@@ -38,7 +38,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          _meals = data['meals']?.take(6).toList() ?? [];
+          _meals = data['meals']?.take(12).toList() ?? [];
           _isLoading = false;
         });
       }
@@ -54,7 +54,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -178,24 +178,27 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  Icons.add_circle,
-                                  color: Color(0xFF2EC153),
-                                  size: 22,
-                                ),
-                                SizedBox(width: 6),
-                                Text(
-                                  'زیادکردنی بەش',
-                                  style: TextStyle(
+                            child: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle,
                                     color: Color(0xFF2EC153),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
+                                    size: 22,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'زیادکردنی بەش',
+                                    style: TextStyle(
+                                      color: Color(0xFF2EC153),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -213,24 +216,27 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  Icons.add_circle,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 6),
-                                Text(
-                                  'زیادکردنی خواردن',
-                                  style: TextStyle(
+                            child: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle,
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                                    size: 20,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'زیادکردنی خواردن',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -362,6 +368,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
   Widget _buildFoodCard({required String title, required String imageUrl}) {
     return Container(
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -392,34 +399,38 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 13,
-                          color: Colors.black87,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            height: 1.0,
+                            color: Colors.black87,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'بەرگری تایبەت و دەبڵ پەنیر',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Color(0xFF9E9E9E),
-                          fontSize: 10,
+                        const SizedBox(height: 2),
+                        const Text(
+                          'بەرگری تایبەت و دەبڵ پەنیر',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Color(0xFF9E9E9E),
+                            fontSize: 10,
+                            height: 1.0,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -458,18 +469,32 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           ),
                         ],
                       ),
-
                       const SizedBox(
-                        width: 46,
-                        child: Text(
-                          '8,000 دینار',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Color(0xFF2EC153),
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                            height: 1.25,
-                          ),
+                        width: 50,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '8,000 ',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Color(0xFF2EC153),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                                height: 1.25,
+                              ),
+                            ),
+                            Text(
+                              'دینار',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Color(0xFF2EC153),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 10,
+                                height: 1,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
