@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Restaurant App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'NRT',
         useMaterial3: true,
         primaryColor: const Color(0xFF2EC153),
       ),

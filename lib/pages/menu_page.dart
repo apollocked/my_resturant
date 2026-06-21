@@ -106,9 +106,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     const Text(
                       'ڕێستۆرانتەکەم',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+                        color: Colors.black54,
                       ),
                     ),
                     IconButton(
@@ -142,8 +142,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     decoration: InputDecoration(
                       hintText: 'گەڕان بەدوای خواردن',
                       hintStyle: const TextStyle(
-                        color: Color(0xFF9E9E9E),
-                        fontSize: 14,
+                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                        fontSize: 15,
                       ),
                       suffixIcon: const Icon(
                         Icons.search,
@@ -194,7 +194,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                     style: TextStyle(
                                       color: Color(0xFF2EC153),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 13,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ],
@@ -232,7 +232,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ],

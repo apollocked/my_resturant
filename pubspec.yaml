@@ -26,3 +26,8 @@ flutter:
 
   assets:
     - assets/
+
+  fonts:
+    - family: NRT
+      fonts:
+        - asset: assets/fonts/Nrt.ttf
