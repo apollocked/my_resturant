@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/pages/menu_page.dart';
+import 'package:provider/provider.dart';
+import 'package:my_resturant/views/pages/menu_page.dart';
+import 'package:my_resturant/views/pages/orders_page.dart';
+import 'package:my_resturant/viewmodels/order_viewmodel.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -11,23 +14,58 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 1;
 
-  final List<Widget> _screens = [
-    const Center(child: Text('داواکارییەکان', style: TextStyle(fontSize: 24))),
-    const RestaurantMenuScreen(),
-    const Center(child: Text('پڕۆفایل', style: TextStyle(fontSize: 24))),
-  ];
+  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  Widget _buildOrdersIcon(int count, bool active) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4.0),
+          child: Icon(
+            active ? Icons.article : Icons.article_outlined,
+            size: 26,
+          ),
+        ),
+        if (count > 0)
+          Positioned(
+            top: -2,
+            right: -6,
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2EC153),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+              child: Text(
+                '$count',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          const OrdersPage(),
+          RestaurantMenuScreen(onNavigateToOrders: () => _onItemTapped(0)),
+          const Center(child: Text('پڕۆفایل', style: TextStyle(fontSize: 24))),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -55,19 +93,19 @@ class _MainLayoutState extends State<MainLayout> {
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
-              items: const [
+              items: [
                 BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: EdgeInsets.only(bottom: 4.0),
-                    child: Icon(Icons.article_outlined, size: 26),
+                  icon: _buildOrdersIcon(
+                    context.watch<OrderViewModel>().orderCount,
+                    false,
                   ),
-                  activeIcon: Padding(
-                    padding: EdgeInsets.only(bottom: 4.0),
-                    child: Icon(Icons.article, size: 26),
+                  activeIcon: _buildOrdersIcon(
+                    context.watch<OrderViewModel>().orderCount,
+                    true,
                   ),
                   label: 'داواکارییەکان',
                 ),
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                   icon: Padding(
                     padding: EdgeInsets.only(bottom: 4.0),
                     child: Icon(Icons.ramen_dining_outlined, size: 26),
@@ -78,7 +116,7 @@ class _MainLayoutState extends State<MainLayout> {
                   ),
                   label: 'مینیو',
                 ),
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                   icon: Padding(
                     padding: EdgeInsets.only(bottom: 4.0),
                     child: Icon(Icons.person_outline, size: 26),
