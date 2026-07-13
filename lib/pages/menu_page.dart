@@ -7,7 +7,7 @@ import 'package:my_resturant/widgets/search_bar_widget.dart';
 import 'package:my_resturant/widgets/action_buttons_row.dart';
 import 'package:my_resturant/widgets/category_chip.dart';
 import 'package:my_resturant/widgets/food_card.dart';
-import 'package:my_resturant/widgets/add_to_cart_sheet.dart';
+
 import 'package:my_resturant/data/mock_data.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
@@ -27,25 +27,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     return key == 'all' ? _meals : _meals.where((r) => r.category == key).toList();
   }
 
-  Future<void> _addToCart(Recipe recipe) async {
-    final result = await showModalBottomSheet<Map<String, dynamic>>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => AddToCartSheet(recipe: recipe),
-    );
-    if (result == null) return;
-    final viewModel = context.read<OrderViewModel>();
-    for (int i = 0; i < result['quantity']; i++) {
-      viewModel.addToCart(recipe);
-    }
-    final lastIndex =
-        viewModel.cart.indexWhere((c) => c.recipe.id == recipe.id);
-    if (lastIndex >= 0 && (result['notes'] as String).isNotEmpty) {
-      viewModel.updateNotes(lastIndex, result['notes']);
-    }
+  void _increment(Recipe recipe) {
+    context.read<OrderViewModel>().addToCart(recipe);
+  }
+
+  void _decrement(Recipe recipe) {
+    context.read<OrderViewModel>().decrementOrRemove(recipe.id);
   }
 
   @override
@@ -98,18 +85,24 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _filteredMeals.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, childAspectRatio: 0.78, crossAxisSpacing: 14, mainAxisSpacing: 16,
-                    ),
-                    itemBuilder: (context, index) {
-                      final recipe = _filteredMeals[index];
-                      return FoodCard(
-                        recipe: recipe,
-                        onAdd: () => _addToCart(recipe),
+                  child: Consumer<OrderViewModel>(
+                    builder: (context, vm, _) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _filteredMeals.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, childAspectRatio: 0.78, crossAxisSpacing: 14, mainAxisSpacing: 16,
+                        ),
+                        itemBuilder: (context, index) {
+                          final recipe = _filteredMeals[index];
+                          return FoodCard(
+                            recipe: recipe,
+                            quantity: vm.getQuantity(recipe.id),
+                            onIncrement: () => _increment(recipe),
+                            onDecrement: () => _decrement(recipe),
+                          );
+                        },
                       );
                     },
                   ),

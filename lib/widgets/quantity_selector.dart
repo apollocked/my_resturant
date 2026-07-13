@@ -21,12 +21,11 @@ class QuantitySelector extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
-            onTap: quantity > 1 ? () => onChanged(-1) : null,
+            onTap: () => onChanged(-1),
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.all(6),
-              child: Icon(Icons.remove, size: 18,
-                  color: quantity > 1 ? Colors.black87 : Colors.grey),
+              child: Icon(Icons.remove, size: 18, color: Colors.black87),
             ),
           ),
           Padding(

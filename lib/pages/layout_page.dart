@@ -27,16 +27,25 @@ class _MainLayoutState extends State<MainLayout> {
         ),
         if (count > 0)
           Positioned(
-            top: -2, right: -6,
+            top: -2,
+            right: -6,
             child: Container(
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                color: const Color(0xFF2EC153), shape: BoxShape.circle,
+                color: const Color(0xFF2EC153),
+                shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 1.5),
               ),
               constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-              child: Text('$count', textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+              child: Text(
+                '$count',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
       ],
@@ -49,20 +58,28 @@ class _MainLayoutState extends State<MainLayout> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          CartPage(onViewKitchen: () => _onItemTapped(2)),
-          RestaurantMenuScreen(onNavigateToCart: () => _onItemTapped(0)),
-          const KitchenPage(),
-          const Center(child: Text('پڕۆفایل', style: TextStyle(fontSize: 24))),
-        ],
+      body: SafeArea(
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            CartPage(onViewKitchen: () => _onItemTapped(2)),
+            RestaurantMenuScreen(onNavigateToCart: () => _onItemTapped(0)),
+            const KitchenPage(),
+            const Center(
+              child: Text('پڕۆفایل', style: TextStyle(fontSize: 24)),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
           ],
         ),
         child: SafeArea(
@@ -77,11 +94,22 @@ class _MainLayoutState extends State<MainLayout> {
               showUnselectedLabels: false,
               selectedItemColor: const Color(0xFF2EC153),
               unselectedItemColor: const Color(0xFF8C8C8C),
-              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              selectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
               items: [
                 BottomNavigationBarItem(
-                  icon: _buildNavIcon(vm.cartCount, Icons.shopping_cart_outlined, Icons.shopping_cart),
-                  activeIcon: _buildNavIcon(vm.cartCount, Icons.shopping_cart, Icons.shopping_cart),
+                  icon: _buildNavIcon(
+                    vm.cartCount,
+                    Icons.shopping_cart_outlined,
+                    Icons.shopping_cart,
+                  ),
+                  activeIcon: _buildNavIcon(
+                    vm.cartCount,
+                    Icons.shopping_cart,
+                    Icons.shopping_cart,
+                  ),
                   label: 'داواکاری',
                 ),
                 const BottomNavigationBarItem(

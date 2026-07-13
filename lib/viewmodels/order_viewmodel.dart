@@ -19,6 +19,9 @@ class OrderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  int getQuantity(String recipeId) =>
+      _cart.where((c) => c.recipe.id == recipeId).firstOrNull?.quantity ?? 0;
+
   void addToCart(Recipe recipe) {
     final existing = _cart.where((c) => c.recipe.id == recipe.id).firstOrNull;
     if (existing != null) {
@@ -29,10 +32,26 @@ class OrderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void decrementOrRemove(String recipeId) {
+    final index = _cart.indexWhere((c) => c.recipe.id == recipeId);
+    if (index < 0) return;
+    if (_cart[index].quantity > 1) {
+      _cart[index].quantity--;
+    } else {
+      _cart.removeAt(index);
+    }
+    notifyListeners();
+  }
+
   void updateQuantity(int index, int delta) {
     if (index < 0 || index >= _cart.length) return;
     final item = _cart[index];
-    item.quantity = (item.quantity + delta).clamp(1, 99);
+    final newQty = item.quantity + delta;
+    if (newQty <= 0) {
+      _cart.removeAt(index);
+    } else {
+      item.quantity = newQty.clamp(1, 99);
+    }
     notifyListeners();
   }
 
