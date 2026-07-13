@@ -22,8 +22,10 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   final List<Recipe> _meals = mockRecipes;
   int _selectedCategoryIndex = 0;
 
-  List<Recipe> get _filteredMeals =>
-      _selectedCategoryIndex == 0 ? _meals : _meals;
+  List<Recipe> get _filteredMeals {
+    final key = categories[_selectedCategoryIndex]['key'];
+    return key == 'all' ? _meals : _meals.where((r) => r.category == key).toList();
+  }
 
   Future<void> _addToCart(Recipe recipe) async {
     final result = await showModalBottomSheet<Map<String, dynamic>>(
