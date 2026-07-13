@@ -22,6 +22,17 @@ class OrderViewModel extends ChangeNotifier {
   int getQuantity(String recipeId) =>
       _cart.where((c) => c.recipe.id == recipeId).firstOrNull?.quantity ?? 0;
 
+  String getNotes(String recipeId) =>
+      _cart.where((c) => c.recipe.id == recipeId).firstOrNull?.notes ?? '';
+
+  void updateNotesByRecipe(String recipeId, String notes) {
+    final cartItem = _cart.where((c) => c.recipe.id == recipeId).lastOrNull;
+    if (cartItem != null) {
+      cartItem.notes = notes;
+      notifyListeners();
+    }
+  }
+
   void addToCart(Recipe recipe) {
     final existing = _cart.where((c) => c.recipe.id == recipe.id).firstOrNull;
     if (existing != null) {
