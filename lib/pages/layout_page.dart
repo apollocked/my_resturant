@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:my_resturant/pages/menu_page.dart';
-import 'package:my_resturant/pages/orders_page.dart';
+import 'package:my_resturant/pages/cart_page.dart';
+import 'package:my_resturant/pages/kitchen_page.dart';
 import 'package:my_resturant/viewmodels/order_viewmodel.dart';
 
 class MainLayout extends StatefulWidget {
@@ -16,13 +17,13 @@ class _MainLayoutState extends State<MainLayout> {
 
   void _onItemTapped(int index) => setState(() => _selectedIndex = index);
 
-  Widget _buildOrdersIcon(int count, bool active) {
+  Widget _buildNavIcon(int count, IconData icon, IconData activeIcon) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
-          child: Icon(active ? Icons.article : Icons.article_outlined, size: 26),
+          child: Icon(icon, size: 26),
         ),
         if (count > 0)
           Positioned(
@@ -44,13 +45,16 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<OrderViewModel>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          const OrdersPage(),
-          RestaurantMenuScreen(onNavigateToOrders: () => _onItemTapped(0)),
+          CartPage(onViewKitchen: () => _onItemTapped(2)),
+          RestaurantMenuScreen(onNavigateToCart: () => _onItemTapped(0)),
+          const KitchenPage(),
           const Center(child: Text('پڕۆفایل', style: TextStyle(fontSize: 24))),
         ],
       ),
@@ -76,9 +80,9 @@ class _MainLayoutState extends State<MainLayout> {
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               items: [
                 BottomNavigationBarItem(
-                  icon: _buildOrdersIcon(context.watch<OrderViewModel>().orderCount, false),
-                  activeIcon: _buildOrdersIcon(context.watch<OrderViewModel>().orderCount, true),
-                  label: 'داواکارییەکان',
+                  icon: _buildNavIcon(vm.cartCount, Icons.shopping_cart_outlined, Icons.shopping_cart),
+                  activeIcon: _buildNavIcon(vm.cartCount, Icons.shopping_cart, Icons.shopping_cart),
+                  label: 'داواکاری',
                 ),
                 const BottomNavigationBarItem(
                   icon: Padding(
@@ -90,6 +94,17 @@ class _MainLayoutState extends State<MainLayout> {
                     child: Icon(Icons.ramen_dining, size: 26),
                   ),
                   label: 'مینیو',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(bottom: 4.0),
+                    child: Icon(Icons.receipt_long_outlined, size: 26),
+                  ),
+                  activeIcon: Padding(
+                    padding: EdgeInsets.only(bottom: 4.0),
+                    child: Icon(Icons.receipt_long, size: 26),
+                  ),
+                  label: 'چێشتخانە',
                 ),
                 const BottomNavigationBarItem(
                   icon: Padding(

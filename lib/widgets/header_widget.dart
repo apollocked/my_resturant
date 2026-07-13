@@ -14,7 +14,7 @@ class HeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderCount = context.watch<OrderViewModel>().orderCount;
+    final cartCount = context.watch<OrderViewModel>().cartCount;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,7 +60,7 @@ class HeaderWidget extends StatelessWidget {
               icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87, size: 26),
               onPressed: onShoppingBagTap,
             ),
-            if (orderCount > 0)
+            if (cartCount > 0)
               Positioned(
                 top: 6, right: 6,
                 child: Container(
@@ -70,7 +70,7 @@ class HeaderWidget extends StatelessWidget {
                     border: Border.all(color: Colors.white, width: 1.5),
                   ),
                   constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                  child: Text('$orderCount', textAlign: TextAlign.center,
+                  child: Text('$cartCount', textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
               ),
