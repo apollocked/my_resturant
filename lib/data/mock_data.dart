@@ -1,6 +1,6 @@
 import 'package:my_resturant/models/recipe.dart';
 
-final List<Recipe> mockRecipes = [
+List<Recipe> mockRecipes = [
   Recipe(id: '1', name: 'بەرگری چیزبۆرگەر', imageUrl: 'https://picsum.photos/seed/cheeseburger/400/300', price: 8500, category: 'burger', description: 'بەرگری تایبەت و دەبڵ پەنیر'),
   Recipe(id: '2', name: 'پیتزا مۆتزاریلا', imageUrl: 'https://picsum.photos/seed/pizza/400/300', price: 12000, category: 'pizza', description: 'پیتزای مۆتزاریلا و تەرخان'),
   Recipe(id: '3', name: 'شاورمە دەبڵ', imageUrl: 'https://picsum.photos/seed/shawarma/400/300', price: 7000, category: 'shawarma', description: 'شاورمەی دەبڵ بە تەرخان و سەلەتە'),
@@ -15,7 +15,7 @@ final List<Recipe> mockRecipes = [
   Recipe(id: '12', name: 'لەحمی عەجین', imageUrl: 'https://picsum.photos/seed/lahmacun/400/300', price: 5000, category: 'pizza', description: 'لەحمی عەجینی تایبەت'),
 ];
 
-final List<Map<String, String>> categories = [
+List<Map<String, String>> categories = [
   {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
   {'key': 'burger', 'name': 'بەرگر', 'icon': '🍔'},
   {'key': 'pizza', 'name': 'پیتزا', 'icon': '🍕'},

@@ -23,6 +23,10 @@ class Recipe {
     );
   }
 
+  Recipe copyWith({String? name, String? imageUrl, double? price, String? description, String? category}) =>
+      Recipe(id: id, name: name ?? this.name, imageUrl: imageUrl ?? this.imageUrl,
+          price: price ?? this.price, description: description ?? this.description, category: category ?? this.category);
+
   Map<String, dynamic> toMap() {
     return {
       'id': id, 'name': name, 'imageUrl': imageUrl,
