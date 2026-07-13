@@ -4,11 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/viewmodels/order_viewmodel.dart';
-import 'package:my_resturant/views/widgets/header_widget.dart';
-import 'package:my_resturant/views/widgets/search_bar_widget.dart';
-import 'package:my_resturant/views/widgets/action_buttons_row.dart';
-import 'package:my_resturant/views/widgets/category_chip.dart';
-import 'package:my_resturant/views/widgets/food_card.dart';
+import 'package:my_resturant/widgets/header_widget.dart';
+import 'package:my_resturant/widgets/search_bar_widget.dart';
+import 'package:my_resturant/widgets/action_buttons_row.dart';
+import 'package:my_resturant/widgets/category_chip.dart';
+import 'package:my_resturant/widgets/food_card.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   final VoidCallback? onNavigateToOrders;
@@ -75,14 +75,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 const SizedBox(height: 28),
                 const Padding(
                   padding: EdgeInsets.only(right: 20.0),
-                  child: Text(
-                    'بەشەکان',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF757575),
-                    ),
-                  ),
+                  child: Text('بەشەکان',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF757575))),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
@@ -97,8 +91,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                         name: _categories[index]['name'],
                         isSelected: _selectedCategoryIndex == index,
                         index: index,
-                        onTap: () =>
-                            setState(() => _selectedCategoryIndex = index),
+                        onTap: () => setState(() => _selectedCategoryIndex = index),
                       );
                     },
                   ),
@@ -106,42 +99,26 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 const SizedBox(height: 28),
                 const Padding(
                   padding: EdgeInsets.only(right: 20.0),
-                  child: Text(
-                    'خواردنەکان',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF757575),
-                    ),
-                  ),
+                  child: Text('خواردنەکان',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF757575))),
                 ),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF2EC153),
-                          ),
-                        )
+                      ? const Center(child: CircularProgressIndicator(color: Color(0xFF2EC153)))
                       : GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: _meals.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.78,
-                                crossAxisSpacing: 14,
-                                mainAxisSpacing: 16,
-                              ),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, childAspectRatio: 0.78, crossAxisSpacing: 14, mainAxisSpacing: 16,
+                          ),
                           itemBuilder: (context, index) {
                             final recipe = _meals[index];
                             return FoodCard(
                               recipe: recipe,
-                              onAdd: () => context
-                                  .read<OrderViewModel>()
-                                  .addOrder(recipe),
+                              onAdd: () => context.read<OrderViewModel>().addOrder(recipe),
                             );
                           },
                         ),

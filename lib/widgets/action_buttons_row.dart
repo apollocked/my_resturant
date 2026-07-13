@@ -4,7 +4,11 @@ class ActionButtonsRow extends StatelessWidget {
   final VoidCallback? onAddSection;
   final VoidCallback? onAddFood;
 
-  const ActionButtonsRow({super.key, this.onAddSection, this.onAddFood});
+  const ActionButtonsRow({
+    super.key,
+    this.onAddSection,
+    this.onAddFood,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,29 +24,17 @@ class ActionButtonsRow extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFF2EC153), width: 1.2),
                   backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: const FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.add_circle,
-                        color: Color(0xFF2EC153),
-                        size: 22,
-                      ),
+                      Icon(Icons.add_circle, color: Color(0xFF2EC153), size: 22),
                       SizedBox(width: 6),
-                      Text(
-                        'زیادکردنی بەش',
-                        style: TextStyle(
-                          color: Color(0xFF2EC153),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      Text('زیادکردنی بەش',
+                          style: TextStyle(color: Color(0xFF2EC153), fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                 ),
@@ -58,9 +50,7 @@ class ActionButtonsRow extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2EC153),
                   elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: const FittedBox(
                   fit: BoxFit.scaleDown,
@@ -69,14 +59,8 @@ class ActionButtonsRow extends StatelessWidget {
                     children: [
                       Icon(Icons.add_circle, color: Colors.white, size: 20),
                       SizedBox(width: 6),
-                      Text(
-                        'زیادکردنی خواردن',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
+                      Text('زیادکردنی خواردن',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                     ],
                   ),
                 ),

@@ -51,8 +51,12 @@ class OrdersPage extends StatelessWidget {
                   background: Container(
                       padding: const EdgeInsets.only(left: 20),
                       color: const Color(0xFFE53935),
+                      alignment: Alignment.centerLeft,
                       child: const Icon(Icons.delete, color: Colors.white)),
-                  onDismissed: (_) => viewModel.removeOrder(index),
+                  confirmDismiss: (_) async {
+                    viewModel.removeOrder(index);
+                    return true;
+                  },
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     leading: ClipRRect(

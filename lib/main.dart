@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:my_resturant/views/pages/layout_page.dart';
+import 'package:my_resturant/pages/layout_page.dart';
 import 'package:my_resturant/viewmodels/order_viewmodel.dart';
 
 void main() {
@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           fontFamily: 'NRT',
+
           useMaterial3: true,
           primaryColor: const Color(0xFF2EC153),
         ),
