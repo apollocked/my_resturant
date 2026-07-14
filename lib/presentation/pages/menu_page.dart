@@ -6,11 +6,11 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/search_bar_widget.dart';
-import 'package:my_resturant/presentation/widgets/category_chip.dart';
-import 'package:my_resturant/presentation/widgets/food_card.dart';
-import 'package:my_resturant/presentation/widgets/menu_cart_bar.dart';
-import 'package:my_resturant/presentation/widgets/notes_dialog.dart';
+import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart';
+import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
+import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
+import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
+import 'package:my_resturant/presentation/widgets/menu/notes_dialog.dart';
 import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 

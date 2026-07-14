@@ -33,7 +33,11 @@ class OrderCubit extends Cubit<OrderState> {
     if (idx >= 0) {
       cart[idx] = CartItem(recipe: cart[idx].recipe, quantity: cart[idx].quantity + 1, notes: cart[idx].notes);
     } else {
-      cart.add(CartItem(recipe: recipe));
+      final notes = state.pendingNotes[recipe.id] ?? '';
+      final pending = Map<String, String>.from(state.pendingNotes)..remove(recipe.id);
+      cart.add(CartItem(recipe: recipe, notes: notes));
+      emit(state.copyWith(cart: cart, pendingNotes: pending));
+      return;
     }
     emit(state.copyWith(cart: cart));
   }
@@ -74,6 +78,9 @@ class OrderCubit extends Cubit<OrderState> {
     if (idx >= 0) {
       cart[idx] = CartItem(recipe: cart[idx].recipe, quantity: cart[idx].quantity, notes: notes);
       emit(state.copyWith(cart: cart));
+    } else {
+      final pending = Map<String, String>.from(state.pendingNotes)..[recipeId] = notes;
+      emit(state.copyWith(pendingNotes: pending));
     }
   }
 
@@ -84,7 +91,7 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(cart: cart));
   }
 
-  void clearCart() => emit(state.copyWith(cart: []));
+  void clearCart() => emit(state.copyWith(cart: [], pendingNotes: const {}));
 
   void setSelectedTable(int t) => emit(state.copyWith(selectedTable: t));
 
@@ -136,7 +143,7 @@ class OrderCubit extends Cubit<OrderState> {
     );
     await _repo.saveOrder(order);
     final orders = List<Order>.from(state.orders)..insert(0, order);
-    emit(state.copyWith(cart: [], orders: orders, selectedTable: 0));
+    emit(state.copyWith(cart: [], orders: orders, selectedTable: 0, pendingNotes: const {}));
   }
 
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async {

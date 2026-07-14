@@ -4,7 +4,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/table_name_row.dart';
+import 'package:my_resturant/presentation/widgets/shared/table_name_row.dart';
 
 class TableManagementPage extends StatefulWidget {
   const TableManagementPage({super.key});

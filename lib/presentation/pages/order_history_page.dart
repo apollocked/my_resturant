@@ -4,7 +4,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/order_card.dart';
+import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});

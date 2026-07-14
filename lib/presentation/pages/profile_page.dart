@@ -6,8 +6,8 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/action_buttons_row.dart';
-import 'package:my_resturant/presentation/widgets/settings_button.dart';
+import 'package:my_resturant/presentation/widgets/profile/action_buttons_row.dart';
+import 'package:my_resturant/presentation/widgets/profile/settings_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

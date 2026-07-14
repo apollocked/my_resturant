@@ -6,7 +6,7 @@ import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/order_card.dart';
+import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 
 class KitchenPage extends StatefulWidget {
   const KitchenPage({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/presentation/widgets/settings_dialog.dart';
+import 'package:my_resturant/presentation/widgets/profile/settings_dialog.dart';
 
 class SettingsButton extends StatelessWidget {
   final Color? color;

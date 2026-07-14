@@ -134,17 +134,23 @@ class OrderCard extends StatelessWidget {
 
   Widget _itemList(Order order, Locale locale, ColorScheme cs) {
     return Column(children: order.items.map((item) => Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(children: [
-        Container(
-          width: 26, height: 26,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(6)),
-          child: Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: AppColors.primary)),
-        ),
-        const SizedBox(width: 8),
-        Expanded(child: Text(item.recipe.name, textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: cs.onSurface))),
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        Row(children: [
+          Container(
+            width: 26, height: 26,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(6)),
+            child: Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: AppColors.primary)),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(item.recipe.name, textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: cs.onSurface))),
+        ]),
+        if (item.notes.isNotEmpty)
+          Padding(padding: const EdgeInsets.only(top: 3, right: 34),
+            child: Text(item.notes, textAlign: TextAlign.right,
+                style: TextStyle(fontSize: 10, color: cs.onSurfaceVariant.withValues(alpha: 0.6), fontStyle: FontStyle.italic))),
       ]),
     )).toList());
   }

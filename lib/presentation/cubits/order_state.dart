@@ -9,6 +9,7 @@ class OrderState {
   final int selectedTable;
   final int tableCount;
   final Map<int, String> tableNames;
+  final Map<String, String> pendingNotes;
 
   const OrderState({
     this.recipes = const [],
@@ -17,6 +18,7 @@ class OrderState {
     this.selectedTable = 0,
     this.tableCount = 10,
     this.tableNames = const {},
+    this.pendingNotes = const {},
   });
 
   int get cartCount => cart.fold(0, (s, i) => s + i.quantity);
@@ -28,7 +30,7 @@ class OrderState {
 
   String getTableName(int n) => tableNames[n] ?? 'مێز $n';
   int getQuantity(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;
-  String getNotes(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.notes ?? '';
+  String getNotes(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.notes ?? pendingNotes[id] ?? '';
 
   Map<String, int> get dishOrderCounts {
     final c = <String, int>{};
@@ -47,8 +49,8 @@ class OrderState {
   List<Order> ordersByDate(DateTime d) => orders.where((o) =>
     o.createdAt.year == d.year && o.createdAt.month == d.month && o.createdAt.day == d.day).toList();
 
-  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, int? selectedTable, int? tableCount, Map<int, String>? tableNames}) =>
+  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes}) =>
     OrderState(recipes: recipes ?? this.recipes, cart: cart ?? this.cart, orders: orders ?? this.orders,
       selectedTable: selectedTable ?? this.selectedTable, tableCount: tableCount ?? this.tableCount,
-      tableNames: tableNames ?? this.tableNames);
+      tableNames: tableNames ?? this.tableNames, pendingNotes: pendingNotes ?? this.pendingNotes);
 }

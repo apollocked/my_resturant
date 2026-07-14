@@ -7,7 +7,7 @@ import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/app_image.dart';
+import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;

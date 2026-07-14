@@ -4,7 +4,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/stat_card.dart';
+import 'package:my_resturant/presentation/widgets/profile/stat_card.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
