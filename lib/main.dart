@@ -15,37 +15,70 @@ class AppTheme {
   static const Color error = Color(0xFFE53E3E);
 
   static ThemeData get light => ThemeData(
-    fontFamily: 'NRT', useMaterial3: true,
+    fontFamily: 'NRT',
+    useMaterial3: true,
     scaffoldBackgroundColor: background,
-    colorScheme: ColorScheme.light(primary: primary, secondary: primary,
-      surface: surface, error: error),
+    colorScheme: ColorScheme.light(
+      primary: primary,
+      secondary: primary,
+      surface: surface,
+      error: error,
+    ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: surface, elevation: 0, centerTitle: false,
-      titleTextStyle: TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.w700),
-      iconTheme: IconThemeData(color: textPrimary)),
+      backgroundColor: surface,
+      elevation: 0,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+        color: textPrimary,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      iconTheme: IconThemeData(color: textPrimary),
+    ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: surface, elevation: 0, type: BottomNavigationBarType.fixed,
-      selectedItemColor: primary, unselectedItemColor: textSecondary,
+      backgroundColor: surface,
+      elevation: 0,
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: primary,
+      unselectedItemColor: textSecondary,
       selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-      unselectedLabelStyle: TextStyle(fontSize: 11)),
+      unselectedLabelStyle: TextStyle(fontSize: 11),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(backgroundColor: primary,
-        foregroundColor: Colors.white, elevation: 0,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
-      filled: true, fillColor: const Color(0xFFF7F5F3),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none),
+      filled: true,
+      fillColor: const Color(0xFFF7F5F3),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      labelStyle: const TextStyle(color: textSecondary, fontSize: 13)),
+      labelStyle: const TextStyle(color: textSecondary, fontSize: 13),
+    ),
     cardTheme: CardThemeData(
-      elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: surface, margin: const EdgeInsets.only(bottom: 12)),
-    dividerTheme: const DividerThemeData(color: divider, thickness: 1, space: 0),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      color: surface,
+      margin: const EdgeInsets.only(bottom: 12),
+    ),
+    dividerTheme: const DividerThemeData(
+      color: divider,
+      thickness: 1,
+      space: 0,
+    ),
     snackBarTheme: SnackBarThemeData(
-      behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
   );
 }
 
@@ -60,8 +93,10 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (_) => OrderCubit(),
       child: MaterialApp(
-        title: 'Restaurant App', debugShowCheckedModeBanner: false,
-        theme: AppTheme.light, home: const MainLayout(),
+        title: 'Restaurant App',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        home: const MainLayout(),
       ),
     );
   }

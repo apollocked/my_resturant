@@ -4,15 +4,13 @@ import 'package:my_resturant/main.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/search_bar_widget.dart';
-import 'package:my_resturant/widgets/action_buttons_row.dart';
 import 'package:my_resturant/widgets/category_chip.dart';
 import 'package:my_resturant/widgets/food_card.dart';
 import 'package:my_resturant/widgets/menu_hero.dart';
 import 'package:my_resturant/widgets/menu_cart_bar.dart';
 import 'package:my_resturant/widgets/notes_dialog.dart';
 import 'package:my_resturant/data/mock_data.dart';
-import 'package:my_resturant/pages/dish_form_page.dart';
-import 'package:my_resturant/pages/category_form_page.dart';
+
 
 class RestaurantMenuScreen extends StatefulWidget {
   final VoidCallback? onNavigateToCart;
@@ -44,16 +42,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (r != null) context.read<OrderCubit>().updateNotesByRecipe(recipe.id, r);
   }
 
-  Future<void> _addDish() async {
-    final r = await Navigator.push<Recipe>(context, MaterialPageRoute(builder: (_) => const DishFormPage()));
-    if (r != null) { _meals.add(r); setState(() {}); }
-  }
-
-  Future<void> _addCategory() async {
-    final ok = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const CategoryFormPage()));
-    if (ok == true) setState(() {});
-  }
-
   @override void dispose() { _searchCtrl.dispose(); super.dispose(); }
 
   @override
@@ -71,8 +59,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 const MenuHero(),
                 const SizedBox(height: 16),
                 Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
-                const SizedBox(height: 12),
-                ActionButtonsRow(onAddSection: _addCategory, onAddFood: _addDish),
                 const SizedBox(height: 28),
                 Padding(padding: const EdgeInsets.only(right: 20), child: Text('بەشەکان',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.textPrimary.withValues(alpha: 0.6)))),

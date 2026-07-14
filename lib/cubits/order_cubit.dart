@@ -96,6 +96,8 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith());
   }
 
+  void refresh() => emit(state.copyWith());
+
   void toggleAvailability(String id) {
     final i = mockRecipes.indexWhere((r) => r.id == id);
     if (i >= 0) { mockRecipes[i] = mockRecipes[i].copyWith(available: !mockRecipes[i].available); }
