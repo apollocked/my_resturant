@@ -19,6 +19,37 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     return mockRecipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
   }
 
+  Future<void> _editRecipe(Recipe r) async {
+    final nameCtl = TextEditingController(text: r.name);
+    final priceCtl = TextEditingController(text: r.price.toInt().toString());
+    final descCtl = TextEditingController(text: r.description);
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (ctx) => Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
+        title: const Text('گۆڕینی خواردن'),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(controller: nameCtl, decoration: const InputDecoration(labelText: 'ناو', border: OutlineInputBorder()), textDirection: TextDirection.rtl),
+          const SizedBox(height: 12),
+          TextField(controller: priceCtl, decoration: const InputDecoration(labelText: 'نرخ', border: OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
+          const SizedBox(height: 12),
+          TextField(controller: descCtl, decoration: const InputDecoration(labelText: 'وەسف', border: OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('ڕەتکردنەوە')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, {'name': nameCtl.text, 'price': double.tryParse(priceCtl.text), 'description': descCtl.text}),
+            style: FilledButton.styleFrom(backgroundColor: AppTheme.primary), child: const Text('نوێکردنەوە')),
+        ],
+      )),
+    );
+    if (result != null) {
+      context.read<OrderCubit>().updateRecipe(r.id,
+        name: result['name'] as String,
+        price: result['price'] as double?,
+        description: result['description'] as String?,
+      );
+    }
+  }
+
   Future<void> _confirmDelete(Recipe r) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -79,8 +110,12 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
               title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
               subtitle: Text('${r.price.toInt()} د.ع • ${r.category}',
                   style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-              trailing: IconButton(icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 20),
-                onPressed: () => _confirmDelete(r)),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(icon: const Icon(Icons.edit_outlined, color: AppTheme.primary, size: 20),
+                  onPressed: () => _editRecipe(r)),
+                IconButton(icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 20),
+                  onPressed: () => _confirmDelete(r)),
+              ]),
             ));
           },
         )),

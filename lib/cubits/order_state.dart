@@ -11,7 +11,7 @@ class OrderState {
   const OrderState({
     this.cart = const [],
     this.orders = const [],
-    this.selectedTable = 1,
+    this.selectedTable = 0,
     this.tableCount = 10,
     this.tableNames = const {},
   });
@@ -21,6 +21,7 @@ class OrderState {
   int get totalOrders => orders.length;
   double get totalRevenue => orders.fold(0.0, (s, o) => s + o.totalPrice);
   List<int> get tableNumbers => List.generate(tableCount, (i) => i + 1);
+  Set<int> get reservedTables => orders.where((o) => o.status != OrderStatus.served).map((o) => o.tableNumber).toSet();
 
   String getTableName(int n) => tableNames[n] ?? 'مێز $n';
   int getQuantity(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;

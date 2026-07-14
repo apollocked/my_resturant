@@ -86,6 +86,16 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith());
   }
 
+  void updateRecipe(String id, {String? name, double? price, String? category, String? description}) {
+    final i = mockRecipes.indexWhere((r) => r.id == id);
+    if (i >= 0) {
+      mockRecipes[i] = mockRecipes[i].copyWith(
+        name: name, price: price, category: category, description: description,
+      );
+    }
+    emit(state.copyWith());
+  }
+
   void toggleAvailability(String id) {
     final i = mockRecipes.indexWhere((r) => r.id == id);
     if (i >= 0) { mockRecipes[i] = mockRecipes[i].copyWith(available: !mockRecipes[i].available); }
@@ -93,7 +103,7 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   void submitOrder(String notes) {
-    if (state.cart.isEmpty) return;
+    if (state.cart.isEmpty || state.selectedTable == 0) return;
     final orders = List<Order>.from(state.orders);
     orders.insert(0, Order(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -101,7 +111,7 @@ class OrderCubit extends Cubit<OrderState> {
       tableName: state.getTableName(state.selectedTable),
       items: List.from(state.cart), notes: notes,
     ));
-    emit(state.copyWith(cart: [], orders: orders));
+    emit(state.copyWith(cart: [], orders: orders, selectedTable: 0));
   }
 
   void updateOrderStatus(String orderId, OrderStatus status) {

@@ -44,7 +44,7 @@ class _CartPageState extends State<CartPage> {
               Icon(Icons.delete_sweep, size: 18, color: AppTheme.error), SizedBox(width: 4),
               Text('سڕینەوە', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 12)),
             ])),
-          TableSelector(selectedTable: state.selectedTable, onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t)),
+          TableSelector(selectedTable: state.selectedTable, onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t), reservedTables: state.reservedTables),
         ])),
       const SizedBox(height: 12),
       Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),

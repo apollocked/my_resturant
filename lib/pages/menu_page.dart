@@ -44,13 +44,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (r != null) context.read<OrderCubit>().updateNotesByRecipe(recipe.id, r);
   }
 
-  Future<void> _edit(Recipe recipe) async {
-    final r = await Navigator.push<Recipe>(context, MaterialPageRoute(builder: (_) => DishFormPage(recipe: recipe)));
-    if (r == null) return;
-    final i = _meals.indexWhere((x) => x.id == recipe.id);
-    if (i >= 0) { _meals[i] = r; setState(() {}); }
-  }
-
   Future<void> _addDish() async {
     final r = await Navigator.push<Recipe>(context, MaterialPageRoute(builder: (_) => const DishFormPage()));
     if (r != null) { _meals.add(r); setState(() {}); }
@@ -66,40 +59,99 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrderCubit>().state;
+    if (state.selectedTable == 0) return _buildTablePicker();
     final meals = _filteredMeals;
-    return Scaffold(body: SafeArea(child: Column(children: [
-      Expanded(child: SingleChildScrollView(physics: const BouncingScrollPhysics(), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        const MenuHero(),
-        const SizedBox(height: 16),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
-        const SizedBox(height: 12),
-        ActionButtonsRow(onAddSection: _addCategory, onAddFood: _addDish),
-        const SizedBox(height: 28),
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text('بەشەکان',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.textPrimary.withValues(alpha: 0.6)))),
-        const SizedBox(height: 12),
-        SizedBox(height: 40, child: ListView.builder(scrollDirection: Axis.horizontal, reverse: true,
-          itemCount: categories.length, padding: EdgeInsets.zero,
-          itemBuilder: (context, index) => CategoryChip(icon: categories[index]['icon']!, name: categories[index]['name']!,
-            isSelected: _selectedCategoryIndex == index, index: index,
-            onTap: () => setState(() => _selectedCategoryIndex = index)))),
-        const SizedBox(height: 24),
-        if (meals.isEmpty)
-          const SizedBox(height: 160, child: Center(child: Text('هیچ خواردنێک نەدۆزرایەوە',
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 14))))
-        else
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(), itemCount: meals.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
-            itemBuilder: (context, index) { final r = meals[index]; return FoodCard(recipe: r,
-              quantity: state.getQuantity(r.id), notes: state.getNotes(r.id),
-              onIncrement: () => _increment(r), onDecrement: () => _decrement(r),
-              onLongPress: () => _notes(r), onEdit: () => _edit(r)); })),
-        const SizedBox(height: 100),
-      ]))),
-      if (state.cartCount > 0)
-        MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: widget.onNavigateToCart),
-    ])));
+    return Scaffold(
+      body: SafeArea(
+        child: Column(children: [
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                const MenuHero(),
+                const SizedBox(height: 16),
+                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
+                const SizedBox(height: 12),
+                ActionButtonsRow(onAddSection: _addCategory, onAddFood: _addDish),
+                const SizedBox(height: 28),
+                Padding(padding: const EdgeInsets.only(right: 20), child: Text('بەشەکان',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.textPrimary.withValues(alpha: 0.6)))),
+                const SizedBox(height: 12),
+                SizedBox(height: 40, child: ListView.builder(scrollDirection: Axis.horizontal, reverse: true,
+                  itemCount: categories.length, padding: EdgeInsets.zero,
+                  itemBuilder: (context, index) => CategoryChip(icon: categories[index]['icon']!, name: categories[index]['name']!,
+                    isSelected: _selectedCategoryIndex == index, index: index, onTap: () => setState(() => _selectedCategoryIndex = index)))),
+                const SizedBox(height: 24),
+                if (meals.isEmpty)
+                  const SizedBox(height: 160, child: Center(child: Text('هیچ خواردنێک نەدۆزرایەوە',
+                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 14))))
+                else
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(), itemCount: meals.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
+                    itemBuilder: (context, index) { final r = meals[index]; return FoodCard(recipe: r,
+                      quantity: state.getQuantity(r.id), notes: state.getNotes(r.id),
+                      onIncrement: () => _increment(r), onDecrement: () => _decrement(r), onLongPress: () => _notes(r)); })),
+                const SizedBox(height: 100),
+              ]),
+            ),
+          ),
+          if (state.cartCount > 0)
+            MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: widget.onNavigateToCart),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildTablePicker() {
+    final s = context.watch<OrderCubit>().state;
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(children: [
+            const SizedBox(height: 40),
+            Container(width: 100, height: 100,
+              decoration: BoxDecoration(color: AppTheme.primarySoft, shape: BoxShape.circle, border: Border.all(color: AppTheme.primary, width: 2)),
+              child: const Icon(Icons.table_restaurant, size: 48, color: AppTheme.primary)),
+            const SizedBox(height: 24),
+            const Text('بەخێربێیت بۆ ڕێستۆرانتەکەم', textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
+            const SizedBox(height: 8),
+            const Text('تکایە مێزەکە هەڵبژێرە', textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: AppTheme.textSecondary)),
+            const SizedBox(height: 32),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1),
+                itemCount: s.tableCount,
+                itemBuilder: (context, i) {
+                  final n = i + 1;
+                  final locked = s.reservedTables.contains(n);
+                  return Material(
+                    color: locked ? const Color(0xFFB0B0B0) : AppTheme.primary, borderRadius: BorderRadius.circular(14),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: locked ? null : () => context.read<OrderCubit>().setSelectedTable(n),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        if (locked) ...[
+                          const Icon(Icons.lock, color: Colors.white, size: 20),
+                          const SizedBox(height: 2),
+                          Text('مێز $n', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                        ] else ...[
+                          Text('$n', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800)),
+                          const SizedBox(height: 2),
+                          Text('مێز', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11)),
+                        ],
+                      ]),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }

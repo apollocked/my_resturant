@@ -16,7 +16,7 @@ class MenuCartBar extends StatelessWidget {
       child: SafeArea(child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('${cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppTheme.primary)),
-          Text('${cartCount} دانە', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+          Text('$cartCount دانە', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
         ])),
         const SizedBox(width: 16),
         SizedBox(height: 46, child: ElevatedButton(

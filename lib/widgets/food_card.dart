@@ -5,12 +5,12 @@ import 'package:my_resturant/widgets/app_image.dart';
 
 class FoodCard extends StatelessWidget {
   final Recipe recipe;
-  final VoidCallback? onIncrement, onDecrement, onLongPress, onEdit;
+  final VoidCallback? onIncrement, onDecrement, onLongPress;
   final int quantity;
   final String notes;
 
   const FoodCard({super.key, required this.recipe, this.onIncrement, this.onDecrement, this.onLongPress,
-    this.onEdit,     this.quantity = 0, this.notes = ''});
+    this.quantity = 0, this.notes = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +80,7 @@ class FoodCard extends StatelessWidget {
                 ])
               else
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Row(children: [
-                    InkWell(onTap: onEdit, child: Container(padding: const EdgeInsets.all(4),
-                        child: const Icon(Icons.edit_square, color: AppTheme.textSecondary, size: 16))),
-                  ]),
+                  const SizedBox(),
                   Text('${recipe.price.toInt()} د.ع',
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppTheme.textSecondary)),
                 ]),
