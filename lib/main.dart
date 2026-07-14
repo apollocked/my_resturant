@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:my_resturant/router/app_router.dart';
-import 'package:my_resturant/cubits/order_cubit.dart';
-import 'package:my_resturant/cubits/settings_cubit.dart';
-import 'package:my_resturant/theme/app_theme.dart';
-import 'package:my_resturant/database/repository.dart';
+import 'package:my_resturant/presentation/router/app_router.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/core/theme/app_theme.dart';
+import 'package:my_resturant/data/repositories/data_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
