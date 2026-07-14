@@ -43,7 +43,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         TextField(controller: _nameCtrl,
           decoration: InputDecoration(labelText: t('category_name'), filled: true)),
         const SizedBox(height: 24),
-        Text(t('choose_icon'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.textPrimary)),
+        Text(t('choose_icon'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: cs.onSurface)),
         const SizedBox(height: 12),
         Expanded(child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

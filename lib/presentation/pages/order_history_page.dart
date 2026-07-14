@@ -38,9 +38,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         if (orders.isEmpty)
           Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(width: 80, height: 80, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-              child: const Icon(Icons.history, size: 36, color: AppColors.textSecondary)),
+              child: Icon(Icons.history, size: 36, color: cs.onSurfaceVariant)),
             const SizedBox(height: 16),
-            Text(t('history_empty'), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+            Text(t('history_empty'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: cs.onSurface)),
           ])))
         else
           Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,

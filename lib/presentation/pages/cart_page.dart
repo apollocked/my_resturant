@@ -8,7 +8,6 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/quantity_selector.dart';
 import 'package:my_resturant/presentation/widgets/table_selector.dart';
 import 'package:my_resturant/presentation/widgets/app_image.dart';
-import 'package:my_resturant/presentation/widgets/settings_button.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -32,7 +31,6 @@ class _CartPageState extends State<CartPage> {
     return Column(children: [
       Padding(padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
         child: Row(children: [
-          const SettingsButton(),
           const Spacer(),
           if (cart.isEmpty) const SizedBox.shrink() else ...[
             TextButton(onPressed: () => context.read<OrderCubit>().clearCart(),
@@ -47,11 +45,11 @@ class _CartPageState extends State<CartPage> {
         Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 100, height: 100,
             decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-            child: const Icon(Icons.shopping_bag_outlined, size: 44, color: AppColors.textSecondary)),
+            child: Icon(Icons.shopping_bag_outlined, size: 44, color: cs.onSurfaceVariant)),
           const SizedBox(height: 20),
-          Text(t('cart_empty_title'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+          Text(t('cart_empty_title'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface)),
           const SizedBox(height: 6),
-          Text(t('cart_empty_subtitle'), style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+          Text(t('cart_empty_subtitle'), style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant)),
         ])))
       else ...[
         const SizedBox(height: 12),
@@ -65,22 +63,22 @@ class _CartPageState extends State<CartPage> {
                 child: AppImage(item.recipe.imageUrl, width: 56, height: 56)),
               const SizedBox(width: 10),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.textPrimary)),
+                Text(item.recipe.name, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurface)),
                 const SizedBox(height: 2),
                 Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
                 SizedBox(height: 24, child: TextField(
                   textAlign: TextAlign.right, textDirection: TextDirection.rtl,
                   decoration: InputDecoration(hintText: t('notes_hint'),
-                    hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.5), fontSize: 11),
+                    hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 11),
                     border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 4), isDense: true),
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
                   onChanged: (v) => context.read<OrderCubit>().updateNotes(index, v),
                 )),
               ])),
               const SizedBox(width: 6),
               QuantitySelector(quantity: item.quantity, onChanged: (d) => context.read<OrderCubit>().updateQuantity(index, d)),
               const SizedBox(width: 8),
-              Text('${item.totalPrice.toInt()}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.textPrimary)),
+              Text('${item.totalPrice.toInt()}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: cs.onSurface)),
               const SizedBox(width: 6),
               InkWell(onTap: () => context.read<OrderCubit>().removeFromCart(index),
                 child: Container(padding: const EdgeInsets.all(4),
@@ -98,7 +96,7 @@ class _CartPageState extends State<CartPage> {
           TextField(controller: _notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
             decoration: InputDecoration(
               hintText: t('general_notes_hint'),
-              hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.5), fontSize: 12)),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12)),
           ),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -111,7 +109,7 @@ class _CartPageState extends State<CartPage> {
               ]))),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Text('${state.cartTotal.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.primary)),
-              Text(t('total'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: AppColors.textSecondary)),
+              Text(t('total'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: cs.onSurfaceVariant)),
             ]),
           ]),
         ])),

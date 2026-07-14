@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 
 class QuantitySelector extends StatelessWidget {
   final int quantity;
@@ -11,15 +10,30 @@ class QuantitySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(12)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        InkWell(onTap: () => onChanged(-1), borderRadius: BorderRadius.circular(8),
-          child: const Padding(padding: EdgeInsets.all(6), child: Icon(Icons.remove, size: 16, color: AppColors.textPrimary))),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text('$quantity', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
-        InkWell(onTap: quantity < 99 ? () => onChanged(1) : null, borderRadius: BorderRadius.circular(8),
-          child: Padding(padding: const EdgeInsets.all(6),
-              child: Icon(Icons.add, size: 16, color: quantity < 99 ? AppColors.textPrimary : cs.onSurfaceVariant))),
+        InkWell(onTap: () => onChanged(-1), borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
+            ),
+            child: Icon(Icons.remove, size: 20, color: cs.onSurface),
+          )),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            border: Border.symmetric(
+              vertical: BorderSide(color: cs.outlineVariant, width: 1),
+            ),
+          ),
+          child: Text('$quantity', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        ),
+        InkWell(onTap: quantity < 99 ? () => onChanged(1) : null, borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Icon(Icons.add, size: 20, color: quantity < 99 ? cs.onSurface : cs.onSurfaceVariant)),
+          ),
       ]),
     );
   }

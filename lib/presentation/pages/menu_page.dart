@@ -48,6 +48,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     if (state.selectedTable == 0) return _buildTablePicker();
     final meals = _filteredMeals(state.recipes);
@@ -62,7 +63,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
                 const SizedBox(height: 28),
                 Padding(padding: const EdgeInsets.only(right: 20), child: Text(t('categories'),
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary.withValues(alpha: 0.6)))),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: cs.onSurface.withValues(alpha: 0.6)))),
                 const SizedBox(height: 12),
                 SizedBox(height: 40, child: ListView.builder(scrollDirection: Axis.horizontal, reverse: true,
                   itemCount: categories.length, padding: EdgeInsets.zero,
@@ -71,7 +72,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 const SizedBox(height: 24),
                 if (meals.isEmpty)
                   SizedBox(height: 160, child: Center(child: Text(t('no_food_found'),
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14))))
+                      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14))))
                 else
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(), itemCount: meals.length,
@@ -108,7 +109,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
               child: const Icon(Icons.table_restaurant, size: 48, color: AppColors.primary)),
             const SizedBox(height: 24),
             Text(t('select_table'), textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: cs.onSurface)),
             const SizedBox(height: 32),
             Expanded(
               child: GridView.builder(

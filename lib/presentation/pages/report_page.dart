@@ -32,7 +32,7 @@ class ReportPage extends StatelessWidget {
         ]),
         if (counts.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Text(t('foods_ranking'), style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary.withValues(alpha: 0.6))),
+          Text(t('foods_ranking'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface.withValues(alpha: 0.6))),
           const SizedBox(height: 12),
           ...counts.entries.map((e) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(children: [
             SizedBox(width: 30, child: Text('${e.value}', textAlign: TextAlign.center,
@@ -43,7 +43,7 @@ class ReportPage extends StatelessWidget {
                   color: AppColors.primary, minHeight: 6))),
             const SizedBox(width: 8),
             SizedBox(width: 100, child: Text(e.key, textAlign: TextAlign.right,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: AppColors.textPrimary))),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurface))),
           ]))),
         ],
       ])),

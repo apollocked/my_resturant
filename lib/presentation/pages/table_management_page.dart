@@ -17,10 +17,11 @@ class _TableManagementPageState extends State<TableManagementPage> {
     final state = context.watch<OrderCubit>().state;
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(t('table_mgmt_title'))),
       body: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
-        Text(t('table_count'), style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+        Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface)),
         const SizedBox(height: 8),
         Row(children: [
           Expanded(child: Slider(value: state.tableCount.toDouble(), min: 1, max: 20, divisions: 19,
@@ -29,7 +30,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
           Text('${state.tableCount}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.primary)),
         ]),
         const SizedBox(height: 20),
-        Text(t('table_names'), style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+        Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface)),
         const SizedBox(height: 12),
         ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
       ])),

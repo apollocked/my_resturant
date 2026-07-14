@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -24,8 +23,8 @@ class SearchBarWidget extends StatelessWidget {
         textAlignVertical: TextAlignVertical.center, textAlign: TextAlign.right,
         textDirection: TextDirection.rtl,
         decoration: InputDecoration(
-          hintText: t('search_hint'), hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.6), fontSize: 13),
-          suffixIcon: Icon(Icons.search, color: AppColors.textSecondary, size: 22),
+          hintText: t('search_hint'), hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 13),
+          suffixIcon: Icon(Icons.search, color: cs.onSurfaceVariant, size: 22),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
       ),

@@ -42,16 +42,16 @@ class OrderDetailPage extends StatelessWidget {
           const SizedBox(height: 24),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-            Text(t('foods'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+            Text(t('foods'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: cs.onSurface)),
           ]),
           const SizedBox(height: 12),
-          ...order.items.map((item) => _itemCard(item, t)),
+          ...order.items.map((item) => _itemCard(item, t, cs)),
           if (order.notes.isNotEmpty)
             Container(width: double.infinity, padding: const EdgeInsets.all(12), margin: const EdgeInsets.only(top: 8),
               decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(10)),
               child: Text(order.notes, textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontStyle: FontStyle.italic))),
+                  style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant, fontStyle: FontStyle.italic))),
           const SizedBox(height: 32),
           if (hasNext)
             SizedBox(width: double.infinity, child: FilledButton(
@@ -70,7 +70,7 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _itemCard(CartItem item, String Function(String) t) {
+  Widget _itemCard(CartItem item, String Function(String) t, ColorScheme cs) {
     return Card(margin: const EdgeInsets.only(bottom: 8),
       child: Padding(padding: const EdgeInsets.all(12), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(item.recipe.imageUrl, width: 52, height: 52)),
@@ -81,19 +81,19 @@ class OrderDetailPage extends StatelessWidget {
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
               child: Text('×${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary))),
             const Spacer(),
-            Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+            Text(item.recipe.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface)),
           ]),
           const SizedBox(height: 4),
           Row(children: [
-            Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.textPrimary)),
+            Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: cs.onSurface)),
             const Spacer(),
-            Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+            Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
           ]),
           if (item.notes.isNotEmpty) ...[
             const SizedBox(height: 4),
             Row(children: [
               Expanded(child: Text(item.notes, textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
+                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
             ]),
           ],
         ])),
@@ -110,9 +110,9 @@ class OrderDetailPage extends StatelessWidget {
         _dot(OrderStatus.pending, current, cs),
       ]),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t('timeline_served'), style: TextStyle(fontSize: 9, color: current == OrderStatus.served ? AppColors.success : AppColors.textSecondary)),
-        Text(t('timeline_preparing'), style: TextStyle(fontSize: 9, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : AppColors.textSecondary)),
-        Text(t('timeline_pending'), style: TextStyle(fontSize: 9, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : AppColors.textSecondary)),
+        Text(t('timeline_served'), style: TextStyle(fontSize: 9, color: current == OrderStatus.served ? AppColors.success : cs.onSurfaceVariant)),
+        Text(t('timeline_preparing'), style: TextStyle(fontSize: 9, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : cs.onSurfaceVariant)),
+        Text(t('timeline_pending'), style: TextStyle(fontSize: 9, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : cs.onSurfaceVariant)),
       ]),
     ]);
   }

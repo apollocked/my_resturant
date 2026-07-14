@@ -63,10 +63,10 @@ class FoodCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
             child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Text(recipe.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.textPrimary)),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: cs.onSurface)),
               const SizedBox(height: 2),
               Text(recipe.description, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10)),
               const SizedBox(height: 6),
               if (isSelected)
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -88,7 +88,7 @@ class FoodCard extends StatelessWidget {
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   const SizedBox(),
                   Text('${recipe.price.toInt()} ${t('currency_suffix')}',
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.textSecondary)),
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: cs.onSurfaceVariant)),
                 ]),
             ]),
           ),

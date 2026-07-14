@@ -100,7 +100,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                     Text(categories[i]['icon']!, style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 4),
                     Text(categories[i]['name']!, style: TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w600, color: isSel ? cs.onPrimary : AppColors.textSecondary)),
+                      fontSize: 13, fontWeight: FontWeight.w600, color: isSel ? cs.onPrimary : cs.onSurfaceVariant)),
                   ]),
                 ),
               ));
@@ -111,9 +111,9 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
         Expanded(child: dishes.isEmpty
           ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-                child: const Icon(Icons.restaurant_menu, size: 44, color: AppColors.textSecondary)),
+                child: Icon(Icons.restaurant_menu, size: 44, color: cs.onSurfaceVariant)),
               const SizedBox(height: 20),
-              Text(t('no_food_found'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              Text(t('no_food_found'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
             ]))
           : ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: dishes.length,
@@ -122,9 +122,9 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
             return Card(margin: const EdgeInsets.only(bottom: 8), child: ListTile(
               leading: ClipRRect(borderRadius: BorderRadius.circular(8),
                 child: AppImage(r.imageUrl, width: 48, height: 48)),
-              title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+              title: Text(r.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface)),
               subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
               trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                 IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
                   onPressed: () => _editRecipe(r)),

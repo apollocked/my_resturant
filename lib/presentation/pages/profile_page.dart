@@ -15,6 +15,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -47,7 +48,7 @@ class ProfilePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+                  color: cs.onSurface,
                 ),
               ),
             ),
@@ -55,7 +56,7 @@ class ProfilePage extends StatelessWidget {
             Center(
               child: Text(
                 t('restaurant_name'),
-                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
               ),
             ),
             const SizedBox(height: 10),
@@ -109,14 +110,15 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _card(BuildContext context, IconData icon, String title, String sub, String route) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Card(
         child: ListTile(
           leading: Icon(icon, color: AppColors.primary),
           title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-          subtitle: Text(sub, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-          trailing: const Icon(Icons.chevron_left, color: AppColors.textSecondary),
+          subtitle: Text(sub, style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
+          trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
           onTap: () => context.push(route),
         ),
       ),

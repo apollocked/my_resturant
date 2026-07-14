@@ -31,7 +31,7 @@ class CategoryChip extends StatelessWidget {
             Text(icon, style: const TextStyle(fontSize: 15)),
             const SizedBox(width: 6),
             Text(name, style: TextStyle(
-                color: isSelected ? cs.onPrimary : AppColors.textPrimary,
+                color: isSelected ? cs.onPrimary : cs.onSurface,
                 fontWeight: FontWeight.w600, fontSize: 12)),
           ]),
         ),

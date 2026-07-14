@@ -52,7 +52,7 @@ class TableSelector extends StatelessWidget {
             onPressed: locked ? null : () { onChanged(n); Navigator.pop(ctx); },
             style: OutlinedButton.styleFrom(
               backgroundColor: locked ? cs.surfaceContainerHighest : (sel ? AppColors.primary : cs.surface),
-              foregroundColor: locked ? cs.onSurfaceVariant : (sel ? cs.onPrimary : AppColors.textPrimary),
+              foregroundColor: locked ? cs.onSurfaceVariant : (sel ? cs.onPrimary : cs.onSurface),
               side: BorderSide(color: locked ? cs.outlineVariant : (sel ? AppColors.primary : cs.outlineVariant)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
             child: locked

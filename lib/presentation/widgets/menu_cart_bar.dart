@@ -22,7 +22,7 @@ class MenuCartBar extends StatelessWidget {
       child: SafeArea(child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('${cartTotal.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.primary)),
-          Text(t('items').replaceAll('{count}', '$cartCount'), style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+          Text(t('items').replaceAll('{count}', '$cartCount'), style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
         ])),
         const SizedBox(width: 16),
         SizedBox(height: 46, child: ElevatedButton(
