@@ -17,7 +17,7 @@ class AvailabilityPage extends StatelessWidget {
     final recipes = cubit.state.recipes;
     return Scaffold(
       appBar: AppBar(title: Text(t('availability_title'))),
-      body: recipes.isEmpty
+      body: SafeArea(child: recipes.isEmpty
         ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
               child: Icon(Icons.restaurant_menu, size: 44, color: cs.onSurfaceVariant)),
@@ -48,7 +48,7 @@ class AvailabilityPage extends StatelessWidget {
             );
           },
         ),
-      ),
+      )),
     );
   }
 }

@@ -28,7 +28,7 @@ class OrderDetailPage extends StatelessWidget {
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
       appBar: AppBar(title: Text(order.displayTable)),
-      body: SingleChildScrollView(
+      body: SafeArea(child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -66,7 +66,7 @@ class OrderDetailPage extends StatelessWidget {
               child: Text(t('again'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
             )),
         ]),
-      ),
+      )),
     );
   }
 

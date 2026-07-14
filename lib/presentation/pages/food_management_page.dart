@@ -80,7 +80,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final dishes = _filtered;
     return Scaffold(
       appBar: AppBar(title: Text(t('food_mgmt_title'))),
-      body: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
+      body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
         const SizedBox(height: 12),
         SizedBox(
           height: 36,
@@ -134,7 +134,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
             ));
           },
         )),
-      ])),
+      ]))),
     );
   }
 }

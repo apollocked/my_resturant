@@ -18,7 +18,7 @@ class ReportPage extends StatelessWidget {
     final maxCount = counts.entries.firstOrNull?.value ?? 1;
     return Scaffold(
       appBar: AppBar(title: Text(t('report'))),
-      body: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
+      body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
         Row(children: [
           Expanded(child: StatCard(icon: Icons.receipt_long, label: t('cart'), value: '${state.totalOrders}', color: AppColors.primary)),
           const SizedBox(width: 12),
@@ -46,7 +46,7 @@ class ReportPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurface))),
           ]))),
         ],
-      ])),
+      ]))),
     );
   }
 }

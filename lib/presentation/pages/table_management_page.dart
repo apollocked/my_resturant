@@ -20,7 +20,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(t('table_mgmt_title'))),
-      body: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
+      body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
         Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface)),
         const SizedBox(height: 8),
         Row(children: [
@@ -33,7 +33,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
         Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface)),
         const SizedBox(height: 12),
         ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
-      ])),
+      ]))),
     );
   }
 }

@@ -29,7 +29,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(t('history_title'))),
-      body: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
+      body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
         const SizedBox(height: 12),
         TextButton.icon(onPressed: _pick, icon: const Icon(Icons.calendar_month, size: 18),
           label: Text(_fmt(_date), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
@@ -45,7 +45,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         else
           Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
             itemBuilder: (context, index) => OrderCard(order: orders[index], showTime: true))),
-      ])),
+      ]))),
     );
   }
 }

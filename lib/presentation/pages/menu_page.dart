@@ -11,8 +11,8 @@ import 'package:my_resturant/presentation/widgets/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/food_card.dart';
 import 'package:my_resturant/presentation/widgets/menu_cart_bar.dart';
 import 'package:my_resturant/presentation/widgets/notes_dialog.dart';
-import 'package:my_resturant/presentation/widgets/settings_button.dart';
 import 'package:my_resturant/data/models/categories.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   const RestaurantMenuScreen({super.key});
@@ -60,9 +60,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
               physics: const BouncingScrollPhysics(),
               child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 const SizedBox(height: 16),
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
+                Padding(padding: EdgeInsets.symmetric(horizontal: R.padding(context)), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
                 const SizedBox(height: 28),
-                Padding(padding: const EdgeInsets.only(right: 20), child: Text(t('categories'),
+                Padding(padding: EdgeInsets.only(right: R.padding(context)), child: Text(t('categories'),
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: cs.onSurface.withValues(alpha: 0.6)))),
                 const SizedBox(height: 12),
                 SizedBox(height: 40, child: ListView.builder(scrollDirection: Axis.horizontal, reverse: true,
@@ -74,9 +74,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                   SizedBox(height: 160, child: Center(child: Text(t('no_food_found'),
                       style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14))))
                 else
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(shrinkWrap: true,
+                  Padding(padding: EdgeInsets.symmetric(horizontal: R.padding(context)), child: GridView.builder(shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(), itemCount: meals.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: R.menuGridColumns(context),
+                        childAspectRatio: R.menuGridAspectRatio(context),
+                        crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
                     itemBuilder: (context, index) { final r = meals[index]; return FoodCard(recipe: r,
                       quantity: state.getQuantity(r.id), notes: state.getNotes(r.id),
                       onIncrement: () => _increment(r), onDecrement: () => _decrement(r), onLongPress: () => _notes(r)); })),
@@ -102,8 +105,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
           padding: const EdgeInsets.all(24),
           child: Column(children: [
             const SizedBox(height: 8),
-            Row(children: [const Spacer(), const SettingsButton()]),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
             Container(width: 100, height: 100,
               decoration: BoxDecoration(color: AppColors.primarySoft, shape: BoxShape.circle, border: Border.all(color: AppColors.primary, width: 2)),
               child: const Icon(Icons.table_restaurant, size: 48, color: AppColors.primary)),
@@ -113,7 +115,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
             const SizedBox(height: 32),
             Expanded(
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: R.tableGridColumns(context), crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context), childAspectRatio: 1),
                 itemCount: s.tableCount,
                 itemBuilder: (context, i) {
                   final n = i + 1;

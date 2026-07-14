@@ -5,6 +5,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/widgets/app_image.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class FoodCard extends StatelessWidget {
   final Recipe recipe;
@@ -26,70 +27,84 @@ class FoodCard extends StatelessWidget {
   Widget _card(BuildContext context, bool isSelected) {
     final settings = context.watch<SettingsCubit>();
     final cs = Theme.of(context).colorScheme;
+    final isTablet = R.isTablet(context);
+    final cp = isTablet ? 16.0 : 12.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     return GestureDetector(
       onTap: onIncrement, onLongPress: onLongPress,
       child: Container(
         decoration: BoxDecoration(
-          color: cs.surface, borderRadius: BorderRadius.circular(14),
+          color: cs.surface, borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
           border: isSelected ? Border.all(color: AppColors.primary, width: 2) : null,
-          boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))]),
+          boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 6))]),
         clipBehavior: Clip.hardEdge,
         child: Column(children: [
-          Expanded(
+          AspectRatio(aspectRatio: isTablet ? 1.4 : 1.2,
             child: Stack(fit: StackFit.expand, children: [
               AppImage(recipe.imageUrl, width: double.infinity),
               Positioned.fill(child: IgnorePointer(child: Container(
                 decoration: BoxDecoration(gradient: LinearGradient(
                   begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, cs.shadow.withValues(alpha: 0.3)], stops: const [0.6, 1.0]))))),
-              Positioned(top: 8, right: 8, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: cs.shadow.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(6)),
-                child: Text('${recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
+                  colors: [Colors.transparent, cs.shadow.withValues(alpha: 0.35)], stops: const [0.5, 1.0]))))),
+              Positioned(top: 10, right: 10, child: Container(
+                padding: EdgeInsets.symmetric(horizontal: isTablet ? 12 : 10, vertical: isTablet ? 6 : 5),
+                decoration: BoxDecoration(color: cs.surface.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(8)),
+                child: Text('${recipe.price.toInt()} ${t('currency_suffix')}',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: isTablet ? 13 : 12, color: cs.onSurface)))),
               if (isSelected)
-                Positioned(top: 8, left: 8, child: Container(
-                  width: 26, height: 26, alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                  child: Text('$quantity', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))),
+                Positioned(top: 10, left: 10, child: Container(
+                  width: isTablet ? 32 : 28, height: isTablet ? 32 : 28, alignment: Alignment.center,
+                  decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 8)]),
+                  child: Text('$quantity', style: TextStyle(color: Colors.white, fontSize: isTablet ? 13 : 12, fontWeight: FontWeight.bold)))),
               if (notes.isNotEmpty)
-                Positioned(bottom: 8, left: 8, child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: cs.shadow.withValues(alpha: 0.4), shape: BoxShape.circle),
-                  child: const Icon(Icons.edit_note, size: 14, color: Colors.white))),
+                Positioned(bottom: 10, left: 10, child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(color: cs.surface.withValues(alpha: 0.85), shape: BoxShape.circle),
+                  child: Icon(Icons.edit_note, size: isTablet ? 18 : 16, color: AppColors.primary))),
             ]),
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+          Padding(padding: EdgeInsets.fromLTRB(cp, isTablet ? 12 : 10, cp, cp),
             child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Text(recipe.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: cs.onSurface)),
-              const SizedBox(height: 2),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: isTablet ? 15 : 13, color: cs.onSurface)),
+              const SizedBox(height: 3),
               Text(recipe.description, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10)),
-              const SizedBox(height: 6),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: isTablet ? 12 : 11)),
+              SizedBox(height: isTablet ? 14 : 10),
               if (isSelected)
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Container(
-                    decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(8)),
+                Column(children: [
+                  Container(height: isTablet ? 44 : 38,
+                    decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(isTablet ? 14 : 12)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      InkWell(onTap: onDecrement, child: const Padding(padding: EdgeInsets.all(5),
-                          child: Icon(Icons.remove, size: 14, color: AppColors.primary))),
-                      Padding(padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Text('$quantity', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.primary))),
-                      InkWell(onTap: onIncrement, child: const Padding(padding: EdgeInsets.all(5),
-                          child: Icon(Icons.add, size: 14, color: AppColors.primary))),
+                      InkWell(onTap: onDecrement, borderRadius: BorderRadius.circular(isTablet ? 14 : 12),
+                        child: Container(width: isTablet ? 46 : 38, alignment: Alignment.center,
+                            child: Icon(Icons.remove, size: isTablet ? 22 : 20, color: AppColors.primary))),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: isTablet ? 10 : 6),
+                        decoration: BoxDecoration(border: Border.symmetric(
+                            vertical: BorderSide(color: cs.outlineVariant, width: 1))),
+                        child: Text('$quantity', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isTablet ? 17 : 15, color: AppColors.primary))),
+                      InkWell(onTap: onIncrement, borderRadius: BorderRadius.circular(isTablet ? 14 : 12),
+                        child: Container(width: isTablet ? 46 : 38, alignment: Alignment.center,
+                            child: Icon(Icons.add, size: isTablet ? 22 : 20, color: AppColors.primary))),
                     ]),
                   ),
+                  SizedBox(height: isTablet ? 8 : 6),
                   Text('${(recipe.price * quantity).toInt()} ${t('currency_suffix')}',
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary)),
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: isTablet ? 15 : 13, color: AppColors.primary)),
                 ])
               else
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  const SizedBox(),
-                  Text('${recipe.price.toInt()} ${t('currency_suffix')}',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: cs.onSurfaceVariant)),
-                ]),
+                SizedBox(width: double.infinity, height: isTablet ? 44 : 38,
+                  child: ElevatedButton(onPressed: onIncrement,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isTablet ? 14 : 12)),
+                      elevation: 0, padding: EdgeInsets.zero),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Icon(Icons.add, size: isTablet ? 20 : 18), const SizedBox(width: 6),
+                      Text(t('add'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isTablet ? 15 : 13)),
+                    ]))),
             ]),
           ),
         ]),
