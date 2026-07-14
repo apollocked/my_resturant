@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/main.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 
 class NotesDialog extends StatefulWidget {
   final String initialNotes;

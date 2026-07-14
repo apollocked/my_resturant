@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/main.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/search_bar_widget.dart';
@@ -11,10 +12,8 @@ import 'package:my_resturant/widgets/menu_cart_bar.dart';
 import 'package:my_resturant/widgets/notes_dialog.dart';
 import 'package:my_resturant/data/mock_data.dart';
 
-
 class RestaurantMenuScreen extends StatefulWidget {
-  final VoidCallback? onNavigateToCart;
-  const RestaurantMenuScreen({super.key, this.onNavigateToCart});
+  const RestaurantMenuScreen({super.key});
   @override
   State<RestaurantMenuScreen> createState() => _RestaurantMenuScreenState();
 }
@@ -83,7 +82,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
             ),
           ),
           if (state.cartCount > 0)
-            MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: widget.onNavigateToCart),
+            MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: () => context.go('/cart')),
         ]),
       ),
     );

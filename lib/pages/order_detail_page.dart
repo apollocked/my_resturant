@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/main.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/order_model.dart';
 import 'package:my_resturant/models/cart_item.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
@@ -49,13 +50,13 @@ class OrderDetailPage extends StatelessWidget {
           const SizedBox(height: 32),
           if (hasNext)
             SizedBox(width: double.infinity, child: FilledButton(
-              onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); Navigator.pop(context); },
+              onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); context.pop(); },
               style: FilledButton.styleFrom(backgroundColor: color, padding: const EdgeInsets.symmetric(vertical: 14)),
               child: Text(_nextLabel[order.status]!, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
             ))
           else
             SizedBox(width: double.infinity, child: OutlinedButton(
-              onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); Navigator.pop(context); },
+              onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); context.pop(); },
               style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
               child: const Text('دووبارە', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
             )),

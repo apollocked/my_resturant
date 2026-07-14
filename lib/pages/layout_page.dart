@@ -1,58 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/main.dart';
-import 'package:my_resturant/pages/menu_page.dart';
-import 'package:my_resturant/pages/cart_page.dart';
-import 'package:my_resturant/pages/kitchen_page.dart';
-import 'package:my_resturant/pages/profile_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 
-class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
-  @override State<MainLayout> createState() => _MainLayoutState();
-}
-
-class _MainLayoutState extends State<MainLayout> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 1;
-  late final _pageCtrl = PageController(initialPage: 1);
-
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-    _pageCtrl.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-  }
-
-  @override void dispose() { _pageCtrl.dispose(); super.dispose(); }
+class MainShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+  const MainShell({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrderCubit>().state;
+    final selectedIndex = navigationShell.currentIndex;
     return Scaffold(
-      body: PageView(controller: _pageCtrl, physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (i) => setState(() => _selectedIndex = i),
-        children: [
-          CartPage(onViewKitchen: () => _onItemTapped(2)),
-          RestaurantMenuScreen(onNavigateToCart: () => _onItemTapped(0)),
-          const KitchenPage(),
-          const ProfilePage(),
-        ]),
+      body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Colors.white,
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5))]),
         child: SafeArea(child: Container(height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, 'داواکاری', 0, state.cartCount),
-            _navItem(Icons.menu_book_outlined, Icons.menu_book, 'مینیو', 1, 0),
-            _navItem(Icons.receipt_long_outlined, Icons.receipt_long, 'چێشتخانە', 2, 0),
-            _navItem(Icons.person_outline, Icons.person, 'پڕۆفایل', 3, 0),
+            _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, 'داواکاری', 0, state.cartCount, selectedIndex),
+            _navItem(Icons.menu_book_outlined, Icons.menu_book, 'مینیو', 1, 0, selectedIndex),
+            _navItem(Icons.receipt_long_outlined, Icons.receipt_long, 'چێشتخانە', 2, 0, selectedIndex),
+            _navItem(Icons.person_outline, Icons.person, 'پڕۆفایل', 3, 0, selectedIndex),
           ]))),
       ),
     );
   }
 
-  Widget _navItem(IconData outline, IconData filled, String label, int index, int badge) {
-    final sel = _selectedIndex == index;
+  Widget _navItem(IconData outline, IconData filled, String label, int index, int badge, int selectedIndex) {
+    final sel = selectedIndex == index;
     return GestureDetector(
-      onTap: () => _onItemTapped(index),
+      onTap: () => navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
       child: AnimatedContainer(duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(color: sel ? AppTheme.primarySoft : Colors.transparent, borderRadius: BorderRadius.circular(12)),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/main.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
 import 'package:my_resturant/widgets/app_image.dart';
 
 class CartPage extends StatefulWidget {
-  final VoidCallback? onViewKitchen;
-  const CartPage({super.key, this.onViewKitchen});
+  const CartPage({super.key});
   @override
   State<CartPage> createState() => _CartPageState();
 }
@@ -95,7 +95,7 @@ class _CartPageState extends State<CartPage> {
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             SizedBox(height: 44, child: ElevatedButton(
-              onPressed: () { context.read<OrderCubit>().submitOrder(_notesCtrl.text); _notesCtrl.clear(); widget.onViewKitchen?.call(); },
+              onPressed: () { context.read<OrderCubit>().submitOrder(_notesCtrl.text); _notesCtrl.clear(); context.go('/kitchen'); },
               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               child: const Row(children: [
                 Icon(Icons.send_rounded, size: 16), SizedBox(width: 6),

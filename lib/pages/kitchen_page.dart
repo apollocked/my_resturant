@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/main.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/order_model.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/order_card.dart';
-import 'package:my_resturant/pages/order_detail_page.dart';
 
 class KitchenPage extends StatelessWidget {
   const KitchenPage({super.key});
@@ -36,7 +36,7 @@ class KitchenPage extends StatelessWidget {
             final o = orders[index];
             final hasNext = OrderCard.nextStatus.containsKey(o.status);
             return GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailPage(order: o))),
+              onTap: () => context.push('/order-detail', extra: o),
               child: OrderCard(order: o, showTimeline: true,
                 onNextStatus: hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
                 onReset: !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null));

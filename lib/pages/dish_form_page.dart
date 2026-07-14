@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:my_resturant/main.dart';
+import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/data/mock_data.dart';
 import 'package:my_resturant/widgets/app_image.dart';
