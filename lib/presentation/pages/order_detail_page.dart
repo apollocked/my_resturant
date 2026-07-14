@@ -72,16 +72,31 @@ class OrderDetailPage extends StatelessWidget {
 
   Widget _itemCard(CartItem item, String Function(String) t) {
     return Card(margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
-        Text('${item.quantity}x', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.primary)),
-        const SizedBox(width: 10),
-        ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(item.recipe.imageUrl, width: 44, height: 44)),
-        const SizedBox(width: 10),
+      child: Padding(padding: const EdgeInsets.all(12), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(item.recipe.imageUrl, width: 52, height: 52)),
+        const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
-          Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+          Row(children: [
+            Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
+              child: Text('×${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary))),
+            const Spacer(),
+            Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+          ]),
+          const SizedBox(height: 4),
+          Row(children: [
+            Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.textPrimary)),
+            const Spacer(),
+            Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+          ]),
+          if (item.notes.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Row(children: [
+              Expanded(child: Text(item.notes, textAlign: TextAlign.right,
+                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
+            ]),
+          ],
         ])),
-        Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.textPrimary)),
       ])));
   }
 
