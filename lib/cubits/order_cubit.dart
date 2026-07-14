@@ -81,6 +81,11 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(tableNames: names));
   }
 
+  void deleteRecipe(String id) {
+    mockRecipes.removeWhere((r) => r.id == id);
+    emit(state.copyWith());
+  }
+
   void toggleAvailability(String id) {
     final i = mockRecipes.indexWhere((r) => r.id == id);
     if (i >= 0) { mockRecipes[i] = mockRecipes[i].copyWith(available: !mockRecipes[i].available); }

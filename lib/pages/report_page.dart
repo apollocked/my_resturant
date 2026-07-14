@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/main.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/widgets/stat_card.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -14,13 +15,13 @@ class ReportPage extends StatelessWidget {
       appBar: AppBar(title: const Text('ڕاپۆرت')),
       body: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
         Row(children: [
-          Expanded(child: _StatCard(icon: Icons.receipt_long, label: 'داواکاری', value: '${state.totalOrders}', color: AppTheme.primary)),
+          Expanded(child: StatCard(icon: Icons.receipt_long, label: 'داواکاری', value: '${state.totalOrders}', color: AppTheme.primary)),
           const SizedBox(width: 12),
-          Expanded(child: _StatCard(icon: Icons.attach_money, label: 'داھات', value: '${state.totalRevenue.toInt()} د.ع', color: AppTheme.success)),
+          Expanded(child: StatCard(icon: Icons.attach_money, label: 'داھات', value: '${state.totalRevenue.toInt()} د.ع', color: AppTheme.success)),
         ]),
         const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: _StatCard(icon: Icons.star, label: 'زۆرترین داواکراو',
+          Expanded(child: StatCard(icon: Icons.star, label: 'زۆرترین داواکراو',
             value: state.mostOrderedDish ?? '-', sub: state.totalOrders > 0 ? '${state.mostOrderedDishCount} جار' : null,
             color: const Color(0xFFFF9800))),
         ]),
@@ -42,27 +43,5 @@ class ReportPage extends StatelessWidget {
         ],
       ])),
     );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label, value;
-  final String? sub;
-  final Color color;
-  const _StatCard({required this.icon, required this.label, required this.value, this.sub, required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-      Row(children: [
-        Container(width: 36, height: 36, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
-          child: Icon(icon, size: 18, color: color)),
-        const Spacer(),
-        Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-      ]),
-      const SizedBox(height: 8),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppTheme.textPrimary)),
-      if (sub != null) Text(sub!, style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-    ])));
   }
 }
