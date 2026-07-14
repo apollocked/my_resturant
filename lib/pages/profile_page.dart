@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/recipe.dart';
-import 'package:my_resturant/data/mock_data.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/action_buttons_row.dart';
 import 'package:my_resturant/widgets/settings_button.dart';
 
@@ -12,34 +13,37 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-            Center(
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: AppTheme.primarySoft,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.primary, width: 2),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  size: 40,
-                  color: AppTheme.primary,
-                ),
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+          Row(children: [const SettingsButton(), const Spacer()]),
+          const SizedBox(height: 8),
+          Center(
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppTheme.primarySoft,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppTheme.primary, width: 2),
+              ),
+              child: const Icon(
+                Icons.person,
+                size: 40,
+                color: AppTheme.primary,
               ),
             ),
+          ),
 
             const SizedBox(height: 12),
-            const Center(
+            Center(
               child: Text(
-                'بەڕێوەبەر',
+                t('admin'),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -48,9 +52,9 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            const Center(
+            Center(
               child: Text(
-                'ڕێستۆرانتەکەم',
+                t('restaurant_name'),
                 style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
               ),
             ),
@@ -63,19 +67,18 @@ class ProfilePage extends StatelessWidget {
               onAddFood: () async {
                 final r = await context.push<Recipe>('/dish-form');
                 if (r != null) {
-                  mockRecipes.add(r);
-                  context.read<OrderCubit>().refresh();
+                  context.read<OrderCubit>().addRecipe(r);
                 }
               },
             ),
 
             const SizedBox(height: 24),
-            _card(context, Icons.table_restaurant_outlined, 'مێزەکان', 'بەڕێوەبردنی ژمارە و ناوی مێزەکان', '/table-management'),
-            _card(context, Icons.restaurant_menu, 'خواردنەکان', 'سڕینەوەی خواردن بە پێی بەش', '/food-management'),
-            _card(context, Icons.toggle_on_outlined, 'خواردنە بەردەستەکان', 'کردنەوە و داخستنی خواردنەکان', '/availability'),
+            _card(context, Icons.table_restaurant_outlined, t('table_management'), t('table_management_sub'), '/table-management'),
+            _card(context, Icons.restaurant_menu, t('food_management'), t('food_management_sub'), '/food-management'),
+            _card(context, Icons.toggle_on_outlined, t('available_foods'), t('available_foods_sub'), '/availability'),
             const SizedBox(height: 4),
-            _card(context, Icons.history, 'مێژووی داواکاری', 'بینینی داواکاریەکانی ڕۆژانی پێشوو', '/order-history'),
-            _card(context, Icons.bar_chart, 'ڕاپۆرت', 'ئامار و ڕیزبەندی خواردنەکان', '/report'),
+            _card(context, Icons.history, t('order_history'), t('order_history_sub'), '/order-history'),
+            _card(context, Icons.bar_chart, t('report'), t('report_sub'), '/report'),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -88,12 +91,12 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.logout, size: 18),
-                    SizedBox(width: 8),
-                    Text('چوونەدەرەوە'),
+                    const Icon(Icons.logout, size: 18),
+                    const SizedBox(width: 8),
+                    Text(t('logout')),
                   ],
                 ),
               ),
@@ -102,9 +105,7 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-    ),
-    const Positioned(top: 8, right: 12, child: SettingsButton()),
-  ]);
+    );
   }
 
   Widget _card(BuildContext context, IconData icon, String title, String sub, String route) {

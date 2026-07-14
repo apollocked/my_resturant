@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/theme/app_theme.dart';
-import 'package:my_resturant/data/mock_data.dart';
+import 'package:my_resturant/data/categories.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 
 const List<String> _icons = [
   '🍽', '🍔', '🍕', '🌯', '🍗', '🥗', '🥪', '🌮', '🥟', '🍜', '🍝', '🍛', '🥘', '🫕', '🥙', '🧆',
@@ -31,13 +34,16 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
-      appBar: AppBar(title: const Text('زیادکردنی بەش')),
+      appBar: AppBar(title: Text(t('add_category'))),
       body: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
         TextField(controller: _nameCtrl,
-          decoration: const InputDecoration(labelText: 'ناوی بەش', filled: true)),
+          decoration: InputDecoration(labelText: t('category_name'), filled: true)),
         const SizedBox(height: 24),
-        const Text('هەڵبژاردنی ئایکۆن:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.textPrimary)),
+        Text(t('choose_icon'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.textPrimary)),
         const SizedBox(height: 12),
         Expanded(child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -49,7 +55,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             return GestureDetector(onTap: () => setState(() => _selectedIcon = icon),
               child: Container(
                 decoration: BoxDecoration(
-                  color: sel ? AppTheme.primary : const Color(0xFFF5F3F0),
+                  color: sel ? AppTheme.primary : cs.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(10),
                   border: sel ? Border.all(color: AppTheme.primary, width: 2) : null),
                 child: Center(child: Text(icon, style: TextStyle(fontSize: sel ? 30 : 22))),
@@ -60,7 +66,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         const SizedBox(height: 16),
         SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
           onPressed: _save,
-          child: const Text('زیادکردن', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)))),
+          child: Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)))),
       ])),
     ));
   }

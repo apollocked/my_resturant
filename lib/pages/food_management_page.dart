@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/theme/app_theme.dart';
-import 'package:my_resturant/data/mock_data.dart';
+import 'package:my_resturant/data/categories.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/widgets/app_image.dart';
 
@@ -15,9 +17,12 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   int _selectedCat = 0;
 
   List<Recipe> get _filtered {
-    if (_selectedCat == 0) return mockRecipes;
-    return mockRecipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
+    final recipes = context.read<OrderCubit>().state.recipes;
+    if (_selectedCat == 0) return recipes;
+    return recipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
   }
+
+  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
 
   Future<void> _editRecipe(Recipe r) async {
     final nameCtl = TextEditingController(text: r.name);
@@ -26,18 +31,18 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (ctx) => Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
-        title: const Text('گۆڕینی خواردن'),
+        title: Text(_t('edit_food')),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
-          TextField(controller: nameCtl, decoration: const InputDecoration(labelText: 'ناو', border: OutlineInputBorder()), textDirection: TextDirection.rtl),
+          TextField(controller: nameCtl, decoration: InputDecoration(labelText: _t('name'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl),
           const SizedBox(height: 12),
-          TextField(controller: priceCtl, decoration: const InputDecoration(labelText: 'نرخ', border: OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
+          TextField(controller: priceCtl, decoration: InputDecoration(labelText: _t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
           const SizedBox(height: 12),
-          TextField(controller: descCtl, decoration: const InputDecoration(labelText: 'وەسف', border: OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
+          TextField(controller: descCtl, decoration: InputDecoration(labelText: _t('description'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
         ]),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('ڕەتکردنەوە')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(_t('cancel'))),
           FilledButton(onPressed: () => Navigator.pop(ctx, {'name': nameCtl.text, 'price': double.tryParse(priceCtl.text), 'description': descCtl.text}),
-            style: FilledButton.styleFrom(backgroundColor: AppTheme.primary), child: const Text('نوێکردنەوە')),
+            style: FilledButton.styleFrom(backgroundColor: AppTheme.primary), child: Text(_t('update'))),
         ],
       )),
     );
@@ -54,12 +59,12 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
-        title: const Text('سڕینەوەی خواردن'),
-        content: Text('دڵنیای لە سڕینەوەی ${r.name}؟'),
+        title: Text(_t('delete_food')),
+        content: Text(_t('delete_confirm').replaceAll('{name}', r.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('ڕەتکردنەوە')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(_t('cancel'))),
           FilledButton(onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: AppTheme.error), child: const Text('سڕینەوە')),
+            style: FilledButton.styleFrom(backgroundColor: AppTheme.error), child: Text(_t('delete'))),
         ],
       )),
     );
@@ -69,9 +74,12 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<OrderCubit>();
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     final dishes = _filtered;
     return Scaffold(
-      appBar: AppBar(title: const Text('بەڕێوەبردنی خواردنەکان')),
+      appBar: AppBar(title: Text(t('food_mgmt_title'))),
       body: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
         const SizedBox(height: 12),
         SizedBox(
@@ -85,14 +93,14 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                 child: AnimatedContainer(duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: isSel ? AppTheme.primary : const Color(0xFFF0EDEA),
+                    color: isSel ? AppTheme.primary : cs.outlineVariant,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: isSel ? [BoxShadow(color: AppTheme.primary.withValues(alpha: 0.25), blurRadius: 8)] : null),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Text(categories[i]['icon']!, style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 4),
                     Text(categories[i]['name']!, style: TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w600, color: isSel ? Colors.white : AppTheme.textSecondary)),
+                      fontSize: 13, fontWeight: FontWeight.w600, color: isSel ? cs.onPrimary : AppTheme.textSecondary)),
                   ]),
                 ),
               ));
@@ -100,7 +108,14 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
           ),
         ),
         const SizedBox(height: 8),
-        Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
+        Expanded(child: dishes.isEmpty
+          ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+                child: const Icon(Icons.restaurant_menu, size: 44, color: AppTheme.textSecondary)),
+              const SizedBox(height: 20),
+              Text(t('no_food_found'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
+            ]))
+          : ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: dishes.length,
           itemBuilder: (context, index) {
             final r = dishes[index];
@@ -108,7 +123,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
               leading: ClipRRect(borderRadius: BorderRadius.circular(8),
                 child: AppImage(r.imageUrl, width: 48, height: 48)),
               title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
-              subtitle: Text('${r.price.toInt()} د.ع • ${r.category}',
+              subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
                   style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
               trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                 IconButton(icon: const Icon(Icons.edit_outlined, color: AppTheme.primary, size: 20),

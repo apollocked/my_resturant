@@ -12,18 +12,19 @@ class AppImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     if (_isNetwork) {
       return Image.network(src, width: width, height: height, fit: fit,
-        loadingBuilder: (c, child, p) => p == null ? child : _placeholder(),
-        errorBuilder: (c, e, s) => _placeholder());
+        loadingBuilder: (c, child, p) => p == null ? child : _placeholder(cs),
+        errorBuilder: (c, e, s) => _placeholder(cs));
     }
     if (src.isNotEmpty) {
       return Image.file(File(src), width: width, height: height, fit: fit,
-        errorBuilder: (c, e, s) => _placeholder());
+        errorBuilder: (c, e, s) => _placeholder(cs));
     }
-    return _placeholder();
+    return _placeholder(cs);
   }
 
-  Widget _placeholder() => Container(color: const Color(0xFFF0EDEA),
-    child: const Icon(Icons.restaurant, color: Color(0xFFD4D0CC), size: 40));
+  Widget _placeholder(ColorScheme cs) => Container(color: cs.surfaceContainerHighest,
+    child: Icon(Icons.restaurant, color: cs.onSurfaceVariant, size: 40));
 }

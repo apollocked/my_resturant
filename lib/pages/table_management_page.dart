@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/table_name_row.dart';
 
 class TableManagementPage extends StatefulWidget {
@@ -13,10 +15,12 @@ class _TableManagementPageState extends State<TableManagementPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrderCubit>().state;
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     return Scaffold(
-      appBar: AppBar(title: const Text('بەڕێوەبردنی مێزەکان')),
+      appBar: AppBar(title: Text(t('table_mgmt_title'))),
       body: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: const EdgeInsets.all(20), children: [
-        const Text('ژمارەی مێزەکان', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+        Text(t('table_count'), style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
         const SizedBox(height: 8),
         Row(children: [
           Expanded(child: Slider(value: state.tableCount.toDouble(), min: 1, max: 20, divisions: 19,
@@ -25,7 +29,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
           Text('${state.tableCount}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppTheme.primary)),
         ]),
         const SizedBox(height: 20),
-        const Text('ناوەکانی مێزەکان', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+        Text(t('table_names'), style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
         const SizedBox(height: 12),
         ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
       ])),

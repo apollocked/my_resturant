@@ -12,6 +12,7 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
@@ -20,16 +21,16 @@ class MainShell extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5))],
+          color: cs.surface,
+          boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5))],
         ),
         child: SafeArea(
           child: Container(height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, t('cart'), 0, state.cartCount, selectedIndex),
-              _navItem(Icons.menu_book_outlined, Icons.menu_book, t('menu'), 1, 0, selectedIndex),
-              _navItem(Icons.receipt_long_outlined, Icons.receipt_long, t('kitchen'), 2, 0, selectedIndex),
-              _navItem(Icons.person_outline, Icons.person, t('profile'), 3, 0, selectedIndex),
+              _navItem(context, Icons.shopping_bag_outlined, Icons.shopping_bag, t('cart'), 0, state.cartCount, selectedIndex),
+              _navItem(context, Icons.menu_book_outlined, Icons.menu_book, t('menu'), 1, 0, selectedIndex),
+              _navItem(context, Icons.receipt_long_outlined, Icons.receipt_long, t('kitchen'), 2, 0, selectedIndex),
+              _navItem(context, Icons.person_outline, Icons.person, t('profile'), 3, 0, selectedIndex),
             ]),
           ),
         ),
@@ -37,7 +38,8 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  Widget _navItem(IconData outline, IconData filled, String label, int index, int badge, int selectedIndex) {
+  Widget _navItem(BuildContext context, IconData outline, IconData filled, String label, int index, int badge, int selectedIndex) {
+    final cs = Theme.of(context).colorScheme;
     final sel = selectedIndex == index;
     return GestureDetector(
       onTap: () => navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
@@ -46,14 +48,14 @@ class MainShell extends StatelessWidget {
         decoration: BoxDecoration(color: sel ? AppTheme.primarySoft : Colors.transparent, borderRadius: BorderRadius.circular(12)),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Stack(clipBehavior: Clip.none, children: [
-            Icon(sel ? filled : outline, size: 22, color: sel ? AppTheme.primary : AppTheme.textSecondary),
+            Icon(sel ? filled : outline, size: 22, color: sel ? AppTheme.primary : cs.onSurfaceVariant),
             if (badge > 0 && index == 0)
               Positioned(top: -4, right: -6, child: Container(width: 16, height: 16, alignment: Alignment.center,
-                decoration: BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 1.5)),
-                child: Text('$badge', style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)))),
+                decoration: BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle, border: Border.all(color: cs.surface, width: 1.5)),
+                child: Text('$badge', style: TextStyle(color: cs.onPrimary, fontSize: 9, fontWeight: FontWeight.bold)))),
           ]),
           const SizedBox(height: 2),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? AppTheme.primary : AppTheme.textSecondary)),
+          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? AppTheme.primary : cs.onSurfaceVariant)),
         ]),
       ),
     );

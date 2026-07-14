@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/widgets/app_image.dart';
@@ -21,13 +24,16 @@ class FoodCard extends StatelessWidget {
   }
 
   Widget _card(BuildContext context, bool isSelected) {
+    final settings = context.watch<SettingsCubit>();
+    final cs = Theme.of(context).colorScheme;
+    String t(String key) => Tr.get(key, settings.state.locale);
     return GestureDetector(
       onTap: onIncrement, onLongPress: onLongPress,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(14),
+          color: cs.surface, borderRadius: BorderRadius.circular(14),
           border: isSelected ? Border.all(color: AppTheme.primary, width: 2) : null,
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))]),
+          boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))]),
         clipBehavior: Clip.hardEdge,
         child: Column(children: [
           Expanded(
@@ -36,11 +42,11 @@ class FoodCard extends StatelessWidget {
               Positioned.fill(child: IgnorePointer(child: Container(
                 decoration: BoxDecoration(gradient: LinearGradient(
                   begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.3)], stops: const [0.6, 1.0]))))),
+                  colors: [Colors.transparent, cs.shadow.withValues(alpha: 0.3)], stops: const [0.6, 1.0]))))),
               Positioned(top: 8, right: 8, child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(6)),
-                child: Text('${recipe.price.toInt()} د.ع', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
+                decoration: BoxDecoration(color: cs.shadow.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(6)),
+                child: Text('${recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
               if (isSelected)
                 Positioned(top: 8, left: 8, child: Container(
                   width: 26, height: 26, alignment: Alignment.center,
@@ -49,7 +55,7 @@ class FoodCard extends StatelessWidget {
               if (notes.isNotEmpty)
                 Positioned(bottom: 8, left: 8, child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: cs.shadow.withValues(alpha: 0.4), shape: BoxShape.circle),
                   child: const Icon(Icons.edit_note, size: 14, color: Colors.white))),
             ]),
           ),
@@ -65,7 +71,7 @@ class FoodCard extends StatelessWidget {
               if (isSelected)
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Container(
-                    decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(8)),
+                    decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(8)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       InkWell(onTap: onDecrement, child: const Padding(padding: EdgeInsets.all(5),
                           child: Icon(Icons.remove, size: 14, color: AppTheme.primary))),
@@ -75,13 +81,13 @@ class FoodCard extends StatelessWidget {
                           child: Icon(Icons.add, size: 14, color: AppTheme.primary))),
                     ]),
                   ),
-                  Text('${(recipe.price * quantity).toInt()} د.ع',
+                  Text('${(recipe.price * quantity).toInt()} ${t('currency_suffix')}',
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppTheme.primary)),
                 ])
               else
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   const SizedBox(),
-                  Text('${recipe.price.toInt()} د.ع',
+                  Text('${recipe.price.toInt()} ${t('currency_suffix')}',
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppTheme.textSecondary)),
                 ]),
             ]),

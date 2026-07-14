@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 
 class ActionButtonsRow extends StatelessWidget {
@@ -7,6 +10,8 @@ class ActionButtonsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>();
+    String t(String key) => Tr.get(key, settings.state.locale);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -25,14 +30,14 @@ class ActionButtonsRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add, size: 18),
-                    SizedBox(width: 6),
+                    const Icon(Icons.add, size: 18),
+                    const SizedBox(width: 6),
                     Text(
-                      'بەش',
-                      style: TextStyle(
+                      t('add_section'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),
@@ -53,14 +58,14 @@ class ActionButtonsRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add, size: 18),
-                    SizedBox(width: 6),
+                    const Icon(Icons.add, size: 18),
+                    const SizedBox(width: 6),
                     Text(
-                      'خواردن',
-                      style: TextStyle(
+                      t('add_food'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),

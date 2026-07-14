@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 
 class MenuCartBar extends StatelessWidget {
@@ -8,23 +11,26 @@ class MenuCartBar extends StatelessWidget {
   const MenuCartBar({super.key, required this.cartCount, required this.cartTotal, this.onViewCart});
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>();
+    final cs = Theme.of(context).colorScheme;
+    String t(String key) => Tr.get(key, settings.state.locale);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-      decoration: BoxDecoration(color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
-        border: const Border(top: BorderSide(color: Color(0xFFF0EDEA)))),
+      decoration: BoxDecoration(color: cs.surface,
+        boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
+        border: Border(top: BorderSide(color: cs.outlineVariant))),
       child: SafeArea(child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text('${cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppTheme.primary)),
-          Text('$cartCount دانە', style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+          Text('${cartTotal.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppTheme.primary)),
+          Text(t('items').replaceAll('{count}', '$cartCount'), style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
         ])),
         const SizedBox(width: 16),
         SizedBox(height: 46, child: ElevatedButton(
           onPressed: onViewCart,
           style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-          child: const Row(children: [
-            Icon(Icons.shopping_bag, size: 18), SizedBox(width: 6),
-            Text('سەیرکردنی داواکاری', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+          child: Row(children: [
+            const Icon(Icons.shopping_bag, size: 18), const SizedBox(width: 6),
+            Text(t('view_order'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
           ]),
         )),
       ])),

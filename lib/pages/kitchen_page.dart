@@ -4,32 +4,36 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/order_model.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/order_card.dart';
-import 'package:my_resturant/widgets/settings_button.dart';
 
 class KitchenPage extends StatelessWidget {
   const KitchenPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     final orders = context.watch<OrderCubit>().state.orders;
     final cubit = context.read<OrderCubit>();
-    return Scaffold(body: Stack(children: [
-      SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        const SizedBox(height: 16),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Row(children: [
-          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-            child: Text('${orders.length} داواکاری', style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600))),
-          const Spacer(),
-          const Text('چێشتخانە', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
-        ])),
-        const SizedBox(height: 16),
+    return Scaffold(body: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+      const SizedBox(height: 16),
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Row(children: [
+        const Spacer(),
+        Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
+          child: Text(t('orders_count').replaceAll('{count}', '${orders.length}'), style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600))),
+        const SizedBox(width: 8),
+        Text(t('kitchen_title'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
+      ])),
+      const SizedBox(height: 16),
       if (orders.isEmpty)
         Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(width: 100, height: 100, decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
+          Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
             child: const Icon(Icons.receipt_long_outlined, size: 44, color: AppTheme.textSecondary)),
           const SizedBox(height: 20),
-          const Text('هیچ داواکارییەک نەنێردراوە',
+          Text(t('kitchen_empty'),
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
         ])))
       else
@@ -44,8 +48,6 @@ class KitchenPage extends StatelessWidget {
                 onReset: !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null));
           },
         )),
-    ])),
-      const Positioned(top: 8, right: 12, child: SettingsButton()),
-    ]));
+    ])));
   }
 }

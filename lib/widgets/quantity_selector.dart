@@ -9,8 +9,9 @@ class QuantitySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      decoration: BoxDecoration(color: const Color(0xFFF5F4F2), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(8)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         InkWell(onTap: () => onChanged(-1), borderRadius: BorderRadius.circular(8),
           child: const Padding(padding: EdgeInsets.all(6), child: Icon(Icons.remove, size: 16, color: AppTheme.textPrimary))),
@@ -18,7 +19,7 @@ class QuantitySelector extends StatelessWidget {
           child: Text('$quantity', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
         InkWell(onTap: quantity < 99 ? () => onChanged(1) : null, borderRadius: BorderRadius.circular(8),
           child: Padding(padding: const EdgeInsets.all(6),
-              child: Icon(Icons.add, size: 16, color: quantity < 99 ? AppTheme.textPrimary : Colors.grey))),
+              child: Icon(Icons.add, size: 16, color: quantity < 99 ? AppTheme.textPrimary : cs.onSurfaceVariant))),
       ]),
     );
   }

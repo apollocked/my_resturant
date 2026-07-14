@@ -5,18 +5,21 @@ import 'package:my_resturant/router/app_router.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/cubits/settings_cubit.dart';
 import 'package:my_resturant/theme/app_theme.dart';
+import 'package:my_resturant/database/repository.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp(repo: AppRepository()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppRepository repo;
+  const MyApp({super.key, required this.repo});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => OrderCubit()),
+        BlocProvider(create: (_) => OrderCubit(repo: repo)),
         BlocProvider(create: (_) => SettingsCubit()),
       ],
       child: const AppView(),

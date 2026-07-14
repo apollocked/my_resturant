@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
 import 'package:my_resturant/widgets/app_image.dart';
@@ -21,33 +23,38 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     final cart = state.cart;
 
-    return Stack(children: [
+    return Column(children: [
+      Padding(padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+        child: Row(children: [
+          const SettingsButton(),
+          const Spacer(),
+          if (cart.isEmpty) const SizedBox.shrink() else ...[
+            TextButton(onPressed: () => context.read<OrderCubit>().clearCart(),
+              child: Row(children: [
+                const Icon(Icons.delete_sweep, size: 18, color: AppTheme.error), const SizedBox(width: 4),
+                Text(t('clear'), style: const TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 12)),
+              ])),
+            TableSelector(selectedTable: state.selectedTable, onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t), reservedTables: state.reservedTables),
+          ],
+        ])),
       if (cart.isEmpty)
-        Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 100, height: 100,
-            decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
             child: const Icon(Icons.shopping_bag_outlined, size: 44, color: AppTheme.textSecondary)),
           const SizedBox(height: 20),
-          const Text('داواکاری نییە', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+          Text(t('cart_empty_title'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
           const SizedBox(height: 6),
-          const Text('لە مینیو خواردن هەڵبژێرە', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
-        ]))
-      else
-        Column(children: [
-      const SizedBox(height: 8),
-      Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              TextButton(onPressed: () => context.read<OrderCubit>().clearCart(),
-            child: const Row(children: [
-              Icon(Icons.delete_sweep, size: 18, color: AppTheme.error), SizedBox(width: 4),
-              Text('سڕینەوە', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 12)),
-            ])),
-          TableSelector(selectedTable: state.selectedTable, onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t), reservedTables: state.reservedTables),
-        ])),
-      const SizedBox(height: 12),
+          Text(t('cart_empty_subtitle'), style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+        ])))
+      else ...[
+        const SizedBox(height: 12),
       Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: cart.length,
         itemBuilder: (context, index) {
@@ -60,10 +67,10 @@ class _CartPageState extends State<CartPage> {
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppTheme.textPrimary)),
                 const SizedBox(height: 2),
-                Text('${item.recipe.price.toInt()} د.ع', style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
                 SizedBox(height: 24, child: TextField(
                   textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-                  decoration: InputDecoration(hintText: 'تێبینی...',
+                  decoration: InputDecoration(hintText: t('notes_hint'),
                     hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 11),
                     border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 4), isDense: true),
                   style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
@@ -84,13 +91,13 @@ class _CartPageState extends State<CartPage> {
       )),
       Container(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-        decoration: BoxDecoration(color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
-          border: const Border(top: BorderSide(color: Color(0xFFF0EDEA)))),
+        decoration: BoxDecoration(color: cs.surface,
+          boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
+          border: Border(top: BorderSide(color: cs.outlineVariant))),
         child: SafeArea(child: Column(children: [
           TextField(controller: _notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
             decoration: InputDecoration(
-              hintText: 'تێبینی گشتی بۆ داواکاری...',
+              hintText: t('general_notes_hint'),
               hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 12)),
           ),
           const SizedBox(height: 10),
@@ -98,19 +105,18 @@ class _CartPageState extends State<CartPage> {
             SizedBox(height: 44, child: ElevatedButton(
               onPressed: () { context.read<OrderCubit>().submitOrder(_notesCtrl.text); _notesCtrl.clear(); context.go('/kitchen'); },
               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: const Row(children: [
-                Icon(Icons.send_rounded, size: 16), SizedBox(width: 6),
-                Text('ناردنی داواکاری', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+              child: Row(children: [
+                const Icon(Icons.send_rounded, size: 16), const SizedBox(width: 6),
+                Text(t('send_order'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
               ]))),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('${state.cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppTheme.primary)),
-              Text('کۆی گشتی', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: AppTheme.textSecondary)),
+              Text('${state.cartTotal.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppTheme.primary)),
+              Text(t('total'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: AppTheme.textSecondary)),
             ]),
           ]),
         ])),
       ),
-    ]),
-      const Positioned(top: 8, right: 12, child: SettingsButton()),
+    ],
     ]);
   }
 }

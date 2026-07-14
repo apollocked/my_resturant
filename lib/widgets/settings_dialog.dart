@@ -21,7 +21,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       child: AlertDialog(
         title: Text(t('settings'), textAlign: isRtl ? TextAlign.right : TextAlign.left),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(t('theme'), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
+          Text(t('theme'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 8),
           Row(children: [
             Expanded(child: _themeBtn(context, t('light'), ThemeMode.light, settings.themeMode)),
@@ -29,7 +29,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             Expanded(child: _themeBtn(context, t('dark'), ThemeMode.dark, settings.themeMode)),
           ]),
           const SizedBox(height: 20),
-          Text(t('language'), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
+          Text(t('language'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 8),
           _langBtn(context, t('kurdish'), const Locale('ku'), settings.locale),
           const SizedBox(height: 6),
@@ -43,13 +43,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
   }
 
   Widget _themeBtn(BuildContext context, String label, ThemeMode mode, ThemeMode current) {
+    final cs = Theme.of(context).colorScheme;
     final sel = mode == current;
     return SizedBox(height: 40, child: OutlinedButton(
       onPressed: () => context.read<SettingsCubit>().setThemeMode(mode),
       style: OutlinedButton.styleFrom(
-        backgroundColor: sel ? AppTheme.primary : Colors.white,
-        foregroundColor: sel ? Colors.white : AppTheme.textPrimary,
-        side: BorderSide(color: sel ? AppTheme.primary : const Color(0xFFE0DCD8)),
+        backgroundColor: sel ? AppTheme.primary : cs.surface,
+        foregroundColor: sel ? cs.onPrimary : cs.onSurface,
+        side: BorderSide(color: sel ? AppTheme.primary : cs.outlineVariant),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
@@ -57,13 +58,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
   }
 
   Widget _langBtn(BuildContext context, String label, Locale locale, Locale current) {
+    final cs = Theme.of(context).colorScheme;
     final sel = locale == current;
     return SizedBox(height: 40, child: OutlinedButton(
       onPressed: () => context.read<SettingsCubit>().setLocale(locale),
       style: OutlinedButton.styleFrom(
-        backgroundColor: sel ? AppTheme.primary : Colors.white,
-        foregroundColor: sel ? Colors.white : AppTheme.textPrimary,
-        side: BorderSide(color: sel ? AppTheme.primary : const Color(0xFFE0DCD8)),
+        backgroundColor: sel ? AppTheme.primary : cs.surface,
+        foregroundColor: sel ? cs.onPrimary : cs.onSurface,
+        side: BorderSide(color: sel ? AppTheme.primary : cs.outlineVariant),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),

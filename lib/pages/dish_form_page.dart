@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/recipe.dart';
-import 'package:my_resturant/data/mock_data.dart';
+import 'package:my_resturant/data/categories.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/app_image.dart';
 
 class DishFormPage extends StatefulWidget {
@@ -38,13 +41,15 @@ class _DishFormPageState extends State<DishFormPage> {
     super.dispose();
   }
 
+  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
+
   Future<void> _pickImage() async {
     try {
       final perm = await PhotoManager.requestPermissionExtend();
       if (perm != PermissionState.authorized && perm != PermissionState.limited) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('پێویستە مۆڵەتی گالەری بدەیت')));
+            SnackBar(content: Text(_t('permission_needed'))));
         }
         return;
       }
@@ -57,8 +62,8 @@ class _DishFormPageState extends State<DishFormPage> {
         sourcePath: file.path,
         aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
         uiSettings: [
-          AndroidUiSettings(toolbarTitle: 'بڕینی وێنە', toolbarColor: AppTheme.primary),
-          IOSUiSettings(title: 'بڕینی وێنە'),
+          AndroidUiSettings(toolbarTitle: _t('crop_image'), toolbarColor: AppTheme.primary),
+          IOSUiSettings(title: _t('crop_image')),
         ],
       );
       if (cropped != null) _imageUrl.value = cropped.path;
@@ -83,7 +88,7 @@ class _DishFormPageState extends State<DishFormPage> {
   Widget build(BuildContext context) {
     final catKeys = categories.where((c) => c['key'] != 'all').toList();
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'نووسینەوەی خواردن' : 'زیادکردنی خواردن')),
+      appBar: AppBar(title: Text(_isEditing ? _t('edit_dish') : _t('add_dish'))),
       body: SingleChildScrollView(padding: const EdgeInsets.all(20), child: Form(key: _formKey, child: Column(children: [
         ValueListenableBuilder<String>(valueListenable: _imageUrl,
           builder: (_, url, _) => url.isEmpty ? const SizedBox(height: 130)
@@ -91,20 +96,20 @@ class _DishFormPageState extends State<DishFormPage> {
                   child: AppImage(url, width: double.infinity, height: 130))),
         const SizedBox(height: 16),
         TextFormField(controller: _nameCtrl,
-          decoration: const InputDecoration(labelText: 'ناوی خواردن', filled: true),
-          validator: (v) => v == null || v.trim().isEmpty ? 'ناوی خواردن بەتاڵە' : null),
+          decoration: InputDecoration(labelText: _t('dish_name'), filled: true),
+          validator: (v) => v == null || v.trim().isEmpty ? _t('dish_name_required') : null),
         const SizedBox(height: 12),
         TextFormField(controller: _priceCtrl, keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: const InputDecoration(labelText: 'نرخ (دینار)', filled: true),
+          decoration: InputDecoration(labelText: _t('price_dinar'), filled: true),
           validator: (v) {
-            if (v == null || v.isEmpty) return 'نرخ بەتاڵە';
+            if (v == null || v.isEmpty) return _t('price_required');
             final n = int.tryParse(v);
-            return (n == null || n <= 0) ? 'نرخ نادروستە' : null;
+            return (n == null || n <= 0) ? _t('price_invalid') : null;
           }),
         const SizedBox(height: 12),
         TextFormField(controller: _descCtrl, maxLines: 2,
-          decoration: const InputDecoration(labelText: 'وەسف', filled: true)),
+          decoration: InputDecoration(labelText: _t('description'), filled: true)),
         const SizedBox(height: 12),
         SizedBox(width: double.infinity, child: OutlinedButton(
           onPressed: _pickImage,
@@ -112,20 +117,20 @@ class _DishFormPageState extends State<DishFormPage> {
             side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.3)),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-          child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(Icons.wallpaper, size: 18), SizedBox(width: 8),
-            Text('هەڵبژاردنی وێنە', style: TextStyle(fontWeight: FontWeight.w600)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.wallpaper, size: 18), const SizedBox(width: 8),
+            Text(_t('pick_image'), style: const TextStyle(fontWeight: FontWeight.w600)),
           ]))),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(initialValue: _category,
-          decoration: const InputDecoration(labelText: 'بەش', filled: true),
+          decoration: InputDecoration(labelText: _t('section_field'), filled: true),
           items: catKeys.map((c) => DropdownMenuItem(value: c['key'],
               child: Text('${c['icon']} ${c['name']}'))).toList(),
           onChanged: (v) => setState(() => _category = v!)),
         const SizedBox(height: 24),
         SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
           onPressed: _save,
-          child: Text(_isEditing ? 'نووسینەوە' : 'زیادکردن',
+          child: Text(_isEditing ? _t('update_btn') : _t('add_btn'),
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)))),
       ]))),
     ));

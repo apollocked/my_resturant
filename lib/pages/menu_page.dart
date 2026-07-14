@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/search_bar_widget.dart';
 import 'package:my_resturant/widgets/category_chip.dart';
 import 'package:my_resturant/widgets/food_card.dart';
-import 'package:my_resturant/widgets/menu_hero.dart';
 import 'package:my_resturant/widgets/menu_cart_bar.dart';
 import 'package:my_resturant/widgets/notes_dialog.dart';
-import 'package:my_resturant/data/mock_data.dart';
 import 'package:my_resturant/widgets/settings_button.dart';
+import 'package:my_resturant/data/categories.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   const RestaurantMenuScreen({super.key});
@@ -20,13 +21,12 @@ class RestaurantMenuScreen extends StatefulWidget {
 }
 
 class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
-  final List<Recipe> _meals = mockRecipes;
   int _selectedCategoryIndex = 0;
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
-  List<Recipe> get _filteredMeals {
-    var list = _meals.where((r) => r.available).toList();
+  List<Recipe> _filteredMeals(List<Recipe> allRecipes) {
+    var list = allRecipes.where((r) => r.available).toList();
     final key = categories[_selectedCategoryIndex]['key'];
     if (key != 'all') list = list.where((r) => r.category == key).toList();
     if (_searchQuery.isNotEmpty) list = list.where((r) => r.name.contains(_searchQuery)).toList();
@@ -46,22 +46,22 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     final state = context.watch<OrderCubit>().state;
     if (state.selectedTable == 0) return _buildTablePicker();
-    final meals = _filteredMeals;
+    final meals = _filteredMeals(state.recipes);
     return Scaffold(
-      body: Stack(children: [
-        SafeArea(
-          child: Column(children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  const MenuHero(),
+      body: SafeArea(
+        child: Column(children: [
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 const SizedBox(height: 16),
                 Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
                 const SizedBox(height: 28),
-                Padding(padding: const EdgeInsets.only(right: 20), child: Text('بەشەکان',
+                Padding(padding: const EdgeInsets.only(right: 20), child: Text(t('categories'),
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.textPrimary.withValues(alpha: 0.6)))),
                 const SizedBox(height: 12),
                 SizedBox(height: 40, child: ListView.builder(scrollDirection: Axis.horizontal, reverse: true,
@@ -70,7 +70,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     isSelected: _selectedCategoryIndex == index, index: index, onTap: () => setState(() => _selectedCategoryIndex = index)))),
                 const SizedBox(height: 24),
                 if (meals.isEmpty)
-                  const SizedBox(height: 160, child: Center(child: Text('هیچ خواردنێک نەدۆزرایەوە',
+                  SizedBox(height: 160, child: Center(child: Text(t('no_food_found'),
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 14))))
                 else
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(shrinkWrap: true,
@@ -87,27 +87,28 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
             MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: () => context.go('/cart')),
         ]),
       ),
-      const Positioned(top: 8, right: 12, child: SettingsButton()),
-    ]));
+    );
   }
 
   Widget _buildTablePicker() {
     final s = context.watch<OrderCubit>().state;
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(children: [
+            const SizedBox(height: 8),
+            Row(children: [const Spacer(), const SettingsButton()]),
             const SizedBox(height: 40),
             Container(width: 100, height: 100,
               decoration: BoxDecoration(color: AppTheme.primarySoft, shape: BoxShape.circle, border: Border.all(color: AppTheme.primary, width: 2)),
               child: const Icon(Icons.table_restaurant, size: 48, color: AppTheme.primary)),
             const SizedBox(height: 24),
-            const Text('بەخێربێیت بۆ ڕێستۆرانتەکەم', textAlign: TextAlign.center,
+            Text(t('select_table'), textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
-            const SizedBox(height: 8),
-            const Text('تکایە مێزەکە هەڵبژێرە', textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppTheme.textSecondary)),
             const SizedBox(height: 32),
             Expanded(
               child: GridView.builder(
@@ -117,19 +118,19 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                   final n = i + 1;
                   final locked = s.reservedTables.contains(n);
                   return Material(
-                    color: locked ? const Color(0xFFB0B0B0) : AppTheme.primary, borderRadius: BorderRadius.circular(14),
+                    color: locked ? cs.outline : AppTheme.primary, borderRadius: BorderRadius.circular(14),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(14),
                       onTap: locked ? null : () => context.read<OrderCubit>().setSelectedTable(n),
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                         if (locked) ...[
-                          const Icon(Icons.lock, color: Colors.white, size: 20),
+                          Icon(Icons.lock, color: cs.surface, size: 20),
                           const SizedBox(height: 2),
-                          Text('مێز $n', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                          Text('${t('table')} $n', style: TextStyle(color: cs.surface, fontSize: 13, fontWeight: FontWeight.w600)),
                         ] else ...[
-                          Text('$n', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800)),
+                          Text('$n', style: TextStyle(color: cs.surface, fontSize: 24, fontWeight: FontWeight.w800)),
                           const SizedBox(height: 2),
-                          Text('مێز', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11)),
+                          Text(t('table'), style: TextStyle(color: cs.surface.withValues(alpha: 0.7), fontSize: 11)),
                         ],
                       ]),
                     ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 import 'package:my_resturant/widgets/order_card.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -22,8 +24,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   @override
   Widget build(BuildContext context) {
     final orders = context.watch<OrderCubit>().state.ordersByDate(_date);
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('مێژووی داواکاری')),
+      appBar: AppBar(title: Text(t('history_title'))),
       body: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
         const SizedBox(height: 12),
         TextButton.icon(onPressed: _pick, icon: const Icon(Icons.calendar_month, size: 18),
@@ -32,10 +37,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         const Divider(),
         if (orders.isEmpty)
           Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 80, height: 80, decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
+            Container(width: 80, height: 80, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
               child: const Icon(Icons.history, size: 36, color: AppTheme.textSecondary)),
             const SizedBox(height: 16),
-            const Text('هیچ داواکارییەک نییە', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
+            Text(t('history_empty'), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
           ])))
         else
           Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
