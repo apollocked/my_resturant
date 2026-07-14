@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/models/recipe.dart';
+import 'package:my_resturant/widgets/app_image.dart';
 
 class FoodCard extends StatelessWidget {
   final Recipe recipe;
@@ -46,10 +47,7 @@ class FoodCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Stack(children: [
-              AspectRatio(aspectRatio: 1.3, child: Image.network(recipe.imageUrl, width: double.infinity, fit: BoxFit.cover,
-                loadingBuilder: (c, child, p) => p == null ? child : const SizedBox.expand(child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFF0F0F0)))),
-                errorBuilder: (c, e, s) => Container(color: const Color(0xFFF0F0F0), child: const Icon(Icons.restaurant, color: Color(0xFFD0D0D0), size: 40)),
-              )),
+              AspectRatio(aspectRatio: 1.3, child: AppImage(recipe.imageUrl, width: double.infinity)),
               Positioned.fill(
                 child: IgnorePointer(
                   child: Container(decoration: BoxDecoration(gradient: LinearGradient(

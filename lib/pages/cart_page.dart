@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:my_resturant/viewmodels/order_viewmodel.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
+import 'package:my_resturant/widgets/app_image.dart';
 
 class CartPage extends StatefulWidget {
   final VoidCallback? onViewKitchen;
@@ -51,7 +52,7 @@ class _CartPageState extends State<CartPage> {
             return Padding(padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(children: [
                 ClipRRect(borderRadius: BorderRadius.circular(8),
-                  child: Image.network(item.recipe.imageUrl, width: 50, height: 50, fit: BoxFit.cover)),
+                  child: AppImage(item.recipe.imageUrl, width: 50, height: 50)),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
