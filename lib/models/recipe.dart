@@ -5,6 +5,7 @@ class Recipe {
   final double price;
   final String description;
   final String category;
+  final bool available;
 
   const Recipe({
     required this.id,
@@ -13,24 +14,18 @@ class Recipe {
     this.price = 8000,
     this.description = 'بەرگری تایبەت و دەبڵ پەنیر',
     this.category = '',
+    this.available = true,
   });
 
-  factory Recipe.fromMealApi(Map<String, dynamic> json) {
-    return Recipe(
-      id: json['idMeal'] ?? '',
-      name: json['strMeal'] ?? '',
-      imageUrl: json['strMealThumb'] ?? '',
-    );
-  }
-
-  Recipe copyWith({String? name, String? imageUrl, double? price, String? description, String? category}) =>
+  Recipe copyWith({String? name, String? imageUrl, double? price, String? description, String? category, bool? available}) =>
       Recipe(id: id, name: name ?? this.name, imageUrl: imageUrl ?? this.imageUrl,
-          price: price ?? this.price, description: description ?? this.description, category: category ?? this.category);
+          price: price ?? this.price, description: description ?? this.description,
+          category: category ?? this.category, available: available ?? this.available);
 
   Map<String, dynamic> toMap() {
     return {
       'id': id, 'name': name, 'imageUrl': imageUrl,
-      'price': price, 'description': description, 'category': category,
+      'price': price, 'description': description, 'category': category, 'available': available,
     };
   }
 }

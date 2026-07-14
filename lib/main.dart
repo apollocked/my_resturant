@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/pages/layout_page.dart';
-import 'package:my_resturant/viewmodels/order_viewmodel.dart';
+import 'package:my_resturant/cubits/order_cubit.dart';
 
 class AppTheme {
   static const Color primary = Color(0xFFE8611A);
@@ -57,8 +57,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => OrderViewModel(),
+    return BlocProvider(
+      create: (_) => OrderCubit(),
       child: MaterialApp(
         title: 'Restaurant App', debugShowCheckedModeBanner: false,
         theme: AppTheme.light, home: const MainLayout(),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/main.dart';
 import 'package:my_resturant/models/order_model.dart';
-import 'package:my_resturant/viewmodels/order_viewmodel.dart';
+import 'package:my_resturant/cubits/order_cubit.dart';
 
 class KitchenPage extends StatelessWidget {
   const KitchenPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final orders = context.watch<OrderViewModel>().orders;
+    final orders = context.watch<OrderCubit>().state.orders;
     return Scaffold(
       body: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
         const SizedBox(height: 16),
@@ -58,7 +58,7 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.read<OrderViewModel>();
+    final cubit = context.read<OrderCubit>();
     final color = _colors[order.status]!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -70,7 +70,7 @@ class _OrderCard extends StatelessWidget {
             child: Text(_labels[order.status]!, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 11)),
           ),
           Row(children: [
-            Text('مێز ${order.tableNumber}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.textPrimary)),
+            Text(order.displayTable, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.textPrimary)),
             const SizedBox(width: 6),
             const Icon(Icons.table_restaurant_outlined, size: 18, color: AppTheme.textSecondary),
           ]),
@@ -106,13 +106,13 @@ class _OrderCard extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           if (_nextStatus.containsKey(order.status))
             TextButton.icon(
-              onPressed: () => vm.updateOrderStatus(order.id, _nextStatus[order.status]!),
+              onPressed: () => cubit.updateOrderStatus(order.id, _nextStatus[order.status]!),
               icon: Icon(Icons.arrow_forward, size: 16, color: color),
               label: Text(_nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: color)),
             )
           else
             TextButton.icon(
-              onPressed: () => vm.updateOrderStatus(order.id, OrderStatus.pending),
+              onPressed: () => cubit.updateOrderStatus(order.id, OrderStatus.pending),
               icon: const Icon(Icons.refresh, size: 16, color: AppTheme.textSecondary),
               label: const Text('دووبارە', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
             ),

@@ -5,6 +5,7 @@ enum OrderStatus { pending, preparing, served }
 class Order {
   final String id;
   final int tableNumber;
+  final String? tableName;
   final List<CartItem> items;
   final OrderStatus status;
   final DateTime createdAt;
@@ -14,6 +15,7 @@ class Order {
     required this.id,
     required this.tableNumber,
     required this.items,
+    this.tableName,
     this.status = OrderStatus.pending,
     DateTime? createdAt,
     this.notes = '',
@@ -21,10 +23,13 @@ class Order {
 
   double get totalPrice => items.fold(0.0, (sum, item) => sum + item.totalPrice);
 
+  String get displayTable => tableName ?? 'مێز $tableNumber';
+
   Order copyWith({OrderStatus? status}) {
     return Order(
       id: id,
       tableNumber: tableNumber,
+      tableName: tableName,
       items: items,
       status: status ?? this.status,
       createdAt: createdAt,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/main.dart';
-import 'package:my_resturant/viewmodels/order_viewmodel.dart';
+import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
 import 'package:my_resturant/widgets/app_image.dart';
@@ -20,8 +20,8 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<OrderViewModel>();
-    final cart = vm.cart;
+    final state = context.watch<OrderCubit>().state;
+    final cart = state.cart;
 
     if (cart.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -39,12 +39,12 @@ class _CartPageState extends State<CartPage> {
       const SizedBox(height: 8),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          TextButton(onPressed: () => vm.clearCart(),
+              TextButton(onPressed: () => context.read<OrderCubit>().clearCart(),
             child: const Row(children: [
               Icon(Icons.delete_sweep, size: 18, color: AppTheme.error), SizedBox(width: 4),
               Text('سڕینەوە', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 12)),
             ])),
-          TableSelector(selectedTable: vm.selectedTable, onChanged: (t) => vm.selectedTable = t),
+          TableSelector(selectedTable: state.selectedTable, onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t)),
         ])),
       const SizedBox(height: 12),
       Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -66,15 +66,15 @@ class _CartPageState extends State<CartPage> {
                     hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 11),
                     border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 4), isDense: true),
                   style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
-                  onChanged: (v) => vm.updateNotes(index, v),
+                  onChanged: (v) => context.read<OrderCubit>().updateNotes(index, v),
                 )),
               ])),
               const SizedBox(width: 6),
-              QuantitySelector(quantity: item.quantity, onChanged: (d) => vm.updateQuantity(index, d)),
+              QuantitySelector(quantity: item.quantity, onChanged: (d) => context.read<OrderCubit>().updateQuantity(index, d)),
               const SizedBox(width: 8),
               Text('${item.totalPrice.toInt()}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.textPrimary)),
               const SizedBox(width: 6),
-              InkWell(onTap: () => vm.removeFromCart(index),
+              InkWell(onTap: () => context.read<OrderCubit>().removeFromCart(index),
                 child: Container(padding: const EdgeInsets.all(4),
                   child: const Icon(Icons.close, size: 14, color: AppTheme.error))),
             ])),
@@ -95,14 +95,14 @@ class _CartPageState extends State<CartPage> {
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             SizedBox(height: 44, child: ElevatedButton(
-              onPressed: () { vm.submitOrder(_notesCtrl.text); _notesCtrl.clear(); widget.onViewKitchen?.call(); },
+              onPressed: () { context.read<OrderCubit>().submitOrder(_notesCtrl.text); _notesCtrl.clear(); widget.onViewKitchen?.call(); },
               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               child: const Row(children: [
                 Icon(Icons.send_rounded, size: 16), SizedBox(width: 6),
                 Text('ناردنی داواکاری', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
               ]))),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('${vm.cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppTheme.primary)),
+              Text('${state.cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppTheme.primary)),
               Text('کۆی گشتی', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: AppTheme.textSecondary)),
             ]),
           ]),

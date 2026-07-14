@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/main.dart';
 import 'package:my_resturant/models/recipe.dart';
-import 'package:my_resturant/viewmodels/order_viewmodel.dart';
+import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/search_bar_widget.dart';
 import 'package:my_resturant/widgets/action_buttons_row.dart';
 import 'package:my_resturant/widgets/category_chip.dart';
@@ -25,26 +25,24 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   String _searchQuery = '';
 
   List<Recipe> get _filteredMeals {
-    var list = _meals;
+    var list = _meals.where((r) => r.available).toList();
     final key = categories[_selectedCategoryIndex]['key'];
     if (key != 'all') list = list.where((r) => r.category == key).toList();
-    if (_searchQuery.isNotEmpty) {
-      list = list.where((r) => r.name.contains(_searchQuery)).toList();
-    }
+    if (_searchQuery.isNotEmpty) list = list.where((r) => r.name.contains(_searchQuery)).toList();
     return list;
   }
 
-  void _increment(Recipe r) => context.read<OrderViewModel>().addToCart(r);
+  void _increment(Recipe r) => context.read<OrderCubit>().addToCart(r);
   void _decrement(Recipe r) =>
-      context.read<OrderViewModel>().decrementOrRemove(r.id);
+      context.read<OrderCubit>().decrementOrRemove(r.id);
 
   Future<void> _notes(Recipe recipe) async {
-    final vm = context.read<OrderViewModel>();
+    final state = context.read<OrderCubit>().state;
     final r = await showDialog<String>(
       context: context,
-      builder: (_) => _NotesDialog(initialNotes: vm.getNotes(recipe.id)),
+      builder: (_) => _NotesDialog(initialNotes: state.getNotes(recipe.id)),
     );
-    if (r != null) vm.updateNotesByRecipe(recipe.id, r);
+    if (r != null) context.read<OrderCubit>().updateNotesByRecipe(recipe.id, r);
   }
 
   Future<void> _edit(Recipe recipe) async {
@@ -115,7 +113,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<OrderViewModel>();
+    final state = context.watch<OrderCubit>().state;
     final meals = _filteredMeals;
     return Scaffold(
       body: SafeArea(
@@ -279,8 +277,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                             final r = meals[index];
                             return FoodCard(
                               recipe: r,
-                              quantity: vm.getQuantity(r.id),
-                              notes: vm.getNotes(r.id),
+                              quantity: state.getQuantity(r.id),
+                              notes: state.getNotes(r.id),
                               onIncrement: () => _increment(r),
                               onDecrement: () => _decrement(r),
                               onLongPress: () => _notes(r),
@@ -295,7 +293,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 ),
               ),
             ),
-            if (vm.cartCount > 0)
+            if (state.cartCount > 0)
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 decoration: BoxDecoration(
@@ -319,7 +317,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${vm.cartTotal.toInt()} د.ع',
+                              '${state.cartTotal.toInt()} د.ع',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 18,
@@ -327,7 +325,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                               ),
                             ),
                             Text(
-                              '${vm.cartCount} دانە',
+                              '${state.cartCount} دانە',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: AppTheme.textSecondary,

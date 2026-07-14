@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/main.dart';
 import 'package:my_resturant/pages/menu_page.dart';
 import 'package:my_resturant/pages/cart_page.dart';
 import 'package:my_resturant/pages/kitchen_page.dart';
-import 'package:my_resturant/viewmodels/order_viewmodel.dart';
+import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/pages/table_management_page.dart';
+import 'package:my_resturant/pages/food_management_page.dart';
+import 'package:my_resturant/pages/order_history_page.dart';
+import 'package:my_resturant/pages/report_page.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -26,7 +30,7 @@ class _MainLayoutState extends State<MainLayout> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<OrderViewModel>();
+    final state = context.watch<OrderCubit>().state;
     return Scaffold(
       body: PageView(
         controller: _pageCtrl, physics: const NeverScrollableScrollPhysics(),
@@ -44,7 +48,7 @@ class _MainLayoutState extends State<MainLayout> with SingleTickerProviderStateM
         child: SafeArea(child: Container(
           height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, 'داواکاری', 0, vm.cartCount),
+            _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, 'داواکاری', 0, state.cartCount),
             _navItem(Icons.menu_book_outlined, Icons.menu_book, 'مینیو', 1, 0),
             _navItem(Icons.receipt_long_outlined, Icons.receipt_long, 'چێشتخانە', 2, 0),
             _navItem(Icons.person_outline, Icons.person, 'پڕۆفایل', 3, 0),
@@ -88,14 +92,23 @@ class _ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(child: Padding(padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        const SizedBox(height: 30),
-        Center(child: Container(width: 90, height: 90, decoration: BoxDecoration(
+        const SizedBox(height: 10),
+        Center(child: Container(width: 80, height: 80, decoration: BoxDecoration(
           color: AppTheme.primarySoft, shape: BoxShape.circle,
           border: Border.all(color: AppTheme.primary, width: 2)),
-          child: const Icon(Icons.person, size: 44, color: AppTheme.primary))),
-        const SizedBox(height: 16),
-        const Center(child: Text('بەڕێوەبەر', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppTheme.textPrimary))),
-        const Center(child: Text('ڕێستۆرانتەکەم', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary))),
+          child: const Icon(Icons.person, size: 40, color: AppTheme.primary))),
+        const SizedBox(height: 12),
+        const Center(child: Text('بەڕێوەبەر', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.textPrimary))),
+        const Center(child: Text('ڕێستۆرانتەکەم', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary))),
+        const SizedBox(height: 24),
+        _profileCard(context, Icons.table_restaurant_outlined, 'مێزەکان', 'بەڕێوەبردنی ژمارە و ناوی مێزەکان',
+            const TableManagementPage()),
+        _profileCard(context, Icons.restaurant_menu, 'خواردنەکان', 'بینین و بەردەستکردنی خواردنەکان',
+            const FoodManagementPage()),
+        _profileCard(context, Icons.history, 'مێژووی داواکاری', 'بینینی داواکاریەکانی ڕۆژانی پێشوو',
+            const OrderHistoryPage()),
+        _profileCard(context, Icons.bar_chart, 'ڕاپۆرت', 'ئامار و ڕیزبەندی خواردنەکان',
+            const ReportPage()),
         const Spacer(),
         SizedBox(width: double.infinity, child: OutlinedButton(
           onPressed: () {},
@@ -106,8 +119,18 @@ class _ProfilePage extends StatelessWidget {
             Icon(Icons.logout, size: 18), SizedBox(width: 8),
             Text('چوونەدەرەوە'),
           ]))),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
       ]),
     ));
+  }
+
+  Widget _profileCard(BuildContext context, IconData icon, String title, String sub, Widget page) {
+    return Padding(padding: const EdgeInsets.only(bottom: 10), child: Card(child: ListTile(
+      leading: Icon(icon, color: AppTheme.primary),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+      subtitle: Text(sub, style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+      trailing: const Icon(Icons.chevron_left, color: AppTheme.textSecondary),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
+    )));
   }
 }
