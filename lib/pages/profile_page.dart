@@ -6,17 +6,19 @@ import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/data/mock_data.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/action_buttons_row.dart';
+import 'package:my_resturant/widgets/settings_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
+    return Stack(children: [
+      SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
             Center(
               child: Container(
                 width: 80,
@@ -100,7 +102,9 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+    const Positioned(top: 8, right: 12, child: SettingsButton()),
+  ]);
   }
 
   Widget _card(BuildContext context, IconData icon, String title, String sub, String route) {

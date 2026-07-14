@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/theme/app_theme.dart';
 import 'package:my_resturant/cubits/order_cubit.dart';
+import 'package:my_resturant/cubits/settings_cubit.dart';
+import 'package:my_resturant/l10n/tr.dart';
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -11,19 +13,26 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrderCubit>().state;
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     final selectedIndex = navigationShell.currentIndex;
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5))]),
-        child: SafeArea(child: Container(height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, 'داواکاری', 0, state.cartCount, selectedIndex),
-            _navItem(Icons.menu_book_outlined, Icons.menu_book, 'مینیو', 1, 0, selectedIndex),
-            _navItem(Icons.receipt_long_outlined, Icons.receipt_long, 'چێشتخانە', 2, 0, selectedIndex),
-            _navItem(Icons.person_outline, Icons.person, 'پڕۆفایل', 3, 0, selectedIndex),
-          ]))),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, -5))],
+        ),
+        child: SafeArea(
+          child: Container(height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              _navItem(Icons.shopping_bag_outlined, Icons.shopping_bag, t('cart'), 0, state.cartCount, selectedIndex),
+              _navItem(Icons.menu_book_outlined, Icons.menu_book, t('menu'), 1, 0, selectedIndex),
+              _navItem(Icons.receipt_long_outlined, Icons.receipt_long, t('kitchen'), 2, 0, selectedIndex),
+              _navItem(Icons.person_outline, Icons.person, t('profile'), 3, 0, selectedIndex),
+            ]),
+          ),
+        ),
       ),
     );
   }

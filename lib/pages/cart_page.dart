@@ -6,6 +6,7 @@ import 'package:my_resturant/cubits/order_cubit.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
 import 'package:my_resturant/widgets/app_image.dart';
+import 'package:my_resturant/widgets/settings_button.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -23,19 +24,19 @@ class _CartPageState extends State<CartPage> {
     final state = context.watch<OrderCubit>().state;
     final cart = state.cart;
 
-    if (cart.isEmpty) {
-      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(width: 100, height: 100,
-          decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
-          child: const Icon(Icons.shopping_bag_outlined, size: 44, color: AppTheme.textSecondary)),
-        const SizedBox(height: 20),
-        const Text('داواکاری نییە', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
-        const SizedBox(height: 6),
-        const Text('لە مینیو خواردن هەڵبژێرە', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
-      ]));
-    }
-
-    return Column(children: [
+    return Stack(children: [
+      if (cart.isEmpty)
+        Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(width: 100, height: 100,
+            decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
+            child: const Icon(Icons.shopping_bag_outlined, size: 44, color: AppTheme.textSecondary)),
+          const SizedBox(height: 20),
+          const Text('داواکاری نییە', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+          const SizedBox(height: 6),
+          const Text('لە مینیو خواردن هەڵبژێرە', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+        ]))
+      else
+        Column(children: [
       const SizedBox(height: 8),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -108,6 +109,8 @@ class _CartPageState extends State<CartPage> {
           ]),
         ])),
       ),
+    ]),
+      const Positioned(top: 8, right: 12, child: SettingsButton()),
     ]);
   }
 }

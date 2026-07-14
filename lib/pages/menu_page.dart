@@ -11,6 +11,7 @@ import 'package:my_resturant/widgets/menu_hero.dart';
 import 'package:my_resturant/widgets/menu_cart_bar.dart';
 import 'package:my_resturant/widgets/notes_dialog.dart';
 import 'package:my_resturant/data/mock_data.dart';
+import 'package:my_resturant/widgets/settings_button.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   const RestaurantMenuScreen({super.key});
@@ -49,13 +50,14 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (state.selectedTable == 0) return _buildTablePicker();
     final meals = _filteredMeals;
     return Scaffold(
-      body: SafeArea(
-        child: Column(children: [
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                const MenuHero(),
+      body: Stack(children: [
+        SafeArea(
+          child: Column(children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  const MenuHero(),
                 const SizedBox(height: 16),
                 Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v))),
                 const SizedBox(height: 28),
@@ -85,7 +87,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
             MenuCartBar(cartCount: state.cartCount, cartTotal: state.cartTotal.toInt(), onViewCart: () => context.go('/cart')),
         ]),
       ),
-    );
+      const Positioned(top: 8, right: 12, child: SettingsButton()),
+    ]));
   }
 
   Widget _buildTablePicker() {
