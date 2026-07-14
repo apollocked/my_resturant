@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:my_resturant/main.dart';
 import 'package:my_resturant/viewmodels/order_viewmodel.dart';
 import 'package:my_resturant/widgets/quantity_selector.dart';
 import 'package:my_resturant/widgets/table_selector.dart';
@@ -13,9 +14,9 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final _orderNotesController = TextEditingController();
+  final _notesCtrl = TextEditingController();
   @override
-  void dispose() { _orderNotesController.dispose(); super.dispose(); }
+  void dispose() { _notesCtrl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -24,94 +25,89 @@ class _CartPageState extends State<CartPage> {
 
     if (cart.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey[300]),
-        const SizedBox(height: 16),
-        Text('داواکاری نییە', style: TextStyle(fontSize: 18, color: Colors.grey[500], fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
-        Text('لە مینیو خواردن هەڵبژێرە', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+        Container(width: 100, height: 100,
+          decoration: BoxDecoration(color: const Color(0xFFF5F3F0), shape: BoxShape.circle),
+          child: const Icon(Icons.shopping_bag_outlined, size: 44, color: AppTheme.textSecondary)),
+        const SizedBox(height: 20),
+        const Text('داواکاری نییە', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+        const SizedBox(height: 6),
+        const Text('لە مینیو خواردن هەڵبژێرە', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
       ]));
     }
 
-    return Padding(padding: const EdgeInsets.all(16), child: Column(children: [
+    return Column(children: [
       const SizedBox(height: 8),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        TextButton.icon(
-          onPressed: () => vm.clearCart(),
-          icon: const Icon(Icons.delete_sweep, color: Color(0xFFE53935), size: 20),
-          label: const Text('سڕینەوە', style: TextStyle(color: Color(0xFFE53935), fontWeight: FontWeight.bold)),
-        ),
-        TableSelector(selectedTable: vm.selectedTable, onChanged: (t) => vm.selectedTable = t),
-      ]),
-      const SizedBox(height: 12),
-      Expanded(
-        child: ListView.separated(
-          itemCount: cart.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            final item = cart[index];
-            return Padding(padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(children: [
-                ClipRRect(borderRadius: BorderRadius.circular(8),
-                  child: AppImage(item.recipe.imageUrl, width: 50, height: 50)),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                    Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    Text('${item.recipe.price.toInt()} دینار',
-                        style: const TextStyle(color: Color(0xFF2EC153), fontSize: 12, fontWeight: FontWeight.w600)),
-                    SizedBox(height: 32, child: TextField(
-                      textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-                      decoration: InputDecoration(
-                        hintText: 'تێبینی...', hintStyle: TextStyle(color: Colors.grey[400], fontSize: 11),
-                        border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 4), isDense: true,
-                      ),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                      onChanged: (v) => vm.updateNotes(index, v),
-                    )),
-                  ]),
-                ),
-                const SizedBox(width: 8),
-                QuantitySelector(quantity: item.quantity, onChanged: (d) => vm.updateQuantity(index, d)),
-                const SizedBox(width: 6),
-                Text('${item.totalPrice.toInt()}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
-                const SizedBox(width: 4),
-                InkWell(onTap: () => vm.removeFromCart(index), child: const Padding(padding: EdgeInsets.all(4),
-                    child: Icon(Icons.close, size: 16, color: Color(0xFFE53935)))),
-              ]),
-            );
-          },
-        ),
-      ),
-      TextField(
-        controller: _orderNotesController, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-        decoration: InputDecoration(
-          hintText: 'تێبینی گشتی بۆ داواکاری...', hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-          filled: true, fillColor: const Color(0xFFF5F5F5),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        ),
-      ),
-      const SizedBox(height: 10),
-      Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2))]),
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          SizedBox(height: 42, child: ElevatedButton.icon(
-            onPressed: () { vm.submitOrder(_orderNotesController.text); _orderNotesController.clear(); widget.onViewKitchen?.call(); },
-            icon: const Icon(Icons.send, size: 18),
-            label: const Text('ناردنی داواکاری', style: TextStyle(fontWeight: FontWeight.bold)),
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2EC153),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-          )),
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text('${vm.cartTotal.toInt()} دینار',
-                style: const TextStyle(color: Color(0xFF2EC153), fontWeight: FontWeight.bold, fontSize: 18)),
-            Text('کۆی گشتی', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey[500])),
+          TextButton(onPressed: () => vm.clearCart(),
+            child: const Row(children: [
+              Icon(Icons.delete_sweep, size: 18, color: AppTheme.error), SizedBox(width: 4),
+              Text('سڕینەوە', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 12)),
+            ])),
+          TableSelector(selectedTable: vm.selectedTable, onChanged: (t) => vm.selectedTable = t),
+        ])),
+      const SizedBox(height: 12),
+      Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: cart.length,
+        itemBuilder: (context, index) {
+          final item = cart[index];
+          return Card(margin: const EdgeInsets.only(bottom: 10),
+            child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
+              ClipRRect(borderRadius: BorderRadius.circular(10),
+                child: AppImage(item.recipe.imageUrl, width: 56, height: 56)),
+              const SizedBox(width: 10),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Text(item.recipe.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppTheme.textPrimary)),
+                const SizedBox(height: 2),
+                Text('${item.recipe.price.toInt()} د.ع', style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                SizedBox(height: 24, child: TextField(
+                  textAlign: TextAlign.right, textDirection: TextDirection.rtl,
+                  decoration: InputDecoration(hintText: 'تێبینی...',
+                    hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 11),
+                    border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 4), isDense: true),
+                  style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                  onChanged: (v) => vm.updateNotes(index, v),
+                )),
+              ])),
+              const SizedBox(width: 6),
+              QuantitySelector(quantity: item.quantity, onChanged: (d) => vm.updateQuantity(index, d)),
+              const SizedBox(width: 8),
+              Text('${item.totalPrice.toInt()}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.textPrimary)),
+              const SizedBox(width: 6),
+              InkWell(onTap: () => vm.removeFromCart(index),
+                child: Container(padding: const EdgeInsets.all(4),
+                  child: const Icon(Icons.close, size: 14, color: AppTheme.error))),
+            ])),
+          );
+        },
+      )),
+      Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+        decoration: BoxDecoration(color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
+          border: const Border(top: BorderSide(color: Color(0xFFF0EDEA)))),
+        child: SafeArea(child: Column(children: [
+          TextField(controller: _notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
+            decoration: InputDecoration(
+              hintText: 'تێبینی گشتی بۆ داواکاری...',
+              hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 12)),
+          ),
+          const SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            SizedBox(height: 44, child: ElevatedButton(
+              onPressed: () { vm.submitOrder(_notesCtrl.text); _notesCtrl.clear(); widget.onViewKitchen?.call(); },
+              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              child: const Row(children: [
+                Icon(Icons.send_rounded, size: 16), SizedBox(width: 6),
+                Text('ناردنی داواکاری', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+              ]))),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Text('${vm.cartTotal.toInt()} د.ع', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppTheme.primary)),
+              Text('کۆی گشتی', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: AppTheme.textSecondary)),
+            ]),
           ]),
-        ]),
+        ])),
       ),
-    ]));
+    ]);
   }
 }

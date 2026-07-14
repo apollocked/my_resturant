@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/main.dart';
 import 'package:my_resturant/data/mock_data.dart';
 
-const List<String> _iconOptions = [
+const List<String> _icons = [
   '🍽', '🍔', '🍕', '🌯', '🍗', '🥗', '🥪', '🌮', '🥟', '🍜', '🍝', '🍛', '🥘', '🫕', '🥙', '🧆',
   '🥩', '🍖', '🥦', '🥕', '🧅', '🫑', '🥐', '🥯', '🍞', '🥨', '🧀', '🥚', '🍳', '🥮', '🍦', '🍰',
 ];
@@ -32,46 +33,35 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   Widget build(BuildContext context) {
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
       appBar: AppBar(title: const Text('زیادکردنی بەش')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          TextField(controller: _nameCtrl,
-            decoration: const InputDecoration(labelText: 'ناوی بەش', border: OutlineInputBorder())),
-          const SizedBox(height: 20),
-          const Text('هەڵبژاردنی ئایکۆن:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-          const SizedBox(height: 10),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 6, crossAxisSpacing: 8, mainAxisSpacing: 8),
-              itemCount: _iconOptions.length,
-              itemBuilder: (context, index) {
-                final icon = _iconOptions[index];
-                final isSelected = icon == _selectedIcon;
-                return InkWell(
-                  onTap: () => setState(() => _selectedIcon = icon),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF2EC153) : const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(8),
-                      border: isSelected ? Border.all(color: const Color(0xFF2EC153), width: 2) : null,
-                    ),
-                    child: Center(child: Text(icon, style: TextStyle(fontSize: isSelected ? 32 : 24))),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
-            onPressed: _save,
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2EC153),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            child: const Text('زیادکردن', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          )),
-        ]),
-      ),
+      body: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        TextField(controller: _nameCtrl,
+          decoration: const InputDecoration(labelText: 'ناوی بەش', filled: true)),
+        const SizedBox(height: 24),
+        const Text('هەڵبژاردنی ئایکۆن:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.textPrimary)),
+        const SizedBox(height: 12),
+        Expanded(child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 6, crossAxisSpacing: 8, mainAxisSpacing: 8),
+          itemCount: _icons.length,
+          itemBuilder: (context, index) {
+            final icon = _icons[index];
+            final sel = icon == _selectedIcon;
+            return GestureDetector(onTap: () => setState(() => _selectedIcon = icon),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: sel ? AppTheme.primary : const Color(0xFFF5F3F0),
+                  borderRadius: BorderRadius.circular(10),
+                  border: sel ? Border.all(color: AppTheme.primary, width: 2) : null),
+                child: Center(child: Text(icon, style: TextStyle(fontSize: sel ? 30 : 22))),
+              ),
+            );
+          },
+        )),
+        const SizedBox(height: 16),
+        SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
+          onPressed: _save,
+          child: const Text('زیادکردن', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)))),
+      ])),
     ));
   }
 }

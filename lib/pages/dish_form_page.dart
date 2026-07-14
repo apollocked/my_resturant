@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:my_resturant/main.dart';
 import 'package:my_resturant/models/recipe.dart';
 import 'package:my_resturant/data/mock_data.dart';
 import 'package:my_resturant/widgets/app_image.dart';
@@ -56,7 +57,7 @@ class _DishFormPageState extends State<DishFormPage> {
         sourcePath: file.path,
         aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
         uiSettings: [
-          AndroidUiSettings(toolbarTitle: 'بڕینی وێنە', toolbarColor: const Color(0xFF2EC153)),
+          AndroidUiSettings(toolbarTitle: 'بڕینی وێنە', toolbarColor: AppTheme.primary),
           IOSUiSettings(title: 'بڕینی وێنە'),
         ],
       );
@@ -83,52 +84,50 @@ class _DishFormPageState extends State<DishFormPage> {
     final catKeys = categories.where((c) => c['key'] != 'all').toList();
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
       appBar: AppBar(title: Text(_isEditing ? 'نووسینەوەی خواردن' : 'زیادکردنی خواردن')),
-      body: SingleChildScrollView(padding: const EdgeInsets.all(20), child: Form(
-        key: _formKey,
-        child: Column(children: [
-          ValueListenableBuilder<String>(valueListenable: _imageUrl,
-            builder: (_, url, _) => url.isEmpty ? const SizedBox(height: 120)
-                : ClipRRect(borderRadius: BorderRadius.circular(8),
-                    child: AppImage(url, width: double.infinity, height: 120))),
-          const SizedBox(height: 16),
-          TextFormField(controller: _nameCtrl,
-            decoration: const InputDecoration(labelText: 'ناوی خواردن', border: OutlineInputBorder()),
-            validator: (v) => v == null || v.trim().isEmpty ? 'ناوی خواردن بەتاڵە' : null),
-          const SizedBox(height: 12),
-          TextFormField(controller: _priceCtrl, keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: const InputDecoration(labelText: 'نرخ (دینار)', border: OutlineInputBorder()),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'نرخ بەتاڵە';
-              final n = int.tryParse(v);
-              return (n == null || n <= 0) ? 'نرخ نادروستە' : null;
-            }),
-          const SizedBox(height: 12),
-          TextFormField(controller: _descCtrl, maxLines: 2,
-            decoration: const InputDecoration(labelText: 'وەسف', border: OutlineInputBorder())),
-          const SizedBox(height: 12),
-          SizedBox(width: double.infinity, child: OutlinedButton.icon(
-            onPressed: _pickImage, icon: const Icon(Icons.wallpaper, size: 20),
-            label: const Text('هەڵبژاردنی وێنە', style: TextStyle(fontWeight: FontWeight.bold)),
-            style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF2EC153),
-              side: const BorderSide(color: Color(0xFF2EC153), width: 1.2),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))))),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(initialValue: _category,
-            decoration: const InputDecoration(labelText: 'بەش', border: OutlineInputBorder()),
-            items: catKeys.map((c) => DropdownMenuItem(value: c['key'],
-                child: Text('${c['icon']} ${c['name']}'))).toList(),
-            onChanged: (v) => setState(() => _category = v!)),
-          const SizedBox(height: 24),
-          SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
-            onPressed: _save,
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2EC153),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            child: Text(_isEditing ? 'نووسینەوە' : 'زیادکردن',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)))),
-        ]),
-      )),
+      body: SingleChildScrollView(padding: const EdgeInsets.all(20), child: Form(key: _formKey, child: Column(children: [
+        ValueListenableBuilder<String>(valueListenable: _imageUrl,
+          builder: (_, url, _) => url.isEmpty ? const SizedBox(height: 130)
+              : ClipRRect(borderRadius: BorderRadius.circular(12),
+                  child: AppImage(url, width: double.infinity, height: 130))),
+        const SizedBox(height: 16),
+        TextFormField(controller: _nameCtrl,
+          decoration: const InputDecoration(labelText: 'ناوی خواردن', filled: true),
+          validator: (v) => v == null || v.trim().isEmpty ? 'ناوی خواردن بەتاڵە' : null),
+        const SizedBox(height: 12),
+        TextFormField(controller: _priceCtrl, keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: const InputDecoration(labelText: 'نرخ (دینار)', filled: true),
+          validator: (v) {
+            if (v == null || v.isEmpty) return 'نرخ بەتاڵە';
+            final n = int.tryParse(v);
+            return (n == null || n <= 0) ? 'نرخ نادروستە' : null;
+          }),
+        const SizedBox(height: 12),
+        TextFormField(controller: _descCtrl, maxLines: 2,
+          decoration: const InputDecoration(labelText: 'وەسف', filled: true)),
+        const SizedBox(height: 12),
+        SizedBox(width: double.infinity, child: OutlinedButton(
+          onPressed: _pickImage,
+          style: OutlinedButton.styleFrom(foregroundColor: AppTheme.primary,
+            side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.3)),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+          child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.wallpaper, size: 18), SizedBox(width: 8),
+            Text('هەڵبژاردنی وێنە', style: TextStyle(fontWeight: FontWeight.w600)),
+          ]))),
+        const SizedBox(height: 12),
+        DropdownButtonFormField<String>(initialValue: _category,
+          decoration: const InputDecoration(labelText: 'بەش', filled: true),
+          items: catKeys.map((c) => DropdownMenuItem(value: c['key'],
+              child: Text('${c['icon']} ${c['name']}'))).toList(),
+          onChanged: (v) => setState(() => _category = v!)),
+        const SizedBox(height: 24),
+        SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
+          onPressed: _save,
+          child: Text(_isEditing ? 'نووسینەوە' : 'زیادکردن',
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)))),
+      ]))),
     ));
   }
 }
