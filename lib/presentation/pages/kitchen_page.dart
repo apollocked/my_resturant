@@ -71,7 +71,7 @@ class _KitchenPageState extends State<KitchenPage> {
         ),
         child: Text(label, style: TextStyle(
           fontSize: 12, fontWeight: FontWeight.w700,
-          color: sel ? Colors.white : cs.onSurfaceVariant)),
+          color: sel ? cs.onPrimary : cs.onSurfaceVariant)),
       ),
     );
   }

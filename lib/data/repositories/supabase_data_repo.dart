@@ -12,8 +12,6 @@ class SupabaseDataRepository implements DataRepository {
 
   String get _userId => _client.auth.currentUser!.id;
 
-  // ── Recipes ───────────────────────────────────────────────
-
   Recipe _mapRecipe(Map<String, dynamic> row) => Recipe(
     id: row['id'] as String,
     name: row['name'] as String,
@@ -62,7 +60,6 @@ class SupabaseDataRepository implements DataRepository {
     }
   }
 
-  @override
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
     final path = 'recipes/$recipeId.jpg';
     await _client.storage

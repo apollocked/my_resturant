@@ -24,7 +24,7 @@ class Order {
   double get totalPrice =>
       items.fold(0.0, (sum, item) => sum + item.totalPrice);
 
-  String get displayTable => tableName ?? 'مێز $tableNumber';
+  String get displayTable => tableName ?? 'Table $tableNumber';
 
   Order copyWith({OrderStatus? status}) {
     return Order(

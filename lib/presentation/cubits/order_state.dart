@@ -28,7 +28,7 @@ class OrderState {
   List<int> get tableNumbers => List.generate(tableCount, (i) => i + 1);
   Set<int> get reservedTables => orders.where((o) => o.status != OrderStatus.served).map((o) => o.tableNumber).toSet();
 
-  String getTableName(int n) => tableNames[n] ?? 'مێز $n';
+  String getTableName(int n) => tableNames[n] ?? 'Table $n';
   int getQuantity(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;
   String getNotes(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.notes ?? pendingNotes[id] ?? '';
 

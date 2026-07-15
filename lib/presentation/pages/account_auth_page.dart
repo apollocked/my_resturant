@@ -139,10 +139,10 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                             ),
                           ),
                           child: _loading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
                                 )
                               : Text(
                                   _isSignUp ? t('create_account_btn') : t('login'),
@@ -177,7 +177,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
           ),
           if (_loading)
             Container(
-              color: Colors.black26,
+              color: cs.scrim.withValues(alpha: 0.26),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),

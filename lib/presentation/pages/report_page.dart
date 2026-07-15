@@ -28,7 +28,7 @@ class ReportPage extends StatelessWidget {
         Row(children: [
           Expanded(child: StatCard(icon: Icons.star, label: t('most_ordered'),
             value: state.mostOrderedDish ?? '-', sub: state.totalOrders > 0 ? '${state.mostOrderedDishCount} ${t('times')}' : null,
-            color: Colors.orange)),
+            color: AppColors.warning)),
         ]),
         if (counts.isNotEmpty) ...[
           const SizedBox(height: 24),

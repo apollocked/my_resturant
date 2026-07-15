@@ -70,7 +70,7 @@ class AppView extends StatelessWidget {
         if (!didPop) _showExitDialog(context, t);
       },
       child: MaterialApp.router(
-      title: 'Restaurant App',
+      title: t('app_name'),
       debugShowCheckedModeBanner: false,
       locale: settings.locale,
       supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
@@ -109,7 +109,7 @@ class AppView extends StatelessWidget {
               Navigator.pop(ctx);
               SystemNavigator.pop();
             },
-            child: Text(t('exit'), style: const TextStyle(color: Colors.white)),
+            child: Text(t('exit'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
         ],
       ),

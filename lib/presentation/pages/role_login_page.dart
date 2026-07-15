@@ -134,13 +134,13 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                           ),
                         ),
                         child: _loading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: cs.onPrimary,
+                                  ),
                               )
                             : Text(
                                 t('enter'),
@@ -158,7 +158,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
           ),
           if (_loading)
             Container(
-              color: Colors.black26,
+              color: cs.scrim.withValues(alpha: 0.26),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -201,7 +201,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
             Icon(
               _roleIcon(r),
               size: 28,
-              color: selected ? Colors.white : AppColors.primary,
+              color: selected ? cs.onPrimary : AppColors.primary,
             ),
             const SizedBox(height: 6),
             Text(
@@ -209,7 +209,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: selected ? Colors.white : cs.onSurface,
+                color: selected ? cs.onPrimary : cs.onSurface,
               ),
             ),
           ],

@@ -86,7 +86,7 @@ class _DishFormPageState extends State<DishFormPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
       }
     }
   }

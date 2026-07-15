@@ -110,7 +110,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           padding: EdgeInsets.zero,
                           itemBuilder: (context, index) => CategoryChip(
                             icon: categories[index]['icon']!,
-                            name: categories[index]['name']!,
+                            name: t('cat_${categories[index]['key']!}'),
                             isSelected: _selectedCategoryIndex == index,
                             index: index,
                             onTap: () =>

@@ -13,7 +13,7 @@ class OrderCard extends StatelessWidget {
   final VoidCallback? onReset;
   const OrderCard({super.key, required this.order, this.showTime = false, this.showTimeline = false, this.onNextStatus, this.onReset});
 
-  static const _colors = {OrderStatus.pending: Colors.orange, OrderStatus.preparing: Color(0xFF3B82F6), OrderStatus.served: AppColors.success};
+  static const _colors = {OrderStatus.pending: AppColors.warning, OrderStatus.preparing: AppColors.info, OrderStatus.served: AppColors.success};
 
   static String _label(OrderStatus s, Locale locale) => Tr.get(
     s == OrderStatus.pending ? 'status_pending' : s == OrderStatus.preparing ? 'status_preparing' : 'status_served', locale);
@@ -21,17 +21,17 @@ class OrderCard extends StatelessWidget {
   static String _nextLabel(OrderStatus s, Locale locale) => Tr.get(
     s == OrderStatus.pending ? 'next_prepare' : 'next_serve', locale);
 
-  String _elapsed(DateTime dt) {
+  String _elapsed(DateTime dt, Locale locale) {
     final min = DateTime.now().difference(dt).inMinutes;
-    if (min < 1) return '<1m';
-    if (min < 60) return '${min}m';
-    return '${min ~/ 60}h ${min % 60}m';
+    if (min < 1) return Tr.get('time_under_1m', locale);
+    if (min < 60) return Tr.get('time_m', locale).replaceAll('{m}', '$min');
+    return Tr.get('time_hm', locale).replaceAll('{h}', '${min ~/ 60}').replaceAll('{m}', '${min % 60}');
   }
 
   Color _urgencyColor(int minutes) {
     if (minutes < 5) return AppColors.success;
-    if (minutes < 15) return Colors.orange;
-    return const Color(0xFFDC2626);
+    if (minutes < 15) return AppColors.warning;
+    return AppColors.error;
   }
 
   @override
@@ -57,7 +57,7 @@ class OrderCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
             ),
-            child: Text(_label(order.status, locale), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 11)),
+            child: Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: 11)),
           ),
           Row(children: [
             if (order.status != OrderStatus.served && elapsedMin > 0)
@@ -67,7 +67,7 @@ class OrderCard extends StatelessWidget {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.schedule, size: 12, color: urgency),
                   const SizedBox(width: 3),
-                  Text(_elapsed(order.createdAt), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: urgency)),
+                  Text(_elapsed(order.createdAt, locale), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: urgency)),
                 ]),
               ),
             if (order.status != OrderStatus.served && elapsedMin > 0) const SizedBox(width: 8),
@@ -124,8 +124,8 @@ class OrderCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
             ),
-            child: Text('${order.totalPrice.toInt()} ${Tr.get('currency_suffix', locale)}',
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Colors.white)),
+                child: Text('${order.totalPrice.toInt()} ${Tr.get('currency_suffix', locale)}',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: cs.onPrimary)),
           ),
         ]),
       ])),
@@ -190,6 +190,6 @@ class OrderCard extends StatelessWidget {
         border: Border.all(color: isReached ? c : cs.outlineVariant, width: 2),
         boxShadow: isReached ? [BoxShadow(color: c.withValues(alpha: 0.3), blurRadius: 4)] : null,
       ),
-      child: isReached ? const Icon(Icons.check, size: 8, color: Colors.white) : null);
+      child: isReached ? Icon(Icons.check, size: 8, color: cs.onPrimary) : null);
   }
 }

@@ -38,7 +38,7 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
         TextField(controller: _priceCtl, decoration: InputDecoration(labelText: widget.t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
         const SizedBox(height: 12),
         StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
-          initialValue: _cat, decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+          initialValue: _cat, decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
           items: categories.where((c) => c['key'] != 'all').map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
           onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
         )),

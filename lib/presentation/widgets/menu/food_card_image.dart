@@ -51,7 +51,7 @@ class FoodCardImage extends StatelessWidget {
                 boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 2))],
               ),
               child: Text('$quantity',
-                  style: TextStyle(color: Colors.white, fontSize: isTablet ? 16 : 14, fontWeight: FontWeight.bold)),
+                  style: TextStyle(color: cs.onPrimary, fontSize: isTablet ? 16 : 14, fontWeight: FontWeight.bold)),
             )),
           if (notes.isNotEmpty)
             Positioned(bottom: 10, left: 10, child: Container(

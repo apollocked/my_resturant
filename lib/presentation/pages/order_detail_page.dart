@@ -15,7 +15,7 @@ class OrderDetailPage extends StatelessWidget {
   final Order order;
   const OrderDetailPage({super.key, required this.order});
 
-  static const _colors = {OrderStatus.pending: Colors.orange, OrderStatus.preparing: Colors.blue, OrderStatus.served: AppColors.success};
+  static const _colors = {OrderStatus.pending: AppColors.warning, OrderStatus.preparing: AppColors.info, OrderStatus.served: AppColors.success};
   static const _nextStatus = {OrderStatus.pending: OrderStatus.preparing, OrderStatus.preparing: OrderStatus.served};
 
   @override
@@ -128,6 +128,6 @@ class OrderDetailPage extends StatelessWidget {
     return Container(width: isReached ? 14 : 10, height: isReached ? 14 : 10,
       decoration: BoxDecoration(color: isReached ? c : cs.surface, shape: BoxShape.circle,
         border: Border.all(color: isReached ? c : cs.outlineVariant, width: 2)),
-      child: isReached ? const Icon(Icons.check, size: 8, color: Colors.white) : null);
+      child: isReached ? Icon(Icons.check, size: 8, color: cs.onPrimary) : null);
   }
 }

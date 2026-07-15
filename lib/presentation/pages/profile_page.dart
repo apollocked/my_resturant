@@ -346,7 +346,7 @@ class ProfilePage extends StatelessWidget {
               acct.logout();
               role.logout();
             },
-            child: Text(t('logout'), style: const TextStyle(color: Colors.white)),
+            child: Text(t('logout'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
         ],
       ),
