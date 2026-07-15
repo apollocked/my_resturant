@@ -10,7 +10,7 @@ void main() {
     await tester.pumpWidget(MyApp(
       repo: AppRepository(),
       acct: AccountCubit(repo: LocalAuthRepository()),
-      role: RoleCubit(),
+      role: RoleCubit(repo: LocalAuthRepository()),
     ));
     await tester.pump();
     expect(find.byType(MyApp), findsOneWidget);

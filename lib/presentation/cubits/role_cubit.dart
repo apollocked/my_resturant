@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
 class RoleState {
   final Role role;
@@ -10,34 +10,17 @@ class RoleState {
 }
 
 class RoleCubit extends Cubit<RoleState> {
-  static const _keyWaiter = 'pin_waiter';
-  static const _keyKitchen = 'pin_kitchen';
-  static const _keyAdmin = 'pin_admin';
-  static const _keyLastRole = 'last_role';
+  final AuthRepository _repo;
 
-  RoleCubit() : super(const RoleState());
-
-  static String _pinKey(Role r) {
-    switch (r) {
-      case Role.waiter: return _keyWaiter;
-      case Role.kitchen: return _keyKitchen;
-      case Role.admin: return _keyAdmin;
-    }
-  }
+  RoleCubit({required this._repo}) : super(const RoleState());
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final configured = prefs.containsKey(_keyWaiter) && prefs.containsKey(_keyKitchen) && prefs.containsKey(_keyAdmin);
-    final lastRole = prefs.getString(_keyLastRole);
-    final role = lastRole != null ? RoleExtension.fromKey(lastRole) : Role.admin;
-    emit(RoleState(isConfigured: configured, role: role));
+    final configured = await _repo.arePasscodesConfigured();
+    emit(RoleState(isConfigured: configured));
   }
 
   Future<void> configure(String waiterPin, String kitchenPin, String adminPin) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyWaiter, waiterPin);
-    await prefs.setString(_keyKitchen, kitchenPin);
-    await prefs.setString(_keyAdmin, adminPin);
+    await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
     emit(const RoleState(isConfigured: true));
   }
 
@@ -46,12 +29,11 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<bool> loginAsync(Role role, String pin) async {
-    final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getString(_pinKey(role));
-    if (stored == null || stored != pin) return false;
-    await prefs.setString(_keyLastRole, role.key);
-    emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
-    return true;
+    final ok = await _repo.verifyPasscode(role, pin);
+    if (ok) {
+      emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
+    }
+    return ok;
   }
 
   Future<void> switchRole(Role role, {String? pin}) async {
@@ -59,27 +41,22 @@ class RoleCubit extends Cubit<RoleState> {
       await _setRole(role);
       return;
     }
-    final stored = (await SharedPreferences.getInstance()).getString(_pinKey(role));
-    if (pin != null && stored == pin) {
-      await _setRole(role);
+    if (pin != null) {
+      final ok = await _repo.verifyPasscode(role, pin);
+      if (ok) await _setRole(role);
     }
   }
 
   Future<void> _setRole(Role role) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyLastRole, role.key);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    final configured = prefs.containsKey(_keyWaiter);
-    emit(RoleState(isConfigured: configured));
+    emit(const RoleState(isConfigured: true));
   }
 
   Future<void> changePin(Role role, String newPin) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_pinKey(role), newPin);
+    await _repo.changePasscode(role, newPin);
   }
 
   bool canSwitchFreely(Role target) => state.role == Role.admin;

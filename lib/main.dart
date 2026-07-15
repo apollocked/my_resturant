@@ -1,26 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
+import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
+import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/auth_repository_impl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final acct = AccountCubit(repo: LocalAuthRepository());
+
+  await Supabase.initialize(
+    url: SupabaseCredentials.url,
+    publishableKey: SupabaseCredentials.publishableKey,
+  );
+
+  final authRepo = LocalAuthRepository();
+  final dataRepo = AppRepository();
+  final acct = AccountCubit(repo: authRepo);
   await acct.load();
-  final role = RoleCubit();
+  final role = RoleCubit(repo: authRepo);
   await role.load();
-  runApp(MyApp(repo: AppRepository(), acct: acct, role: role));
+  runApp(MyApp(repo: dataRepo, acct: acct, role: role));
 }
 
 class MyApp extends StatelessWidget {
-  final AppRepository repo;
+  final DataRepository repo;
   final AccountCubit acct;
   final RoleCubit role;
   const MyApp({super.key, required this.repo, required this.acct, required this.role});

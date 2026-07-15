@@ -3,13 +3,8 @@ import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
 class AccountState {
   final bool isLoggedIn;
-  final bool isAccountCreated;
   final String? email;
-  const AccountState({
-    this.isLoggedIn = false,
-    this.isAccountCreated = false,
-    this.email,
-  });
+  const AccountState({this.isLoggedIn = false, this.email});
 }
 
 class AccountCubit extends Cubit<AccountState> {
@@ -18,49 +13,34 @@ class AccountCubit extends Cubit<AccountState> {
   AccountCubit({required this._repo}) : super(const AccountState());
 
   Future<void> load() async {
-    final created = await _repo.isAccountCreated();
-    emit(state.copyWith(isAccountCreated: created));
+    final session = await _repo.isAccountCreated();
+    final email = await _repo.getAccountEmail();
+    if (session && email != null) {
+      emit(AccountState(isLoggedIn: true, email: email));
+    }
   }
 
   Future<void> createAccount(String email, String password) async {
     await _repo.createAccount(email, password);
-    emit(
-      AccountState(
-        isLoggedIn: true,
-        isAccountCreated: true,
-        email: email.trim().toLowerCase(),
-      ),
-    );
+    emit(AccountState(
+      isLoggedIn: true,
+      email: email.trim().toLowerCase(),
+    ));
   }
 
   Future<bool> login(String email, String password) async {
     final ok = await _repo.login(email, password);
     if (ok) {
-      emit(
-        AccountState(
-          isLoggedIn: true,
-          isAccountCreated: true,
-          email: email.trim().toLowerCase(),
-        ),
-      );
+      emit(AccountState(
+        isLoggedIn: true,
+        email: email.trim().toLowerCase(),
+      ));
     }
     return ok;
   }
 
   Future<void> logout() async {
     await _repo.logout();
-    emit(const AccountState(isAccountCreated: true));
+    emit(const AccountState());
   }
-}
-
-extension AccountStateX on AccountState {
-  AccountState copyWith({
-    bool? isLoggedIn,
-    bool? isAccountCreated,
-    String? email,
-  }) => AccountState(
-    isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-    isAccountCreated: isAccountCreated ?? this.isAccountCreated,
-    email: email ?? this.email,
-  );
 }

@@ -1,0 +1,4 @@
+class SupabaseCredentials {
+  static const String url = 'YOUR_SUPABASE_URL';
+  static const String publishableKey = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+}

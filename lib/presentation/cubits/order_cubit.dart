@@ -4,15 +4,16 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_state.dart';
+import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/data_repository.dart';
 
 class OrderCubit extends Cubit<OrderState> {
-  final AppRepository _repo;
+  final DataRepository _repo;
   StreamSubscription? _orderSub;
   StreamSubscription? _recipeSub;
   StreamSubscription? _settingSub;
 
-  OrderCubit({AppRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
+  OrderCubit({DataRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
     _load();
   }
 

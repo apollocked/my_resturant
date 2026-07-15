@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/repositories/recipe_repository.dart';
-import 'package:my_resturant/domain/repositories/order_repository.dart';
-import 'package:my_resturant/domain/repositories/settings_repository.dart';
+import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/datasources/local/app_database.dart';
 
 final AppDatabase db = AppDatabase();
 
-class AppRepository implements RecipeRepository, OrderRepository, SettingsRepository {
+class AppRepository implements DataRepository {
   final _orderCtrl = StreamController<List<Order>>.broadcast();
   final _recipeCtrl = StreamController<List<Recipe>>.broadcast();
   final _settingCtrl = StreamController<Map<String, String>>.broadcast();

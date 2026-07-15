@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
-import 'package:my_resturant/presentation/pages/account_login_page.dart';
-import 'package:my_resturant/presentation/pages/create_account_page.dart';
+import 'package:my_resturant/presentation/pages/account_auth_page.dart';
 import 'package:my_resturant/presentation/pages/role_login_page.dart';
 import 'package:my_resturant/presentation/pages/cart_page.dart';
 import 'package:my_resturant/presentation/pages/menu_page.dart';
@@ -36,37 +35,21 @@ final appRouter = GoRouter(
     final rs = context.read<RoleCubit>().state;
     final loc = state.matchedLocation;
 
-    // 1. Account not created → force create-account
-    if (!acct.isAccountCreated && loc != '/create-account') return '/create-account';
+    if (!acct.isLoggedIn && loc != '/account-auth') return '/account-auth';
 
-    // 2. On create-account
-    if (loc == '/create-account') {
-      if (acct.isAccountCreated && !acct.isLoggedIn) return '/account-login';
-      return null;
-    }
-
-    // 3. Not account-logged-in → force account-login
-    if (!acct.isLoggedIn && loc != '/account-login') return '/account-login';
-
-    // 4. Account-logged-in on account-login → next step
-    if (loc == '/account-login' && acct.isLoggedIn) {
+    if (loc == '/account-auth' && acct.isLoggedIn) {
       if (!rs.isConfigured) return '/setup';
       return '/role-login';
     }
 
-    // 5. Not configured → force setup
     if (!rs.isConfigured && loc != '/setup') return '/setup';
 
-    // 6. Configured on setup → role-login
     if (loc == '/setup' && rs.isConfigured) return '/role-login';
 
-    // 7. Not role-logged-in → force role-login
     if (!rs.isLoggedIn && loc != '/role-login') return '/role-login';
 
-    // 8. Role-logged-in on role-login → app
     if (loc == '/role-login' && rs.isLoggedIn) return '/menu';
 
-    // 9. Role-based page gating
     if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) return '/kitchen';
     if (rs.role == Role.waiter && loc == '/kitchen') return '/menu';
     if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) return '/menu';
@@ -74,8 +57,7 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
-    GoRoute(path: '/create-account', builder: (_, _) => const CreateAccountPage()),
-    GoRoute(path: '/account-login', builder: (_, _) => const AccountLoginPage()),
+    GoRoute(path: '/account-auth', builder: (_, _) => const AccountAuthPage()),
     GoRoute(path: '/role-login', builder: (_, _) => const RoleLoginPage()),
     GoRoute(path: '/setup', builder: (_, _) => const SetupPage()),
     StatefulShellRoute.indexedStack(
