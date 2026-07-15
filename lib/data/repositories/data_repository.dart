@@ -57,6 +57,7 @@ class AppRepository implements DataRepository {
     _emitRecipes();
   }
 
+  @override
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
     final dir = Directory(
       'C:\\Users\\hamab\\Desktop\\Flutter_Projects\\my_resturant\\uploads\\recipes',
