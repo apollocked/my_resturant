@@ -27,6 +27,7 @@ dependencies:
   cached_network_image: ^3.4.1
   crypto: ^3.0.7
   supabase_flutter: ^2.16.0
+  fl_chart: ^1.2.0
 
 dev_dependencies:
   flutter_test:
