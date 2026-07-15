@@ -53,12 +53,12 @@ final appRouter = GoRouter(
     if (loc == '/role-login') return '/menu';
 
     if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) return '/kitchen';
-    if (rs.role == Role.waiter && loc == '/kitchen') return '/menu';
     if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) return '/menu';
 
     return null;
   },
   routes: [
+    GoRoute(path: '/', redirect: (_, _) => '/menu'),
     GoRoute(path: '/account-auth', builder: (_, _) => const AccountAuthPage()),
     GoRoute(path: '/role-login', builder: (_, _) => const RoleLoginPage()),
     GoRoute(path: '/setup', builder: (_, _) => const SetupPage()),

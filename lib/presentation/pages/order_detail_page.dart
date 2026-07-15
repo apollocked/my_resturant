@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
+import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
@@ -24,6 +26,7 @@ class OrderDetailPage extends StatelessWidget {
     final color = _colors[order.status]!;
     final hasNext = _nextStatus.containsKey(order.status);
     final cubit = context.read<OrderCubit>();
+    final canEdit = context.watch<RoleCubit>().state.role != Role.waiter;
     final labels = {OrderStatus.pending: t('status_pending'), OrderStatus.preparing: t('status_preparing'), OrderStatus.served: t('status_served')};
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
@@ -52,19 +55,21 @@ class OrderDetailPage extends StatelessWidget {
               decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(10)),
               child: Text(order.notes, textAlign: TextAlign.right,
                   style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant, fontStyle: FontStyle.italic))),
-          const SizedBox(height: 32),
-          if (hasNext)
-            SizedBox(width: double.infinity, child: FilledButton(
-              onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); context.pop(); },
-              style: FilledButton.styleFrom(backgroundColor: color, padding: const EdgeInsets.symmetric(vertical: 14)),
-              child: Text(nextLabel[order.status]!, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-            ))
-          else
-            SizedBox(width: double.infinity, child: OutlinedButton(
-              onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); context.pop(); },
-              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-              child: Text(t('again'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-            )),
+          if (canEdit) ...[
+            const SizedBox(height: 32),
+            if (hasNext)
+              SizedBox(width: double.infinity, child: FilledButton(
+                onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); context.pop(); },
+                style: FilledButton.styleFrom(backgroundColor: color, padding: const EdgeInsets.symmetric(vertical: 14)),
+                child: Text(nextLabel[order.status]!, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              ))
+            else
+              SizedBox(width: double.infinity, child: OutlinedButton(
+                onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); context.pop(); },
+                style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                child: Text(t('again'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              )),
+          ],
         ]),
       )),
     );

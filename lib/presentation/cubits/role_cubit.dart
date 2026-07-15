@@ -17,7 +17,12 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> load() async {
     final configured = await _repo.arePasscodesConfigured();
-    emit(RoleState(isConfigured: configured));
+    final savedRole = await _repo.getLoggedInRole();
+    if (savedRole != null) {
+      emit(RoleState(isConfigured: configured, isLoggedIn: true, role: savedRole));
+    } else {
+      emit(RoleState(isConfigured: configured));
+    }
   }
 
   void clearError() => emit(RoleState(
@@ -44,6 +49,7 @@ class RoleCubit extends Cubit<RoleState> {
     try {
       final ok = await _repo.verifyPasscode(role, pin);
       if (ok) {
+        await _repo.saveLoggedInRole(role);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;
@@ -65,10 +71,12 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<void> _setRole(Role role) async {
+    await _repo.saveLoggedInRole(role);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }
 
   Future<void> logout() async {
+    await _repo.saveLoggedInRole(null);
     emit(const RoleState(isConfigured: true));
   }
 

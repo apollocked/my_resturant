@@ -95,7 +95,7 @@ class ProfilePage extends StatelessWidget {
                 Icons.history,
                 t('order_history'),
                 t('order_history_sub'),
-                '/order-history',
+                '/history',
               ),
               _card(
                 context,

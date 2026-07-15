@@ -112,4 +112,10 @@ class SupabaseAuthRepository implements AuthRepository {
     };
     await _client.from('profiles').update({column: _hash(newPin)}).eq('id', user.id);
   }
+
+  @override
+  Future<void> saveLoggedInRole(Role? role) async {}
+
+  @override
+  Future<Role?> getLoggedInRole() async => null;
 }

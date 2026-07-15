@@ -8,6 +8,7 @@ class LocalAuthRepository implements AuthRepository {
   static const _pinWaiter = 'pin_waiter';
   static const _pinKitchen = 'pin_kitchen';
   static const _pinAdmin = 'pin_admin';
+  static const _loggedInRoleKey = 'logged_in_role';
 
   @override
   Future<bool> isAccountCreated() async {
@@ -77,5 +78,23 @@ class LocalAuthRepository implements AuthRepository {
       Role.admin => _pinAdmin,
     };
     await prefs.setString(key, newPin);
+  }
+
+  @override
+  Future<void> saveLoggedInRole(Role? role) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (role != null) {
+      await prefs.setString(_loggedInRoleKey, role.name);
+    } else {
+      await prefs.remove(_loggedInRoleKey);
+    }
+  }
+
+  @override
+  Future<Role?> getLoggedInRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString(_loggedInRoleKey);
+    if (name == null) return null;
+    return Role.values.firstWhere((r) => r.name == name);
   }
 }
