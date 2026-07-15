@@ -49,7 +49,7 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> logout() async {
     await _repo.logout();
-    emit(const AccountState());
+    emit(const AccountState(isAccountCreated: true));
   }
 }
 

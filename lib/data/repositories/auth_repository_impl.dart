@@ -36,9 +36,7 @@ class LocalAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_emailKey);
-    await prefs.remove(_passKey);
+    // clear session only, keep credentials for future login
   }
 
   @override
