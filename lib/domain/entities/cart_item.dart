@@ -5,19 +5,11 @@ class CartItem {
   int quantity;
   String notes;
 
-  CartItem({
-    required this.recipe,
-    this.quantity = 1,
-    this.notes = '',
-  });
+  CartItem({required this.recipe, this.quantity = 1, this.notes = ''});
 
   double get totalPrice => recipe.price * quantity;
 
   Map<String, dynamic> toMap() {
-    return {
-      'recipe': recipe.toMap(),
-      'quantity': quantity,
-      'notes': notes,
-    };
+    return {'recipe': recipe.toMap(), 'quantity': quantity, 'notes': notes};
   }
 }

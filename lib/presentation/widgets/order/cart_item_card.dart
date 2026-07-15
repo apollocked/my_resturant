@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
@@ -30,7 +31,7 @@ class CartItemCard extends StatelessWidget {
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Row(children: [
-                InkWell(onTap: () => cubit.removeFromCart(index), borderRadius: BorderRadius.circular(8),
+                InkWell(onTap: () { HapticFeedback.mediumImpact(); cubit.removeFromCart(index); }, borderRadius: BorderRadius.circular(8),
                   child: Container(width: 32, height: 32, alignment: Alignment.center,
                     decoration: BoxDecoration(color: AppColors.error.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
                     child: const Icon(Icons.close, size: 16, color: AppColors.error))),

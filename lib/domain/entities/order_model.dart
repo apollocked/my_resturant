@@ -21,7 +21,8 @@ class Order {
     this.notes = '',
   }) : createdAt = createdAt ?? DateTime.now();
 
-  double get totalPrice => items.fold(0.0, (sum, item) => sum + item.totalPrice);
+  double get totalPrice =>
+      items.fold(0.0, (sum, item) => sum + item.totalPrice);
 
   String get displayTable => tableName ?? 'مێز $tableNumber';
 

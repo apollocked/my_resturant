@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -24,7 +25,7 @@ class FoodCardImage extends StatelessWidget {
     String t(String key) => Tr.get(key, settings.state.locale);
     return Expanded(
       child: GestureDetector(
-        onTap: onTap, onLongPress: onLongPress,
+        onTap: () { HapticFeedback.lightImpact(); onTap?.call(); }, onLongPress: onLongPress,
         child: Stack(fit: StackFit.expand, children: [
           AppImage(recipe.imageUrl, width: double.infinity),
           Positioned.fill(

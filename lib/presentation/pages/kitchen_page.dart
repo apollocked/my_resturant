@@ -82,20 +82,23 @@ class _KitchenPageState extends State<KitchenPage> {
         Text(t('kitchen_empty'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
       ]));
     }
-    return ListView.builder(
-      key: ValueKey(_tabIndex),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: orders.length,
-      itemBuilder: (context, index) {
-        final o = orders[index];
-        final hasNext = OrderCard.nextStatus.containsKey(o.status);
-        return GestureDetector(
-          onTap: () => context.push('/order-detail', extra: o),
-          child: OrderCard(order: o, showTimeline: true,
-            onNextStatus: hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-            onReset: !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: () async => context.read<OrderCubit>().refresh(),
+      child: ListView.builder(
+        key: ValueKey(_tabIndex),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: orders.length,
+        itemBuilder: (context, index) {
+          final o = orders[index];
+          final hasNext = OrderCard.nextStatus.containsKey(o.status);
+          return GestureDetector(
+            onTap: () => context.push('/order-detail', extra: o),
+            child: OrderCard(order: o, showTimeline: true,
+              onNextStatus: hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+              onReset: !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+          );
+        },
+      ),
     );
   }
 }

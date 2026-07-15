@@ -43,8 +43,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             Text(t('history_empty'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: cs.onSurface)),
           ])))
         else
-          Expanded(child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
-            itemBuilder: (context, index) => OrderCard(order: orders[index], showTime: true))),
+          Expanded(child: RefreshIndicator(
+            onRefresh: () async => context.read<OrderCubit>().refresh(),
+            child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
+              itemBuilder: (context, index) => OrderCard(order: orders[index], showTime: true)),
+          )),
       ]))),
     );
   }
