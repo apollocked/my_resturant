@@ -1,4 +1,4 @@
 class SupabaseCredentials {
-  static const String url = 'YOUR_SUPABASE_URL';
-  static const String publishableKey = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+  static const String url = 'https://wwzvywkvblftreqdusay.supabase.co';
+  static const String publishableKey = 'sb_publishable_zFK0H560dmL7zZpRjZ7f_A_bwa-xPWA';
 }

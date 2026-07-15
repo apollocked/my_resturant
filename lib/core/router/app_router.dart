@@ -35,20 +35,22 @@ final appRouter = GoRouter(
     final rs = context.read<RoleCubit>().state;
     final loc = state.matchedLocation;
 
-    if (!acct.isLoggedIn && loc != '/account-auth') return '/account-auth';
-
-    if (loc == '/account-auth' && acct.isLoggedIn) {
-      if (!rs.isConfigured) return '/setup';
-      return '/role-login';
+    if (!acct.isLoggedIn) {
+      if (loc != '/account-auth') return '/account-auth';
+      return null;
     }
 
-    if (!rs.isConfigured && loc != '/setup') return '/setup';
+    if (!rs.isConfigured) {
+      if (loc != '/setup') return '/setup';
+      return null;
+    }
 
-    if (loc == '/setup' && rs.isConfigured) return '/role-login';
+    if (!rs.isLoggedIn) {
+      if (loc != '/role-login') return '/role-login';
+      return null;
+    }
 
-    if (!rs.isLoggedIn && loc != '/role-login') return '/role-login';
-
-    if (loc == '/role-login' && rs.isLoggedIn) return '/menu';
+    if (loc == '/role-login') return '/menu';
 
     if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) return '/kitchen';
     if (rs.role == Role.waiter && loc == '/kitchen') return '/menu';
@@ -68,7 +70,7 @@ final appRouter = GoRouter(
         StatefulShellBranch(routes: [GoRoute(path: '/kitchen', builder: (_, _) => const KitchenPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/history', builder: (_, _) => const OrderHistoryPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/profile', builder: (_, _) => const ProfilePage())]),
-      ],
+  ],
     ),
     GoRoute(path: '/order-detail', parentNavigatorKey: _rootNavigator,
       builder: (_, state) => OrderDetailPage(order: state.extra as Order)),

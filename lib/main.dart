@@ -65,9 +65,10 @@ class AppView extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       localeResolutionCallback: (locale, supported) {
-        if (locale == null) return const Locale('ku');
-        for (final s in supported) {
-          if (s.languageCode == locale.languageCode) return locale;
+        if (locale == null) return const Locale('en');
+        if (supported.contains(locale) &&
+            GlobalMaterialLocalizations.delegate.isSupported(locale)) {
+          return locale;
         }
         return const Locale('en');
       },
