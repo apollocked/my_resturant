@@ -4,23 +4,28 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/cubits/admin_auth_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
 import 'package:my_resturant/data/repositories/data_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(repo: AppRepository()));
+  final auth = AdminAuthCubit();
+  await auth.load();
+  runApp(MyApp(repo: AppRepository(), auth: auth));
 }
 
 class MyApp extends StatelessWidget {
   final AppRepository repo;
-  const MyApp({super.key, required this.repo});
+  final AdminAuthCubit auth;
+  const MyApp({super.key, required this.repo, required this.auth});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => OrderCubit(repo: repo)),
         BlocProvider(create: (_) => SettingsCubit()),
+        BlocProvider(create: (_) => auth),
       ],
       child: const AppView(),
     );
@@ -36,7 +41,7 @@ class AppView extends StatelessWidget {
       title: 'Restaurant App',
       debugShowCheckedModeBanner: false,
       locale: settings.locale,
-      supportedLocales: const [Locale('ar'), Locale('en')],
+      supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
