@@ -35,67 +35,128 @@ class MainShell extends StatelessWidget {
 
     if (isDesktop && R.height(context) >= 500) {
       return Scaffold(
-        body: Row(children: [
-          NavigationRail(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (i) => navigationShell.goBranch(
-              i, initialLocation: i == navigationShell.currentIndex),
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: cs.surface,
-            indicatorColor: AppColors.primarySoft,
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.restaurant, size: 36, color: AppColors.primary),
-                const SizedBox(height: 4),
-                Text(t('app_name'), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary)),
-              ]),
+        body: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (i) => navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              ),
+              labelType: NavigationRailLabelType.all,
+              backgroundColor: cs.surface,
+              indicatorColor: AppColors.primarySoft,
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.restaurant,
+                      size: 36,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      t('app_name'),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              minWidth: 100,
+              groupAlignment: 0,
+              destinations: items
+                  .map(
+                    (item) => NavigationRailDestination(
+                      icon: item.index == 0 && state.cartCount > 0
+                          ? Badge(
+                              label: Text(
+                                '${state.cartCount}',
+                                style: const TextStyle(fontSize: 9),
+                              ),
+                              child: Icon(item.outline, size: 24),
+                            )
+                          : Icon(item.outline, size: 24),
+                      selectedIcon: item.index == 0 && state.cartCount > 0
+                          ? Badge(
+                              label: Text(
+                                '${state.cartCount}',
+                                style: const TextStyle(fontSize: 9),
+                              ),
+                              child: Icon(item.filled, size: 24),
+                            )
+                          : Icon(item.filled, size: 24),
+                      label: Text(
+                        t(item.labelKey),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
-            minWidth: 100,
-            groupAlignment: 0,
-            destinations: items.map((item) => NavigationRailDestination(
-              icon: item.index == 0 && state.cartCount > 0
-                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline, size: 24))
-                  : Icon(item.outline, size: 24),
-              selectedIcon: item.index == 0 && state.cartCount > 0
-                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled, size: 24))
-                  : Icon(item.filled, size: 24),
-              label: Text(t(item.labelKey), style: const TextStyle(fontSize: 12)),
-            )).toList(),
-          ),
-          const VerticalDivider(width: 1),
-          Expanded(child: navigationShell),
-        ]),
+            const VerticalDivider(width: 1),
+            Expanded(child: navigationShell),
+          ],
+        ),
       );
     }
 
     if (isTablet && R.height(context) >= 500) {
       return Scaffold(
-        body: Row(children: [
-          NavigationRail(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (i) => navigationShell.goBranch(
-              i, initialLocation: i == navigationShell.currentIndex),
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: cs.surface,
-            indicatorColor: AppColors.primarySoft,
-            leading: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Icon(Icons.restaurant, size: 32, color: AppColors.primary),
+        body: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (i) => navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              ),
+              labelType: NavigationRailLabelType.all,
+              backgroundColor: cs.surface,
+              indicatorColor: AppColors.primarySoft,
+              leading: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Icon(
+                  Icons.restaurant,
+                  size: 32,
+                  color: AppColors.primary,
+                ),
+              ),
+              destinations: items
+                  .map(
+                    (item) => NavigationRailDestination(
+                      icon: item.index == 0 && state.cartCount > 0
+                          ? Badge(
+                              label: Text(
+                                '${state.cartCount}',
+                                style: const TextStyle(fontSize: 9),
+                              ),
+                              child: Icon(item.outline),
+                            )
+                          : Icon(item.outline),
+                      selectedIcon: item.index == 0 && state.cartCount > 0
+                          ? Badge(
+                              label: Text(
+                                '${state.cartCount}',
+                                style: const TextStyle(fontSize: 9),
+                              ),
+                              child: Icon(item.filled),
+                            )
+                          : Icon(item.filled),
+                      label: Text(t(item.labelKey)),
+                    ),
+                  )
+                  .toList(),
             ),
-            destinations: items.map((item) => NavigationRailDestination(
-              icon: item.index == 0 && state.cartCount > 0
-                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline))
-                  : Icon(item.outline),
-              selectedIcon: item.index == 0 && state.cartCount > 0
-                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled))
-                  : Icon(item.filled),
-              label: Text(t(item.labelKey)),
-            )).toList(),
-          ),
-          const VerticalDivider(width: 1),
-          Expanded(child: navigationShell),
-        ]),
+            const VerticalDivider(width: 1),
+            Expanded(child: navigationShell),
+          ],
+        ),
       );
     }
 
@@ -141,7 +202,12 @@ class MainShell extends StatelessWidget {
   List<_Nav> _buildNavItems(Role role) {
     if (role == Role.kitchen) {
       return [
-        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(
+          Icons.receipt_long_outlined,
+          Icons.receipt_long,
+          'kitchen',
+          2,
+        ),
         const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
         const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
       ];
@@ -150,7 +216,12 @@ class MainShell extends StatelessWidget {
       return [
         const _Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
         const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
-        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(
+          Icons.receipt_long_outlined,
+          Icons.receipt_long,
+          'kitchen',
+          2,
+        ),
         const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
         const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
       ];

@@ -137,7 +137,7 @@ class _DishFormPageState extends State<DishFormPage> {
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: R.isDesktop(context) ? 56 : 48,
                   child: ElevatedButton(
                     onPressed: _save,
                     child: Text(

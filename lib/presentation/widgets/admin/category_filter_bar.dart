@@ -20,8 +20,8 @@ class CategoryFilterBar extends StatelessWidget {
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
     final height = isDesktop ? 48.0 : isTablet ? 42.0 : 36.0;
-    final paddingH = isDesktop ? 18 : isTablet ? 16 : 14;
-    final paddingV = isDesktop ? 10 : isTablet ? 8 : 6;
+    final paddingH = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
+    final paddingV = isDesktop ? 10.0 : isTablet ? 8.0 : 6.0;
     final iconSize = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
     final textSize = isDesktop ? 15.0 : isTablet ? 14.0 : 13.0;
     String t(String key) => Tr.get(key, settings.state.locale);

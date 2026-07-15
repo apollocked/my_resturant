@@ -47,12 +47,12 @@ class OrderCard extends StatelessWidget {
     final elapsedMin = DateTime.now().difference(order.createdAt).inMinutes;
     final urgency = _urgencyColor(elapsedMin);
     final cardPadding = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
-    final statusFont = isDesktop ? 13 : isTablet ? 12 : 11;
-    final tableFont = isDesktop ? 20 : isTablet ? 18 : 16;
-    final totalFont = isDesktop ? 15 : isTablet ? 14 : 13;
-    final itemFont = isDesktop ? 13 : isTablet ? 12.5 : 12;
-    final notesFont = isDesktop ? 12 : isTablet ? 11.5 : 11;
-    final timelineFont = isDesktop ? 10 : isTablet ? 9.5 : 9;
+    final statusFont = isDesktop ? 13.0 : isTablet ? 12.0 : 11.0;
+    final tableFont = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
+    final totalFont = isDesktop ? 15.0 : isTablet ? 14.0 : 13.0;
+    final itemFont = isDesktop ? 13.0 : isTablet ? 12.5 : 12.0;
+    final notesFont = isDesktop ? 12.0 : isTablet ? 11.5 : 11.0;
+    final timelineFont = isDesktop ? 10.0 : isTablet ? 9.5 : 9.0;
 
     return Card(
       margin: EdgeInsets.only(bottom: isDesktop ? 0 : 10),
@@ -92,44 +92,44 @@ class OrderCard extends StatelessWidget {
           ]),
         ]),
         if (showTimeline) ...[
-          SizedBox(height: isDesktop ? 16 : 14),
+          SizedBox(height: isDesktop ? 16.0 : 14.0),
           _timeline(order.status, cs, locale, timelineFont),
         ],
-        SizedBox(height: isDesktop ? 16 : 14),
+        SizedBox(height: isDesktop ? 16.0 : 14.0),
         _itemList(order, locale, cs, itemFont),
         if (order.notes.isNotEmpty)
-          Padding(padding: const EdgeInsets.only(top: 8),
+          Padding(padding: const EdgeInsets.only(top: 8.0),
             child: Row(children: [
               Expanded(child: Text(order.notes, textAlign: TextAlign.right,
                   style: TextStyle(fontSize: notesFont, color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
             ])),
-        SizedBox(height: isDesktop ? 14 : 12),
+        SizedBox(height: isDesktop ? 14.0 : 12.0),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           if (showTime)
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant))
           else if (onNextStatus != null)
             SizedBox(
-              height: isDesktop ? 38 : 32,
+              height: isDesktop ? 38.0 : 32.0,
               child: FilledButton.icon(
                 onPressed: onNextStatus,
-                icon: Icon(Icons.arrow_forward, size: isDesktop ? 16 : 14),
-                label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14 : 12)),
+                icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
+                label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14.0 : 12.0)),
                 style: FilledButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               ),
             )
           else if (onReset != null)
             SizedBox(
-              height: isDesktop ? 38 : 32,
+              height: isDesktop ? 38.0 : 32.0,
               child: OutlinedButton.icon(
                 onPressed: onReset,
                 icon: const Icon(Icons.refresh, size: 14),
-                label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14 : 12, fontWeight: FontWeight.w600)),
+                label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14.0 : 12.0, fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               ),
             ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 16 : 12, vertical: isDesktop ? 8 : 6),
+            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 16.0 : 12.0, vertical: isDesktop ? 8.0 : 6.0),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [AppColors.primary.withValues(alpha: 0.8), AppColors.primary], begin: Alignment.topLeft, end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(10),

@@ -50,15 +50,15 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 72,
-                        height: 72,
+                        width: R.avatarSize(context),
+                        height: R.avatarSize(context),
                         decoration: const BoxDecoration(
                           color: AppColors.primarySoft,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           _isSignUp ? Icons.person_add_outlined : Icons.restaurant,
-                          size: 36,
+                          size: R.avatarSize(context) * 0.5,
                           color: AppColors.primary,
                         ),
                       ),

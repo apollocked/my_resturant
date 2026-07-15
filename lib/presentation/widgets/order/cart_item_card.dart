@@ -27,9 +27,9 @@ class CartItemCard extends StatelessWidget {
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
     final imageSize = isDesktop ? 80.0 : isTablet ? 72.0 : 64.0;
-    final nameSize = isDesktop ? 16 : isTablet ? 15 : 14;
-    final priceSize = isDesktop ? 14 : isTablet ? 13 : 12;
-    final totalSize = isDesktop ? 20 : isTablet ? 18 : 16;
+    final nameSize = isDesktop ? 16.0 : isTablet ? 15.0 : 14.0;
+    final priceSize = isDesktop ? 14.0 : isTablet ? 13.0 : 12.0;
+    final totalSize = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
     return Card(
       margin: EdgeInsets.only(bottom: isDesktop ? 14 : 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 18 : 14)),

@@ -9,8 +9,8 @@ abstract class R {
   static double height(BuildContext context) => MediaQuery.of(context).size.height;
 
   static bool isPhone(BuildContext context) => width(context) < 600;
-  static bool isTablet(BuildContext context) => width(context) >= 600 && width(context) < 900;
-  static bool isDesktop(BuildContext context) => width(context) >= 900;
+  static bool isTablet(BuildContext context) => width(context) >= 600 && width(context) < 1024;
+  static bool isDesktop(BuildContext context) => width(context) >= 1024;
   static bool isLargePhone(BuildContext context) => width(context) >= 400;
 
   static ScreenSize screenSize(BuildContext context) {
@@ -28,19 +28,19 @@ abstract class R {
   static double menuGridAspectRatio(BuildContext context) {
     if (isDesktop(context)) return 1.05;
     if (isTablet(context)) return 0.9;
-    return 0.72;
+    return 0.78;
   }
 
   static int tableGridColumns(BuildContext context) {
     final w = width(context);
-    if (w >= 900) return 8;
+    if (w >= 1024) return 8;
     if (w >= 600) return 6;
     return 4;
   }
 
   static int categoryIconColumns(BuildContext context) {
     final w = width(context);
-    if (w >= 900) return 10;
+    if (w >= 1024) return 10;
     if (w >= 600) return 8;
     return 6;
   }

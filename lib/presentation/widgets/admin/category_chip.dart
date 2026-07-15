@@ -17,14 +17,14 @@ class CategoryChip extends StatelessWidget {
     final screen = R.screenSize(context);
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
-    final paddingH = isDesktop ? 20 : isTablet ? 16 : 14;
-    final paddingV = isDesktop ? 14 : isTablet ? 10 : 8;
+    final paddingH = isDesktop ? 20.0 : isTablet ? 16.0 : 14.0;
+    final paddingV = isDesktop ? 14.0 : isTablet ? 10.0 : 8.0;
     final iconSize = isDesktop ? 20.0 : isTablet ? 17.0 : 15.0;
     final textSize = isDesktop ? 14.0 : isTablet ? 13.0 : 12.0;
     final radius = isDesktop ? 28.0 : isTablet ? 24.0 : 20.0;
-    final spacing = isDesktop ? 10 : isTablet ? 8 : 6;
+    final spacing = isDesktop ? 10.0 : isTablet ? 8.0 : 6.0;
     return Padding(
-      padding: EdgeInsets.only(left: index == 0 ? (isDesktop ? 24 : 20) : 0, right: index > 0 ? (isDesktop ? 14 : 8) : 0),
+      padding: EdgeInsets.only(left: index == 0 ? (isDesktop ? 24.0 : 20.0) : 0, right: index > 0 ? (isDesktop ? 14.0 : 8.0) : 0),
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(

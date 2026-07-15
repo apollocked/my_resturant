@@ -29,7 +29,6 @@ class OrderDetailPage extends StatelessWidget {
     final cubit = context.read<OrderCubit>();
     final canEdit = context.watch<RoleCubit>().state.role != Role.waiter;
     final isDesktop = R.isDesktop(context);
-    final isTablet = R.isTablet(context);
     final labels = {OrderStatus.pending: t('status_pending'), OrderStatus.preparing: t('status_preparing'), OrderStatus.served: t('status_served')};
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
@@ -129,10 +128,10 @@ class OrderDetailPage extends StatelessWidget {
     final isReached = dot.index <= current.index;
     final c = _colors[dot]!;
     final size = isDesktop ? 18.0 : 14.0;
-    final iconS = isDesktop ? 10 : 8;
+    final iconS = isDesktop ? 10.0 : 8.0;
     return Container(width: isReached ? size : size * 0.7, height: isReached ? size : size * 0.7,
       decoration: BoxDecoration(color: isReached ? c : cs.surface, shape: BoxShape.circle,
-        border: Border.all(color: isReached ? c : cs.outlineVariant, width: isDesktop ? 3 : 2)),
+        border: Border.all(color: isReached ? c : cs.outlineVariant, width: isDesktop ? 3.0 : 2.0)),
       child: isReached ? Icon(Icons.check, size: iconS, color: cs.onPrimary) : null);
   }
 }

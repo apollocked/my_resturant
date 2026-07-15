@@ -24,12 +24,12 @@ class FoodCardImage extends StatelessWidget {
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
     final isSelected = quantity > 0;
-    final pricePadH = isDesktop ? 14 : isTablet ? 12 : 10;
-    final pricePadV = isDesktop ? 8 : isTablet ? 6 : 5;
-    final priceFontSize = isDesktop ? 15 : isTablet ? 13 : 12;
+    final pricePadH = isDesktop ? 14.0 : isTablet ? 12.0 : 10.0;
+    final pricePadV = isDesktop ? 8.0 : isTablet ? 6.0 : 5.0;
+    final priceFontSize = isDesktop ? 15.0 : isTablet ? 13.0 : 12.0;
     final badgeSize = isDesktop ? 48.0 : isTablet ? 42.0 : 36.0;
-    final badgeFontSize = isDesktop ? 18 : isTablet ? 16 : 14;
-    final notesIconSize = isDesktop ? 22 : isTablet ? 18 : 16;
+    final badgeFontSize = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
+    final notesIconSize = isDesktop ? 22.0 : isTablet ? 18.0 : 16.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     return Expanded(
       child: GestureDetector(
