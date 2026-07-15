@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
@@ -20,6 +22,8 @@ class _KitchenPageState extends State<KitchenPage> {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
+    final role = context.watch<RoleCubit>().state.role;
+    final canEdit = role != Role.waiter;
     String t(String key) => Tr.get(key, settings.locale);
     final orders = context.watch<OrderCubit>().state.orders;
     final cubit = context.read<OrderCubit>();
@@ -49,8 +53,8 @@ class _KitchenPageState extends State<KitchenPage> {
       Expanded(child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         child: _tabIndex == 0
-            ? _orderList(activeOrders, cubit, context, t)
-            : _orderList(servedOrders, cubit, context, t),
+            ? _orderList(activeOrders, cubit, context, t, canEdit)
+            : _orderList(servedOrders, cubit, context, t, canEdit),
       )),
     ])));
   }
@@ -72,7 +76,7 @@ class _KitchenPageState extends State<KitchenPage> {
     );
   }
 
-  Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t) {
+  Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t, bool canEdit) {
     final cs = Theme.of(context).colorScheme;
     if (orders.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -94,8 +98,8 @@ class _KitchenPageState extends State<KitchenPage> {
           return GestureDetector(
             onTap: () => context.push('/order-detail', extra: o),
             child: OrderCard(order: o, showTimeline: true,
-              onNextStatus: hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-              onReset: !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+              onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+              onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
           );
         },
       ),

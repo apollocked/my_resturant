@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
@@ -25,6 +27,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   Widget build(BuildContext context) {
     final orders = context.watch<OrderCubit>().state.ordersByDate(_date);
     final settings = context.watch<SettingsCubit>().state;
+    final role = context.watch<RoleCubit>().state.role;
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
@@ -46,7 +49,20 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           Expanded(child: RefreshIndicator(
             onRefresh: () async => context.read<OrderCubit>().refresh(),
             child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
-              itemBuilder: (context, index) => OrderCard(order: orders[index], showTime: true)),
+              itemBuilder: (context, index) {
+                final order = orders[index];
+                return OrderCard(order: order, showTime: true,
+                  onReset: role == Role.admin ? () {
+                    final cubit = context.read<OrderCubit>();
+                    for (final item in order.items) {
+                      for (int i = 0; i < item.quantity; i++) {
+                        cubit.addToCart(item.recipe);
+                      }
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('order_restored'))));
+                    if (context.mounted) context.read<OrderCubit>().refresh();
+                  } : null);
+              }),
           )),
       ]))),
     );

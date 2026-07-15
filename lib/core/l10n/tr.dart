@@ -374,3 +374,6 @@ class Tr {
   static String get(String key, Locale locale) =>
       _data[locale.languageCode]?[key] ?? _data['en']?[key] ?? key;
 }
+
+
+

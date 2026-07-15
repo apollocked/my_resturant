@@ -3,8 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/role.dart';
+
+class _Nav {
+  final IconData outline, filled;
+  final String labelKey;
+  final int index;
+  const _Nav(this.outline, this.filled, this.labelKey, this.index);
+}
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -15,8 +24,25 @@ class MainShell extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     final settings = context.watch<SettingsCubit>().state;
+    final role = context.watch<RoleCubit>().state.role;
     String t(String key) => Tr.get(key, settings.locale);
     final selectedIndex = navigationShell.currentIndex;
+
+    final items = role == Role.kitchen
+      ? [_Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+         _Nav(Icons.history_outlined, Icons.history, 'history', 3),
+         _Nav(Icons.person_outline, Icons.person, 'profile', 4)]
+      : role == Role.admin
+        ? [_Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
+           _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+           _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+           _Nav(Icons.history_outlined, Icons.history, 'history', 3),
+           _Nav(Icons.person_outline, Icons.person, 'profile', 4)]
+        : [_Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
+           _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+           _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+           _Nav(Icons.person_outline, Icons.person, 'profile', 4)];
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
@@ -26,12 +52,9 @@ class MainShell extends StatelessWidget {
         ),
         child: SafeArea(
           child: Container(height: 64, padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _navItem(context, Icons.shopping_bag_outlined, Icons.shopping_bag, t('cart'), 0, state.cartCount, selectedIndex),
-              _navItem(context, Icons.menu_book_outlined, Icons.menu_book, t('menu'), 1, 0, selectedIndex),
-              _navItem(context, Icons.receipt_long_outlined, Icons.receipt_long, t('kitchen'), 2, 0, selectedIndex),
-              _navItem(context, Icons.person_outline, Icons.person, t('profile'), 3, 0, selectedIndex),
-            ]),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: items.map((item) =>
+              _navItem(context, item.outline, item.filled, t(item.labelKey), item.index, item.index == 0 ? state.cartCount : 0, selectedIndex)
+            ).toList()),
           ),
         ),
       ),

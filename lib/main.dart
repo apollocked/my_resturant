@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/cubits/admin_auth_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
@@ -12,13 +13,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final auth = AdminAuthCubit();
   await auth.load();
-  runApp(MyApp(repo: AppRepository(), auth: auth));
+  final role = RoleCubit();
+  await role.load();
+  runApp(MyApp(repo: AppRepository(), auth: auth, role: role));
 }
 
 class MyApp extends StatelessWidget {
   final AppRepository repo;
   final AdminAuthCubit auth;
-  const MyApp({super.key, required this.repo, required this.auth});
+  final RoleCubit role;
+  const MyApp({super.key, required this.repo, required this.auth, required this.role});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => OrderCubit(repo: repo)),
         BlocProvider(create: (_) => SettingsCubit()),
         BlocProvider(create: (_) => auth),
+        BlocProvider(create: (_) => role),
       ],
       child: const AppView(),
     );
