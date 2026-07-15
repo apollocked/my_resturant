@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/router/app_router.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -60,7 +63,13 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
-    return MaterialApp.router(
+    String t(String key) => Tr.get(key, settings.locale);
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _showExitDialog(context, t);
+      },
+      child: MaterialApp.router(
       title: 'Restaurant App',
       debugShowCheckedModeBanner: false,
       locale: settings.locale,
@@ -82,6 +91,28 @@ class AppView extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: settings.themeMode,
       routerConfig: appRouter,
+    ),
+    );
+  }
+
+  void _showExitDialog(BuildContext context, String Function(String) t) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('app_name')),
+        content: Text(t('exit_confirm')),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            onPressed: () {
+              Navigator.pop(ctx);
+              SystemNavigator.pop();
+            },
+            child: Text(t('exit'), style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
   }
 }

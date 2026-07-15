@@ -149,7 +149,7 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => accountCubit.logout(),
+                onPressed: () => _confirmLogout(context, accountCubit, roleCubit, t),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.error,
                   side: const BorderSide(color: AppColors.error),
@@ -329,5 +329,27 @@ class ProfilePage extends StatelessWidget {
         ),
       );
     }
+  }
+
+  void _confirmLogout(BuildContext context, AccountCubit acct, RoleCubit role, String Function(String) t) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('logout')),
+        content: Text(t('logout_confirm')),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            onPressed: () {
+              Navigator.pop(ctx);
+              acct.logout();
+              role.logout();
+            },
+            child: Text(t('logout'), style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 }

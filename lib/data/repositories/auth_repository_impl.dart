@@ -33,7 +33,10 @@ class LocalAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> logout() async {}
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_loggedInRoleKey);
+  }
 
   @override
   Future<String?> getAccountEmail() async {

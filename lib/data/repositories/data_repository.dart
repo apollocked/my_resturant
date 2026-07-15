@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:io';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
@@ -26,8 +28,20 @@ class AppRepository implements DataRepository {
   }
 
   @override
-  Future<void> editRecipe(String id, {String? name, double? price, String? category, String? description}) async {
-    await db.updateRecipeRecord(id, name: name, price: price, category: category, description: description);
+  Future<void> editRecipe(
+    String id, {
+    String? name,
+    double? price,
+    String? category,
+    String? description,
+  }) async {
+    await db.updateRecipeRecord(
+      id,
+      name: name,
+      price: price,
+      category: category,
+      description: description,
+    );
     _emitRecipes();
   }
 
@@ -43,12 +57,23 @@ class AppRepository implements DataRepository {
     _emitRecipes();
   }
 
+  Future<String> uploadImage(String recipeId, Uint8List bytes) async {
+    final dir = Directory(
+      'C:\\Users\\hamab\\Desktop\\Flutter_Projects\\my_resturant\\uploads\\recipes',
+    );
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final file = File('${dir.path}\\$recipeId.jpg');
+    await file.writeAsBytes(bytes);
+    return file.path;
+  }
+
   @override
   Stream<List<Recipe>> watchRecipes() => _recipeCtrl.stream;
 
   // Categories
   Future<List<Map<String, String>>> loadCategories() => db.getAllCategoryMaps();
-  Future<void> addCategory(String key, String name, String icon) => db.insertCategory(key, name, icon);
+  Future<void> addCategory(String key, String name, String icon) =>
+      db.insertCategory(key, name, icon);
 
   // Orders
   @override

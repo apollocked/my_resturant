@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
@@ -14,14 +15,14 @@ class SupabaseDataRepository implements DataRepository {
   // ── Recipes ───────────────────────────────────────────────
 
   Recipe _mapRecipe(Map<String, dynamic> row) => Recipe(
-        id: row['id'] as String,
-        name: row['name'] as String,
-        imageUrl: row['image_url'] as String,
-        price: (row['price'] as num).toDouble(),
-        description: row['description'] as String,
-        category: row['category'] as String,
-        available: row['available'] as bool,
-      );
+    id: row['id'] as String,
+    name: row['name'] as String,
+    imageUrl: row['image_url'] as String,
+    price: (row['price'] as num).toDouble(),
+    description: row['description'] as String,
+    category: row['category'] as String,
+    available: row['available'] as bool,
+  );
 
   @override
   Future<List<Recipe>> loadRecipes() async {
@@ -44,8 +45,13 @@ class SupabaseDataRepository implements DataRepository {
   }
 
   @override
-  Future<void> editRecipe(String id,
-      {String? name, double? price, String? category, String? description}) async {
+  Future<void> editRecipe(
+    String id, {
+    String? name,
+    double? price,
+    String? category,
+    String? description,
+  }) async {
     final updates = <String, dynamic>{};
     if (name != null) updates['name'] = name;
     if (price != null) updates['price'] = price;
@@ -56,6 +62,18 @@ class SupabaseDataRepository implements DataRepository {
     }
   }
 
+  Future<String> uploadImage(String recipeId, Uint8List bytes) async {
+    final path = 'recipes/$recipeId.jpg';
+    await _client.storage
+        .from('recipe_images')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
+    return _client.storage.from('recipe_images').getPublicUrl(path);
+  }
+
   @override
   Future<void> removeRecipe(String id) async {
     await _client.from('recipes').delete().eq('id', id);
@@ -63,7 +81,11 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> toggleRecipe(String id) async {
-    final data = await _client.from('recipes').select('available').eq('id', id).single();
+    final data = await _client
+        .from('recipes')
+        .select('available')
+        .eq('id', id)
+        .single();
     await _client
         .from('recipes')
         .update({'available': !(data['available'] as bool)})
@@ -72,9 +94,10 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Stream<List<Recipe>> watchRecipes() {
-    return _client.from('recipes').stream(primaryKey: ['id']).map(
-          (data) => data.map(_mapRecipe).toList(),
-        );
+    return _client
+        .from('recipes')
+        .stream(primaryKey: ['id'])
+        .map((data) => data.map(_mapRecipe).toList());
   }
 
   // ── Orders ────────────────────────────────────────────────
@@ -121,14 +144,20 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> saveOrder(Order order) async {
-    final itemsJson = jsonEncode(order.items.map((item) => {
-      'recipe_id': item.recipe.id,
-      'recipe_name': item.recipe.name,
-      'recipe_price': item.recipe.price,
-      'recipe_image_url': item.recipe.imageUrl,
-      'quantity': item.quantity,
-      'notes': item.notes,
-    }).toList());
+    final itemsJson = jsonEncode(
+      order.items
+          .map(
+            (item) => {
+              'recipe_id': item.recipe.id,
+              'recipe_name': item.recipe.name,
+              'recipe_price': item.recipe.price,
+              'recipe_image_url': item.recipe.imageUrl,
+              'quantity': item.quantity,
+              'notes': item.notes,
+            },
+          )
+          .toList(),
+    );
 
     await _client.from('orders').insert({
       'id': order.id,
@@ -160,7 +189,9 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Future<Map<String, String>> loadSettings() async {
     final data = await _client.from('app_settings').select();
-    return {for (final row in data) row['key'] as String: row['value'] as String};
+    return {
+      for (final row in data) row['key'] as String: row['value'] as String,
+    };
   }
 
   @override
@@ -177,6 +208,11 @@ class SupabaseDataRepository implements DataRepository {
     return _client
         .from('app_settings')
         .stream(primaryKey: ['key'])
-        .map((data) => {for (final row in data) row['key'] as String: row['value'] as String});
+        .map(
+          (data) => {
+            for (final row in data)
+              row['key'] as String: row['value'] as String,
+          },
+        );
   }
 }

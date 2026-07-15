@@ -70,6 +70,7 @@ class Tr {
       'report': 'ڕاپۆرت',
       'report_sub': 'ئامار و ڕیزبەندی خواردنەکان',
       'logout': 'چوونەدەرەوە',
+      'logout_confirm': 'دڵنیایت لە چوونەدەرەوە؟',
       'add_section': 'بەش',
       'add_food': 'خواردن',
       // food management page
@@ -170,6 +171,9 @@ class Tr {
       'enter_pin_for': 'پاسکۆد بۆ {role} داخڵ بکە',
       'verify': 'پشتڕاستکردنەوە',
       'show_passwords': 'نیشاندانی پاسکۆدەکان',
+      'exit_confirm': 'دەتەوێت لە ئەپەکە بچیتە دەرەوە؟',
+      'exit': 'چوونەدەرەوە',
+      'app_name': 'ڕێستۆرانتەکەم',
     },
     'ar': {
       'settings': 'الإعدادات',
@@ -235,6 +239,7 @@ class Tr {
       'report': 'التقرير',
       'report_sub': 'إحصاءات وترتيب الأطعمة',
       'logout': 'تسجيل الخروج',
+      'logout_confirm': 'هل أنت متأكد من تسجيل الخروج؟',
       'add_section': 'قسم',
       'add_food': 'طعام',
       'food_mgmt_title': 'إدارة الأطعمة',
@@ -322,6 +327,9 @@ class Tr {
       'enter_pin_for': 'أدخل رمز المرور لـ {role}',
       'verify': 'تحقق',
       'show_passwords': 'إظهار رموز المرور',
+      'exit_confirm': 'هل تريد الخروج من التطبيق؟',
+      'exit': 'خروج',
+      'app_name': 'مطعمي',
     },
     'en': {
       'settings': 'Settings',
@@ -387,6 +395,7 @@ class Tr {
       'report': 'Report',
       'report_sub': 'Statistics and food ranking',
       'logout': 'Log out',
+      'logout_confirm': 'Are you sure you want to log out?',
       'add_section': 'Section',
       'add_food': 'Food',
       'food_mgmt_title': 'Food Management',
@@ -474,6 +483,9 @@ class Tr {
       'enter_pin_for': 'Enter passcode for {role}',
       'verify': 'Verify',
       'show_passwords': 'Show passcodes',
+      'exit_confirm': 'Do you want to exit the app?',
+      'exit': 'Exit',
+      'app_name': 'My Restaurant',
     },
   };
 

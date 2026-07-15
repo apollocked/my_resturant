@@ -114,8 +114,19 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> saveLoggedInRole(Role? role) async {}
+  Future<void> saveLoggedInRole(Role? role) async {
+    final user = _client.auth.currentUser;
+    if (user == null) return;
+    await _client.from('profiles').update({'role': role?.name}).eq('id', user.id);
+  }
 
   @override
-  Future<Role?> getLoggedInRole() async => null;
+  Future<Role?> getLoggedInRole() async {
+    final user = _client.auth.currentUser;
+    if (user == null) return null;
+    final data = await _client.from('profiles').select('role').eq('id', user.id).single();
+    final name = data['role'] as String?;
+    if (name == null) return null;
+    return Role.values.firstWhere((r) => r.name == name);
+  }
 }
