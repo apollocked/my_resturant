@@ -10,11 +10,8 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
-// Swap imports below to switch between mock (local) and real (Supabase) repos
 import 'package:my_resturant/data/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/auth_repository_impl.dart';
-// import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
-// import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +21,14 @@ void main() async {
     publishableKey: SupabaseCredentials.publishableKey,
   );
 
-  // Swap constructors below when using Supabase repos
   final authRepo = LocalAuthRepository();
   final dataRepo = AppRepository();
-  // final authRepo = SupabaseAuthRepository();
-  // final dataRepo = SupabaseDataRepository();
+
+  if (!await authRepo.isAccountCreated()) {
+    await authRepo.createAccount('admin@demo.com', 'password');
+    await authRepo.savePasscodes('1111', '2222', '3333');
+  }
+
   final acct = AccountCubit(repo: authRepo);
   await acct.load();
   final role = RoleCubit(repo: authRepo);

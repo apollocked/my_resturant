@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -17,6 +18,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
   Role _selected = Role.waiter;
   final _pinCtl = TextEditingController();
   bool _loading = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -113,6 +115,11 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                if (_error case final err?)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                  ),
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -213,22 +220,21 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
 
   Future<void> _login() async {
     if (_pinCtl.text.isEmpty) return;
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
     final ok = await context.read<RoleCubit>().loginAsync(
       _selected,
       _pinCtl.text,
     );
     if (!mounted) return;
-    setState(() => _loading = false);
-    if (!ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            Tr.get('pin_invalid', context.read<SettingsCubit>().state.locale),
-          ),
-          backgroundColor: AppColors.error,
-        ),
-      );
+    if (ok) {
+      setState(() => _loading = false);
+      context.go('/menu');
+    } else {
+      setState(() {
+        _loading = false;
+        _error = Tr.get('pin_invalid', context.read<SettingsCubit>().state.locale);
+      });
+      _pinCtl.clear();
     }
   }
 }

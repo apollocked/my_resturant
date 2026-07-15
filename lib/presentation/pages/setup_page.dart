@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -17,6 +18,7 @@ class _SetupPageState extends State<SetupPage> {
   final _kitchenCtl = TextEditingController();
   final _adminCtl = TextEditingController();
   final bool _obscure = true;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -95,24 +97,35 @@ class _SetupPageState extends State<SetupPage> {
                     cs,
                   ),
                   const SizedBox(height: 28),
+                  if (context.watch<RoleCubit>().state.errorMessage case final err?)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                    ),
                   SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: FilledButton(
-                      onPressed: _submit,
+                      onPressed: _loading ? null : _submit,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: Text(
-                        t('setup_btn'),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
+                      child: _loading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text(
+                              t('setup_btn'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
                     ),
                   ),
                 ],
@@ -152,12 +165,20 @@ class _SetupPageState extends State<SetupPage> {
     );
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    context.read<RoleCubit>().configure(
-      _waiterCtl.text,
-      _kitchenCtl.text,
-      _adminCtl.text,
-    );
+    setState(() => _loading = true);
+    context.read<RoleCubit>().clearError();
+    try {
+      await context.read<RoleCubit>().configure(
+        _waiterCtl.text,
+        _kitchenCtl.text,
+        _adminCtl.text,
+      );
+    } catch (_) {}
+    if (mounted) {
+      setState(() => _loading = false);
+      context.go('/menu');
+    }
   }
 }

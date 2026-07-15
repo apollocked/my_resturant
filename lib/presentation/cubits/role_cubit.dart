@@ -6,7 +6,8 @@ class RoleState {
   final Role role;
   final bool isConfigured;
   final bool isLoggedIn;
-  const RoleState({this.role = Role.admin, this.isConfigured = false, this.isLoggedIn = false});
+  final String? errorMessage;
+  const RoleState({this.role = Role.admin, this.isConfigured = false, this.isLoggedIn = false, this.errorMessage});
 }
 
 class RoleCubit extends Cubit<RoleState> {
@@ -19,9 +20,20 @@ class RoleCubit extends Cubit<RoleState> {
     emit(RoleState(isConfigured: configured));
   }
 
+  void clearError() => emit(RoleState(
+    isConfigured: state.isConfigured,
+    isLoggedIn: state.isLoggedIn,
+    role: state.role,
+  ));
+
   Future<void> configure(String waiterPin, String kitchenPin, String adminPin) async {
-    await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
-    emit(const RoleState(isConfigured: true));
+    try {
+      await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
+      emit(const RoleState(isConfigured: true));
+    } catch (e) {
+      emit(RoleState(errorMessage: '$e'));
+      rethrow;
+    }
   }
 
   bool login(Role role, String pin) {
@@ -29,11 +41,16 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<bool> loginAsync(Role role, String pin) async {
-    final ok = await _repo.verifyPasscode(role, pin);
-    if (ok) {
-      emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
+    try {
+      final ok = await _repo.verifyPasscode(role, pin);
+      if (ok) {
+        emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
+      }
+      return ok;
+    } catch (e) {
+      emit(RoleState(errorMessage: '$e'));
+      return false;
     }
-    return ok;
   }
 
   Future<void> switchRole(Role role, {String? pin}) async {

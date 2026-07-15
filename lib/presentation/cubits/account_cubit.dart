@@ -4,7 +4,8 @@ import 'package:my_resturant/domain/repositories/auth_repository.dart';
 class AccountState {
   final bool isLoggedIn;
   final String? email;
-  const AccountState({this.isLoggedIn = false, this.email});
+  final String? errorMessage;
+  const AccountState({this.isLoggedIn = false, this.email, this.errorMessage});
 }
 
 class AccountCubit extends Cubit<AccountState> {
@@ -20,23 +21,38 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  Future<void> createAccount(String email, String password) async {
-    await _repo.createAccount(email, password);
-    emit(AccountState(
-      isLoggedIn: true,
-      email: email.trim().toLowerCase(),
-    ));
-  }
+  void clearError() => emit(AccountState(
+    isLoggedIn: state.isLoggedIn,
+    email: state.email,
+  ));
 
-  Future<bool> login(String email, String password) async {
-    final ok = await _repo.login(email, password);
-    if (ok) {
+  Future<void> createAccount(String email, String password) async {
+    try {
+      await _repo.createAccount(email, password);
       emit(AccountState(
         isLoggedIn: true,
         email: email.trim().toLowerCase(),
       ));
+    } catch (e) {
+      emit(AccountState(errorMessage: '$e'));
+      rethrow;
     }
-    return ok;
+  }
+
+  Future<bool> login(String email, String password) async {
+    try {
+      final ok = await _repo.login(email, password);
+      if (ok) {
+        emit(AccountState(
+          isLoggedIn: true,
+          email: email.trim().toLowerCase(),
+        ));
+      }
+      return ok;
+    } catch (e) {
+      emit(AccountState(errorMessage: '$e'));
+      return false;
+    }
   }
 
   Future<void> logout() async {

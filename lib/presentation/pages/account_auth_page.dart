@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -148,11 +149,19 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  if (context.watch<AccountCubit>().state.errorMessage case final err?)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                    ),
                   TextButton(
-                    onPressed: () => setState(() {
-                      _isSignUp = !_isSignUp;
-                      _formKey.currentState?.reset();
-                    }),
+                    onPressed: () {
+                      context.read<AccountCubit>().clearError();
+                      setState(() {
+                        _isSignUp = !_isSignUp;
+                        _formKey.currentState?.reset();
+                      });
+                    },
                     child: Text(
                       _isSignUp ? t('already_have_account') : t('dont_have_account'),
                       style: TextStyle(color: cs.primary, fontSize: 13),
@@ -170,33 +179,25 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
+    context.read<AccountCubit>().clearError();
     try {
       final cubit = context.read<AccountCubit>();
       if (_isSignUp) {
         await cubit.createAccount(_emailCtl.text, _passCtl.text);
       } else {
         final ok = await cubit.login(_emailCtl.text, _passCtl.text);
-        if (!ok && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(Tr.get('account_invalid', context.read<SettingsCubit>().state.locale)),
-              backgroundColor: AppColors.error,
-            ),
-          );
-          setState(() => _loading = false);
+        if (!ok) {
+          if (mounted) setState(() => _loading = false);
           return;
         }
       }
       if (mounted) {
         await context.read<RoleCubit>().load();
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
-        );
-      }
+    } catch (_) {}
+    if (mounted) {
+      setState(() => _loading = false);
+      context.go('/menu');
     }
-    if (mounted) setState(() => _loading = false);
   }
 }
