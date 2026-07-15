@@ -5,6 +5,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -40,7 +41,7 @@ class _SetupPageState extends State<SetupPage> {
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
+                padding: EdgeInsets.all(R.padding(context)),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -63,7 +64,7 @@ class _SetupPageState extends State<SetupPage> {
                       Text(
                         t('setup_title'),
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: R.fontXl(context),
                           fontWeight: FontWeight.w800,
                           color: cs.onSurface,
                         ),
@@ -71,7 +72,7 @@ class _SetupPageState extends State<SetupPage> {
                       const SizedBox(height: 8),
                       Text(
                         t('setup_subtitle'),
-                        style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                        style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
@@ -102,7 +103,7 @@ class _SetupPageState extends State<SetupPage> {
                       if (context.watch<RoleCubit>().state.errorMessage case final err?)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                          child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
                         ),
                       SizedBox(
                         width: double.infinity,
@@ -123,9 +124,9 @@ class _SetupPageState extends State<SetupPage> {
                                 )
                               : Text(
                                   t('setup_btn'),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 15,
+                                    fontSize: R.fontMd(context),
                                   ),
                                 ),
                         ),

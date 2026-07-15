@@ -93,7 +93,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                   t('choose_icon'),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: R.fontMd(context),
                     color: cs.onSurface,
                   ),
                 ),

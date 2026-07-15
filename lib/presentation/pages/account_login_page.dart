@@ -4,6 +4,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class AccountLoginPage extends StatefulWidget {
   const AccountLoginPage({super.key});
@@ -35,7 +36,7 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
+            padding: EdgeInsets.all(R.padding(context)),
             child: Form(
               key: _formKey,
               child: Column(
@@ -58,7 +59,7 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
                   Text(
                     t('restaurant_name'),
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: R.fontXl(context),
                       fontWeight: FontWeight.w800,
                       color: cs.onSurface,
                     ),
@@ -66,7 +67,7 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
                   const SizedBox(height: 6),
                   Text(
                     t('account_login_subtitle'),
-                    style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                    style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
@@ -136,9 +137,9 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
                             )
                           : Text(
                               t('login'),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 15,
+                                fontSize: R.fontMd(context),
                               ),
                             ),
                     ),

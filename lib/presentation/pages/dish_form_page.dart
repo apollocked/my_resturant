@@ -10,6 +10,7 @@ import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/admin/dish_form_fields.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class DishFormPage extends StatefulWidget {
   final Recipe? recipe;
@@ -118,7 +119,7 @@ class _DishFormPageState extends State<DishFormPage> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(R.padding(context)),
             child: Column(
               children: [
                 DishFormFields(
@@ -143,7 +144,7 @@ class _DishFormPageState extends State<DishFormPage> {
                       _isEditing ? _t('update_btn') : _t('add_btn'),
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 15,
+                        fontSize: R.fontMd(context),
                       ),
                     ),
                   ),

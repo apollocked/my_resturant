@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -28,51 +29,37 @@ class MainShell extends StatelessWidget {
     String t(String key) => Tr.get(key, settings.locale);
     final selectedIndex = navigationShell.currentIndex;
 
-    final items = role == Role.kitchen
-        ? [
-            const _Nav(
-              Icons.receipt_long_outlined,
-              Icons.receipt_long,
-              'kitchen',
-              2,
+    final items = _buildNavItems(role);
+
+    if (R.isTablet(context) && R.height(context) >= 500) {
+      return Scaffold(
+        body: Row(children: [
+          NavigationRail(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (i) => navigationShell.goBranch(
+              i, initialLocation: i == navigationShell.currentIndex),
+            labelType: NavigationRailLabelType.all,
+            backgroundColor: cs.surface,
+            indicatorColor: AppColors.primarySoft,
+            leading: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Icon(Icons.restaurant, size: 32, color: AppColors.primary),
             ),
-            const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
-            const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
-          ]
-        : role == Role.admin
-        ? [
-            const _Nav(
-              Icons.shopping_bag_outlined,
-              Icons.shopping_bag,
-              'cart',
-              0,
-            ),
-            const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
-            const _Nav(
-              Icons.receipt_long_outlined,
-              Icons.receipt_long,
-              'kitchen',
-              2,
-            ),
-            const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
-            const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
-          ]
-        : [
-            const _Nav(
-              Icons.shopping_bag_outlined,
-              Icons.shopping_bag,
-              'cart',
-              0,
-            ),
-            const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
-            const _Nav(
-              Icons.receipt_long_outlined,
-              Icons.receipt_long,
-              'kitchen',
-              2,
-            ),
-            const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
-          ];
+            destinations: items.map((item) => NavigationRailDestination(
+              icon: item.index == 0 && state.cartCount > 0
+                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline))
+                  : Icon(item.outline),
+              selectedIcon: item.index == 0 && state.cartCount > 0
+                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled))
+                  : Icon(item.filled),
+              label: Text(t(item.labelKey)),
+            )).toList(),
+          ),
+          const VerticalDivider(width: 1),
+          Expanded(child: navigationShell),
+        ]),
+      );
+    }
 
     return Scaffold(
       body: navigationShell,
@@ -111,6 +98,31 @@ class MainShell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<_Nav> _buildNavItems(Role role) {
+    if (role == Role.kitchen) {
+      return [
+        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
+        const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
+      ];
+    }
+    if (role == Role.admin) {
+      return [
+        const _Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
+        const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
+        const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
+      ];
+    }
+    return [
+      const _Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
+      const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+      const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+      const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
+    ];
   }
 
   Widget _navItem(

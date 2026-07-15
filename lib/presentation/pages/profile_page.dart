@@ -11,6 +11,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/profile/action_buttons_row.dart';
 import 'package:my_resturant/presentation/widgets/profile/settings_button.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

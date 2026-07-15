@@ -118,8 +118,8 @@ class OrderCubit extends Cubit<OrderState> {
   void setTableCount(int v) {
     final names = Map<int, String>.from(state.tableNames);
     names.removeWhere((k, _) => k > v);
-    emit(state.copyWith(tableCount: v.clamp(1, 20), tableNames: names));
-    _repo.saveSetting('tableCount', v.clamp(1, 20).toString());
+    emit(state.copyWith(tableCount: v.clamp(1, 35), tableNames: names));
+    _repo.saveSetting('tableCount', v.clamp(1, 35).toString());
   }
 
   void setTableName(int n, String name) {

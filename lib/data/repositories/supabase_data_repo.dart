@@ -60,6 +60,7 @@ class SupabaseDataRepository implements DataRepository {
     }
   }
 
+  @override
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
     final path = 'recipes/$recipeId.jpg';
     await _client.storage

@@ -7,6 +7,7 @@ import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class RoleLoginPage extends StatefulWidget {
   const RoleLoginPage({super.key});
@@ -38,7 +39,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
+                padding: EdgeInsets.all(R.padding(context)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -59,7 +60,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                     Text(
                       t('role_login_title'),
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: R.fontXl(context),
                         fontWeight: FontWeight.w800,
                         color: cs.onSurface,
                       ),
@@ -67,13 +68,13 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                     const SizedBox(height: 6),
                     Text(
                       t('role_login_subtitle'),
-                      style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                      style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
                     ),
                     const SizedBox(height: 28),
                     Text(
                       t('choose_role'),
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: R.fontMd(context),
                         fontWeight: FontWeight.w600,
                         color: cs.onSurfaceVariant,
                       ),
@@ -120,7 +121,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                     if (_error case final err?)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                        child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
                       ),
                     SizedBox(
                       width: double.infinity,
@@ -144,9 +145,9 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                               )
                             : Text(
                                 t('enter'),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 15,
+                                  fontSize: R.fontMd(context),
                                 ),
                               ),
                       ),

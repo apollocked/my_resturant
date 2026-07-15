@@ -9,6 +9,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenPage extends StatefulWidget {
   const KitchenPage({super.key});
@@ -32,12 +33,12 @@ class _KitchenPageState extends State<KitchenPage> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(body: SafeArea(child: Column(children: [
-      Padding(padding: const EdgeInsets.fromLTRB(20, 16, 20, 0), child: Row(children: [
+      Padding(      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 0), child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(t('kitchen_title'), style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: cs.onSurface)),
+          Text(t('kitchen_title'), style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface)),
           const SizedBox(height: 2),
           Text(t('orders_count').replaceAll('{count}', '${orders.length}'),
-              style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+              style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         ])),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -80,17 +81,17 @@ class _KitchenPageState extends State<KitchenPage> {
     final cs = Theme.of(context).colorScheme;
     if (orders.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-          child: Icon(Icons.receipt_long_outlined, size: 44, color: cs.onSurfaceVariant)),
+        Container(width: R.hp(context, 22), height: R.hp(context, 22), decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+          child: Icon(Icons.receipt_long_outlined, size: R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
         const SizedBox(height: 20),
-        Text(t('kitchen_empty'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
+        Text(t('kitchen_empty'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
       ]));
     }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
       child: ListView.builder(
         key: ValueKey(_tabIndex),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
         itemCount: orders.length,
         itemBuilder: (context, index) {
           final o = orders[index];

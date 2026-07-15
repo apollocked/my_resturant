@@ -189,95 +189,101 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(R.padding(context)),
           child: Column(
             children: [
-              const SizedBox(height: 8),
-              const SizedBox(height: 40),
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primary, width: 2),
-                ),
-                child: const Icon(
-                  Icons.table_restaurant,
-                  size: 48,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                t('select_table'),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: cs.onSurface,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: R.tableGridColumns(context),
-                    crossAxisSpacing: R.gridSpacing(context),
-                    mainAxisSpacing: R.gridSpacing(context),
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: s.tableCount,
-                  itemBuilder: (context, i) {
-                    final n = i + 1;
-                    final locked = s.reservedTables.contains(n);
-                    return Material(
-                      color: locked ? cs.outline : AppColors.primary,
-                      borderRadius: BorderRadius.circular(14),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: locked
-                            ? null
-                            : () => context.read<OrderCubit>().setSelectedTable(
-                                n,
-                              ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (locked) ...[
-                              Icon(Icons.lock, color: cs.surface, size: 20),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${t('table')} $n',
-                                style: TextStyle(
-                                  color: cs.surface,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ] else ...[
-                              Text(
-                                '$n',
-                                style: TextStyle(
-                                  color: cs.surface,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                t('table'),
-                                style: TextStyle(
-                                  color: cs.surface.withValues(alpha: 0.7),
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ],
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: R.hp(context, 2)),
+                      SizedBox(height: R.hp(context, 1)),
+                      Container(
+                        width: R.isTablet(context) ? 120 : 100,
+                        height: R.isTablet(context) ? 120 : 100,
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySoft,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.primary, width: 2),
+                        ),
+                        child: Icon(
+                          Icons.table_restaurant,
+                          size: R.isTablet(context) ? 60 : 48,
+                          color: AppColors.primary,
                         ),
                       ),
-                    );
-                  },
+                      SizedBox(height: R.hp(context, 3)),
+                      Text(
+                        t('select_table'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: R.fontXl(context),
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: R.hp(context, 3)),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: R.tableGridColumns(context),
+                          crossAxisSpacing: R.gridSpacing(context),
+                          mainAxisSpacing: R.gridSpacing(context),
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: s.tableCount,
+                        itemBuilder: (context, i) {
+                          final n = i + 1;
+                          final locked = s.reservedTables.contains(n);
+                          return Material(
+                            color: locked ? cs.outline : AppColors.primary,
+                            borderRadius: BorderRadius.circular(14),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: locked
+                                  ? null
+                                  : () => context.read<OrderCubit>().setSelectedTable(n),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (locked) ...[
+                                    Icon(Icons.lock, color: cs.surface, size: 20),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${t('table')} $n',
+                                      style: TextStyle(
+                                        color: cs.surface,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ] else ...[
+                                    Text(
+                                      '$n',
+                                      style: TextStyle(
+                                        color: cs.surface,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      t('table'),
+                                      style: TextStyle(
+                                        color: cs.surface.withValues(alpha: 0.7),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

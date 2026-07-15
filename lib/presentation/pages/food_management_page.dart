@@ -10,6 +10,7 @@ import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/edit_recipe_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_filter_bar.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class FoodManagementPage extends StatefulWidget {
   const FoodManagementPage({super.key});
@@ -115,7 +116,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                             Text(
                               t('no_food_found'),
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: R.fontLg(context),
                                 fontWeight: FontWeight.w600,
                                 color: cs.onSurface,
                               ),
@@ -124,7 +125,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
                         itemCount: dishes.length,
                         itemBuilder: (context, index) {
                           final r = dishes[index];
@@ -143,14 +144,14 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                                 r.name,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+                                  fontSize: R.fontMd(context),
                                   color: cs.onSurface,
                                 ),
                               ),
                               subtitle: Text(
                                 '${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: R.fontSm(context),
                                   color: cs.onSurfaceVariant,
                                 ),
                               ),

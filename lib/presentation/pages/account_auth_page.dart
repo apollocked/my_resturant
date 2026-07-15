@@ -6,6 +6,7 @@ import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class AccountAuthPage extends StatefulWidget {
   const AccountAuthPage({super.key});
@@ -42,7 +43,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
+                padding: EdgeInsets.all(R.padding(context)),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -65,7 +66,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       Text(
                         _isSignUp ? t('create_account_title') : t('restaurant_name'),
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: R.fontXl(context),
                           fontWeight: FontWeight.w800,
                           color: cs.onSurface,
                         ),
@@ -73,7 +74,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       const SizedBox(height: 6),
                       Text(
                         _isSignUp ? t('create_account_subtitle') : t('account_login_subtitle'),
-                        style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                        style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
                       ),
                       const SizedBox(height: 32),
                       TextFormField(
@@ -146,7 +147,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                                 )
                               : Text(
                                   _isSignUp ? t('create_account_btn') : t('login'),
-                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context)),
                                 ),
                         ),
                       ),
@@ -154,7 +155,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       if (context.watch<AccountCubit>().state.errorMessage case final err?)
                         Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                          child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
                         ),
                       TextButton(
                         onPressed: () {
@@ -166,7 +167,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                         },
                         child: Text(
                           _isSignUp ? t('already_have_account') : t('dont_have_account'),
-                          style: TextStyle(color: cs.primary, fontSize: 13),
+                          style: TextStyle(color: cs.primary, fontSize: R.fontSm(context)),
                         ),
                       ),
                     ],

@@ -10,6 +10,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -32,13 +33,13 @@ class OrderDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(order.displayTable)),
       body: SafeArea(child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(R.padding(context)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
               child: Text(labels[order.status]!, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 13))),
-            Text('${order.totalPrice.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.primary)),
+            Text('${order.totalPrice.toInt()} ${t('currency_suffix')}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.fontXl(context), color: AppColors.primary)),
           ]),
           const SizedBox(height: 20),
           _buildTimeline(order.status, t, cs),
@@ -46,7 +47,7 @@ class OrderDetailPage extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
-            Text(t('foods'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: cs.onSurface)),
+            Text(t('foods'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w700, color: cs.onSurface)),
           ]),
           const SizedBox(height: 12),
           ...order.items.map((item) => _itemCard(item, t, cs)),
@@ -61,13 +62,13 @@ class OrderDetailPage extends StatelessWidget {
               SizedBox(width: double.infinity, child: FilledButton(
                 onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); context.pop(); },
                 style: FilledButton.styleFrom(backgroundColor: color, padding: const EdgeInsets.symmetric(vertical: 14)),
-                child: Text(nextLabel[order.status]!, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                child: Text(nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context))),
               ))
             else
               SizedBox(width: double.infinity, child: OutlinedButton(
                 onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); context.pop(); },
                 style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                child: Text(t('again'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                child: Text(t('again'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context))),
               )),
           ],
         ]),
