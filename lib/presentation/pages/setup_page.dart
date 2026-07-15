@@ -35,104 +35,115 @@ class _SetupPageState extends State<SetupPage> {
     String t(String key) => Tr.get(key, settings.locale);
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primarySoft,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.lock_outline,
-                      size: 36,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    t('setup_title'),
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    t('setup_subtitle'),
-                    style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  _passField(
-                    _waiterCtl,
-                    t('waiter'),
-                    Icons.room_service_outlined,
-                    t,
-                    cs,
-                  ),
-                  const SizedBox(height: 14),
-                  _passField(
-                    _kitchenCtl,
-                    t('kitchen'),
-                    Icons.restaurant_outlined,
-                    t,
-                    cs,
-                  ),
-                  const SizedBox(height: 14),
-                  _passField(
-                    _adminCtl,
-                    t('admin'),
-                    Icons.admin_panel_settings_outlined,
-                    t,
-                    cs,
-                  ),
-                  const SizedBox(height: 28),
-                  if (context.watch<RoleCubit>().state.errorMessage case final err?)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
-                    ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: FilledButton(
-                      onPressed: _loading ? null : _submit,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 72,
+                        height: 72,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primarySoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lock_outline,
+                          size: 36,
+                          color: AppColors.primary,
                         ),
                       ),
-                      child: _loading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text(
-                              t('setup_btn'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
+                      const SizedBox(height: 20),
+                      Text(
+                        t('setup_title'),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        t('setup_subtitle'),
+                        style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      _passField(
+                        _waiterCtl,
+                        t('waiter'),
+                        Icons.room_service_outlined,
+                        t,
+                        cs,
+                      ),
+                      const SizedBox(height: 14),
+                      _passField(
+                        _kitchenCtl,
+                        t('kitchen'),
+                        Icons.restaurant_outlined,
+                        t,
+                        cs,
+                      ),
+                      const SizedBox(height: 14),
+                      _passField(
+                        _adminCtl,
+                        t('admin'),
+                        Icons.admin_panel_settings_outlined,
+                        t,
+                        cs,
+                      ),
+                      const SizedBox(height: 28),
+                      if (context.watch<RoleCubit>().state.errorMessage case final err?)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                        ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: _loading ? null : _submit,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
                             ),
-                    ),
+                          ),
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text(
+                                  t('setup_btn'),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
+          if (_loading)
+            Container(
+              color: Colors.black26,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }

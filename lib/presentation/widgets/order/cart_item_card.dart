@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/order/quantity_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
@@ -20,6 +22,7 @@ class CartItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final cubit = context.read<OrderCubit>();
+    final suff = Tr.get('currency_suffix', context.watch<SettingsCubit>().state.locale);
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -39,8 +42,8 @@ class CartItemCard extends StatelessWidget {
                 Text(item.recipe.name, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: cs.onSurface)),
               ]),
               const SizedBox(height: 4),
-              Text('${item.recipe.price.toInt()} ${'currency_suffix'}',
-                  style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+Text('${item.recipe.price.toInt()} $suff',
+    style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
               TextField(controller: notesCtl(item.recipe.id, item.notes), textAlign: TextAlign.right, textDirection: TextDirection.rtl,
                 decoration: InputDecoration(hintText: notesHint,

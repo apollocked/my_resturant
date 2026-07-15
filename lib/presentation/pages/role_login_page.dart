@@ -33,126 +33,137 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     String t(String key) => Tr.get(key, settings.locale);
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primarySoft,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.admin_panel_settings_outlined,
-                    size: 36,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  t('role_login_title'),
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: cs.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  t('role_login_subtitle'),
-                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  t('choose_role'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: Role.values
-                      .map(
-                        (r) => Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: _roleCard(r, _selected == r, cs, t),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 28),
-                TextField(
-                  controller: _pinCtl,
-                  obscureText: true,
-                  maxLength: 6,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 8,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: '',
-                    hintText: t('pin_hint'),
-                    filled: true,
-                    fillColor: cs.surfaceContainerHighest.withValues(
-                      alpha: 0.3,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                if (_error case final err?)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
-                  ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: FilledButton(
-                    onPressed: _loading ? null : _login,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primarySoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.admin_panel_settings_outlined,
+                        size: 36,
+                        color: AppColors.primary,
                       ),
                     ),
-                    child: _loading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                    const SizedBox(height: 16),
+                    Text(
+                      t('role_login_title'),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      t('role_login_subtitle'),
+                      style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      t('choose_role'),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: Role.values
+                          .map(
+                            (r) => Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: _roleCard(r, _selected == r, cs, t),
+                              ),
                             ),
                           )
-                        : Text(
-                            t('enter'),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                          .toList(),
+                    ),
+                    const SizedBox(height: 28),
+                    TextField(
+                      controller: _pinCtl,
+                      obscureText: true,
+                      maxLength: 6,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 8,
+                      ),
+                      decoration: InputDecoration(
+                        counterText: '',
+                        hintText: t('pin_hint'),
+                        filled: true,
+                        fillColor: cs.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (_error case final err?)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(err, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                      ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FilledButton(
+                        onPressed: _loading ? null : _login,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                  ),
+                        ),
+                        child: _loading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                t('enter'),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (_loading)
+            Container(
+              color: Colors.black26,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
