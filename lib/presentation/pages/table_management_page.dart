@@ -13,16 +13,17 @@ class TableManagementPage extends StatefulWidget {
 }
 
 class _TableManagementPageState extends State<TableManagementPage> {
-  Widget _countBtn(IconData icon, ColorScheme cs, VoidCallback onTap) {
+  Widget _countBtn(IconData icon, ColorScheme cs, VoidCallback onTap, bool isDesktop) {
+    final size = isDesktop ? 52.0 : 44.0;
     return Material(
       color: cs.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
       elevation: 0,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isDesktop ? 16 : 12),
         onTap: onTap,
-        child: Container(width: 44, height: 44, alignment: Alignment.center,
-          child: Icon(icon, size: 22, color: AppColors.primary)),
+        child: Container(width: size, height: size, alignment: Alignment.center,
+          child: Icon(icon, size: isDesktop ? 26 : 22, color: AppColors.primary)),
       ),
     );
   }
@@ -33,13 +34,14 @@ class _TableManagementPageState extends State<TableManagementPage> {
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
+    final isDesktop = R.isDesktop(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('table_mgmt_title'))),
       body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: EdgeInsets.all(R.padding(context)), children: [
         Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
         const SizedBox(height: 10),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 16, vertical: isDesktop ? 16 : 12),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(14),
@@ -47,18 +49,18 @@ class _TableManagementPageState extends State<TableManagementPage> {
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             _countBtn(Icons.remove, cs, () {
               if (state.tableCount > 1) context.read<OrderCubit>().setTableCount(state.tableCount - 1);
-            }),
+            }, isDesktop),
             Container(
-              width: 80, alignment: Alignment.center,
-              child: Text('${state.tableCount}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.isTablet(context) ? 32 : 28, color: cs.onSurface)),
+              width: isDesktop ? 100 : 80, alignment: Alignment.center,
+              child: Text('${state.tableCount}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? 40 : R.isTablet(context) ? 32 : 28, color: cs.onSurface)),
             ),
             _countBtn(Icons.add, cs, () {
               if (state.tableCount < 35) context.read<OrderCubit>().setTableCount(state.tableCount + 1);
-            }),
+            }, isDesktop),
           ]),
         ),
         const SizedBox(height: 20),
-        Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface)),
+        Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
         const SizedBox(height: 12),
         ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
       ]))),

@@ -24,13 +24,10 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   List<Recipe> get _filtered {
     final recipes = context.read<OrderCubit>().state.recipes;
     if (_selectedCat == 0) return recipes;
-    return recipes
-        .where((r) => r.category == categories[_selectedCat]['key'])
-        .toList();
+    return recipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
   }
 
-  String _t(String key) =>
-      Tr.get(key, context.read<SettingsCubit>().state.locale);
+  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
 
   Future<void> _editRecipe(Recipe r) async {
     if (!mounted) return;
@@ -38,17 +35,12 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (_) => EditRecipeDialog(
-        name: r.name,
-        price: r.price,
-        description: r.description,
-        category: r.category,
-        t: _t,
+        name: r.name, price: r.price, description: r.description, category: r.category, t: _t,
       ),
     );
     if (!mounted) return;
     if (result != null) {
-      orderCubit.updateRecipe(
-        r.id,
+      orderCubit.updateRecipe(r.id,
         name: result['name'] as String,
         price: result['price'] as double?,
         description: result['description'] as String?,
@@ -80,6 +72,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final dishes = _filtered;
+    final isDesktop = R.isDesktop(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('food_mgmt_title'))),
       body: SafeArea(
@@ -88,102 +81,74 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
           child: Column(
             children: [
               const SizedBox(height: 12),
-              CategoryFilterBar(
-                selectedIndex: _selectedCat,
-                onChanged: (i) => setState(() => _selectedCat = i),
-              ),
+              CategoryFilterBar(selectedIndex: _selectedCat, onChanged: (i) => setState(() => _selectedCat = i)),
               const SizedBox(height: 8),
               Expanded(
                 child: dishes.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: cs.surfaceContainerHighest,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.restaurant_menu,
-                                size: 44,
-                                color: cs.onSurfaceVariant,
-                              ),
+                    ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        Container(width: isDesktop ? 120 : 100, height: isDesktop ? 120 : 100,
+                          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+                          child: Icon(Icons.restaurant_menu, size: isDesktop ? 56 : 44, color: cs.onSurfaceVariant)),
+                        const SizedBox(height: 20),
+                        Text(t('no_food_found'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
+                      ]))
+                    : isDesktop
+                        ? GridView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 2.2,
+                              crossAxisSpacing: R.gridSpacing(context),
+                              mainAxisSpacing: R.gridSpacing(context),
                             ),
-                            const SizedBox(height: 20),
-                            Text(
-                              t('no_food_found'),
-                              style: TextStyle(
-                                fontSize: R.fontLg(context),
-                                fontWeight: FontWeight.w600,
-                                color: cs.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-                        itemCount: dishes.length,
-                        itemBuilder: (context, index) {
-                          final r = dishes[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: AppImage(
-                                  r.imageUrl,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                              ),
-                              title: Text(
-                                r.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: R.fontMd(context),
-                                  color: cs.onSurface,
-                                ),
-                              ),
-                              subtitle: Text(
-                                '${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
-                                style: TextStyle(
-                                  fontSize: R.fontSm(context),
-                                  color: cs.onSurfaceVariant,
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      color: AppColors.primary,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => _editRecipe(r),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      color: AppColors.error,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => _confirmDelete(r),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                            itemCount: dishes.length,
+                            itemBuilder: (context, index) => _dishCard(dishes[index], cs, t),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                            itemCount: dishes.length,
+                            itemBuilder: (context, index) => _dishTile(dishes[index], cs, t),
+                          ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _dishTile(Recipe r, ColorScheme cs, String Function(String) t) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(r.imageUrl, width: 48, height: 48)),
+        title: Text(r.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface)),
+        subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+          IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20), onPressed: () => _editRecipe(r)),
+          IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20), onPressed: () => _confirmDelete(r)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _dishCard(Recipe r, ColorScheme cs, String Function(String) t) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Row(children: [
+            IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 18), onPressed: () => _editRecipe(r), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+            IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 18), onPressed: () => _confirmDelete(r), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+            const Spacer(),
+            ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(r.imageUrl, width: 44, height: 44)),
+            const SizedBox(width: 10),
+          ]),
+          const Spacer(),
+          Text(r.name, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: cs.onSurface)),
+          const SizedBox(height: 2),
+          Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+        ]),
       ),
     );
   }

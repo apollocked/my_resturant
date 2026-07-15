@@ -142,7 +142,7 @@ class _DishFormPageState extends State<DishFormPage> {
                     onPressed: _save,
                     child: Text(
                       _isEditing ? _t('update_btn') : _t('add_btn'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: R.fontMd(context),
                       ),

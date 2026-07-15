@@ -31,39 +31,69 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     final role = context.watch<RoleCubit>().state.role;
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
+    final isDesktop = R.isDesktop(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('history_title'))),
       body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
         const SizedBox(height: 12),
         TextButton.icon(onPressed: _pick, icon: const Icon(Icons.calendar_month, size: 18),
-          label: Text(_fmt(_date), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+          label: Text(_fmt(_date), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600)),
           style: TextButton.styleFrom(foregroundColor: AppColors.primary)),
         const Divider(),
         if (orders.isEmpty)
           Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 80, height: 80, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-              child: Icon(Icons.history, size: 36, color: cs.onSurfaceVariant)),
+            Container(width: R.hp(context, isDesktop ? 16 : 18), height: R.hp(context, isDesktop ? 16 : 18),
+              decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+              child: Icon(Icons.history, size: isDesktop ? 48 : 36, color: cs.onSurfaceVariant)),
             const SizedBox(height: 16),
-            Text(t('history_empty'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: cs.onSurface)),
+            Text(t('history_empty'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
           ])))
         else
           Expanded(child: RefreshIndicator(
             onRefresh: () async => context.read<OrderCubit>().refresh(),
-            child: ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16), itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                return OrderCard(order: order, showTime: true,
-                  onReset: role == Role.admin ? () {
-                    final cubit = context.read<OrderCubit>();
-                    for (final item in order.items) {
-                      for (int i = 0; i < item.quantity; i++) {
-                        cubit.addToCart(item.recipe);
-                      }
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('order_restored'))));
-                    if (context.mounted) context.read<OrderCubit>().refresh();
-                  } : null);
-              }),
+            child: isDesktop
+              ? GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.0,
+                    crossAxisSpacing: R.gridSpacing(context),
+                    mainAxisSpacing: R.gridSpacing(context),
+                  ),
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    return OrderCard(order: order, showTime: true,
+                      onReset: role == Role.admin ? () {
+                        final cubit = context.read<OrderCubit>();
+                        for (final item in order.items) {
+                          for (int i = 0; i < item.quantity; i++) {
+                            cubit.addToCart(item.recipe);
+                          }
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('order_restored'))));
+                        if (context.mounted) context.read<OrderCubit>().refresh();
+                      } : null);
+                  },
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    return OrderCard(order: order, showTime: true,
+                      onReset: role == Role.admin ? () {
+                        final cubit = context.read<OrderCubit>();
+                        for (final item in order.items) {
+                          for (int i = 0; i < item.quantity; i++) {
+                            cubit.addToCart(item.recipe);
+                          }
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('order_restored'))));
+                        if (context.mounted) context.read<OrderCubit>().refresh();
+                      } : null);
+                  },
+                ),
           )),
       ]))),
     );

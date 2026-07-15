@@ -16,6 +16,7 @@ class CartBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDesktop = R.isDesktop(context);
     return Container(
       padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 16),
       decoration: BoxDecoration(
@@ -23,39 +24,65 @@ class CartBottomBar extends StatelessWidget {
         boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
         border: Border(top: BorderSide(color: cs.outlineVariant)),
       ),
-      child: SafeArea(child: Column(children: [
-        TextField(controller: notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-          decoration: InputDecoration(hintText: notesHint,
-            hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            filled: true, fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
-          )),
-        const SizedBox(height: 14),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          SizedBox(height: 48,
-            child: ElevatedButton(
-              onPressed: canSubmit ? onSubmit : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: SafeArea(child: isDesktop
+        ? Row(children: [
+            SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                onPressed: canSubmit ? onSubmit : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 32),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.send_rounded, size: 18),
+                  const SizedBox(width: 8),
+                  Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                ]),
               ),
-              child: Row(children: [
-                const Icon(Icons.send_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-              ]),
             ),
-          ),
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text('${total.toInt()} $currencySuffix',
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.primary)),
-            Text(totalLabel, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
+            const Spacer(),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Text('${total.toInt()} $currencySuffix',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26, color: AppColors.primary)),
+              Text(totalLabel, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant)),
+            ]),
+          ])
+        : Column(children: [
+            TextField(controller: notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
+              decoration: InputDecoration(hintText: notesHint,
+                hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                filled: true, fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
+              )),
+            const SizedBox(height: 14),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              SizedBox(height: 48,
+                child: ElevatedButton(
+                  onPressed: canSubmit ? onSubmit : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
+                  ),
+                  child: Row(children: [
+                    const Icon(Icons.send_rounded, size: 18),
+                    const SizedBox(width: 8),
+                    Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                  ]),
+                ),
+              ),
+              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Text('${total.toInt()} $currencySuffix',
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.primary)),
+                Text(totalLabel, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
+              ]),
+            ]),
           ]),
-        ]),
-      ])),
+      ),
     );
   }
 }

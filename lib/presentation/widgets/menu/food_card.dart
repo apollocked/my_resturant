@@ -39,7 +39,7 @@ class FoodCard extends StatelessWidget {
             isSelected: isSelected,
           )),
     );
-  }
+    }
 }
 
 class _CardBody extends StatelessWidget {
@@ -62,12 +62,17 @@ class _CardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isTablet = R.isTablet(context);
-    final cp = isTablet ? 16.0 : 12.0;
+    final screen = R.screenSize(context);
+    final isDesktop = screen == ScreenSize.desktop;
+    final isTablet = screen == ScreenSize.tablet;
+    final cp = isDesktop ? 20.0 : isTablet ? 16.0 : 12.0;
+    final radius = isDesktop ? 24.0 : isTablet ? 20.0 : 16.0;
+    final nameSize = isDesktop ? 17.0 : isTablet ? 15.0 : 13.0;
+    final descSize = isDesktop ? 13.0 : isTablet ? 12.0 : 11.0;
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
+        borderRadius: BorderRadius.circular(radius),
         border: isSelected ? Border.all(color: AppColors.primary, width: 2) : null,
         boxShadow: [
           BoxShadow(
@@ -88,19 +93,19 @@ class _CardBody extends StatelessWidget {
             onLongPress: onLongPress,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(cp, isTablet ? 12 : 10, cp, cp),
+            padding: EdgeInsets.fromLTRB(cp, isDesktop ? 14 : isTablet ? 12 : 10, cp, cp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(recipe.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: isTablet ? 15 : 13, color: cs.onSurface),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: nameSize, color: cs.onSurface),
                 ),
                 const SizedBox(height: 3),
                 Text(recipe.description, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: isTablet ? 12 : 11),
+                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: descSize),
                 ),
-                SizedBox(height: isTablet ? 14 : 10),
+                SizedBox(height: isDesktop ? 16 : isTablet ? 14 : 10),
                 FoodCardControls(
                   quantity: quantity,
                   totalPrice: recipe.price * quantity,

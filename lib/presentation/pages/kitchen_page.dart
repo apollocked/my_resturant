@@ -31,9 +31,10 @@ class _KitchenPageState extends State<KitchenPage> {
     final activeOrders = orders.where((o) => o.status != OrderStatus.served).toList();
     final servedOrders = orders.where((o) => o.status == OrderStatus.served).toList();
     final cs = Theme.of(context).colorScheme;
+    final isDesktop = R.isDesktop(context);
 
     return Scaffold(body: SafeArea(child: Column(children: [
-      Padding(      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 0), child: Row(children: [
+      Padding(padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 0), child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(t('kitchen_title'), style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface)),
           const SizedBox(height: 2),
@@ -44,9 +45,9 @@ class _KitchenPageState extends State<KitchenPage> {
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(12)),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            _pill('${t('active')} ${activeOrders.length}', 0, cs),
+            _pill('${t('active')} ${activeOrders.length}', 0, cs, isDesktop),
             const SizedBox(width: 4),
-            _pill('${t('served')} ${servedOrders.length}', 1, cs),
+            _pill('${t('served')} ${servedOrders.length}', 1, cs, isDesktop),
           ]),
         ),
       ])),
@@ -60,18 +61,18 @@ class _KitchenPageState extends State<KitchenPage> {
     ])));
   }
 
-  Widget _pill(String label, int index, ColorScheme cs) {
+  Widget _pill(String label, int index, ColorScheme cs, bool isDesktop) {
     final sel = _tabIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _tabIndex = index),
       child: AnimatedContainer(duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 20 : 14, vertical: isDesktop ? 10 : 7),
         decoration: BoxDecoration(
           color: sel ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(label, style: TextStyle(
-          fontSize: 12, fontWeight: FontWeight.w700,
+          fontSize: isDesktop ? 14 : 12, fontWeight: FontWeight.w700,
           color: sel ? cs.onPrimary : cs.onSurfaceVariant)),
       ),
     );
@@ -79,31 +80,55 @@ class _KitchenPageState extends State<KitchenPage> {
 
   Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t, bool canEdit) {
     final cs = Theme.of(context).colorScheme;
+    final isDesktop = R.isDesktop(context);
     if (orders.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(width: R.hp(context, 22), height: R.hp(context, 22), decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-          child: Icon(Icons.receipt_long_outlined, size: R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
+        Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
+          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+          child: Icon(Icons.receipt_long_outlined, size: isDesktop ? 64 : R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
         const SizedBox(height: 20),
         Text(t('kitchen_empty'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
       ]));
     }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
-      child: ListView.builder(
-        key: ValueKey(_tabIndex),
-        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final o = orders[index];
-          final hasNext = OrderCard.nextStatus.containsKey(o.status);
-          return GestureDetector(
-            onTap: () => context.push('/order-detail', extra: o),
-            child: OrderCard(order: o, showTimeline: true,
-              onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-              onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
-          );
-        },
-      ),
+      child: isDesktop
+        ? GridView.builder(
+            key: ValueKey('grid_$_tabIndex'),
+            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.0,
+              crossAxisSpacing: R.gridSpacing(context),
+              mainAxisSpacing: R.gridSpacing(context),
+            ),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final o = orders[index];
+              final hasNext = OrderCard.nextStatus.containsKey(o.status);
+              return GestureDetector(
+                onTap: () => context.push('/order-detail', extra: o),
+                child: OrderCard(order: o, showTimeline: true,
+                  onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+                  onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+              );
+            },
+          )
+        : ListView.builder(
+            key: ValueKey('list_$_tabIndex'),
+            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final o = orders[index];
+              final hasNext = OrderCard.nextStatus.containsKey(o.status);
+              return GestureDetector(
+                onTap: () => context.push('/order-detail', extra: o),
+                child: OrderCard(order: o, showTimeline: true,
+                  onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+                  onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+              );
+            },
+          ),
     );
   }
 }

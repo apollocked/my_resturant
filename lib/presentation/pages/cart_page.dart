@@ -40,6 +40,7 @@ class _CartPageState extends State<CartPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final state = context.watch<OrderCubit>().state;
     final cart = state.cart;
+    final isDesktop = R.isDesktop(context);
 
     return SafeArea(child: Column(children: [
       Padding(
@@ -50,10 +51,10 @@ class _CartPageState extends State<CartPage> {
             TextButton.icon(
               onPressed: () => context.read<OrderCubit>().clearCart(),
               icon: const Icon(Icons.delete_sweep, size: 18),
-              label: Text(t('clear'), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+              label: Text(t('clear'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context))),
               style: TextButton.styleFrom(foregroundColor: AppColors.error),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: isDesktop ? 16 : 8),
             TableSelector(selectedTable: state.selectedTable,
               onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t),
               reservedTables: state.reservedTables),
@@ -64,14 +65,30 @@ class _CartPageState extends State<CartPage> {
         Expanded(child: EmptyState(icon: Icons.shopping_bag_outlined, title: t('cart_empty_title'), subtitle: t('cart_empty_subtitle')))
       else ...[
         const SizedBox(height: 8),
-        Expanded(child: ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-          itemCount: cart.length,
-          itemBuilder: (context, index) => CartItemCard(
-            item: cart[index], index: index,
-            notesCtl: _notesCtl, notesHint: t('notes_hint'),
-          ),
-        )),
+        Expanded(child: isDesktop
+          ? GridView.builder(
+              padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.15,
+                crossAxisSpacing: R.gridSpacing(context),
+                mainAxisSpacing: R.gridSpacing(context),
+              ),
+              itemCount: cart.length,
+              itemBuilder: (context, index) => CartItemCard(
+                item: cart[index], index: index,
+                notesCtl: _notesCtl, notesHint: t('notes_hint'),
+              ),
+            )
+          : ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+              itemCount: cart.length,
+              itemBuilder: (context, index) => CartItemCard(
+                item: cart[index], index: index,
+                notesCtl: _notesCtl, notesHint: t('notes_hint'),
+              ),
+            ),
+        ),
         CartBottomBar(
           notesCtrl: _notesCtrl, notesHint: t('general_notes_hint'),
           totalLabel: t('total'), sendLabel: t('send_order'),

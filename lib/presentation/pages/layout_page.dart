@@ -28,10 +28,48 @@ class MainShell extends StatelessWidget {
     final role = context.watch<RoleCubit>().state.role;
     String t(String key) => Tr.get(key, settings.locale);
     final selectedIndex = navigationShell.currentIndex;
+    final isDesktop = R.isDesktop(context);
+    final isTablet = R.isTablet(context);
 
     final items = _buildNavItems(role);
 
-    if (R.isTablet(context) && R.height(context) >= 500) {
+    if (isDesktop && R.height(context) >= 500) {
+      return Scaffold(
+        body: Row(children: [
+          NavigationRail(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (i) => navigationShell.goBranch(
+              i, initialLocation: i == navigationShell.currentIndex),
+            labelType: NavigationRailLabelType.all,
+            backgroundColor: cs.surface,
+            indicatorColor: AppColors.primarySoft,
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.restaurant, size: 36, color: AppColors.primary),
+                const SizedBox(height: 4),
+                Text(t('app_name'), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary)),
+              ]),
+            ),
+            minWidth: 100,
+            groupAlignment: 0,
+            destinations: items.map((item) => NavigationRailDestination(
+              icon: item.index == 0 && state.cartCount > 0
+                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline, size: 24))
+                  : Icon(item.outline, size: 24),
+              selectedIcon: item.index == 0 && state.cartCount > 0
+                  ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled, size: 24))
+                  : Icon(item.filled, size: 24),
+              label: Text(t(item.labelKey), style: const TextStyle(fontSize: 12)),
+            )).toList(),
+          ),
+          const VerticalDivider(width: 1),
+          Expanded(child: navigationShell),
+        ]),
+      );
+    }
+
+    if (isTablet && R.height(context) >= 500) {
       return Scaffold(
         body: Row(children: [
           NavigationRail(

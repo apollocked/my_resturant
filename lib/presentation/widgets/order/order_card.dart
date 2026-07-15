@@ -4,6 +4,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class OrderCard extends StatelessWidget {
   final Order order;
@@ -39,25 +40,35 @@ class OrderCard extends StatelessWidget {
     final settings = context.watch<SettingsCubit>();
     final locale = settings.state.locale;
     final cs = Theme.of(context).colorScheme;
+    final screen = R.screenSize(context);
+    final isDesktop = screen == ScreenSize.desktop;
+    final isTablet = screen == ScreenSize.tablet;
     final color = _colors[order.status]!;
     final elapsedMin = DateTime.now().difference(order.createdAt).inMinutes;
     final urgency = _urgencyColor(elapsedMin);
+    final cardPadding = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
+    final statusFont = isDesktop ? 13 : isTablet ? 12 : 11;
+    final tableFont = isDesktop ? 20 : isTablet ? 18 : 16;
+    final totalFont = isDesktop ? 15 : isTablet ? 14 : 13;
+    final itemFont = isDesktop ? 13 : isTablet ? 12.5 : 12;
+    final notesFont = isDesktop ? 12 : isTablet ? 11.5 : 11;
+    final timelineFont = isDesktop ? 10 : isTablet ? 9.5 : 9;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: isDesktop ? 0 : 10),
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 18 : 16),
         side: BorderSide(color: order.status == OrderStatus.served ? cs.outlineVariant : Colors.transparent)),
-      child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+      child: Padding(padding: EdgeInsets.all(cardPadding), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 14 : 10, vertical: isDesktop ? 7 : 5),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [color.withValues(alpha: 0.8), color], begin: Alignment.topLeft, end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(8),
               boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
             ),
-            child: Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: 11)),
+            child: Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: statusFont)),
           ),
           Row(children: [
             if (order.status != OrderStatus.served && elapsedMin > 0)
@@ -71,68 +82,68 @@ class OrderCard extends StatelessWidget {
                 ]),
               ),
             if (order.status != OrderStatus.served && elapsedMin > 0) const SizedBox(width: 8),
-            Text(order.displayTable, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: cs.onSurface)),
+            Text(order.displayTable, style: TextStyle(fontWeight: FontWeight.w800, fontSize: tableFont, color: cs.onSurface)),
             const SizedBox(width: 6),
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.table_restaurant_outlined, size: 16, color: AppColors.primary),
+              child: Icon(Icons.table_restaurant_outlined, size: isDesktop ? 20 : 16, color: AppColors.primary),
             ),
           ]),
         ]),
         if (showTimeline) ...[
-          const SizedBox(height: 14),
-          _timeline(order.status, cs, locale),
+          SizedBox(height: isDesktop ? 16 : 14),
+          _timeline(order.status, cs, locale, timelineFont),
         ],
-        const SizedBox(height: 14),
-        _itemList(order, locale, cs),
+        SizedBox(height: isDesktop ? 16 : 14),
+        _itemList(order, locale, cs, itemFont),
         if (order.notes.isNotEmpty)
           Padding(padding: const EdgeInsets.only(top: 8),
             child: Row(children: [
               Expanded(child: Text(order.notes, textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
+                  style: TextStyle(fontSize: notesFont, color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
             ])),
-        const SizedBox(height: 12),
+        SizedBox(height: isDesktop ? 14 : 12),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           if (showTime)
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant))
           else if (onNextStatus != null)
             SizedBox(
-              height: 32,
+              height: isDesktop ? 38 : 32,
               child: FilledButton.icon(
                 onPressed: onNextStatus,
-                icon: const Icon(Icons.arrow_forward, size: 14),
-                label: Text(_nextLabel(order.status, locale), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+                icon: Icon(Icons.arrow_forward, size: isDesktop ? 16 : 14),
+                label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14 : 12)),
                 style: FilledButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               ),
             )
           else if (onReset != null)
             SizedBox(
-              height: 32,
+              height: isDesktop ? 38 : 32,
               child: OutlinedButton.icon(
                 onPressed: onReset,
                 icon: const Icon(Icons.refresh, size: 14),
-                label: Text(Tr.get('again', locale), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14 : 12, fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               ),
             ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 16 : 12, vertical: isDesktop ? 8 : 6),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [AppColors.primary.withValues(alpha: 0.8), AppColors.primary], begin: Alignment.topLeft, end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
             ),
                 child: Text('${order.totalPrice.toInt()} ${Tr.get('currency_suffix', locale)}',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: cs.onPrimary)),
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: totalFont, color: cs.onPrimary)),
           ),
         ]),
       ])),
     );
   }
 
-  Widget _itemList(Order order, Locale locale, ColorScheme cs) {
+  Widget _itemList(Order order, Locale locale, ColorScheme cs, double itemFont) {
     return Column(children: order.items.map((item) => Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -145,7 +156,7 @@ class OrderCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(child: Text(item.recipe.name, textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: cs.onSurface))),
+              style: TextStyle(fontSize: itemFont, fontWeight: FontWeight.w500, color: cs.onSurface))),
         ]),
         if (item.notes.isNotEmpty)
           Padding(padding: const EdgeInsets.only(top: 3, right: 34),
@@ -157,7 +168,7 @@ class OrderCard extends StatelessWidget {
 
   static const nextStatus = {OrderStatus.pending: OrderStatus.preparing, OrderStatus.preparing: OrderStatus.served};
 
-  Widget _timeline(OrderStatus current, ColorScheme cs, Locale locale) {
+  Widget _timeline(OrderStatus current, ColorScheme cs, Locale locale, double timelineFont) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(color: cs.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
@@ -171,9 +182,9 @@ class OrderCard extends StatelessWidget {
         ]),
         const SizedBox(height: 4),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(Tr.get('timeline_served', locale), style: TextStyle(fontSize: 9, color: current == OrderStatus.served ? AppColors.success : cs.onSurfaceVariant)),
-          Text(Tr.get('timeline_preparing', locale), style: TextStyle(fontSize: 9, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : cs.onSurfaceVariant)),
-          Text(Tr.get('timeline_pending', locale), style: TextStyle(fontSize: 9, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : cs.onSurfaceVariant)),
+          Text(Tr.get('timeline_served', locale), style: TextStyle(fontSize: timelineFont, color: current == OrderStatus.served ? AppColors.success : cs.onSurfaceVariant)),
+          Text(Tr.get('timeline_preparing', locale), style: TextStyle(fontSize: timelineFont, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : cs.onSurfaceVariant)),
+          Text(Tr.get('timeline_pending', locale), style: TextStyle(fontSize: timelineFont, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : cs.onSurfaceVariant)),
         ]),
       ]),
     );
