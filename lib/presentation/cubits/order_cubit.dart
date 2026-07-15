@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
@@ -7,6 +8,9 @@ import 'package:my_resturant/data/repositories/data_repository.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   final AppRepository _repo;
+  StreamSubscription? _orderSub;
+  StreamSubscription? _recipeSub;
+  StreamSubscription? _settingSub;
 
   OrderCubit({AppRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
     _load();
@@ -16,6 +20,21 @@ class OrderCubit extends Cubit<OrderState> {
     final recipes = await _repo.loadRecipes();
     final orders = await _repo.loadOrders();
     final settings = await _repo.loadSettings();
+    _applySettings(settings);
+    emit(state.copyWith(recipes: recipes, orders: orders));
+
+    _orderSub = _repo.watchOrders().listen((o) {
+      if (!isClosed) emit(state.copyWith(orders: o));
+    });
+    _recipeSub = _repo.watchRecipes().listen((r) {
+      if (!isClosed) emit(state.copyWith(recipes: r));
+    });
+    _settingSub = _repo.watchSettings().listen((s) {
+      if (!isClosed) _applySettings(s);
+    });
+  }
+
+  void _applySettings(Map<String, String> settings) {
     final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
     final names = <int, String>{};
     for (final e in settings.entries) {
@@ -24,7 +43,7 @@ class OrderCubit extends Cubit<OrderState> {
         if (n != null) names[n] = e.value;
       }
     }
-    emit(state.copyWith(recipes: recipes, orders: orders, tableCount: tableCount, tableNames: names));
+    emit(state.copyWith(tableCount: tableCount, tableNames: names));
   }
 
   void addToCart(Recipe recipe) {
@@ -109,29 +128,14 @@ class OrderCubit extends Cubit<OrderState> {
     _repo.saveSetting('tableName_$n', name.trim());
   }
 
-  Future<void> addRecipe(Recipe recipe) async {
-    await _repo.addRecipe(recipe);
-    emit(state.copyWith(recipes: List.from(state.recipes)..add(recipe)));
-  }
+  Future<void> addRecipe(Recipe recipe) async => _repo.addRecipe(recipe);
 
-  Future<void> deleteRecipe(String id) async {
-    await _repo.removeRecipe(id);
-    emit(state.copyWith(recipes: state.recipes.where((r) => r.id != id).toList()));
-  }
+  Future<void> deleteRecipe(String id) async => _repo.removeRecipe(id);
 
-  Future<void> updateRecipe(String id, {String? name, double? price, String? category, String? description}) async {
-    await _repo.editRecipe(id, name: name, price: price, category: category, description: description);
-    final recipes = state.recipes.map((r) => r.id == id
-      ? r.copyWith(name: name, price: price, category: category, description: description) : r).toList();
-    emit(state.copyWith(recipes: recipes));
-  }
+  Future<void> updateRecipe(String id, {String? name, double? price, String? category, String? description}) async =>
+      _repo.editRecipe(id, name: name, price: price, category: category, description: description);
 
-  Future<void> toggleAvailability(String id) async {
-    await _repo.toggleRecipe(id);
-    final recipes = state.recipes.map((r) => r.id == id
-      ? r.copyWith(available: !r.available) : r).toList();
-    emit(state.copyWith(recipes: recipes));
-  }
+  Future<void> toggleAvailability(String id) async => _repo.toggleRecipe(id);
 
   Future<void> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0) return;
@@ -142,15 +146,22 @@ class OrderCubit extends Cubit<OrderState> {
       items: List.from(state.cart), notes: notes,
     );
     await _repo.saveOrder(order);
-    final orders = List<Order>.from(state.orders)..insert(0, order);
-    emit(state.copyWith(cart: [], orders: orders, selectedTable: 0, pendingNotes: const {}));
+    emit(state.copyWith(cart: [], selectedTable: 0, pendingNotes: const {}));
   }
 
-  Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
-    await _repo.changeOrderStatus(orderId, status);
-    final orders = state.orders.map((o) => o.id == orderId ? o.copyWith(status: status) : o).toList();
-    emit(state.copyWith(orders: orders));
+  Future<void> updateOrderStatus(String orderId, OrderStatus status) async =>
+      _repo.changeOrderStatus(orderId, status);
+
+  Future<void> refresh() async {
+    final orders = await _repo.loadOrders();
+    if (!isClosed) emit(state.copyWith(orders: orders));
   }
 
-  void refresh() => emit(state.copyWith());
+  @override
+  Future<void> close() {
+    _orderSub?.cancel();
+    _recipeSub?.cancel();
+    _settingSub?.cancel();
+    return super.close();
+  }
 }

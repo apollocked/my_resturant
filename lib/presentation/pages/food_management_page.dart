@@ -23,19 +23,31 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   List<Recipe> get _filtered {
     final recipes = context.read<OrderCubit>().state.recipes;
     if (_selectedCat == 0) return recipes;
-    return recipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
+    return recipes
+        .where((r) => r.category == categories[_selectedCat]['key'])
+        .toList();
   }
 
-  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
+  String _t(String key) =>
+      Tr.get(key, context.read<SettingsCubit>().state.locale);
 
   Future<void> _editRecipe(Recipe r) async {
-    final result = await showDialog<Map<String, dynamic>>(context: context,
+    if (!mounted) return;
+    final orderCubit = context.read<OrderCubit>();
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
       builder: (_) => EditRecipeDialog(
-        name: r.name, price: r.price, description: r.description, category: r.category, t: _t,
+        name: r.name,
+        price: r.price,
+        description: r.description,
+        category: r.category,
+        t: _t,
       ),
     );
+    if (!mounted) return;
     if (result != null) {
-      context.read<OrderCubit>().updateRecipe(r.id,
+      orderCubit.updateRecipe(
+        r.id,
         name: result['name'] as String,
         price: result['price'] as double?,
         description: result['description'] as String?,
@@ -45,13 +57,19 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   }
 
   Future<void> _confirmDelete(Recipe r) async {
-    final ok = await showDialog<bool>(context: context,
+    if (!mounted) return;
+    final orderCubit = context.read<OrderCubit>();
+    final ok = await showDialog<bool>(
+      context: context,
       builder: (_) => DeleteConfirmDialog(
-        title: _t('delete_food'), content: _t('delete_confirm').replaceAll('{name}', r.name),
-        cancelLabel: _t('cancel'), deleteLabel: _t('delete'),
+        title: _t('delete_food'),
+        content: _t('delete_confirm').replaceAll('{name}', r.name),
+        cancelLabel: _t('cancel'),
+        deleteLabel: _t('delete'),
       ),
     );
-    if (ok == true) context.read<OrderCubit>().deleteRecipe(r.id);
+    if (!mounted) return;
+    if (ok == true) orderCubit.deleteRecipe(r.id);
   }
 
   @override
@@ -63,37 +81,109 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final dishes = _filtered;
     return Scaffold(
       appBar: AppBar(title: Text(t('food_mgmt_title'))),
-      body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: Column(children: [
-        const SizedBox(height: 12),
-        CategoryFilterBar(selectedIndex: _selectedCat, onChanged: (i) => setState(() => _selectedCat = i)),
-        const SizedBox(height: 8),
-        Expanded(child: dishes.isEmpty
-          ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(width: 100, height: 100, decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-                child: Icon(Icons.restaurant_menu, size: 44, color: cs.onSurfaceVariant)),
-              const SizedBox(height: 20),
-              Text(t('no_food_found'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
-            ]))
-          : ListView.builder(padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: dishes.length,
-          itemBuilder: (context, index) {
-            final r = dishes[index];
-            return Card(margin: const EdgeInsets.only(bottom: 8), child: ListTile(
-              leading: ClipRRect(borderRadius: BorderRadius.circular(8),
-                child: AppImage(r.imageUrl, width: 48, height: 48)),
-              title: Text(r.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface)),
-              subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
-                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
-              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
-                  onPressed: () => _editRecipe(r)),
-                IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
-                  onPressed: () => _confirmDelete(r)),
-              ]),
-            ));
-          },
-        )),
-      ]))),
+      body: SafeArea(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              CategoryFilterBar(
+                selectedIndex: _selectedCat,
+                onChanged: (i) => setState(() => _selectedCat = i),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: dishes.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: cs.surfaceContainerHighest,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.restaurant_menu,
+                                size: 44,
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              t('no_food_found'),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: dishes.length,
+                        itemBuilder: (context, index) {
+                          final r = dishes[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: AppImage(
+                                  r.imageUrl,
+                                  width: 48,
+                                  height: 48,
+                                ),
+                              ),
+                              title: Text(
+                                r.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: cs.onSurface,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '${r.price.toInt()} ${t('currency_suffix')} • ${r.category}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      color: AppColors.primary,
+                                      size: 20,
+                                    ),
+                                    onPressed: () => _editRecipe(r),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: AppColors.error,
+                                      size: 20,
+                                    ),
+                                    onPressed: () => _confirmDelete(r),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

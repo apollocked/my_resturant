@@ -40,12 +40,17 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       context.read<OrderCubit>().decrementOrRemove(r.id);
 
   Future<void> _notes(Recipe recipe) async {
-    final s = context.read<OrderCubit>().state;
+    if (!mounted) return;
+    final orderCubit = context.read<OrderCubit>();
+    final s = orderCubit.state;
     final r = await showDialog<String>(
       context: context,
       builder: (_) => NotesDialog(initialNotes: s.getNotes(recipe.id)),
     );
-    if (r != null) context.read<OrderCubit>().updateNotesByRecipe(recipe.id, r);
+    if (!mounted) return;
+    if (r != null) {
+      orderCubit.updateNotesByRecipe(recipe.id, r);
+    }
   }
 
   @override
