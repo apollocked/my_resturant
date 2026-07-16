@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/data/models/categories.dart';
 
 class EditRecipeDialog extends StatefulWidget {
   final String name, description;
   final double price;
   final String category;
   final String Function(String) t;
+  final List<Map<String, String>> categories;
 
-  const EditRecipeDialog({super.key, required this.name, required this.price, required this.description, required this.category, required this.t});
+  const EditRecipeDialog({super.key, required this.name, required this.price, required this.description, required this.category, required this.t, required this.categories});
 
   @override
   State<EditRecipeDialog> createState() => _EditRecipeDialogState();
@@ -39,7 +39,7 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
         const SizedBox(height: 12),
         StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
           initialValue: _cat, decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
-          items: categories.where((c) => c['key'] != 'all').map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
+          items: widget.categories.where((c) => c['key'] != 'all').map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
           onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
         )),
         const SizedBox(height: 12),

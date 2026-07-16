@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -22,9 +21,11 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   int _selectedCat = 0;
 
   List<Recipe> get _filtered {
-    final recipes = context.read<OrderCubit>().state.recipes;
+    final state = context.read<OrderCubit>().state;
+    final recipes = state.recipes;
     if (_selectedCat == 0) return recipes;
-    return recipes.where((r) => r.category == categories[_selectedCat]['key']).toList();
+    if (state.categories.isEmpty || _selectedCat >= state.categories.length) return recipes;
+    return recipes.where((r) => r.category == state.categories[_selectedCat]['key']).toList();
   }
 
   String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
@@ -36,6 +37,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
       context: context,
       builder: (_) => EditRecipeDialog(
         name: r.name, price: r.price, description: r.description, category: r.category, t: _t,
+        categories: orderCubit.state.categories,
       ),
     );
     if (!mounted) return;
@@ -81,7 +83,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
           child: Column(
             children: [
               const SizedBox(height: 12),
-              CategoryFilterBar(selectedIndex: _selectedCat, onChanged: (i) => setState(() => _selectedCat = i)),
+              CategoryFilterBar(selectedIndex: _selectedCat, onChanged: (i) => setState(() => _selectedCat = i), categories: context.read<OrderCubit>().state.categories),
               const SizedBox(height: 8),
               Expanded(
                 child: dishes.isEmpty

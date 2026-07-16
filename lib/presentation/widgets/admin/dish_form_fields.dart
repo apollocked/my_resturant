@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
 
@@ -13,6 +12,7 @@ class DishFormFields extends StatefulWidget {
   final bool isEditing;
   final VoidCallback onPickImage;
   final ValueChanged<String> onCategoryChanged;
+  final List<Map<String, String>> categories;
 
   const DishFormFields({
     super.key,
@@ -26,6 +26,7 @@ class DishFormFields extends StatefulWidget {
     required this.t,
     required this.isEditing,
     required this.onPickImage,
+    required this.categories,
   });
 
   @override
@@ -43,7 +44,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
 
   @override
   Widget build(BuildContext context) {
-    final catKeys = categories.where((c) => c['key'] != 'all').toList();
+    final catKeys = widget.categories.where((c) => c['key'] != 'all').toList();
     return Form(
       key: widget.formKey,
       child: Column(

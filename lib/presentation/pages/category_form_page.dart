@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/data/models/categories.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
@@ -50,6 +50,7 @@ class CategoryFormPage extends StatefulWidget {
 class _CategoryFormPageState extends State<CategoryFormPage> {
   final _nameCtrl = TextEditingController();
   String _selectedIcon = '🍽';
+  bool _saving = false;
 
   @override
   void dispose() {
@@ -57,13 +58,25 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     super.dispose();
   }
 
-  void _save() {
+  Future<void> _save() async {
     final name = _nameCtrl.text.trim();
-    if (name.isEmpty) return;
+    if (name.isEmpty || _saving) return;
     final key = name.replaceAll(RegExp(r'\s+'), '_').toLowerCase();
-    if (categories.any((c) => c['key'] == key)) return;
-    categories.add({'key': key, 'name': name, 'icon': _selectedIcon});
-    Navigator.pop(context, true);
+    final existing = context.read<OrderCubit>().state.categories;
+    if (existing.any((c) => c['key'] == key)) return;
+    setState(() => _saving = true);
+    try {
+      await context.read<OrderCubit>().addCategory(key, name, _selectedIcon);
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -137,14 +150,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: _save,
-                    child: Text(
-                      t('add'),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
-                    ),
+                    onPressed: _saving ? null : _save,
+                    child: _saving
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        : Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   ),
                 ),
               ],

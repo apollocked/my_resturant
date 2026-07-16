@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +12,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/admin/dish_form_fields.dart';
@@ -40,7 +40,7 @@ class _DishFormPageState extends State<DishFormPage> {
     _priceCtrl = TextEditingController(text: r?.price.toInt().toString() ?? '');
     _descCtrl = TextEditingController(text: r?.description ?? '');
     _imageUrl.value = r?.imageUrl ?? '';
-    _category = r?.category ?? categories[1]['key']!;
+    _category = r?.category ?? 'burger';
   }
 
   @override
@@ -68,30 +68,46 @@ class _DishFormPageState extends State<DishFormPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: cs.onSurfaceVariant.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 20),
-              Text(t('pick_image_source'),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
+              Text(
+                t('pick_image_source'),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurface,
+                ),
+              ),
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: Text(t('gallery')),
-                onTap: () { Navigator.pop(ctx); _pickFromGallery(); },
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickFromGallery();
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: Text(t('camera')),
-                onTap: () { Navigator.pop(ctx); _pickFromCamera(); },
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickFromCamera();
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.folder_open),
                 title: Text(t('files')),
-                onTap: () { Navigator.pop(ctx); _pickFromFile(); },
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickFromFile();
+                },
               ),
             ],
           ),
@@ -107,9 +123,9 @@ class _DishFormPageState extends State<DishFormPage> {
       await _cropAndSet(xFile.path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_t('error_occurred'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
       }
     }
   }
@@ -121,27 +137,25 @@ class _DishFormPageState extends State<DishFormPage> {
       await _cropAndSet(xFile.path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_t('error_occurred'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
       }
     }
   }
 
   Future<void> _pickFromFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
+      final result = await FilePicker.platform.pickFiles(type: FileType.image);
       if (result == null || result.files.isEmpty) return;
       final path = result.files.first.path;
       if (path == null) return;
       await _cropAndSet(path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_t('error_occurred'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
       }
     }
   }
@@ -180,7 +194,10 @@ class _DishFormPageState extends State<DishFormPage> {
         if (mounted) Navigator.pop(context);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(_t('error_occurred')), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(_t('error_occurred')),
+              backgroundColor: Colors.red,
+            ),
           );
         }
         return;
@@ -213,8 +230,14 @@ class _DishFormPageState extends State<DishFormPage> {
     final path = '$uid/$recipeId.jpg';
     await Supabase.instance.client.storage
         .from('recipe_images')
-        .uploadBinary(path, bytes, fileOptions: const FileOptions(upsert: true));
-    return Supabase.instance.client.storage.from('recipe_images').getPublicUrl(path);
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
+    return Supabase.instance.client.storage
+        .from('recipe_images')
+        .getPublicUrl(path);
   }
 
   @override
@@ -241,6 +264,7 @@ class _DishFormPageState extends State<DishFormPage> {
                   isEditing: _isEditing,
                   onPickImage: _showImageSourceSheet,
                   onCategoryChanged: (v) => _category = v,
+                  categories: context.read<OrderCubit>().state.categories,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(

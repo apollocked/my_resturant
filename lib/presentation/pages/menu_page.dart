@@ -11,7 +11,6 @@ import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
 import 'package:my_resturant/presentation/widgets/menu/item_on_hold_sheet.dart';
-import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
@@ -25,10 +24,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
-  List<Recipe> _filteredMeals(List<Recipe> allRecipes) {
+  List<Recipe> _filteredMeals(List<Recipe> allRecipes, List<Map<String, String>> cats) {
     var list = allRecipes.where((r) => r.available).toList();
-    final key = categories[_selectedCategoryIndex]['key'];
-    if (key != 'all') list = list.where((r) => r.category == key).toList();
+    if (cats.isNotEmpty && _selectedCategoryIndex < cats.length) {
+      final key = cats[_selectedCategoryIndex]['key'];
+      if (key != 'all') list = list.where((r) => r.category == key).toList();
+    }
     if (_searchQuery.isNotEmpty) {
       list = list.where((r) => r.name.contains(_searchQuery)).toList();
     }
@@ -38,8 +39,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   void _increment(Recipe r) => context.read<OrderCubit>().addToCart(r);
   void _decrement(Recipe r) =>
       context.read<OrderCubit>().decrementOrRemove(r.id);
-  void _remove(Recipe r) =>
-      context.read<OrderCubit>().removeFromCartById(r.id);
+  void _remove(Recipe r) => context.read<OrderCubit>().removeFromCartById(r.id);
 
   Future<void> _notes(Recipe recipe) async {
     if (!mounted) return;
@@ -50,7 +50,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ItemOnHoldSheet(recipe: recipe, initialNotes: s.getNotes(recipe.id)),
+      builder: (_) =>
+          ItemOnHoldSheet(recipe: recipe, initialNotes: s.getNotes(recipe.id)),
     );
     if (!mounted) return;
     if (r != null) {
@@ -71,7 +72,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     if (state.selectedTable == 0) return _buildTablePicker();
-    final meals = _filteredMeals(state.recipes);
+    final meals = _filteredMeals(state.recipes, state.categories);
 
     if (R.isDesktop(context)) {
       return _buildDesktopLayout(cs, t, state, meals);
@@ -80,7 +81,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     return _buildMobileLayout(cs, t, state, meals);
   }
 
-  Widget _buildDesktopLayout(ColorScheme cs, String Function(String) t, dynamic state, List<Recipe> meals) {
+  Widget _buildDesktopLayout(
+    ColorScheme cs,
+    String Function(String) t,
+    dynamic state,
+    List<Recipe> meals,
+  ) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -93,24 +99,37 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                   children: [
                     Container(
                       width: 180,
-                      padding: EdgeInsets.fromLTRB(R.padding(context), 24, 0, 16),
+                      padding: EdgeInsets.fromLTRB(
+                        R.padding(context),
+                        24,
+                        0,
+                        16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(t('categories'),
-                            style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w700, color: cs.onSurface.withValues(alpha: 0.6))),
+                          Text(
+                            t('categories'),
+                            style: TextStyle(
+                              fontSize: R.fontMd(context),
+                              fontWeight: FontWeight.w700,
+                              color: cs.onSurface.withValues(alpha: 0.6),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: categories.length,
+                              itemCount: state.categories.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: CategoryChip(
-                                  icon: categories[index]['icon']!,
-                                  name: t('cat_${categories[index]['key']!}'),
+                                  icon: state.categories[index]['icon']!,
+                                  name: t('cat_${state.categories[index]['key']!}'),
                                   isSelected: _selectedCategoryIndex == index,
                                   index: index,
-                                  onTap: () => setState(() => _selectedCategoryIndex = index),
+                                  onTap: () => setState(
+                                    () => _selectedCategoryIndex = index,
+                                  ),
                                 ),
                               ),
                             ),
@@ -122,27 +141,47 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 16),
+                        padding: EdgeInsets.fromLTRB(
+                          R.padding(context),
+                          16,
+                          R.padding(context),
+                          16,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v)),
+                            SearchBarWidget(
+                              onChanged: (v) =>
+                                  setState(() => _searchQuery = v),
+                            ),
                             const SizedBox(height: 28),
                             if (meals.isEmpty)
-                              SizedBox(height: 200, child: Center(
-                                child: Text(t('no_food_found'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontMd(context))),
-                              ))
+                              SizedBox(
+                                height: 200,
+                                child: Center(
+                                  child: Text(
+                                    t('no_food_found'),
+                                    style: TextStyle(
+                                      color: cs.onSurfaceVariant,
+                                      fontSize: R.fontMd(context),
+                                    ),
+                                  ),
+                                ),
+                              )
                             else
                               GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: meals.length,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4,
-                                  childAspectRatio: R.menuGridAspectRatio(context),
-                                  crossAxisSpacing: R.gridSpacing(context),
-                                  mainAxisSpacing: R.gridSpacing(context),
-                                ),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      childAspectRatio: R.menuGridAspectRatio(
+                                        context,
+                                      ),
+                                      crossAxisSpacing: R.gridSpacing(context),
+                                      mainAxisSpacing: R.gridSpacing(context),
+                                    ),
                                 itemBuilder: (context, index) {
                                   final r = meals[index];
                                   return FoodCard(
@@ -177,7 +216,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     );
   }
 
-  Widget _buildMobileLayout(ColorScheme cs, String Function(String) t, dynamic state, List<Recipe> meals) {
+  Widget _buildMobileLayout(
+    ColorScheme cs,
+    String Function(String) t,
+    dynamic state,
+    List<Recipe> meals,
+  ) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -192,14 +236,24 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     children: [
                       SizedBox(height: R.isTablet(context) ? 20 : 16),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-                        child: SearchBarWidget(onChanged: (v) => setState(() => _searchQuery = v)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: R.padding(context),
+                        ),
+                        child: SearchBarWidget(
+                          onChanged: (v) => setState(() => _searchQuery = v),
+                        ),
                       ),
                       SizedBox(height: R.isTablet(context) ? 32 : 28),
                       Padding(
                         padding: EdgeInsets.only(right: R.padding(context)),
-                        child: Text(t('categories'),
-                          style: TextStyle(fontSize: R.isTablet(context) ? 16 : 14, fontWeight: FontWeight.w700, color: cs.onSurface.withValues(alpha: 0.6))),
+                        child: Text(
+                          t('categories'),
+                          style: TextStyle(
+                            fontSize: R.isTablet(context) ? 16 : 14,
+                            fontWeight: FontWeight.w700,
+                            color: cs.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       SizedBox(
@@ -207,35 +261,50 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           reverse: true,
-                          itemCount: categories.length,
+                          itemCount: state.categories.length,
                           padding: EdgeInsets.zero,
                           itemBuilder: (context, index) => CategoryChip(
-                            icon: categories[index]['icon']!,
-                            name: t('cat_${categories[index]['key']!}'),
+                            icon: state.categories[index]['icon']!,
+                            name: t('cat_${state.categories[index]['key']!}'),
                             isSelected: _selectedCategoryIndex == index,
                             index: index,
-                            onTap: () => setState(() => _selectedCategoryIndex = index),
+                            onTap: () =>
+                                setState(() => _selectedCategoryIndex = index),
                           ),
                         ),
                       ),
                       SizedBox(height: R.isTablet(context) ? 28 : 24),
                       if (meals.isEmpty)
-                        SizedBox(height: 160, child: Center(
-                          child: Text(t('no_food_found'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14)),
-                        ))
+                        SizedBox(
+                          height: 160,
+                          child: Center(
+                            child: Text(
+                              t('no_food_found'),
+                              style: TextStyle(
+                                color: cs.onSurfaceVariant,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        )
                       else
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: R.padding(context),
+                          ),
                           child: GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: meals.length,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: R.menuGridColumns(context),
-                              childAspectRatio: R.menuGridAspectRatio(context),
-                              crossAxisSpacing: R.gridSpacing(context),
-                              mainAxisSpacing: R.gridSpacing(context),
-                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: R.menuGridColumns(context),
+                                  childAspectRatio: R.menuGridAspectRatio(
+                                    context,
+                                  ),
+                                  crossAxisSpacing: R.gridSpacing(context),
+                                  mainAxisSpacing: R.gridSpacing(context),
+                                ),
                             itemBuilder: (context, index) {
                               final r = meals[index];
                               return FoodCard(
@@ -274,9 +343,21 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final screen = R.screenSize(context);
-    final avatarSize = screen == ScreenSize.desktop ? 140.0 : screen == ScreenSize.tablet ? 120.0 : 100.0;
-    final iconSize = screen == ScreenSize.desktop ? 72.0 : screen == ScreenSize.tablet ? 60.0 : 48.0;
-    final tableFontSize = screen == ScreenSize.desktop ? 32.0 : screen == ScreenSize.tablet ? 28.0 : 24.0;
+    final avatarSize = screen == ScreenSize.desktop
+        ? 140.0
+        : screen == ScreenSize.tablet
+        ? 120.0
+        : 100.0;
+    final iconSize = screen == ScreenSize.desktop
+        ? 72.0
+        : screen == ScreenSize.tablet
+        ? 60.0
+        : 48.0;
+    final tableFontSize = screen == ScreenSize.desktop
+        ? 32.0
+        : screen == ScreenSize.tablet
+        ? 28.0
+        : 24.0;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -287,21 +368,50 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: R.hp(context, screen == ScreenSize.desktop ? 4 : 2)),
+                      SizedBox(
+                        height: R.hp(
+                          context,
+                          screen == ScreenSize.desktop ? 4 : 2,
+                        ),
+                      ),
                       Container(
-                        width: avatarSize, height: avatarSize,
+                        width: avatarSize,
+                        height: avatarSize,
                         decoration: BoxDecoration(
                           color: AppColors.primarySoft,
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primary, width: 2),
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
-                        child: Icon(Icons.table_restaurant, size: iconSize, color: AppColors.primary),
+                        child: Icon(
+                          Icons.table_restaurant,
+                          size: iconSize,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      SizedBox(height: screen == ScreenSize.desktop ? R.hp(context, 5) : R.hp(context, 3)),
-                      Text(t('select_table'), textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: screen == ScreenSize.desktop ? R.fontXxl(context) : R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface),
+                      SizedBox(
+                        height: screen == ScreenSize.desktop
+                            ? R.hp(context, 5)
+                            : R.hp(context, 3),
                       ),
-                      SizedBox(height: screen == ScreenSize.desktop ? R.hp(context, 4) : R.hp(context, 3)),
+                      Text(
+                        t('select_table'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: screen == ScreenSize.desktop
+                              ? R.fontXxl(context)
+                              : R.fontXl(context),
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      SizedBox(
+                        height: screen == ScreenSize.desktop
+                            ? R.hp(context, 4)
+                            : R.hp(context, 3),
+                      ),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -317,21 +427,61 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           final locked = s.reservedTables.contains(n);
                           return Material(
                             color: locked ? cs.outline : AppColors.primary,
-                            borderRadius: BorderRadius.circular(screen == ScreenSize.desktop ? 18 : 14),
+                            borderRadius: BorderRadius.circular(
+                              screen == ScreenSize.desktop ? 18 : 14,
+                            ),
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(screen == ScreenSize.desktop ? 18 : 14),
-                              onTap: locked ? null : () => context.read<OrderCubit>().setSelectedTable(n),
+                              borderRadius: BorderRadius.circular(
+                                screen == ScreenSize.desktop ? 18 : 14,
+                              ),
+                              onTap: locked
+                                  ? null
+                                  : () => context
+                                        .read<OrderCubit>()
+                                        .setSelectedTable(n),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   if (locked) ...[
-                                    Icon(Icons.lock, color: cs.surface, size: screen == ScreenSize.desktop ? 28 : 20),
+                                    Icon(
+                                      Icons.lock,
+                                      color: cs.surface,
+                                      size: screen == ScreenSize.desktop
+                                          ? 28
+                                          : 20,
+                                    ),
                                     const SizedBox(height: 2),
-                                    Text('${t('table')} $n', style: TextStyle(color: cs.surface, fontSize: screen == ScreenSize.desktop ? 16 : 13, fontWeight: FontWeight.w600)),
+                                    Text(
+                                      '${t('table')} $n',
+                                      style: TextStyle(
+                                        color: cs.surface,
+                                        fontSize: screen == ScreenSize.desktop
+                                            ? 16
+                                            : 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ] else ...[
-                                    Text('$n', style: TextStyle(color: cs.surface, fontSize: tableFontSize, fontWeight: FontWeight.w800)),
+                                    Text(
+                                      '$n',
+                                      style: TextStyle(
+                                        color: cs.surface,
+                                        fontSize: tableFontSize,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
                                     const SizedBox(height: 2),
-                                    Text(t('table'), style: TextStyle(color: cs.surface.withValues(alpha: 0.7), fontSize: screen == ScreenSize.desktop ? 14 : 11)),
+                                    Text(
+                                      t('table'),
+                                      style: TextStyle(
+                                        color: cs.surface.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                        fontSize: screen == ScreenSize.desktop
+                                            ? 14
+                                            : 11,
+                                      ),
+                                    ),
                                   ],
                                 ],
                               ),

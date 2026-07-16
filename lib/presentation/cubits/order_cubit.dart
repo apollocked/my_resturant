@@ -24,8 +24,9 @@ class OrderCubit extends Cubit<OrderState> {
       final recipes = await _repo.loadRecipes();
       final orders = await _repo.loadOrders();
       final settings = await _repo.loadSettings();
+      final cats = await _repo.loadCategories();
       _applySettings(settings);
-      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders));
+      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders, categories: cats));
     } catch (e) {
       if (!isClosed) debugPrint('OrderCubit._load error: $e');
     }
@@ -38,6 +39,9 @@ class OrderCubit extends Cubit<OrderState> {
     });
     _subscribe(_repo.watchSettings(), (s) {
       if (!isClosed) _applySettings(s);
+    });
+    _subscribe(_repo.watchCategories(), (c) {
+      if (!isClosed) emit(state.copyWith(categories: c));
     });
 
     _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => _poll());
@@ -181,6 +185,14 @@ class OrderCubit extends Cubit<OrderState> {
 
   Future<void> toggleAvailability(String id) async => _repo.toggleRecipe(id);
 
+  Future<void> addCategory(String key, String name, String icon) async {
+    await _repo.addCategory(key, name, icon);
+  }
+
+  Future<void> removeCategory(String key) async {
+    await _repo.removeCategory(key);
+  }
+
   Future<void> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0) return;
     final order = Order(
@@ -206,7 +218,8 @@ class OrderCubit extends Cubit<OrderState> {
   Future<void> refresh() async {
     final orders = await _repo.loadOrders();
     final recipes = await _repo.loadRecipes();
-    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes));
+    final cats = await _repo.loadCategories();
+    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes, categories: cats));
   }
 
   @override

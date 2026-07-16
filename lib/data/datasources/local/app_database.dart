@@ -109,6 +109,10 @@ class AppDatabase extends _$AppDatabase {
     await into(categories).insert(CategoriesCompanion.insert(key: key, name: name, icon: icon));
   }
 
+  Future<void> deleteCategoryByKey(String key) async {
+    await (delete(categories)..where((t) => t.key.equals(key))).go();
+  }
+
   Future<List<Order>> getAllOrders() async {
     final rows = await (select(orders)..orderBy([(o) => OrderingTerm(expression: o.createdAt, mode: OrderingMode.desc)])).get();
     final itemsByOrder = <String, List<CartItem>>{};

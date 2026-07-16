@@ -6,6 +6,7 @@ class OrderState {
   final List<Recipe> recipes;
   final List<CartItem> cart;
   final List<Order> orders;
+  final List<Map<String, String>> categories;
   final int selectedTable;
   final int tableCount;
   final Map<int, String> tableNames;
@@ -15,6 +16,7 @@ class OrderState {
     this.recipes = const [],
     this.cart = const [],
     this.orders = const [],
+    this.categories = const [],
     this.selectedTable = 0,
     this.tableCount = 10,
     this.tableNames = const {},
@@ -49,8 +51,9 @@ class OrderState {
   List<Order> ordersByDate(DateTime d) => orders.where((o) =>
     o.createdAt.year == d.year && o.createdAt.month == d.month && o.createdAt.day == d.day).toList();
 
-  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes}) =>
+  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, List<Map<String, String>>? categories, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes}) =>
     OrderState(recipes: recipes ?? this.recipes, cart: cart ?? this.cart, orders: orders ?? this.orders,
-      selectedTable: selectedTable ?? this.selectedTable, tableCount: tableCount ?? this.tableCount,
-      tableNames: tableNames ?? this.tableNames, pendingNotes: pendingNotes ?? this.pendingNotes);
+      categories: categories ?? this.categories, selectedTable: selectedTable ?? this.selectedTable,
+      tableCount: tableCount ?? this.tableCount, tableNames: tableNames ?? this.tableNames,
+      pendingNotes: pendingNotes ?? this.pendingNotes);
 }

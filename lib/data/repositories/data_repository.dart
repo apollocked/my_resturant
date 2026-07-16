@@ -19,6 +19,8 @@ class AppRepository implements DataRepository {
     _settingCtrl.close();
   }
 
+  final _categoryCtrl = StreamController<List<Map<String, String>>>.broadcast();
+
   Future<void> _emitOrders() async => _orderCtrl.add(await loadOrders());
   Future<void> _emitRecipes() async => _recipeCtrl.add(await loadRecipes());
   Future<void> _emitSettings() async => _settingCtrl.add(await loadSettings());
@@ -78,9 +80,20 @@ class AppRepository implements DataRepository {
   Stream<List<Recipe>> watchRecipes() => _recipeCtrl.stream;
 
   // Categories
+  @override
   Future<List<Map<String, String>>> loadCategories() => db.getAllCategoryMaps();
+  @override
   Future<void> addCategory(String key, String name, String icon) =>
       db.insertCategory(key, name, icon);
+
+  @override
+  Future<void> removeCategory(String key) async {
+    await db.deleteCategoryByKey(key);
+    _categoryCtrl.add(await loadCategories());
+  }
+
+  @override
+  Stream<List<Map<String, String>>> watchCategories() => _categoryCtrl.stream;
 
   // Orders
   @override
