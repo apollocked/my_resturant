@@ -24,7 +24,7 @@ class TableSelector extends StatelessWidget {
           color: AppColors.primarySoft, borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.primary.withValues(alpha: 0.2))),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(selectedTable == 0 ? t('choose') : '${t('table')} $selectedTable',
+          Text(selectedTable == 0 ? t('choose') : 'Table $selectedTable',
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.primary)),
           const SizedBox(width: 4),
           const Icon(Icons.expand_more, color: AppColors.primary, size: 18),

@@ -452,7 +452,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '${t('table')} $n',
+                                      'Table $n',
                                       style: TextStyle(
                                         color: cs.surface,
                                         fontSize: screen == ScreenSize.desktop
@@ -472,7 +472,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      t('table'),
+                                      'Table',
                                       style: TextStyle(
                                         color: cs.surface.withValues(
                                           alpha: 0.7,
