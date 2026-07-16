@@ -14,7 +14,7 @@ class ConnectivityBanner extends StatefulWidget {
 
 class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTickerProviderStateMixin {
   bool _connected = true;
-  late StreamSubscription<List<ConnectivityResult>> _sub;
+  StreamSubscription<List<ConnectivityResult>>? _sub;
   late AnimationController _animCtrl;
 
   @override
@@ -44,7 +44,7 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
 
   @override
   void dispose() {
-    _sub.cancel();
+    _sub?.cancel();
     _animCtrl.dispose();
     super.dispose();
   }

@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
@@ -158,21 +161,60 @@ class _DishFormPageState extends State<DishFormPage> {
     if (cropped != null) _imageUrl.value = cropped.path;
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    final id = _isEditing ? widget.recipe!.id : const Uuid().v4();
+    String imageUrl = _imageUrl.value.isEmpty
+        ? 'https://picsum.photos/seed/${_nameCtrl.text.trim()}/400/300'
+        : _imageUrl.value;
+    if (!imageUrl.startsWith('http')) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+      try {
+        imageUrl = await _uploadImage(id, imageUrl);
+      } catch (e) {
+        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_t('error_occurred')), backgroundColor: Colors.red),
+          );
+        }
+        return;
+      }
+      if (mounted) Navigator.pop(context);
+    }
     final r = Recipe(
-      id: _isEditing
-          ? widget.recipe!.id
-          : const Uuid().v4(),
+      id: id,
       name: _nameCtrl.text.trim(),
       price: double.tryParse(_priceCtrl.text) ?? 0,
       description: _descCtrl.text.trim(),
       category: _category,
-      imageUrl: _imageUrl.value.isEmpty
-          ? 'https://picsum.photos/seed/${_nameCtrl.text.trim()}/400/300'
-          : _imageUrl.value,
+      imageUrl: imageUrl,
     );
-    Navigator.pop(context, r);
+    if (mounted) Navigator.pop(context, r);
+  }
+
+  Future<String> _uploadImage(String recipeId, String localPath) async {
+    final file = File(localPath);
+    final bytes = await FlutterImageCompress.compressWithFile(
+      file.path,
+      quality: 75,
+      minWidth: 1024,
+      minHeight: 1024,
+      format: CompressFormat.jpeg,
+    );
+    if (bytes == null || bytes.isEmpty) throw Exception('Compression failed');
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) throw Exception('Not logged in');
+    final path = '$uid/$recipeId.jpg';
+    await Supabase.instance.client.storage
+        .from('recipe_images')
+        .uploadBinary(path, bytes, fileOptions: const FileOptions(upsert: true));
+    return Supabase.instance.client.storage.from('recipe_images').getPublicUrl(path);
   }
 
   @override

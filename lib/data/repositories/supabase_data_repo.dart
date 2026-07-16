@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/core/constants/app_constants.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
@@ -43,10 +45,14 @@ class SupabaseDataRepository implements DataRepository {
     if (count.count >= AppConstants.maxRecipesPerRestaurant) {
       throw Exception('Maximum ${AppConstants.maxRecipesPerRestaurant} recipes reached');
     }
+    String imageUrl = r.imageUrl;
+    if (!imageUrl.startsWith('http')) {
+      imageUrl = await _compressAndUpload(uid, r.id, imageUrl);
+    }
     await _client.from('recipes').insert({
       'id': r.id,
       'name': r.name,
-      'image_url': r.imageUrl,
+      'image_url': imageUrl,
       'price': r.price,
       'description': r.description,
       'category': r.category,
@@ -90,6 +96,20 @@ class SupabaseDataRepository implements DataRepository {
           fileOptions: const FileOptions(upsert: true),
         );
     return _client.storage.from('recipe_images').getPublicUrl(path);
+  }
+
+  Future<String> _compressAndUpload(String uid, String recipeId, String localPath) async {
+    final file = File(localPath);
+    if (!await file.exists()) return localPath;
+    final bytes = await FlutterImageCompress.compressWithFile(
+      file.path,
+      quality: 75,
+      minWidth: 1024,
+      minHeight: 1024,
+      format: CompressFormat.jpeg,
+    );
+    if (bytes == null || bytes.isEmpty) return localPath;
+    return uploadImage(recipeId, bytes);
   }
 
   @override

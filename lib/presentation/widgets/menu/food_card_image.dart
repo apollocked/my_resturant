@@ -30,8 +30,6 @@ class FoodCardImage extends StatelessWidget {
     final badgeSize = isDesktop ? 48.0 : isTablet ? 42.0 : 36.0;
     final badgeFontSize = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
     final notesIconSize = isDesktop ? 22.0 : isTablet ? 18.0 : 16.0;
-    final removeBtnSize = isDesktop ? 26.0 : isTablet ? 22.0 : 20.0;
-    final removeIconSize = isDesktop ? 14.0 : isTablet ? 12.0 : 11.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     return Expanded(
       child: GestureDetector(
@@ -64,21 +62,27 @@ class FoodCardImage extends StatelessWidget {
                   style: TextStyle(color: cs.onPrimary, fontSize: badgeFontSize, fontWeight: FontWeight.bold)),
             )),
           if (isSelected && onRemove != null)
-            Positioned(top: 10, left: 10 + badgeSize + 6, child: GestureDetector(
-              onTap: () { HapticFeedback.lightImpact(); onRemove?.call(); },
+            Positioned(bottom: 10, left: 10, child: GestureDetector(
+              onTap: () { HapticFeedback.mediumImpact(); onRemove?.call(); },
               child: Container(
-                width: removeBtnSize, height: removeBtnSize,
-                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: isDesktop ? 12 : isTablet ? 10 : 8, vertical: isDesktop ? 7 : isTablet ? 6 : 5),
                 decoration: BoxDecoration(
-                  color: cs.error.withValues(alpha: 0.9),
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: cs.error.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2))],
+                  color: cs.error,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [BoxShadow(color: cs.error.withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 2))],
                 ),
-                child: Icon(Icons.close, size: removeIconSize, color: cs.onError),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete_outline_rounded, size: isDesktop ? 16 : isTablet ? 14 : 13, color: cs.onError),
+                    SizedBox(width: isDesktop ? 5 : 4),
+                    Text(t('delete'), style: TextStyle(color: cs.onError, fontSize: isDesktop ? 12 : isTablet ? 11 : 10, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
             )),
           if (notes.isNotEmpty)
-            Positioned(bottom: 10, left: 10, child: Container(
+            Positioned(bottom: 10, right: 10, child: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(color: cs.surface.withValues(alpha: 0.85), shape: BoxShape.circle),
               child: Icon(Icons.edit_note, size: notesIconSize, color: AppColors.primary),

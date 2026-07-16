@@ -25,13 +25,13 @@ class OrderCubit extends Cubit<OrderState> {
     _applySettings(settings);
     emit(state.copyWith(recipes: recipes, orders: orders));
 
-    _orderSub = _repo.watchOrders().listen((o) {
+    _orderSub = _repo.watchOrders().handleError((_) {}).listen((o) {
       if (!isClosed) emit(state.copyWith(orders: o));
     });
-    _recipeSub = _repo.watchRecipes().listen((r) {
+    _recipeSub = _repo.watchRecipes().handleError((_) {}).listen((r) {
       if (!isClosed) emit(state.copyWith(recipes: r));
     });
-    _settingSub = _repo.watchSettings().listen((s) {
+    _settingSub = _repo.watchSettings().handleError((_) {}).listen((s) {
       if (!isClosed) _applySettings(s);
     });
   }

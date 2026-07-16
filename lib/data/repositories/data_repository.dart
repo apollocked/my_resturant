@@ -13,6 +13,12 @@ class AppRepository implements DataRepository {
   final _recipeCtrl = StreamController<List<Recipe>>.broadcast();
   final _settingCtrl = StreamController<Map<String, String>>.broadcast();
 
+  void close() {
+    _orderCtrl.close();
+    _recipeCtrl.close();
+    _settingCtrl.close();
+  }
+
   Future<void> _emitOrders() async => _orderCtrl.add(await loadOrders());
   Future<void> _emitRecipes() async => _recipeCtrl.add(await loadRecipes());
   Future<void> _emitSettings() async => _settingCtrl.add(await loadSettings());

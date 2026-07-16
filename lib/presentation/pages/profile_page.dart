@@ -221,25 +221,30 @@ class ProfilePage extends StatelessWidget {
       return;
     }
     final ctl = TextEditingController();
-    final pin = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(t('enter_pin_for').replaceAll('{role}', t(r.name))),
-        content: TextField(
-          controller: ctl, obscureText: true, maxLength: 6,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(border: const OutlineInputBorder(), hintText: t('pin_hint')),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, ctl.text),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-            child: Text(t('verify')),
+    String? pin;
+    try {
+      pin = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(t('enter_pin_for').replaceAll('{role}', t(r.name))),
+          content: TextField(
+            controller: ctl, obscureText: true, maxLength: 6,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(border: const OutlineInputBorder(), hintText: t('pin_hint')),
           ),
-        ],
-      ),
-    );
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, ctl.text),
+              style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+              child: Text(t('verify')),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      ctl.dispose();
+    }
     if (pin == null || pin.isEmpty) return;
     await cubit.switchRole(r, pin: pin);
     if (context.mounted && cubit.state.role != r) {
@@ -313,7 +318,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).then((_) => ctl.dispose());
   }
 
   void _showUpdatePassword(BuildContext context, AccountCubit cubit, String Function(String) t, ColorScheme cs) {
@@ -370,6 +375,9 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      curCtl.dispose();
+      newCtl.dispose();
+    });
   }
 }

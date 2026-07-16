@@ -10,7 +10,7 @@ import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart'
 import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
-import 'package:my_resturant/presentation/widgets/menu/notes_dialog.dart';
+import 'package:my_resturant/presentation/widgets/menu/item_on_hold_sheet.dart';
 import 'package:my_resturant/data/models/categories.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
@@ -45,9 +45,12 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (!mounted) return;
     final orderCubit = context.read<OrderCubit>();
     final s = orderCubit.state;
-    final r = await showDialog<String>(
+    final r = await showModalBottomSheet<String>(
       context: context,
-      builder: (_) => NotesDialog(initialNotes: s.getNotes(recipe.id)),
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ItemOnHoldSheet(recipe: recipe, initialNotes: s.getNotes(recipe.id)),
     );
     if (!mounted) return;
     if (r != null) {
