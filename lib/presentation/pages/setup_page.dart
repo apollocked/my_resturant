@@ -250,7 +250,7 @@ class _SetupPageState extends State<SetupPage> {
     if (mounted) {
       setState(() => _loading = false);
       await _showPasscodesDialog(context);
-      if (mounted) context.go('/menu');
+      if (mounted) context.go('/role-login');
     }
   }
 }

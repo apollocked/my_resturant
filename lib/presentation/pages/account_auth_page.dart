@@ -209,7 +209,11 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
-      context.go('/menu');
+      if (context.read<RoleCubit>().state.isConfigured) {
+        context.go('/role-login');
+      } else {
+        context.go('/setup');
+      }
     }
   }
 }

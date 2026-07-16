@@ -59,7 +59,11 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   Future<void> logout() async {
-    await _repo.logout();
+    try {
+      await _repo.logout();
+    } catch (e, st) {
+      debugPrint('AccountCubit.logout error: $e\n$st');
+    }
     emit(const AccountState());
   }
 
