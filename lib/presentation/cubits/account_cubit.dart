@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
@@ -33,7 +34,8 @@ class AccountCubit extends Cubit<AccountState> {
         isLoggedIn: true,
         email: email.trim().toLowerCase(),
       ));
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('AccountCubit.createAccount error: $e\n$st');
       emit(AccountState(errorMessage: '$e'));
       rethrow;
     }
@@ -49,7 +51,8 @@ class AccountCubit extends Cubit<AccountState> {
         ));
       }
       return ok;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('AccountCubit.login error: $e\n$st');
       emit(AccountState(errorMessage: '$e'));
       return false;
     }
@@ -57,6 +60,29 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> logout() async {
     await _repo.logout();
-    emit(AccountState(isLoggedIn: true, email: state.email));
+    emit(const AccountState());
   }
+
+  Future<void> updateEmail(String newEmail) async {
+    try {
+      await _repo.updateEmail(newEmail);
+      emit(AccountState(isLoggedIn: true, email: newEmail.trim().toLowerCase()));
+    } catch (e, st) {
+      debugPrint('AccountCubit.updateEmail error: $e\n$st');
+      emit(AccountState(isLoggedIn: true, email: state.email, errorMessage: '$e'));
+      rethrow;
+    }
+  }
+
+  Future<void> updatePassword(String currentPassword, String newPassword) async {
+    try {
+      await _repo.updatePassword(currentPassword, newPassword);
+    } catch (e, st) {
+      debugPrint('AccountCubit.updatePassword error: $e\n$st');
+      emit(AccountState(isLoggedIn: true, email: state.email, errorMessage: '$e'));
+      rethrow;
+    }
+  }
+
+  void dismissError() => emit(AccountState(isLoggedIn: state.isLoggedIn, email: state.email));
 }

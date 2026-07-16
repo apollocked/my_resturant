@@ -45,6 +45,18 @@ class LocalAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> updateEmail(String newEmail) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_emailKey, newEmail.trim().toLowerCase());
+  }
+
+  @override
+  Future<void> updatePassword(String currentPassword, String newPassword) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_passKey, newPassword);
+  }
+
+  @override
   Future<bool> arePasscodesConfigured() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(_pinWaiter) &&

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
@@ -36,7 +37,8 @@ class SupabaseAuthRepository implements AuthRepository {
         password: password,
       );
       return response.user != null;
-    } on AuthException {
+    } on AuthException catch (e) {
+      debugPrint('SupabaseAuthRepo.login error: $e');
       return false;
     }
   }
@@ -44,6 +46,16 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<void> logout() async {
     await _client.auth.signOut();
+  }
+
+  @override
+  Future<void> updateEmail(String newEmail) async {
+    await _client.auth.updateUser(UserAttributes(email: newEmail.trim().toLowerCase()));
+  }
+
+  @override
+  Future<void> updatePassword(String currentPassword, String newPassword) async {
+    await _client.auth.updateUser(UserAttributes(password: newPassword));
   }
 
   @override
@@ -64,7 +76,8 @@ class SupabaseAuthRepository implements AuthRepository {
       return (data['pin_waiter']?.isNotEmpty == true &&
           data['pin_kitchen']?.isNotEmpty == true &&
           data['pin_admin']?.isNotEmpty == true);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('SupabaseAuthRepo.arePasscodesConfigured error: $e\n$st');
       return false;
     }
   }
@@ -73,11 +86,13 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin) async {
     final user = _client.auth.currentUser;
     if (user == null) throw Exception('Not logged in');
-    await _client.from('profiles').update({
+    await _client.from('profiles').upsert({
+      'id': user.id,
+      'email': user.email,
       'pin_waiter': _hash(waiterPin),
       'pin_kitchen': _hash(kitchenPin),
       'pin_admin': _hash(adminPin),
-    }).eq('id', user.id);
+    });
   }
 
   @override
@@ -96,7 +111,8 @@ class SupabaseAuthRepository implements AuthRepository {
           .eq('id', user.id)
           .single();
       return data[column] == _hash(pin);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('SupabaseAuthRepo.verifyPasscode error: $e\n$st');
       return false;
     }
   }
@@ -117,7 +133,10 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> saveLoggedInRole(Role? role) async {
     final user = _client.auth.currentUser;
     if (user == null) return;
-    await _client.from('profiles').update({'role': role?.name}).eq('id', user.id);
+    await _client.from('profiles').upsert({
+      'id': user.id,
+      'role': role?.name,
+    });
   }
 
   @override

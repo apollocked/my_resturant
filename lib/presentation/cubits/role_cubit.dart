@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
@@ -35,7 +36,8 @@ class RoleCubit extends Cubit<RoleState> {
     try {
       await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
       emit(const RoleState(isConfigured: true));
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('RoleCubit.configure error: $e\n$st');
       emit(RoleState(errorMessage: '$e'));
       rethrow;
     }
@@ -53,7 +55,8 @@ class RoleCubit extends Cubit<RoleState> {
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('RoleCubit.loginAsync error: $e\n$st');
       emit(RoleState(errorMessage: '$e'));
       return false;
     }

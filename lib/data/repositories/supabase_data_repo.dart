@@ -10,7 +10,8 @@ import 'package:my_resturant/domain/repositories/data_repository.dart';
 class SupabaseDataRepository implements DataRepository {
   SupabaseClient get _client => Supabase.instance.client;
 
-  String get _userId => _client.auth.currentUser!.id;
+  bool get _isAuthed => _client.auth.currentSession != null;
+  String? get _userId => _client.auth.currentUser?.id;
 
   Recipe _mapRecipe(Map<String, dynamic> row) => Recipe(
     id: row['id'] as String,
@@ -24,12 +25,15 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<List<Recipe>> loadRecipes() async {
+    if (!_isAuthed) return [];
     final data = await _client.from('recipes').select();
     return data.map(_mapRecipe).toList();
   }
 
   @override
   Future<void> addRecipe(Recipe r) async {
+    final uid = _userId;
+    if (uid == null) return;
     await _client.from('recipes').insert({
       'id': r.id,
       'name': r.name,
@@ -38,7 +42,7 @@ class SupabaseDataRepository implements DataRepository {
       'description': r.description,
       'category': r.category,
       'available': r.available,
-      'restaurant_id': _userId,
+      'restaurant_id': uid,
     });
   }
 
@@ -50,6 +54,7 @@ class SupabaseDataRepository implements DataRepository {
     String? category,
     String? description,
   }) async {
+    if (!_isAuthed) return;
     final updates = <String, dynamic>{};
     if (name != null) updates['name'] = name;
     if (price != null) updates['price'] = price;
@@ -75,11 +80,13 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> removeRecipe(String id) async {
+    if (!_isAuthed) return;
     await _client.from('recipes').delete().eq('id', id);
   }
 
   @override
   Future<void> toggleRecipe(String id) async {
+    if (!_isAuthed) return;
     final data = await _client
         .from('recipes')
         .select('available')
@@ -93,6 +100,7 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Stream<List<Recipe>> watchRecipes() {
+    if (!_isAuthed) return const Stream.empty();
     return _client
         .from('recipes')
         .stream(primaryKey: ['id'])
@@ -134,6 +142,7 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<List<Order>> loadOrders() async {
+    if (!_isAuthed) return [];
     final data = await _client
         .from('orders')
         .select()
@@ -143,6 +152,8 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> saveOrder(Order order) async {
+    final uid = _userId;
+    if (uid == null) return;
     final itemsJson = jsonEncode(
       order.items
           .map(
@@ -166,17 +177,19 @@ class SupabaseDataRepository implements DataRepository {
       'created_at': order.createdAt.millisecondsSinceEpoch,
       'notes': order.notes,
       'items_json': itemsJson,
-      'restaurant_id': _userId,
+      'restaurant_id': uid,
     });
   }
 
   @override
   Future<void> changeOrderStatus(String id, OrderStatus status) async {
+    if (!_isAuthed) return;
     await _client.from('orders').update({'status': status.name}).eq('id', id);
   }
 
   @override
   Stream<List<Order>> watchOrders() {
+    if (!_isAuthed) return const Stream.empty();
     return _client
         .from('orders')
         .stream(primaryKey: ['id'])
@@ -187,6 +200,7 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<Map<String, String>> loadSettings() async {
+    if (!_isAuthed) return {};
     final data = await _client.from('app_settings').select();
     return {
       for (final row in data) row['key'] as String: row['value'] as String,
@@ -195,18 +209,21 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> saveSetting(String key, String value) async {
+    final uid = _userId;
+    if (uid == null) return;
     await _client.from('app_settings').upsert({
       'key': key,
       'value': value,
-      'restaurant_id': _userId,
+      'restaurant_id': uid,
     }, onConflict: 'key, restaurant_id');
   }
 
   @override
   Stream<Map<String, String>> watchSettings() {
+    if (!_isAuthed) return const Stream.empty();
     return _client
         .from('app_settings')
-        .stream(primaryKey: ['key'])
+        .stream(primaryKey: ['key', 'restaurant_id'])
         .map(
           (data) => {
             for (final row in data)

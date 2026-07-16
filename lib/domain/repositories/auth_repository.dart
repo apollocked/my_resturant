@@ -6,6 +6,8 @@ abstract class AuthRepository {
   Future<bool> login(String email, String password);
   Future<void> logout();
   Future<String?> getAccountEmail();
+  Future<void> updateEmail(String newEmail);
+  Future<void> updatePassword(String currentPassword, String newPassword);
 
   Future<bool> arePasscodesConfigured();
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin);

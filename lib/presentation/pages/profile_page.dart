@@ -23,6 +23,7 @@ class ProfilePage extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final roleCubit = context.read<RoleCubit>();
     final accountCubit = context.read<AccountCubit>();
+    final acctState = context.watch<AccountCubit>().state;
     final isDesktop = R.isDesktop(context);
 
     return SafeArea(
@@ -44,6 +45,27 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 4),
             Center(
               child: Text(t('restaurant_name'), style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+            ),
+            Center(
+              child: Text(acctState.email ?? '', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+            ),
+
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.email_outlined, color: AppColors.primary),
+                title: Text(t('update_email'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                trailing: const Icon(Icons.chevron_left, size: 18),
+                onTap: () => _showUpdateEmail(context, accountCubit, t, cs),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.lock_outline, color: AppColors.primary),
+                title: Text(t('update_password'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                trailing: const Icon(Icons.chevron_left, size: 18),
+                onTap: () => _showUpdatePassword(context, accountCubit, t, cs),
+              ),
             ),
 
             if (role == Role.admin) ...[
@@ -241,6 +263,108 @@ class ProfilePage extends StatelessWidget {
               role.logout();
             },
             child: Text(t('logout'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpdateEmail(BuildContext context, AccountCubit cubit, String Function(String) t, ColorScheme cs) {
+    final ctl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('update_email')),
+        content: TextField(
+          controller: ctl,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: t('new_email'),
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+            onPressed: () async {
+              if (ctl.text.isEmpty || !ctl.text.contains('@')) return;
+              Navigator.pop(ctx);
+              try {
+                await cubit.updateEmail(ctl.text);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('${t('email_updated')}. ${t('email_confirmation_hint')}'),
+                    backgroundColor: AppColors.success,
+                  ));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('$e'),
+                    backgroundColor: AppColors.error,
+                  ));
+                }
+              }
+            },
+            child: Text(t('save')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpdatePassword(BuildContext context, AccountCubit cubit, String Function(String) t, ColorScheme cs) {
+    final curCtl = TextEditingController();
+    final newCtl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('update_password')),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(
+            controller: curCtl,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: t('current_password'),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: newCtl,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: t('new_password'),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+            onPressed: () async {
+              if (curCtl.text.isEmpty || newCtl.text.length < 6) return;
+              Navigator.pop(ctx);
+              try {
+                await cubit.updatePassword(curCtl.text, newCtl.text);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(t('password_updated')),
+                    backgroundColor: AppColors.success,
+                  ));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('$e'),
+                    backgroundColor: AppColors.error,
+                  ));
+                }
+              }
+            },
+            child: Text(t('save')),
           ),
         ],
       ),
