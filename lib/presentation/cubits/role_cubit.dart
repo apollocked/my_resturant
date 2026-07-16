@@ -18,12 +18,7 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> load() async {
     final configured = await _repo.arePasscodesConfigured();
-    final savedRole = await _repo.getLoggedInRole();
-    if (savedRole != null) {
-      emit(RoleState(isConfigured: configured, isLoggedIn: true, role: savedRole));
-    } else {
-      emit(RoleState(isConfigured: configured));
-    }
+    emit(RoleState(isConfigured: configured));
   }
 
   void clearError() => emit(RoleState(

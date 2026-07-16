@@ -127,7 +127,14 @@ class SupabaseAuthRepository implements AuthRepository {
       Role.kitchen => 'pin_kitchen',
       Role.admin => 'pin_admin',
     };
-    await _client.from('profiles').update({column: _hash(newPin)}).eq('id', user.id);
+    final existing = await _client.from('profiles').select('pin_waiter, pin_kitchen, pin_admin').eq('id', user.id).maybeSingle();
+    await _client.from('profiles').upsert({
+      'id': user.id,
+      'pin_waiter': existing?['pin_waiter'] ?? '',
+      'pin_kitchen': existing?['pin_kitchen'] ?? '',
+      'pin_admin': existing?['pin_admin'] ?? '',
+      column: _hash(newPin),
+    });
   }
 
   @override
