@@ -257,10 +257,12 @@ class ProfilePage extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              acct.logout();
-              role.logout();
+              await acct.logout();
+              await role.logout();
+              if (!context.mounted) return;
+              context.go('/account-auth');
             },
             child: Text(t('logout'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),

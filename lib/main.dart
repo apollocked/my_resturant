@@ -18,7 +18,6 @@ import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Supabase.initialize(
     url: SupabaseCredentials.url,
     publishableKey: SupabaseCredentials.publishableKey,
@@ -38,7 +37,12 @@ class MyApp extends StatelessWidget {
   final DataRepository repo;
   final AccountCubit acct;
   final RoleCubit role;
-  const MyApp({super.key, required this.repo, required this.acct, required this.role});
+  const MyApp({
+    super.key,
+    required this.repo,
+    required this.acct,
+    required this.role,
+  });
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -65,28 +69,28 @@ class AppView extends StatelessWidget {
         if (!didPop) _showExitDialog(context, t);
       },
       child: MaterialApp.router(
-      title: t('app_name'),
-      debugShowCheckedModeBanner: false,
-      locale: settings.locale,
-      supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      localeResolutionCallback: (locale, supported) {
-        if (locale == null) return const Locale('en');
-        if (supported.contains(locale) &&
-            GlobalMaterialLocalizations.delegate.isSupported(locale)) {
-          return locale;
-        }
-        return const Locale('en');
-      },
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: settings.themeMode,
-      routerConfig: appRouter,
-    ),
+        title: t('app_name'),
+        debugShowCheckedModeBanner: false,
+        locale: settings.locale,
+        supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        localeResolutionCallback: (locale, supported) {
+          if (locale == null) return const Locale('en');
+          if (supported.contains(locale) &&
+              GlobalMaterialLocalizations.delegate.isSupported(locale)) {
+            return locale;
+          }
+          return const Locale('en');
+        },
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: settings.themeMode,
+        routerConfig: appRouter,
+      ),
     );
   }
 
@@ -97,14 +101,20 @@ class AppView extends StatelessWidget {
         title: Text(t('app_name')),
         content: Text(t('exit_confirm')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t('cancel')),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () {
               Navigator.pop(ctx);
               SystemNavigator.pop();
             },
-            child: Text(t('exit'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+            child: Text(
+              t('exit'),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
           ),
         ],
       ),
