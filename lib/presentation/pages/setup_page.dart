@@ -18,7 +18,9 @@ class _SetupPageState extends State<SetupPage> {
   final _waiterCtl = TextEditingController();
   final _kitchenCtl = TextEditingController();
   final _adminCtl = TextEditingController();
-  final bool _obscure = true;
+  bool _obscureWaiter = true;
+  bool _obscureKitchen = true;
+  bool _obscureAdmin = true;
   bool _loading = false;
 
   @override
@@ -80,6 +82,8 @@ class _SetupPageState extends State<SetupPage> {
                         _waiterCtl,
                         t('waiter'),
                         Icons.room_service_outlined,
+                        _obscureWaiter,
+                        () => setState(() => _obscureWaiter = !_obscureWaiter),
                         t,
                         cs,
                       ),
@@ -88,6 +92,8 @@ class _SetupPageState extends State<SetupPage> {
                         _kitchenCtl,
                         t('kitchen'),
                         Icons.restaurant_outlined,
+                        _obscureKitchen,
+                        () => setState(() => _obscureKitchen = !_obscureKitchen),
                         t,
                         cs,
                       ),
@@ -96,6 +102,8 @@ class _SetupPageState extends State<SetupPage> {
                         _adminCtl,
                         t('admin'),
                         Icons.admin_panel_settings_outlined,
+                        _obscureAdmin,
+                        () => setState(() => _obscureAdmin = !_obscureAdmin),
                         t,
                         cs,
                       ),
@@ -153,17 +161,23 @@ class _SetupPageState extends State<SetupPage> {
     TextEditingController ctl,
     String label,
     IconData icon,
+    bool obscure,
+    VoidCallback toggleObscure,
     String Function(String) t,
     ColorScheme cs,
   ) {
     return TextFormField(
       controller: ctl,
-      obscureText: _obscure,
+      obscureText: obscure,
       maxLength: 6,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         counterText: '',
         prefixIcon: Icon(icon, size: 20),
+        suffixIcon: IconButton(
+          icon: Icon(obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20),
+          onPressed: toggleObscure,
+        ),
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         filled: true,
@@ -174,6 +188,51 @@ class _SetupPageState extends State<SetupPage> {
           : v.length < 4
           ? t('pin_too_short')
           : null,
+    );
+  }
+
+  Future<void> _showPasscodesDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 28),
+            SizedBox(width: 10),
+            Text('Passcodes Saved'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Save these passcodes securely. You will need them to log in.'),
+            const SizedBox(height: 16),
+            _passcodeRow(Icons.room_service_outlined, 'Waiter', _waiterCtl.text),
+            const SizedBox(height: 8),
+            _passcodeRow(Icons.restaurant_outlined, 'Kitchen', _kitchenCtl.text),
+            const SizedBox(height: 8),
+            _passcodeRow(Icons.admin_panel_settings_outlined, 'Admin', _adminCtl.text),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _passcodeRow(IconData icon, String label, String code) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.primary),
+        const SizedBox(width: 10),
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text(code, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 3)),
+      ],
     );
   }
 
@@ -190,7 +249,8 @@ class _SetupPageState extends State<SetupPage> {
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
-      context.go('/menu');
+      await _showPasscodesDialog(context);
+      if (mounted) context.go('/menu');
     }
   }
 }

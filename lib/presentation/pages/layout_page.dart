@@ -8,6 +8,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/presentation/widgets/shared/connectivity_banner.dart';
 
 class _Nav {
   final IconData outline, filled;
@@ -34,7 +35,9 @@ class MainShell extends StatelessWidget {
     final items = _buildNavItems(role);
 
     if (isDesktop && R.height(context) >= 500) {
-      return Scaffold(
+      return SafeArea(
+        child: ConnectivityBanner(
+          child: Scaffold(
         body: Row(
           children: [
             NavigationRail(
@@ -103,11 +106,15 @@ class MainShell extends StatelessWidget {
             Expanded(child: navigationShell),
           ],
         ),
+        ),
+      ),
       );
     }
 
     if (isTablet && R.height(context) >= 500) {
-      return Scaffold(
+      return SafeArea(
+        child: ConnectivityBanner(
+          child: Scaffold(
         body: Row(
           children: [
             NavigationRail(
@@ -157,10 +164,14 @@ class MainShell extends StatelessWidget {
             Expanded(child: navigationShell),
           ],
         ),
+        ),
+      ),
       );
     }
 
-    return Scaffold(
+    return SafeArea(
+      child: ConnectivityBanner(
+        child: Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -196,6 +207,8 @@ class MainShell extends StatelessWidget {
           ),
         ),
       ),
+    ),
+    ),
     );
   }
 
