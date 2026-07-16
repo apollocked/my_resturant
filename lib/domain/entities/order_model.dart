@@ -10,6 +10,7 @@ class Order {
   final OrderStatus status;
   final DateTime createdAt;
   final String notes;
+  final String trackingCode;
 
   Order({
     required this.id,
@@ -19,6 +20,7 @@ class Order {
     this.status = OrderStatus.pending,
     DateTime? createdAt,
     this.notes = '',
+    this.trackingCode = '',
   }) : createdAt = createdAt ?? DateTime.now();
 
   double get totalPrice =>
@@ -26,7 +28,9 @@ class Order {
 
   String get displayTable => tableName ?? 'Table $tableNumber';
 
-  Order copyWith({OrderStatus? status}) {
+  String get displayTrackingCode => trackingCode.isNotEmpty ? trackingCode : 'ORD-${createdAt.millisecondsSinceEpoch}';
+
+  Order copyWith({OrderStatus? status, String? trackingCode}) {
     return Order(
       id: id,
       tableNumber: tableNumber,
@@ -35,6 +39,7 @@ class Order {
       status: status ?? this.status,
       createdAt: createdAt,
       notes: notes,
+      trackingCode: trackingCode ?? this.trackingCode,
     );
   }
 }

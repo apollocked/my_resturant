@@ -31,19 +31,23 @@ class AccountCubit extends Cubit<AccountState> {
   AccountCubit({required this._repo}) : super(const AccountState());
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString('account_email');
-    final savedLoggedIn = prefs.getBool('account_logged_in') ?? false;
-    if (savedLoggedIn && savedEmail != null) {
-      emit(AccountState(isLoggedIn: true, email: savedEmail));
-      return;
-    }
-    final session = await _repo.isAccountCreated();
-    final email = await _repo.getAccountEmail();
-    if (session && email != null) {
-      await prefs.setBool('account_logged_in', true);
-      await prefs.setString('account_email', email);
-      emit(AccountState(isLoggedIn: true, email: email));
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedEmail = prefs.getString('account_email');
+      final savedLoggedIn = prefs.getBool('account_logged_in') ?? false;
+      if (savedLoggedIn && savedEmail != null) {
+        emit(AccountState(isLoggedIn: true, email: savedEmail));
+        return;
+      }
+      final session = await _repo.isAccountCreated();
+      final email = await _repo.getAccountEmail();
+      if (session && email != null) {
+        await prefs.setBool('account_logged_in', true);
+        await prefs.setString('account_email', email);
+        emit(AccountState(isLoggedIn: true, email: email));
+      }
+    } catch (e, st) {
+      debugPrint('AccountCubit.load error: $e\n$st');
     }
   }
 

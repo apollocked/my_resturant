@@ -32,7 +32,7 @@ class OrderDetailPage extends StatelessWidget {
     final labels = {OrderStatus.pending: t('status_pending'), OrderStatus.preparing: t('status_preparing'), OrderStatus.served: t('status_served')};
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
-      appBar: AppBar(title: Text(order.displayTable)),
+      appBar: AppBar(title: Text('${order.displayTable} — ${order.displayTrackingCode}')),
       body: SafeArea(child: SingleChildScrollView(
         padding: EdgeInsets.all(R.padding(context)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [

@@ -68,7 +68,13 @@ class OrderCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
             ),
-            child: Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: statusFont)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: statusFont)),
+              if (order.trackingCode.isNotEmpty || order.displayTrackingCode.isNotEmpty) ...[
+                const SizedBox(width: 6),
+                Text(order.displayTrackingCode, style: TextStyle(color: cs.onPrimary.withValues(alpha: 0.7), fontWeight: FontWeight.w500, fontSize: statusFont - 1)),
+              ],
+            ]),
           ),
           Row(children: [
             if (order.status != OrderStatus.served && elapsedMin > 0)

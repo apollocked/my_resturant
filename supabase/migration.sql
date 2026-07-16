@@ -67,21 +67,21 @@ CREATE POLICY "Everyone can read recipes"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can insert recipes"
+CREATE POLICY "Authenticated users can insert recipes"
   ON recipes FOR INSERT
   TO authenticated
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can update recipes"
+CREATE POLICY "Authenticated users can update recipes"
   ON recipes FOR UPDATE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin')
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id)
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can delete recipes"
+CREATE POLICY "Authenticated users can delete recipes"
   ON recipes FOR DELETE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id);
 
 CREATE INDEX IF NOT EXISTS idx_recipes_restaurant_id ON recipes(restaurant_id);
 
@@ -103,21 +103,21 @@ CREATE POLICY "Everyone can read categories"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can insert categories"
+CREATE POLICY "Authenticated users can insert categories"
   ON categories FOR INSERT
   TO authenticated
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can update categories"
+CREATE POLICY "Authenticated users can update categories"
   ON categories FOR UPDATE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin')
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id)
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can delete categories"
+CREATE POLICY "Authenticated users can delete categories"
   ON categories FOR DELETE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id);
 
 CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);
 
@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at BIGINT NOT NULL,
   notes TEXT NOT NULL DEFAULT '',
   items_json TEXT NOT NULL DEFAULT '[]',
+  tracking_code TEXT NOT NULL DEFAULT '',
   restaurant_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE
 );
 
@@ -142,21 +143,21 @@ CREATE POLICY "Everyone can read orders"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Waiter and admin can insert orders"
+CREATE POLICY "Authenticated users can insert orders"
   ON orders FOR INSERT
   TO authenticated
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = ANY (ARRAY['waiter', 'admin']));
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Kitchen and admin can update orders"
+CREATE POLICY "Authenticated users can update orders"
   ON orders FOR UPDATE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = ANY (ARRAY['kitchen', 'admin']))
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = ANY (ARRAY['kitchen', 'admin']));
+  USING ((select auth.uid()) = restaurant_id)
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can delete orders"
+CREATE POLICY "Authenticated users can delete orders"
   ON orders FOR DELETE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id);
 
 CREATE INDEX IF NOT EXISTS idx_orders_restaurant_id ON orders(restaurant_id);
 
@@ -177,21 +178,21 @@ CREATE POLICY "Everyone can read settings"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can insert settings"
+CREATE POLICY "Authenticated users can insert settings"
   ON app_settings FOR INSERT
   TO authenticated
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can update settings"
+CREATE POLICY "Authenticated users can update settings"
   ON app_settings FOR UPDATE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin')
-  WITH CHECK ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id)
+  WITH CHECK ((select auth.uid()) = restaurant_id);
 
-CREATE POLICY "Admin can delete settings"
+CREATE POLICY "Authenticated users can delete settings"
   ON app_settings FOR DELETE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id AND (select get_my_role()) = 'admin');
+  USING ((select auth.uid()) = restaurant_id);
 
 CREATE INDEX IF NOT EXISTS idx_app_settings_restaurant_id ON app_settings(restaurant_id);
 
@@ -207,16 +208,15 @@ ALTER PUBLICATION supabase_realtime ADD TABLE app_settings;
 -- ============================================================
 -- Storage policies (path-based isolation per restaurant)
 -- ============================================================
-CREATE POLICY "Admin can upload recipe images"
+CREATE POLICY "Authenticated users can upload recipe images"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
     bucket_id = 'recipe_images'
-    AND (select get_my_role()) = 'admin'
     AND (storage.foldername(name))[1] = (select auth.uid())::text
   );
 
-CREATE POLICY "Users can read own restaurant images"
+CREATE POLICY "Authenticated users can read own restaurant images"
   ON storage.objects FOR SELECT
   TO authenticated
   USING (
@@ -224,26 +224,23 @@ CREATE POLICY "Users can read own restaurant images"
     AND (storage.foldername(name))[1] = (select auth.uid())::text
   );
 
-CREATE POLICY "Admin can update recipe images"
+CREATE POLICY "Authenticated users can update recipe images"
   ON storage.objects FOR UPDATE
   TO authenticated
   USING (
     bucket_id = 'recipe_images'
-    AND (select get_my_role()) = 'admin'
     AND (storage.foldername(name))[1] = (select auth.uid())::text
   )
   WITH CHECK (
     bucket_id = 'recipe_images'
-    AND (select get_my_role()) = 'admin'
     AND (storage.foldername(name))[1] = (select auth.uid())::text
   );
 
-CREATE POLICY "Admin can delete recipe images"
+CREATE POLICY "Authenticated users can delete recipe images"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (
     bucket_id = 'recipe_images'
-    AND (select get_my_role()) = 'admin'
     AND (storage.foldername(name))[1] = (select auth.uid())::text
   );
 

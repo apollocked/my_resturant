@@ -171,6 +171,7 @@ class SupabaseDataRepository implements DataRepository {
       ),
       createdAt: DateTime.fromMillisecondsSinceEpoch(row['created_at'] as int),
       notes: row['notes'] as String? ?? '',
+      trackingCode: row['tracking_code'] as String? ?? '',
     );
   }
 
@@ -211,6 +212,8 @@ class SupabaseDataRepository implements DataRepository {
           .toList(),
     );
 
+    final trackingCode = 'ORD-${DateTime.now().millisecondsSinceEpoch}';
+
     await _client.from('orders').insert({
       'id': order.id,
       'table_number': order.tableNumber,
@@ -219,6 +222,7 @@ class SupabaseDataRepository implements DataRepository {
       'created_at': order.createdAt.millisecondsSinceEpoch,
       'notes': order.notes,
       'items_json': itemsJson,
+      'tracking_code': trackingCode,
       'restaurant_id': uid,
     });
   }
@@ -239,9 +243,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Stream<List<Order>> watchOrders() {
     if (!_isAuthed) return const Stream.empty();
+    final uid = _userId;
+    if (uid == null) return const Stream.empty();
     return _client
         .from('orders')
         .stream(primaryKey: ['id'])
+        .eq('restaurant_id', uid)
         .map((data) => data.map(_mapOrder).toList());
   }
 

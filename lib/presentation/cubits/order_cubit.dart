@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
@@ -10,30 +12,64 @@ import 'package:my_resturant/data/repositories/data_repository.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   final DataRepository _repo;
-  StreamSubscription? _orderSub;
-  StreamSubscription? _recipeSub;
-  StreamSubscription? _settingSub;
+  final List<StreamSubscription> _subs = [];
+  Timer? _pollTimer;
 
   OrderCubit({DataRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
     _load();
   }
 
   Future<void> _load() async {
-    final recipes = await _repo.loadRecipes();
-    final orders = await _repo.loadOrders();
-    final settings = await _repo.loadSettings();
-    _applySettings(settings);
-    emit(state.copyWith(recipes: recipes, orders: orders));
+    try {
+      final recipes = await _repo.loadRecipes();
+      final orders = await _repo.loadOrders();
+      final settings = await _repo.loadSettings();
+      _applySettings(settings);
+      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders));
+    } catch (e) {
+      if (!isClosed) debugPrint('OrderCubit._load error: $e');
+    }
 
-    _orderSub = _repo.watchOrders().handleError((_) {}).listen((o) {
+    _subscribe(_repo.watchOrders(), (o) {
       if (!isClosed) emit(state.copyWith(orders: o));
     });
-    _recipeSub = _repo.watchRecipes().handleError((_) {}).listen((r) {
+    _subscribe(_repo.watchRecipes(), (r) {
       if (!isClosed) emit(state.copyWith(recipes: r));
     });
-    _settingSub = _repo.watchSettings().handleError((_) {}).listen((s) {
+    _subscribe(_repo.watchSettings(), (s) {
       if (!isClosed) _applySettings(s);
     });
+
+    _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => _poll());
+  }
+
+  void _subscribe<T>(Stream<T> stream, void Function(T) onData) {
+    final sub = stream.listen(
+      onData,
+      onError: (_) => _reconnect(stream, onData),
+    );
+    _subs.add(sub);
+  }
+
+  void _reconnect<T>(Stream<T> stream, void Function(T) onData, [int attempt = 0]) {
+    if (isClosed) return;
+    final delay = Duration(seconds: min(1 << attempt, 30));
+    Future.delayed(delay, () {
+      if (isClosed) return;
+      stream.listen(
+        onData,
+        onError: (_) => _reconnect(stream, onData, attempt + 1),
+      );
+    });
+  }
+
+  Future<void> _poll() async {
+    if (isClosed) return;
+    try {
+      final recipes = await _repo.loadRecipes();
+      final orders = await _repo.loadOrders();
+      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders));
+    } catch (_) {}
   }
 
   void _applySettings(Map<String, String> settings) {
@@ -157,8 +193,10 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(cart: [], selectedTable: 0, pendingNotes: const {}));
   }
 
-  Future<void> updateOrderStatus(String orderId, OrderStatus status) async =>
-      _repo.changeOrderStatus(orderId, status);
+  Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
+    await _repo.changeOrderStatus(orderId, status);
+    await refresh();
+  }
 
   Future<void> deleteAllOrders() async {
     await _repo.deleteAllOrders();
@@ -167,14 +205,16 @@ class OrderCubit extends Cubit<OrderState> {
 
   Future<void> refresh() async {
     final orders = await _repo.loadOrders();
-    if (!isClosed) emit(state.copyWith(orders: orders));
+    final recipes = await _repo.loadRecipes();
+    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes));
   }
 
   @override
   Future<void> close() {
-    _orderSub?.cancel();
-    _recipeSub?.cancel();
-    _settingSub?.cancel();
+    _pollTimer?.cancel();
+    for (final s in _subs) {
+      s.cancel();
+    }
     return super.close();
   }
 }

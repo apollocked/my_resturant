@@ -18,20 +18,25 @@ class RoleCubit extends Cubit<RoleState> {
   RoleCubit({required this._repo}) : super(const RoleState());
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final configured = prefs.getBool('passcodes_configured') ?? await _repo.arePasscodesConfigured();
-    final roleLoggedIn = prefs.getBool('role_logged_in') ?? false;
-    if (roleLoggedIn) {
-      final roleName = prefs.getString('role_name');
-      if (roleName != null) {
-        final role = Role.values.cast<Role?>().firstWhere((r) => r!.name == roleName, orElse: () => null);
-        if (role != null) {
-          emit(RoleState(isConfigured: configured, isLoggedIn: true, role: role));
-          return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final configured = prefs.getBool('passcodes_configured') ?? await _repo.arePasscodesConfigured();
+      final roleLoggedIn = prefs.getBool('role_logged_in') ?? false;
+      if (roleLoggedIn) {
+        final roleName = prefs.getString('role_name');
+        if (roleName != null) {
+          final role = Role.values.cast<Role?>().firstWhere((r) => r!.name == roleName, orElse: () => null);
+          if (role != null) {
+            emit(RoleState(isConfigured: configured, isLoggedIn: true, role: role));
+            return;
+          }
         }
       }
+      emit(RoleState(isConfigured: configured));
+    } catch (e, st) {
+      debugPrint('RoleCubit.load error: $e\n$st');
+      emit(const RoleState());
     }
-    emit(RoleState(isConfigured: configured));
   }
 
   void clearError() => emit(RoleState(

@@ -24,7 +24,6 @@ void main() async {
     url: SupabaseCredentials.url,
     publishableKey: SupabaseCredentials.publishableKey,
   );
-
   final authRepo = SupabaseAuthRepository();
   final dataRepo = SupabaseDataRepository();
 

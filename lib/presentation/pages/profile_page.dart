@@ -39,30 +39,61 @@ class ProfilePage extends StatelessWidget {
             Center(
               child: Text(
                 t(role.name),
-                style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface),
+                style: TextStyle(
+                  fontSize: R.fontXl(context),
+                  fontWeight: FontWeight.w800,
+                  color: cs.onSurface,
+                ),
               ),
             ),
             const SizedBox(height: 4),
             Center(
-              child: Text(t('restaurant_name'), style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+              child: Text(
+                t('restaurant_name'),
+                style: TextStyle(
+                  fontSize: R.fontSm(context),
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
             ),
             Center(
-              child: Text(acctState.email ?? '', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+              child: Text(
+                acctState.email ?? '',
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+              ),
             ),
 
             const SizedBox(height: 16),
             Card(
               child: ListTile(
-                leading: const Icon(Icons.email_outlined, color: AppColors.primary),
-                title: Text(t('update_email'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                leading: const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.primary,
+                ),
+                title: Text(
+                  t('update_email'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: R.fontMd(context),
+                  ),
+                ),
                 trailing: const Icon(Icons.chevron_left, size: 18),
                 onTap: () => _showUpdateEmail(context, accountCubit, t, cs),
               ),
             ),
             Card(
               child: ListTile(
-                leading: const Icon(Icons.lock_outline, color: AppColors.primary),
-                title: Text(t('update_password'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                leading: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.primary,
+                ),
+                title: Text(
+                  t('update_password'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: R.fontMd(context),
+                  ),
+                ),
                 trailing: const Icon(Icons.chevron_left, size: 18),
                 onTap: () => _showUpdatePassword(context, accountCubit, t, cs),
               ),
@@ -94,27 +125,97 @@ class ProfilePage extends StatelessWidget {
                   mainAxisSpacing: R.gridSpacing(context),
                   childAspectRatio: 1.8,
                   children: [
-                    _card(context, Icons.table_restaurant_outlined, t('table_management'), t('table_management_sub'), '/table-management'),
-                    _card(context, Icons.restaurant_menu, t('food_management'), t('food_management_sub'), '/food-management'),
-                    _card(context, Icons.toggle_on_outlined, t('available_foods'), t('available_foods_sub'), '/availability'),
-                    _card(context, Icons.history, t('order_history'), t('order_history_sub'), '/history'),
-                    _card(context, Icons.bar_chart, t('report'), t('report_sub'), '/report'),
+                    _card(
+                      context,
+                      Icons.table_restaurant_outlined,
+                      t('table_management'),
+                      t('table_management_sub'),
+                      '/table-management',
+                    ),
+                    _card(
+                      context,
+                      Icons.restaurant_menu,
+                      t('food_management'),
+                      t('food_management_sub'),
+                      '/food-management',
+                    ),
+                    _card(
+                      context,
+                      Icons.toggle_on_outlined,
+                      t('available_foods'),
+                      t('available_foods_sub'),
+                      '/availability',
+                    ),
+                    _card(
+                      context,
+                      Icons.history,
+                      t('order_history'),
+                      t('order_history_sub'),
+                      '/history',
+                    ),
+                    _card(
+                      context,
+                      Icons.bar_chart,
+                      t('report'),
+                      t('report_sub'),
+                      '/report',
+                    ),
                   ],
                 )
               else ...[
-                _card(context, Icons.table_restaurant_outlined, t('table_management'), t('table_management_sub'), '/table-management'),
-                _card(context, Icons.restaurant_menu, t('food_management'), t('food_management_sub'), '/food-management'),
-                _card(context, Icons.toggle_on_outlined, t('available_foods'), t('available_foods_sub'), '/availability'),
-                _card(context, Icons.history, t('order_history'), t('order_history_sub'), '/history'),
-                _card(context, Icons.bar_chart, t('report'), t('report_sub'), '/report'),
+                _card(
+                  context,
+                  Icons.table_restaurant_outlined,
+                  t('table_management'),
+                  t('table_management_sub'),
+                  '/table-management',
+                ),
+                _card(
+                  context,
+                  Icons.restaurant_menu,
+                  t('food_management'),
+                  t('food_management_sub'),
+                  '/food-management',
+                ),
+                _card(
+                  context,
+                  Icons.toggle_on_outlined,
+                  t('available_foods'),
+                  t('available_foods_sub'),
+                  '/availability',
+                ),
+                _card(
+                  context,
+                  Icons.history,
+                  t('order_history'),
+                  t('order_history_sub'),
+                  '/history',
+                ),
+                _card(
+                  context,
+                  Icons.bar_chart,
+                  t('report'),
+                  t('report_sub'),
+                  '/report',
+                ),
               ],
             ],
 
             const SizedBox(height: 16),
-            Text(t('switch_role'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant)),
+            Text(
+              t('switch_role'),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
             const SizedBox(height: 8),
             ...Role.values.map(
-              (r) => Padding(padding: const EdgeInsets.only(bottom: 8), child: _switchRow(context, r, r == role, roleCubit, t, cs)),
+              (r) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _switchRow(context, r, r == role, roleCubit, t, cs),
+              ),
             ),
 
             if (role == Role.admin) ...[
@@ -127,8 +228,13 @@ class ProfilePage extends StatelessWidget {
                   label: Text(t('change_pins')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    side: const BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -138,17 +244,23 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => _confirmLogout(context, accountCubit, roleCubit, t),
+                onPressed: () =>
+                    _confirmLogout(context, accountCubit, roleCubit, t),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.error,
                   side: const BorderSide(color: AppColors.error),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Icon(Icons.logout, size: 18),
-                  const SizedBox(width: 8),
-                  Text(t('logout')),
-                ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.logout, size: 18),
+                    const SizedBox(width: 8),
+                    Text(t('logout')),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -162,26 +274,46 @@ class ProfilePage extends StatelessWidget {
     final avatarSize = R.avatarSize(context);
     return Center(
       child: Container(
-        width: avatarSize, height: avatarSize,
+        width: avatarSize,
+        height: avatarSize,
         decoration: BoxDecoration(
           color: AppColors.primarySoft,
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.primary, width: 2),
         ),
-        child: Icon(Icons.person, size: avatarSize * 0.5, color: AppColors.primary),
+        child: Icon(
+          Icons.person,
+          size: avatarSize * 0.5,
+          color: AppColors.primary,
+        ),
       ),
     );
   }
 
-  Widget _card(BuildContext context, IconData icon, String title, String sub, String route) {
+  Widget _card(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String sub,
+    String route,
+  ) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Card(
         child: ListTile(
           leading: Icon(icon, color: AppColors.primary),
-          title: Text(title, style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context))),
-          subtitle: Text(sub, style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: R.fontMd(context),
+            ),
+          ),
+          subtitle: Text(
+            sub,
+            style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+          ),
           trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
           onTap: () => context.push(route),
         ),
@@ -189,17 +321,52 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _switchRow(BuildContext context, Role r, bool isCurrent, RoleCubit cubit, String Function(String) t, ColorScheme cs) {
+  Widget _switchRow(
+    BuildContext context,
+    Role r,
+    bool isCurrent,
+    RoleCubit cubit,
+    String Function(String) t,
+    ColorScheme cs,
+  ) {
     return Card(
       child: ListTile(
-        leading: Icon(_roleIcon(r), color: isCurrent ? AppColors.primary : cs.onSurfaceVariant),
-        title: Text(t(r.name), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: isCurrent ? AppColors.primary : cs.onSurface)),
-        subtitle: isCurrent ? Text(t('current_role'), style: const TextStyle(fontSize: 11, color: AppColors.primary)) : null,
+        leading: Icon(
+          _roleIcon(r),
+          color: isCurrent ? AppColors.primary : cs.onSurfaceVariant,
+        ),
+        title: Text(
+          t(r.name),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: isCurrent ? AppColors.primary : cs.onSurface,
+          ),
+        ),
+        subtitle: isCurrent
+            ? Text(
+                t('current_role'),
+                style: const TextStyle(fontSize: 11, color: AppColors.primary),
+              )
+            : null,
         trailing: isCurrent
             ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: AppColors.primarySoft, borderRadius: BorderRadius.circular(8)),
-                child: Text(t('active'), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primarySoft,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  t('active'),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
               )
             : null,
         onTap: isCurrent ? null : () => _switchTo(context, r, cubit, t),
@@ -209,13 +376,21 @@ class ProfilePage extends StatelessWidget {
 
   IconData _roleIcon(Role r) {
     switch (r) {
-      case Role.waiter: return Icons.room_service_outlined;
-      case Role.kitchen: return Icons.restaurant_outlined;
-      case Role.admin: return Icons.admin_panel_settings_outlined;
+      case Role.waiter:
+        return Icons.room_service_outlined;
+      case Role.kitchen:
+        return Icons.restaurant_outlined;
+      case Role.admin:
+        return Icons.admin_panel_settings_outlined;
     }
   }
 
-  Future<void> _switchTo(BuildContext context, Role r, RoleCubit cubit, String Function(String) t) async {
+  Future<void> _switchTo(
+    BuildContext context,
+    Role r,
+    RoleCubit cubit,
+    String Function(String) t,
+  ) async {
     if (cubit.state.role == Role.admin) {
       await cubit.switchRole(r);
       return;
@@ -228,12 +403,20 @@ class ProfilePage extends StatelessWidget {
         builder: (ctx) => AlertDialog(
           title: Text(t('enter_pin_for').replaceAll('{role}', t(r.name))),
           content: TextField(
-            controller: ctl, obscureText: true, maxLength: 6,
+            controller: ctl,
+            obscureText: true,
+            maxLength: 6,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(border: const OutlineInputBorder(), hintText: t('pin_hint')),
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: t('pin_hint'),
+            ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(t('cancel')),
+            ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, ctl.text),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
@@ -243,23 +426,36 @@ class ProfilePage extends StatelessWidget {
         ),
       );
     } finally {
-      ctl.dispose();
+      Future.delayed(const Duration(milliseconds: 300), () => ctl.dispose());
     }
     if (pin == null || pin.isEmpty) return;
     await cubit.switchRole(r, pin: pin);
     if (context.mounted && cubit.state.role != r) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('pin_invalid')), backgroundColor: AppColors.error));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t('pin_invalid')),
+          backgroundColor: AppColors.error,
+        ),
+      );
     }
   }
 
-  void _confirmLogout(BuildContext context, AccountCubit acct, RoleCubit role, String Function(String) t) {
+  void _confirmLogout(
+    BuildContext context,
+    AccountCubit acct,
+    RoleCubit role,
+    String Function(String) t,
+  ) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(t('logout')),
         content: Text(t('logout_confirm')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t('cancel')),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () async {
@@ -269,14 +465,22 @@ class ProfilePage extends StatelessWidget {
               if (!context.mounted) return;
               context.go('/account-auth');
             },
-            child: Text(t('logout'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+            child: Text(
+              t('logout'),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showUpdateEmail(BuildContext context, AccountCubit cubit, String Function(String) t, ColorScheme cs) {
+  void _showUpdateEmail(
+    BuildContext context,
+    AccountCubit cubit,
+    String Function(String) t,
+    ColorScheme cs,
+  ) {
     final ctl = TextEditingController();
     showDialog(
       context: context,
@@ -291,7 +495,10 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t('cancel')),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
             onPressed: () async {
@@ -300,17 +507,23 @@ class ProfilePage extends StatelessWidget {
               try {
                 await cubit.updateEmail(ctl.text);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('${t('email_updated')}. ${t('email_confirmation_hint')}'),
-                    backgroundColor: AppColors.success,
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${t('email_updated')}. ${t('email_confirmation_hint')}',
+                      ),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('$e'),
-                    backgroundColor: AppColors.error,
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$e'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
                 }
               }
             },
@@ -321,34 +534,45 @@ class ProfilePage extends StatelessWidget {
     ).then((_) => ctl.dispose());
   }
 
-  void _showUpdatePassword(BuildContext context, AccountCubit cubit, String Function(String) t, ColorScheme cs) {
+  void _showUpdatePassword(
+    BuildContext context,
+    AccountCubit cubit,
+    String Function(String) t,
+    ColorScheme cs,
+  ) {
     final curCtl = TextEditingController();
     final newCtl = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(t('update_password')),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          TextField(
-            controller: curCtl,
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: t('current_password'),
-              border: const OutlineInputBorder(),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: curCtl,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: t('current_password'),
+                border: const OutlineInputBorder(),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: newCtl,
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: t('new_password'),
-              border: const OutlineInputBorder(),
+            const SizedBox(height: 12),
+            TextField(
+              controller: newCtl,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: t('new_password'),
+                border: const OutlineInputBorder(),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t('cancel')),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
             onPressed: () async {
@@ -357,17 +581,21 @@ class ProfilePage extends StatelessWidget {
               try {
                 await cubit.updatePassword(curCtl.text, newCtl.text);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(t('password_updated')),
-                    backgroundColor: AppColors.success,
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(t('password_updated')),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('$e'),
-                    backgroundColor: AppColors.error,
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$e'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
                 }
               }
             },
