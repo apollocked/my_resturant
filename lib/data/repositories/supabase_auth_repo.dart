@@ -25,22 +25,23 @@ class SupabaseAuthRepository implements AuthRepository {
       throw Exception('Failed to create account');
     }
     if (response.session == null) {
-      throw Exception('Email confirmation required. Check your inbox.');
+      final login = await _client.auth.signInWithPassword(
+        email: email.trim().toLowerCase(),
+        password: password,
+      );
+      if (login.user == null) {
+        throw const AuthException('Email confirmation required. Check your inbox.', code: 'email_not_confirmed');
+      }
     }
   }
 
   @override
   Future<bool> login(String email, String password) async {
-    try {
-      final response = await _client.auth.signInWithPassword(
-        email: email.trim().toLowerCase(),
-        password: password,
-      );
-      return response.user != null;
-    } on AuthException catch (e) {
-      debugPrint('SupabaseAuthRepo.login error: $e');
-      return false;
-    }
+    final response = await _client.auth.signInWithPassword(
+      email: email.trim().toLowerCase(),
+      password: password,
+    );
+    return response.user != null;
   }
 
   @override

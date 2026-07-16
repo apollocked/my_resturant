@@ -1,6 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
+
+String _errorKey(Object e) {
+  if (e is AuthException) {
+    return switch (e.code) {
+      'invalid_credentials' => 'err_invalid_credentials',
+      'email_not_confirmed' => 'err_email_not_confirmed',
+      'user_already_exists' => 'err_email_exists',
+      'over_email_send_rate_limit' || 'email_rate_limit' => 'err_rate_limit',
+      'weak_password' => 'err_weak_password',
+      _ => 'error_occurred',
+    };
+  }
+  return 'error_occurred';
+}
 
 class AccountState {
   final bool isLoggedIn;
@@ -36,7 +51,7 @@ class AccountCubit extends Cubit<AccountState> {
       ));
     } catch (e, st) {
       debugPrint('AccountCubit.createAccount error: $e\n$st');
-      emit(AccountState(errorMessage: '$e'));
+      emit(AccountState(errorMessage: _errorKey(e)));
       rethrow;
     }
   }
@@ -53,7 +68,7 @@ class AccountCubit extends Cubit<AccountState> {
       return ok;
     } catch (e, st) {
       debugPrint('AccountCubit.login error: $e\n$st');
-      emit(AccountState(errorMessage: '$e'));
+      emit(AccountState(errorMessage: _errorKey(e)));
       return false;
     }
   }

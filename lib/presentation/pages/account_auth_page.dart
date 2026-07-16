@@ -155,7 +155,7 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       if (context.watch<AccountCubit>().state.errorMessage case final err?)
                         Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
+                          child: Text(t(err), style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
                         ),
                       TextButton(
                         onPressed: () {
@@ -199,7 +199,16 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
       } else {
         final ok = await cubit.login(_emailCtl.text, _passCtl.text);
         if (!ok) {
-          if (mounted) setState(() => _loading = false);
+          if (mounted) {
+            setState(() => _loading = false);
+            final err = context.read<AccountCubit>().state.errorMessage;
+            if (err != null) {
+              final loc = context.read<SettingsCubit>().state.locale;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(Tr.get(err, loc)), backgroundColor: AppColors.error),
+              );
+            }
+          }
           return;
         }
       }
