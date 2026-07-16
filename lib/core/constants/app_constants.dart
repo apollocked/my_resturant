@@ -13,4 +13,10 @@ class AppConstants {
   static const String defaultImageBase = 'https://picsum.photos/seed/';
   static const String defaultImageParams = '/400/300';
   static const String dbFileName = 'restaurant.db';
+
+  // SaaS limits (free tier)
+  static const int maxRecipesPerRestaurant = 50;
+  static const int maxCategoriesPerRestaurant = 15;
+  static const int maxOrdersPerRestaurant = 10000;
+  static const int maxImageSizeBytes = 2 * 1024 * 1024; // 2MB
 }

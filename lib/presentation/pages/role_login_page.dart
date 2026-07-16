@@ -8,6 +8,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/profile/settings_dialog.dart';
 
 class RoleLoginPage extends StatefulWidget {
   const RoleLoginPage({super.key});
@@ -34,6 +35,19 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     String t(String key) => Tr.get(key, settings.locale);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        actions: [
+          InkWell(
+            onTap: () => showDialog(context: context, builder: (_) => const SettingsDialog()),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Icon(Icons.settings, size: 22, color: cs.onSurfaceVariant),
+            ),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           SafeArea(

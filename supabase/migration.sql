@@ -253,3 +253,83 @@ CREATE POLICY "Admin can delete recipe images"
 REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.auto_confirm_user() FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon, authenticated;
+
+-- ============================================================
+-- SaaS Limits (free tier)
+-- ============================================================
+
+-- Max 20 restaurants total
+CREATE OR REPLACE FUNCTION public.check_restaurant_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT count(*) FROM public.profiles) >= 20 THEN
+    RAISE EXCEPTION 'Maximum number of restaurants (20) reached.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS check_restaurant_limit ON auth.users;
+CREATE TRIGGER check_restaurant_limit
+  BEFORE INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_restaurant_limit();
+
+-- Max 50 recipes per restaurant
+CREATE OR REPLACE FUNCTION public.check_recipe_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT count(*) FROM public.recipes WHERE restaurant_id = NEW.restaurant_id) >= 50 THEN
+    RAISE EXCEPTION 'Maximum number of recipes (50) reached.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY INVOKER;
+
+DROP TRIGGER IF EXISTS check_recipe_limit ON recipes;
+CREATE TRIGGER check_recipe_limit
+  BEFORE INSERT ON recipes
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_recipe_limit();
+
+-- Max 15 categories per restaurant
+CREATE OR REPLACE FUNCTION public.check_category_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT count(*) FROM public.categories WHERE restaurant_id = NEW.restaurant_id) >= 15 THEN
+    RAISE EXCEPTION 'Maximum number of categories (15) reached.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY INVOKER;
+
+DROP TRIGGER IF EXISTS check_category_limit ON categories;
+CREATE TRIGGER check_category_limit
+  BEFORE INSERT ON categories
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_category_limit();
+
+-- Max 10000 orders per restaurant
+CREATE OR REPLACE FUNCTION public.check_order_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT count(*) FROM public.orders WHERE restaurant_id = NEW.restaurant_id) >= 10000 THEN
+    RAISE EXCEPTION 'Maximum number of orders (10000) reached.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY INVOKER;
+
+DROP TRIGGER IF EXISTS check_order_limit ON orders;
+CREATE TRIGGER check_order_limit
+  BEFORE INSERT ON orders
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_order_limit();
+
+-- Validate recipe price
+ALTER TABLE recipes DROP CONSTRAINT IF EXISTS recipes_price_check;
+ALTER TABLE recipes ADD CONSTRAINT recipes_price_check CHECK (price > 0);
+
+-- Validate order status
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check;
+ALTER TABLE orders ADD CONSTRAINT orders_status_check CHECK (status IN ('pending', 'preparing', 'served'));

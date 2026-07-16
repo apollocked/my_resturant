@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:my_resturant/core/constants/app_constants.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -34,6 +35,14 @@ class SupabaseDataRepository implements DataRepository {
   Future<void> addRecipe(Recipe r) async {
     final uid = _userId;
     if (uid == null) return;
+    final count = await _client
+        .from('recipes')
+        .select('id')
+        .eq('restaurant_id', uid)
+        .count();
+    if (count.count >= AppConstants.maxRecipesPerRestaurant) {
+      throw Exception('Maximum ${AppConstants.maxRecipesPerRestaurant} recipes reached');
+    }
     await _client.from('recipes').insert({
       'id': r.id,
       'name': r.name,
@@ -69,6 +78,9 @@ class SupabaseDataRepository implements DataRepository {
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
     final uid = _userId;
     if (uid == null) throw Exception('Not logged in');
+    if (bytes.length > AppConstants.maxImageSizeBytes) {
+      throw Exception('Image too large. Maximum size is ${AppConstants.maxImageSizeBytes ~/ (1024 * 1024)}MB');
+    }
     final path = '$uid/$recipeId.jpg';
     await _client.storage
         .from('recipe_images')
@@ -156,6 +168,14 @@ class SupabaseDataRepository implements DataRepository {
   Future<void> saveOrder(Order order) async {
     final uid = _userId;
     if (uid == null) return;
+    final count = await _client
+        .from('orders')
+        .select('id')
+        .eq('restaurant_id', uid)
+        .count();
+    if (count.count >= AppConstants.maxOrdersPerRestaurant) {
+      throw Exception('Maximum ${AppConstants.maxOrdersPerRestaurant} orders reached. Please archive old orders.');
+    }
     final itemsJson = jsonEncode(
       order.items
           .map(
