@@ -56,6 +56,17 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> updatePassword(String currentPassword, String newPassword) async {
+    final user = _client.auth.currentUser;
+    if (user == null) throw Exception('Not logged in');
+    final email = user.email;
+    if (email == null) throw Exception('No email on account');
+    final login = await _client.auth.signInWithPassword(
+      email: email,
+      password: currentPassword,
+    );
+    if (login.session == null) {
+      throw Exception('Current password is incorrect');
+    }
     await _client.auth.updateUser(UserAttributes(password: newPassword));
   }
 

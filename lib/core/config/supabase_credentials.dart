@@ -1,4 +1,6 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class SupabaseCredentials {
-  static const String url = 'https://wwzvywkvblftreqdusay.supabase.co';
-  static const String publishableKey = 'sb_publishable_zFK0H560dmL7zZpRjZ7f_A_bwa-xPWA';
+  static String get url => dotenv.env['SUPABASE_URL'] ?? '';
+  static String get publishableKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 }

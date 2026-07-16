@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -97,7 +98,7 @@ class _DishFormPageState extends State<DishFormPage> {
     final r = Recipe(
       id: _isEditing
           ? widget.recipe!.id
-          : DateTime.now().millisecondsSinceEpoch.toString(),
+          : const Uuid().v4(),
       name: _nameCtrl.text.trim(),
       price: double.tryParse(_priceCtrl.text) ?? 0,
       description: _descCtrl.text.trim(),

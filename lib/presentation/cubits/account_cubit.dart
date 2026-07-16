@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
@@ -30,9 +31,18 @@ class AccountCubit extends Cubit<AccountState> {
   AccountCubit({required this._repo}) : super(const AccountState());
 
   Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('account_email');
+    final savedLoggedIn = prefs.getBool('account_logged_in') ?? false;
+    if (savedLoggedIn && savedEmail != null) {
+      emit(AccountState(isLoggedIn: true, email: savedEmail));
+      return;
+    }
     final session = await _repo.isAccountCreated();
     final email = await _repo.getAccountEmail();
     if (session && email != null) {
+      await prefs.setBool('account_logged_in', true);
+      await prefs.setString('account_email', email);
       emit(AccountState(isLoggedIn: true, email: email));
     }
   }
@@ -45,6 +55,9 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> createAccount(String email, String password) async {
     try {
       await _repo.createAccount(email, password);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('account_logged_in', true);
+      await prefs.setString('account_email', email.trim().toLowerCase());
       emit(AccountState(
         isLoggedIn: true,
         email: email.trim().toLowerCase(),
@@ -60,6 +73,9 @@ class AccountCubit extends Cubit<AccountState> {
     try {
       final ok = await _repo.login(email, password);
       if (ok) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('account_logged_in', true);
+        await prefs.setString('account_email', email.trim().toLowerCase());
         emit(AccountState(
           isLoggedIn: true,
           email: email.trim().toLowerCase(),
@@ -79,6 +95,9 @@ class AccountCubit extends Cubit<AccountState> {
     } catch (e, st) {
       debugPrint('AccountCubit.logout error: $e\n$st');
     }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('account_logged_in');
+    await prefs.remove('account_email');
     emit(const AccountState());
   }
 

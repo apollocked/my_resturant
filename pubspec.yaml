@@ -26,7 +26,9 @@ dependencies:
   shared_preferences: ^2.5.0
   cached_network_image: ^3.4.1
   crypto: ^3.0.7
+  uuid: ^4.5.1
   supabase_flutter: ^2.16.0
+  flutter_dotenv: ^5.2.0
   fl_chart: ^1.2.0
   connectivity_plus: ^7.3.0
 
@@ -42,6 +44,7 @@ flutter:
 
   assets:
     - assets/
+    - .env
 
   fonts:
     - family: NRT

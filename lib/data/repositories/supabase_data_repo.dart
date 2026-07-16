@@ -67,7 +67,9 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
-    final path = 'recipes/$recipeId.jpg';
+    final uid = _userId;
+    if (uid == null) throw Exception('Not logged in');
+    final path = '$uid/$recipeId.jpg';
     await _client.storage
         .from('recipe_images')
         .uploadBinary(

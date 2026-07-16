@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -141,7 +142,7 @@ class OrderCubit extends Cubit<OrderState> {
   Future<void> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0) return;
     final order = Order(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: const Uuid().v4(),
       tableNumber: state.selectedTable,
       tableName: state.getTableName(state.selectedTable),
       items: List.from(state.cart), notes: notes,

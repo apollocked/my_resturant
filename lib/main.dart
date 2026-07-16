@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/router/app_router.dart';
@@ -18,6 +19,7 @@ import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await Supabase.initialize(
     url: SupabaseCredentials.url,
     publishableKey: SupabaseCredentials.publishableKey,
