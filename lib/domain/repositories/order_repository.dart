@@ -5,5 +5,6 @@ abstract class OrderRepository {
   Future<List<Order>> loadOrders();
   Future<void> saveOrder(Order order);
   Future<void> changeOrderStatus(String id, OrderStatus status);
+  Future<void> deleteAllOrders();
   Stream<List<Order>> watchOrders();
 }

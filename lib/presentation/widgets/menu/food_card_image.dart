@@ -12,9 +12,9 @@ class FoodCardImage extends StatelessWidget {
   final Recipe recipe;
   final int quantity;
   final String notes;
-  final VoidCallback? onTap, onLongPress;
+  final VoidCallback? onTap, onLongPress, onRemove;
 
-  const FoodCardImage({super.key, required this.recipe, required this.quantity, required this.notes, this.onTap, this.onLongPress});
+  const FoodCardImage({super.key, required this.recipe, required this.quantity, required this.notes, this.onTap, this.onLongPress, this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,8 @@ class FoodCardImage extends StatelessWidget {
     final badgeSize = isDesktop ? 48.0 : isTablet ? 42.0 : 36.0;
     final badgeFontSize = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
     final notesIconSize = isDesktop ? 22.0 : isTablet ? 18.0 : 16.0;
+    final removeBtnSize = isDesktop ? 26.0 : isTablet ? 22.0 : 20.0;
+    final removeIconSize = isDesktop ? 14.0 : isTablet ? 12.0 : 11.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     return Expanded(
       child: GestureDetector(
@@ -60,6 +62,20 @@ class FoodCardImage extends StatelessWidget {
               ),
               child: Text('$quantity',
                   style: TextStyle(color: cs.onPrimary, fontSize: badgeFontSize, fontWeight: FontWeight.bold)),
+            )),
+          if (isSelected && onRemove != null)
+            Positioned(top: 10, left: 10 + badgeSize + 6, child: GestureDetector(
+              onTap: () { HapticFeedback.lightImpact(); onRemove?.call(); },
+              child: Container(
+                width: removeBtnSize, height: removeBtnSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: cs.error.withValues(alpha: 0.9),
+                  shape: BoxShape.circle,
+                  boxShadow: [BoxShadow(color: cs.error.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2))],
+                ),
+                child: Icon(Icons.close, size: removeIconSize, color: cs.onError),
+              ),
             )),
           if (notes.isNotEmpty)
             Positioned(bottom: 10, left: 10, child: Container(

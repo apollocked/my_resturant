@@ -93,6 +93,12 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(cart: cart));
   }
 
+  void removeFromCartById(String recipeId) {
+    final cart = List<CartItem>.from(state.cart);
+    cart.removeWhere((c) => c.recipe.id == recipeId);
+    emit(state.copyWith(cart: cart));
+  }
+
   void updateNotesByRecipe(String recipeId, String notes) {
     final cart = List<CartItem>.from(state.cart);
     final idx = cart.indexWhere((c) => c.recipe.id == recipeId);
@@ -153,6 +159,11 @@ class OrderCubit extends Cubit<OrderState> {
 
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async =>
       _repo.changeOrderStatus(orderId, status);
+
+  Future<void> deleteAllOrders() async {
+    await _repo.deleteAllOrders();
+    if (!isClosed) emit(state.copyWith(orders: []));
+  }
 
   Future<void> refresh() async {
     final orders = await _repo.loadOrders();

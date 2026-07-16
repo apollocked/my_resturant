@@ -38,6 +38,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   void _increment(Recipe r) => context.read<OrderCubit>().addToCart(r);
   void _decrement(Recipe r) =>
       context.read<OrderCubit>().decrementOrRemove(r.id);
+  void _remove(Recipe r) =>
+      context.read<OrderCubit>().removeFromCartById(r.id);
 
   Future<void> _notes(Recipe recipe) async {
     if (!mounted) return;
@@ -146,6 +148,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                     notes: state.getNotes(r.id),
                                     onIncrement: () => _increment(r),
                                     onDecrement: () => _decrement(r),
+                                    onRemove: () => _remove(r),
                                     onLongPress: () => _notes(r),
                                   );
                                 },
@@ -238,6 +241,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 notes: state.getNotes(r.id),
                                 onIncrement: () => _increment(r),
                                 onDecrement: () => _decrement(r),
+                                onRemove: () => _remove(r),
                                 onLongPress: () => _notes(r),
                               );
                             },

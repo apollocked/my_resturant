@@ -143,6 +143,11 @@ class AppDatabase extends _$AppDatabase {
     await (update(orders)..where((t) => t.id.equals(orderId))).write(OrdersCompanion(status: Value(status.name)));
   }
 
+  Future<void> deleteAllOrders() async {
+    await delete(orderItems).go();
+    await delete(orders).go();
+  }
+
   Future<Map<String, String>> getSettings() async {
     final rows = await select(appSettings).get();
     return {for (final r in rows) r.key: r.value};

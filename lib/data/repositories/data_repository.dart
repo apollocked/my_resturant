@@ -93,6 +93,12 @@ class AppRepository implements DataRepository {
   }
 
   @override
+  Future<void> deleteAllOrders() async {
+    await db.deleteAllOrders();
+    _emitOrders();
+  }
+
+  @override
   Stream<List<Order>> watchOrders() => _orderCtrl.stream;
 
   // Settings

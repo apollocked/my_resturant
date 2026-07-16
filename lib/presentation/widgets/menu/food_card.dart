@@ -7,7 +7,7 @@ import 'food_card_controls.dart';
 
 class FoodCard extends StatelessWidget {
   final Recipe recipe;
-  final VoidCallback? onIncrement, onDecrement, onLongPress;
+  final VoidCallback? onIncrement, onDecrement, onRemove, onLongPress;
   final int quantity;
   final String notes;
 
@@ -16,6 +16,7 @@ class FoodCard extends StatelessWidget {
     required this.recipe,
     this.onIncrement,
     this.onDecrement,
+    this.onRemove,
     this.onLongPress,
     this.quantity = 0,
     this.notes = '',
@@ -33,6 +34,7 @@ class FoodCard extends StatelessWidget {
             recipe: recipe,
             onIncrement: onIncrement,
             onDecrement: onDecrement,
+            onRemove: onRemove,
             onLongPress: onLongPress,
             quantity: quantity,
             notes: notes,
@@ -44,7 +46,7 @@ class FoodCard extends StatelessWidget {
 
 class _CardBody extends StatelessWidget {
   final Recipe recipe;
-  final VoidCallback? onIncrement, onDecrement, onLongPress;
+  final VoidCallback? onIncrement, onDecrement, onRemove, onLongPress;
   final int quantity;
   final String notes;
   final bool isSelected;
@@ -53,6 +55,7 @@ class _CardBody extends StatelessWidget {
     required this.recipe,
     this.onIncrement,
     this.onDecrement,
+    this.onRemove,
     this.onLongPress,
     required this.quantity,
     required this.notes,
@@ -91,6 +94,7 @@ class _CardBody extends StatelessWidget {
             notes: notes,
             onTap: onIncrement,
             onLongPress: onLongPress,
+            onRemove: onRemove,
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(cp, isDesktop ? 14 : isTablet ? 12 : 10, cp, cp),

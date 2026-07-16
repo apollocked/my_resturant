@@ -210,6 +210,13 @@ class SupabaseDataRepository implements DataRepository {
   }
 
   @override
+  Future<void> deleteAllOrders() async {
+    final uid = _userId;
+    if (uid == null) return;
+    await _client.from('orders').delete().eq('restaurant_id', uid);
+  }
+
+  @override
   Stream<List<Order>> watchOrders() {
     if (!_isAuthed) return const Stream.empty();
     return _client

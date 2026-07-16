@@ -47,6 +47,34 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     () => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1),
   );
 
+  void _confirmClearAll(String Function(String) t, ColorScheme cs) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(Icons.warning_amber_rounded, color: cs.error, size: 48),
+        title: Text(t('clear_all_orders')),
+        content: Text(t('clear_all_orders_confirm')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t('cancel')),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: cs.error),
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<OrderCubit>().deleteAllOrders();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(t('clear_all_orders'))),
+              );
+            },
+            child: Text(t('clear'), style: TextStyle(color: cs.onError)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<OrderCubit>();
@@ -75,7 +103,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     final dayCount = dayOrders.length;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t('history_title'))),
+      appBar: AppBar(
+        title: Text(t('history_title')),
+        actions: [
+          if (role == Role.admin && allOrders.isNotEmpty)
+            IconButton(
+              onPressed: () => _confirmClearAll(t, cs),
+              icon: Icon(Icons.delete_sweep, color: cs.error),
+              tooltip: t('clear_all_orders'),
+            ),
+        ],
+      ),
       body: SafeArea(
         child: Directionality(
           textDirection: TextDirection.rtl,

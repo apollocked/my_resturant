@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
@@ -22,6 +23,7 @@ class DishFormPage extends StatefulWidget {
 
 class _DishFormPageState extends State<DishFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
   late final TextEditingController _nameCtrl, _priceCtrl, _descCtrl;
   final _imageUrl = ValueNotifier<String>('');
   late String _category;
@@ -50,47 +52,110 @@ class _DishFormPageState extends State<DishFormPage> {
   String _t(String key) =>
       Tr.get(key, context.read<SettingsCubit>().state.locale);
 
-  Future<void> _pickImage() async {
-    try {
-      final perm = await PhotoManager.requestPermissionExtend();
-      if (perm != PermissionState.authorized &&
-          perm != PermissionState.limited) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(_t('permission_needed'))));
-        }
-        return;
-      }
-      final files = await AssetPicker.pickAssets(
-        context,
-        pickerConfig: const AssetPickerConfig(
-          maxAssets: 1,
-          requestType: RequestType.image,
-        ),
-      );
-      if (files == null || files.isEmpty) return;
-      final file = await files.first.file;
-      if (file == null) return;
-      final cropped = await ImageCropper().cropImage(
-        sourcePath: file.path,
-        aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: _t('crop_image'),
-            toolbarColor: AppColors.primary,
+  void _showImageSourceSheet() {
+    final cs = Theme.of(context).colorScheme;
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(t('pick_image_source'),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: Text(t('gallery')),
+                onTap: () { Navigator.pop(ctx); _pickFromGallery(); },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: Text(t('camera')),
+                onTap: () { Navigator.pop(ctx); _pickFromCamera(); },
+              ),
+              ListTile(
+                leading: const Icon(Icons.folder_open),
+                title: Text(t('files')),
+                onTap: () { Navigator.pop(ctx); _pickFromFile(); },
+              ),
+            ],
           ),
-          IOSUiSettings(title: _t('crop_image')),
-        ],
-      );
-      if (cropped != null) _imageUrl.value = cropped.path;
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickFromGallery() async {
+    try {
+      final xFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (xFile == null) return;
+      await _cropAndSet(xFile.path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_t('error_occurred'))),
+        );
       }
     }
+  }
+
+  Future<void> _pickFromCamera() async {
+    try {
+      final xFile = await _picker.pickImage(source: ImageSource.camera);
+      if (xFile == null) return;
+      await _cropAndSet(xFile.path);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_t('error_occurred'))),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickFromFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+      );
+      if (result == null || result.files.isEmpty) return;
+      final path = result.files.first.path;
+      if (path == null) return;
+      await _cropAndSet(path);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_t('error_occurred'))),
+        );
+      }
+    }
+  }
+
+  Future<void> _cropAndSet(String path) async {
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: path,
+      aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: _t('crop_image'),
+          toolbarColor: AppColors.primary,
+        ),
+        IOSUiSettings(title: _t('crop_image')),
+      ],
+    );
+    if (cropped != null) _imageUrl.value = cropped.path;
   }
 
   void _save() {
@@ -132,7 +197,7 @@ class _DishFormPageState extends State<DishFormPage> {
                   initialCategory: _category,
                   t: _t,
                   isEditing: _isEditing,
-                  onPickImage: _pickImage,
+                  onPickImage: _showImageSourceSheet,
                   onCategoryChanged: (v) => _category = v,
                 ),
                 const SizedBox(height: 24),
