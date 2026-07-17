@@ -60,6 +60,8 @@ const Map<String, String> ku = {
   'orders_count': '{count} داواکاری',
   'kitchen_empty': 'هیچ داواکارییەک نەنێردراوە',
   'served': 'پێشکەشکراو',
+  'clear_table': 'سڕینەوەی مێز',
+  'clear_table_section': 'مێزەکان آمادەن بۆ سڕینەوە',
   'restaurant_name': 'ڕێستۆرانتەکەم',
   'table_management': 'مێزەکان',
   'table_management_sub': 'بەڕێوەبردنی ژمارە و ناوی مێزەکان',

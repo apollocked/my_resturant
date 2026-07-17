@@ -82,6 +82,14 @@ class _KitchenPageState extends State<KitchenPage> {
   Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t, bool canEdit) {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
+    final orderState = cubit.state;
+    final servedTables = <int, List<Order>>{};
+    if (_tabIndex == 1) {
+      for (final o in orders) {
+        servedTables.putIfAbsent(o.tableNumber, () => []).add(o);
+      }
+    }
+    final clearableTables = servedTables.keys.where((n) => !orderState.clearedTables.contains(n)).toList();
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
         return isDesktop
@@ -101,43 +109,39 @@ class _KitchenPageState extends State<KitchenPage> {
     }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
-      child: isDesktop
-        ? GridView.builder(
-            key: ValueKey('grid_$_tabIndex'),
-            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.0,
-              crossAxisSpacing: R.gridSpacing(context),
-              mainAxisSpacing: R.gridSpacing(context),
+      child: ListView(
+        key: ValueKey('list_$_tabIndex'),
+        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+        children: [
+          if (clearableTables.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(t('clear_table_section'), style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
             ),
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final o = orders[index];
-              final hasNext = OrderCard.nextStatus.containsKey(o.status);
-              return GestureDetector(
-                onTap: () => context.push('/order-detail', extra: o),
-                child: OrderCard(order: o, showTimeline: true,
-                  onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-                  onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
-              );
-            },
-          )
-        : ListView.builder(
-            key: ValueKey('list_$_tabIndex'),
-            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final o = orders[index];
-              final hasNext = OrderCard.nextStatus.containsKey(o.status);
-              return GestureDetector(
-                onTap: () => context.push('/order-detail', extra: o),
-                child: OrderCard(order: o, showTimeline: true,
-                  onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-                  onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
-              );
-            },
-          ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: clearableTables.map((n) => ActionChip(
+                avatar: Icon(Icons.cleaning_services, size: 18, color: Colors.green),
+                label: Text('${t('clear_table')} $n', style: const TextStyle(fontWeight: FontWeight.w600)),
+                backgroundColor: Colors.green.withValues(alpha: 0.1),
+                side: BorderSide(color: Colors.green.withValues(alpha: 0.3)),
+                onPressed: () => cubit.clearTable(n),
+              )).toList(),
+            ),
+            const SizedBox(height: 12),
+          ],
+          ...orders.map((o) {
+            final hasNext = OrderCard.nextStatus.containsKey(o.status);
+            return GestureDetector(
+              onTap: () => context.push('/order-detail', extra: o),
+              child: OrderCard(order: o, showTimeline: true,
+                onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+                onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+            );
+          }),
+        ],
+      ),
     );
   }
 }

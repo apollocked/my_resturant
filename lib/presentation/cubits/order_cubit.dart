@@ -79,13 +79,18 @@ class OrderCubit extends Cubit<OrderState> {
   void _applySettings(Map<String, String> settings) {
     final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
     final names = <int, String>{};
+    final cleared = <int>{};
     for (final e in settings.entries) {
       if (e.key.startsWith('tableName_')) {
         final n = int.tryParse(e.key.split('_').last);
         if (n != null) names[n] = e.value;
       }
+      if (e.key.startsWith('cleared_') && e.value == 'true') {
+        final n = int.tryParse(e.key.split('_').last);
+        if (n != null) cleared.add(n);
+      }
     }
-    emit(state.copyWith(tableCount: tableCount, tableNames: names));
+    emit(state.copyWith(tableCount: tableCount, tableNames: names, clearedTables: cleared));
   }
 
   void addToCart(Recipe recipe) {
@@ -202,7 +207,15 @@ class OrderCubit extends Cubit<OrderState> {
       items: List.from(state.cart), notes: notes,
     );
     await _repo.saveOrder(order);
-    emit(state.copyWith(cart: [], selectedTable: 0, pendingNotes: const {}));
+    final cleared = Set<int>.from(state.clearedTables)..remove(state.selectedTable);
+    _repo.saveSetting('cleared_${state.selectedTable}', 'false');
+    emit(state.copyWith(cart: [], selectedTable: 0, pendingNotes: const {}, clearedTables: cleared));
+  }
+
+  void clearTable(int tableNumber) {
+    final cleared = Set<int>.from(state.clearedTables)..add(tableNumber);
+    _repo.saveSetting('cleared_$tableNumber', 'true');
+    emit(state.copyWith(clearedTables: cleared));
   }
 
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async {

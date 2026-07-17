@@ -60,6 +60,8 @@ const Map<String, String> en = {
   'orders_count': '{count} orders',
   'kitchen_empty': 'No orders sent',
   'served': 'Served',
+  'clear_table': 'Clear table',
+  'clear_table_section': 'Tables ready to clear',
   'restaurant_name': 'My Restaurant',
   'table_management': 'Tables',
   'table_management_sub': 'Manage table numbers and names',

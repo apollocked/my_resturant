@@ -60,6 +60,8 @@ const Map<String, String> ar = {
   'orders_count': '{count} طلب',
   'kitchen_empty': 'لم يتم إرسال أي طلب',
   'served': 'تم التقديم',
+  'clear_table': 'إخلاء الطاولة',
+  'clear_table_section': 'طاولات جاهزة للإخلاء',
   'restaurant_name': 'مطعمي',
   'table_management': 'الطاولات',
   'table_management_sub': 'إدارة أرقام وأسماء الطاولات',
