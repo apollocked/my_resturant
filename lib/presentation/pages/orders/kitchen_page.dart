@@ -107,6 +107,26 @@ class _KitchenPageState extends State<KitchenPage> {
         Text(t('kitchen_empty'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
       ]));
     }
+    final orderWidgets = orders.map((o) {
+      final hasNext = OrderCard.nextStatus.containsKey(o.status);
+      return GestureDetector(
+        onTap: () => context.push('/order-detail', extra: o),
+        child: OrderCard(order: o, showTimeline: true,
+          onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
+          onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+      );
+    }).toList();
+    if (_tabIndex == 0) {
+      return RefreshIndicator(
+        onRefresh: () async => context.read<OrderCubit>().refresh(),
+        child: isDesktop
+            ? GridView(key: ValueKey('grid_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0,
+                  crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
+                children: orderWidgets)
+            : ListView(key: ValueKey('list_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)), children: orderWidgets),
+      );
+    }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
       child: ListView(
@@ -122,7 +142,7 @@ class _KitchenPageState extends State<KitchenPage> {
               spacing: 8,
               runSpacing: 8,
               children: clearableTables.map((n) => ActionChip(
-                avatar: Icon(Icons.cleaning_services, size: 18, color: Colors.green),
+                avatar: const Icon(Icons.cleaning_services, size: 18, color: Colors.green),
                 label: Text('${t('clear_table')} $n', style: const TextStyle(fontWeight: FontWeight.w600)),
                 backgroundColor: Colors.green.withValues(alpha: 0.1),
                 side: BorderSide(color: Colors.green.withValues(alpha: 0.3)),
@@ -131,15 +151,7 @@ class _KitchenPageState extends State<KitchenPage> {
             ),
             const SizedBox(height: 12),
           ],
-          ...orders.map((o) {
-            final hasNext = OrderCard.nextStatus.containsKey(o.status);
-            return GestureDetector(
-              onTap: () => context.push('/order-detail', extra: o),
-              child: OrderCard(order: o, showTimeline: true,
-                onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-                onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
-            );
-          }),
+          ...orderWidgets,
         ],
       ),
     );
