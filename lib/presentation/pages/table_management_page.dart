@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/table_name_row.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class TableManagementPage extends StatefulWidget {
@@ -38,6 +39,15 @@ class _TableManagementPageState extends State<TableManagementPage> {
     return Scaffold(
       appBar: AppBar(title: Text(t('table_mgmt_title'))),
       body: SafeArea(child: Directionality(textDirection: TextDirection.rtl, child: ListView(padding: EdgeInsets.all(R.padding(context)), children: [
+        if (state.isLoading) ...[
+          const ShimmerBox(width: 120, height: 18, radius: 6),
+          const SizedBox(height: 10),
+          const ShimmerBox(width: double.infinity, height: 80, radius: 14),
+          const SizedBox(height: 20),
+          const ShimmerBox(width: 120, height: 18, radius: 6),
+          const SizedBox(height: 12),
+          ...List.generate(5, (_) => const Padding(padding: EdgeInsets.only(bottom: 8), child: ShimmerListTile())),
+        ] else ...[
         Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
         const SizedBox(height: 10),
         Container(
@@ -63,6 +73,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
         Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
         const SizedBox(height: 12),
         ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
+        ],
       ]))),
     );
   }

@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class AvailabilityPage extends StatelessWidget {
@@ -20,7 +21,9 @@ class AvailabilityPage extends StatelessWidget {
     final isTablet = R.isTablet(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('availability_title'))),
-      body: SafeArea(child: recipes.isEmpty
+      body: SafeArea(child: cubit.state.isLoading && recipes.isEmpty
+        ? ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
+        : recipes.isEmpty
         ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
               decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),

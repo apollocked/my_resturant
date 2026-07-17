@@ -9,6 +9,7 @@ import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/edit_recipe_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_filter_bar.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class FoodManagementPage extends StatefulWidget {
@@ -86,7 +87,17 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
               CategoryFilterBar(selectedIndex: _selectedCat, onChanged: (i) => setState(() => _selectedCat = i), categories: context.read<OrderCubit>().state.categories),
               const SizedBox(height: 8),
               Expanded(
-                child: dishes.isEmpty
+                child: context.read<OrderCubit>().state.isLoading && dishes.isEmpty
+                    ? isDesktop
+                        ? GridView(
+                            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, childAspectRatio: 2.2,
+                              crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context),
+                            ),
+                            children: List.generate(6, (_) => const ShimmerListTile()))
+                        : ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
+                    : dishes.isEmpty
                     ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                         Container(width: isDesktop ? 120 : 100, height: isDesktop ? 120 : 100,
                           decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),

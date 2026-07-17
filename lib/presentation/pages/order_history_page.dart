@@ -7,6 +7,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -64,9 +65,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             onPressed: () {
               Navigator.pop(ctx);
               context.read<OrderCubit>().deleteAllOrders();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(t('clear_all_orders'))),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(t('clear_all_orders'))));
             },
             child: Text(t('clear'), style: TextStyle(color: cs.onError)),
           ),
@@ -117,202 +118,237 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       body: SafeArea(
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: cubit.state.isLoading && allOrders.isEmpty
+              ? Column(
                   children: [
-                    IconButton(
-                      onPressed: _prevMonth,
-                      icon: const Icon(Icons.chevron_left),
-                    ),
-                    TextButton.icon(
-                      onPressed: _pick,
-                      icon: const Icon(Icons.calendar_month, size: 18),
-                      label: Text(
-                        '${_viewMonth.year} / ${_viewMonth.month.toString().padLeft(2, '0')}',
-                        style: TextStyle(
-                          fontSize: R.fontLg(context),
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ShimmerBox(width: 36, height: 36, radius: 8),
+                          ShimmerBox(width: 140, height: 36, radius: 8),
+                          ShimmerBox(width: 36, height: 36, radius: 8),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: _nextMonth,
-                      icon: const Icon(Icons.chevron_right),
+                    const SizedBox(height: 8),
+                    ShimmerGrid(
+                      itemCount: 6,
+                      itemBuilder: () => const ShimmerOrderCard(),
                     ),
                   ],
-                ),
-              ),
-              _CalendarGrid(
-                year: _viewMonth.year,
-                month: _viewMonth.month,
-                selectedDay: _selectedDate.day,
-                daysWithOrders: daysWithOrders,
-                onDayTap: (day) {
-                  if (day <= DateTime.now().day ||
-                      _viewMonth.month < DateTime.now().month ||
-                      _viewMonth.year < DateTime.now().year) {
-                    setState(
-                      () => _selectedDate = DateTime(
-                        _viewMonth.year,
-                        _viewMonth.month,
-                        day,
-                      ),
-                    );
-                  }
-                },
-              ),
-              const Divider(height: 1),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
-                child: Row(
-                  children: [
-                    _StatChip(
-                      icon: Icons.receipt_long,
-                      label: '$dayCount ${t('orders')}',
-                      color: AppColors.primary,
-                      cs: cs,
-                    ),
-                    const SizedBox(width: 8),
-                    _StatChip(
-                      icon: Icons.shopping_bag,
-                      label: '$dayItems ${t('total_items')}',
-                      color: cs.tertiary,
-                      cs: cs,
-                    ),
-                    const SizedBox(width: 8),
-                    _StatChip(
-                      icon: Icons.attach_money,
-                      label:
-                          '${dayTotal.toStringAsFixed(0)} ${t('currency_suffix')}',
-                      color: Colors.green,
-                      cs: cs,
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              if (dayOrders.isEmpty)
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: R.hp(context, isDesktop ? 16 : 18),
-                          height: R.hp(context, isDesktop ? 16 : 18),
-                          decoration: BoxDecoration(
-                            color: cs.surfaceContainerHighest,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.history,
-                            size: isDesktop ? 48 : 36,
-                            color: cs.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          t('history_empty'),
-                          style: TextStyle(
-                            fontSize: R.fontLg(context),
-                            fontWeight: FontWeight.w600,
-                            color: cs.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 )
-              else
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async => context.read<OrderCubit>().refresh(),
-                    child: isDesktop
-                        ? GridView.builder(
-                            padding: EdgeInsets.symmetric(horizontal: p),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 1.0,
-                                  crossAxisSpacing: R.gridSpacing(context),
-                                  mainAxisSpacing: R.gridSpacing(context),
-                                ),
-                            itemCount: dayOrders.length,
-                            itemBuilder: (context, index) {
-                              final order = dayOrders[index];
-                              return OrderCard(
-                                order: order,
-                                showTime: true,
-                                onReset: role == Role.admin
-                                    ? () {
-                                        final c = context.read<OrderCubit>();
-                                        for (final item in order.items) {
-                                          for (
-                                            int i = 0;
-                                            i < item.quantity;
-                                            i++
-                                          ) {
-                                            c.addToCart(item.recipe);
-                                          }
-                                        }
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(t('order_restored')),
-                                          ),
-                                        );
-                                        if (context.mounted) {
-                                          context.read<OrderCubit>().refresh();
-                                        }
-                                      }
-                                    : null,
-                              );
-                            },
-                          )
-                        : ListView.builder(
-                            padding: EdgeInsets.symmetric(horizontal: p),
-                            itemCount: dayOrders.length,
-                            itemBuilder: (context, index) {
-                              final order = dayOrders[index];
-                              return OrderCard(
-                                order: order,
-                                showTime: true,
-                                onReset: role == Role.admin
-                                    ? () {
-                                        final c = context.read<OrderCubit>();
-                                        for (final item in order.items) {
-                                          for (
-                                            int i = 0;
-                                            i < item.quantity;
-                                            i++
-                                          ) {
-                                            c.addToCart(item.recipe);
-                                          }
-                                        }
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(t('order_restored')),
-                                          ),
-                                        );
-                                        if (context.mounted) {
-                                          context.read<OrderCubit>().refresh();
-                                        }
-                                      }
-                                    : null,
-                              );
-                            },
+              : Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: _prevMonth,
+                            icon: const Icon(Icons.chevron_left),
                           ),
-                  ),
+                          TextButton.icon(
+                            onPressed: _pick,
+                            icon: const Icon(Icons.calendar_month, size: 18),
+                            label: Text(
+                              '${_viewMonth.year} / ${_viewMonth.month.toString().padLeft(2, '0')}',
+                              style: TextStyle(
+                                fontSize: R.fontLg(context),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: _nextMonth,
+                            icon: const Icon(Icons.chevron_right),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _CalendarGrid(
+                      year: _viewMonth.year,
+                      month: _viewMonth.month,
+                      selectedDay: _selectedDate.day,
+                      daysWithOrders: daysWithOrders,
+                      onDayTap: (day) {
+                        if (day <= DateTime.now().day ||
+                            _viewMonth.month < DateTime.now().month ||
+                            _viewMonth.year < DateTime.now().year) {
+                          setState(
+                            () => _selectedDate = DateTime(
+                              _viewMonth.year,
+                              _viewMonth.month,
+                              day,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const Divider(height: 1),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
+                      child: Row(
+                        children: [
+                          _StatChip(
+                            icon: Icons.receipt_long,
+                            label: '$dayCount ${t('orders')}',
+                            color: AppColors.primary,
+                            cs: cs,
+                          ),
+                          const SizedBox(width: 8),
+                          _StatChip(
+                            icon: Icons.shopping_bag,
+                            label: '$dayItems ${t('total_items')}',
+                            color: cs.tertiary,
+                            cs: cs,
+                          ),
+                          const SizedBox(width: 8),
+                          _StatChip(
+                            icon: Icons.attach_money,
+                            label:
+                                '${dayTotal.toStringAsFixed(0)} ${t('currency_suffix')}',
+                            color: Colors.green,
+                            cs: cs,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    if (dayOrders.isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: R.hp(context, isDesktop ? 16 : 18),
+                                height: R.hp(context, isDesktop ? 16 : 18),
+                                decoration: BoxDecoration(
+                                  color: cs.surfaceContainerHighest,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.history,
+                                  size: isDesktop ? 48 : 36,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                t('history_empty'),
+                                style: TextStyle(
+                                  fontSize: R.fontLg(context),
+                                  fontWeight: FontWeight.w600,
+                                  color: cs.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async =>
+                              context.read<OrderCubit>().refresh(),
+                          child: isDesktop
+                              ? GridView.builder(
+                                  padding: EdgeInsets.symmetric(horizontal: p),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 1.0,
+                                        crossAxisSpacing: R.gridSpacing(
+                                          context,
+                                        ),
+                                        mainAxisSpacing: R.gridSpacing(context),
+                                      ),
+                                  itemCount: dayOrders.length,
+                                  itemBuilder: (context, index) {
+                                    final order = dayOrders[index];
+                                    return OrderCard(
+                                      order: order,
+                                      showTime: true,
+                                      onReset: role == Role.admin
+                                          ? () {
+                                              final c = context
+                                                  .read<OrderCubit>();
+                                              for (final item in order.items) {
+                                                for (
+                                                  int i = 0;
+                                                  i < item.quantity;
+                                                  i++
+                                                ) {
+                                                  c.addToCart(item.recipe);
+                                                }
+                                              }
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    t('order_restored'),
+                                                  ),
+                                                ),
+                                              );
+                                              if (context.mounted) {
+                                                context
+                                                    .read<OrderCubit>()
+                                                    .refresh();
+                                              }
+                                            }
+                                          : null,
+                                    );
+                                  },
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.symmetric(horizontal: p),
+                                  itemCount: dayOrders.length,
+                                  itemBuilder: (context, index) {
+                                    final order = dayOrders[index];
+                                    return OrderCard(
+                                      order: order,
+                                      showTime: true,
+                                      onReset: role == Role.admin
+                                          ? () {
+                                              final c = context
+                                                  .read<OrderCubit>();
+                                              for (final item in order.items) {
+                                                for (
+                                                  int i = 0;
+                                                  i < item.quantity;
+                                                  i++
+                                                ) {
+                                                  c.addToCart(item.recipe);
+                                                }
+                                              }
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    t('order_restored'),
+                                                  ),
+                                                ),
+                                              );
+                                              if (context.mounted) {
+                                                context
+                                                    .read<OrderCubit>()
+                                                    .refresh();
+                                              }
+                                            }
+                                          : null,
+                                    );
+                                  },
+                                ),
+                        ),
+                      ),
+                  ],
                 ),
-            ],
-          ),
         ),
       ),
     );

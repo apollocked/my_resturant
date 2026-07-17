@@ -26,7 +26,7 @@ class OrderCubit extends Cubit<OrderState> {
       final settings = await _repo.loadSettings();
       final cats = await _repo.loadCategories();
       _applySettings(settings);
-      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders, categories: cats));
+      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders, categories: cats, isLoading: false));
     } catch (e) {
       if (!isClosed) debugPrint('OrderCubit._load error: $e');
     }
@@ -219,7 +219,7 @@ class OrderCubit extends Cubit<OrderState> {
     final orders = await _repo.loadOrders();
     final recipes = await _repo.loadRecipes();
     final cats = await _repo.loadCategories();
-    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes, categories: cats));
+    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes, categories: cats, isLoading: false));
   }
 
   @override

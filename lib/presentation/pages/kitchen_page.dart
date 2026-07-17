@@ -9,6 +9,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenPage extends StatefulWidget {
@@ -82,6 +83,14 @@ class _KitchenPageState extends State<KitchenPage> {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
     if (orders.isEmpty) {
+      if (context.read<OrderCubit>().state.isLoading) {
+        return isDesktop
+            ? GridView(padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0,
+                  crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
+                children: List.generate(4, (_) => const ShimmerOrderCard()))
+            : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
+      }
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
           decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),

@@ -11,6 +11,7 @@ import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
 import 'package:my_resturant/presentation/widgets/menu/item_on_hold_sheet.dart';
+import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
@@ -24,7 +25,10 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
-  List<Recipe> _filteredMeals(List<Recipe> allRecipes, List<Map<String, String>> cats) {
+  List<Recipe> _filteredMeals(
+    List<Recipe> allRecipes,
+    List<Map<String, String>> cats,
+  ) {
     var list = allRecipes.where((r) => r.available).toList();
     if (cats.isNotEmpty && _selectedCategoryIndex < cats.length) {
       final key = cats[_selectedCategoryIndex]['key'];
@@ -72,6 +76,79 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     final cs = Theme.of(context).colorScheme;
     final state = context.watch<OrderCubit>().state;
     if (state.selectedTable == 0) return _buildTablePicker();
+    if (state.isLoading && state.recipes.isEmpty) {
+      return Scaffold(
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () async => context.read<OrderCubit>().refresh(),
+            child: R.isDesktop(context)
+                ? Row(
+                    children: [
+                      Container(
+                        width: 180,
+                        padding: EdgeInsets.fromLTRB(
+                          R.padding(context),
+                          24,
+                          0,
+                          16,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const ShimmerBox(width: 80, height: 14, radius: 6),
+                            const SizedBox(height: 16),
+                            ...List.generate(
+                              5,
+                              (_) => const Padding(
+                                padding: EdgeInsets.only(bottom: 8),
+                                child: ShimmerBox(
+                                  width: double.infinity,
+                                  height: 36,
+                                  radius: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const VerticalDivider(width: 1),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(R.padding(context)),
+                          child: ShimmerGrid(
+                            itemCount: 8,
+                            itemBuilder: () => const ShimmerFoodCard(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      SizedBox(height: R.isTablet(context) ? 20 : 16),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: R.padding(context),
+                        ),
+                        child: const ShimmerBox(
+                          width: double.infinity,
+                          height: 44,
+                          radius: 12,
+                        ),
+                      ),
+                      SizedBox(height: R.isTablet(context) ? 28 : 24),
+                      Expanded(
+                        child: ShimmerGrid(
+                          itemCount: 6,
+                          itemBuilder: () => const ShimmerFoodCard(),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      );
+    }
     final meals = _filteredMeals(state.recipes, state.categories);
 
     if (R.isDesktop(context)) {
@@ -124,7 +201,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: CategoryChip(
                                   icon: state.categories[index]['icon']!,
-                                  name: t('cat_${state.categories[index]['key']!}'),
+                                  name: t(
+                                    'cat_${state.categories[index]['key']!}',
+                                  ),
                                   isSelected: _selectedCategoryIndex == index,
                                   index: index,
                                   onTap: () => setState(
