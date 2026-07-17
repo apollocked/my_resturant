@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
 
@@ -39,12 +40,14 @@ class _DishFormFieldsState extends State<DishFormFields> {
   @override
   void initState() {
     super.initState();
-    _cat = widget.initialCategory;
+    final cats = effectiveCategories(widget.categories);
+    final match = cats.any((c) => c['key'] == widget.initialCategory);
+    _cat = match ? widget.initialCategory : (cats.isNotEmpty ? cats.first['key']! : 'burger');
   }
 
   @override
   Widget build(BuildContext context) {
-    final catKeys = widget.categories.where((c) => c['key'] != 'all').toList();
+    final catKeys = effectiveCategories(widget.categories);
     return Form(
       key: widget.formKey,
       child: Column(

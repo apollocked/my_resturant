@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
@@ -25,12 +26,16 @@ class CategoryFilterBar extends StatelessWidget {
     final iconSize = isDesktop ? 18.0 : isTablet ? 16.0 : 14.0;
     final textSize = isDesktop ? 15.0 : isTablet ? 14.0 : 13.0;
     String t(String key) => Tr.get(key, settings.state.locale);
+    final cats = [
+      {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
+      ...effectiveCategories(categories),
+    ];
     return SizedBox(height: height,
       child: ListView.builder(scrollDirection: Axis.horizontal, padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 16),
-        itemCount: categories.length,
+        itemCount: cats.length,
         itemBuilder: (context, i) {
           final isSel = selectedIndex == i;
-          final catKey = categories[i]['key']!;
+          final catKey = cats[i]['key']!;
           final label = t('cat_$catKey');
           return Padding(padding: EdgeInsets.only(left: isDesktop ? 12 : 8), child: GestureDetector(
             onTap: () => onChanged(i),
@@ -42,7 +47,7 @@ class CategoryFilterBar extends StatelessWidget {
                 boxShadow: isSel ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 8)] : null,
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Text(categories[i]['icon']!, style: TextStyle(fontSize: iconSize)),
+                Text(cats[i]['icon']!, style: TextStyle(fontSize: iconSize)),
                 const SizedBox(width: 4),
                 Text(label, style: TextStyle(
                     fontSize: textSize, fontWeight: FontWeight.w600, color: isSel ? cs.onPrimary : cs.onSurface)),

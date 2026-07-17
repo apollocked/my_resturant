@@ -6,6 +6,7 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
@@ -24,6 +25,11 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   int _selectedCategoryIndex = 0;
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
+
+  List<Map<String, String>> _allCats(List<Map<String, String>> dbCats) => [
+    {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
+    ...effectiveCategories(dbCats),
+  ];
 
   List<Recipe> _filteredMeals(
     List<Recipe> allRecipes,
@@ -149,13 +155,14 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
         ),
       );
     }
-    final meals = _filteredMeals(state.recipes, state.categories);
+    final cats = _allCats(state.categories);
+    final meals = _filteredMeals(state.recipes, cats);
 
     if (R.isDesktop(context)) {
-      return _buildDesktopLayout(cs, t, state, meals);
+      return _buildDesktopLayout(cs, t, state, meals, cats);
     }
 
-    return _buildMobileLayout(cs, t, state, meals);
+    return _buildMobileLayout(cs, t, state, meals, cats);
   }
 
   Widget _buildDesktopLayout(
@@ -163,6 +170,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     String Function(String) t,
     dynamic state,
     List<Recipe> meals,
+    List<Map<String, String>> cats,
   ) {
     return Scaffold(
       body: SafeArea(
@@ -196,13 +204,13 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           const SizedBox(height: 16),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: state.categories.length,
+                              itemCount: cats.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: CategoryChip(
-                                  icon: state.categories[index]['icon']!,
+                                  icon: cats[index]['icon']!,
                                   name: t(
-                                    'cat_${state.categories[index]['key']!}',
+                                    'cat_${cats[index]['key']!}',
                                   ),
                                   isSelected: _selectedCategoryIndex == index,
                                   index: index,
@@ -300,6 +308,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     String Function(String) t,
     dynamic state,
     List<Recipe> meals,
+    List<Map<String, String>> cats,
   ) {
     return Scaffold(
       body: SafeArea(
@@ -340,11 +349,11 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           reverse: true,
-                          itemCount: state.categories.length,
+                          itemCount: cats.length,
                           padding: EdgeInsets.zero,
                           itemBuilder: (context, index) => CategoryChip(
-                            icon: state.categories[index]['icon']!,
-                            name: t('cat_${state.categories[index]['key']!}'),
+                            icon: cats[index]['icon']!,
+                            name: t('cat_${cats[index]['key']!}'),
                             isSelected: _selectedCategoryIndex == index,
                             index: index,
                             onTap: () =>

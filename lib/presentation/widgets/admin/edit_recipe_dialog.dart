@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/data/models/default_categories.dart';
 
 class EditRecipeDialog extends StatefulWidget {
   final String name, description;
@@ -23,28 +24,34 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
     _nameCtl = TextEditingController(text: widget.name);
     _priceCtl = TextEditingController(text: widget.price.toInt().toString());
     _descCtl = TextEditingController(text: widget.description);
-    _cat = widget.category;
+    final cats = effectiveCategories(widget.categories);
+    final match = cats.any((c) => c['key'] == widget.category);
+    _cat = match ? widget.category : (cats.isNotEmpty ? cats.first['key']! : 'burger');
   }
 
   @override void dispose() { _nameCtl.dispose(); _priceCtl.dispose(); _descCtl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
+    final cats = effectiveCategories(widget.categories);
     return Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
       title: Text(widget.t('edit_food')),
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        TextField(controller: _nameCtl, decoration: InputDecoration(labelText: widget.t('name'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl),
-        const SizedBox(height: 12),
-        TextField(controller: _priceCtl, decoration: InputDecoration(labelText: widget.t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
-        const SizedBox(height: 12),
-        StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
-          initialValue: _cat, decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
-          items: widget.categories.where((c) => c['key'] != 'all').map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
-          onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
-        )),
-        const SizedBox(height: 12),
-        TextField(controller: _descCtl, decoration: InputDecoration(labelText: widget.t('description'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
-      ]),
+      content: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(controller: _nameCtl, decoration: InputDecoration(labelText: widget.t('name'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl),
+          const SizedBox(height: 12),
+          TextField(controller: _priceCtl, decoration: InputDecoration(labelText: widget.t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
+          const SizedBox(height: 12),
+          StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
+            initialValue: _cat,
+            decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
+            items: cats.map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
+            onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
+          )),
+          const SizedBox(height: 12),
+          TextField(controller: _descCtl, decoration: InputDecoration(labelText: widget.t('description'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
+        ]),
+      ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(widget.t('cancel'))),
         FilledButton(onPressed: () => Navigator.pop(context, {
