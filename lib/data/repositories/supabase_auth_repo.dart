@@ -167,4 +167,28 @@ class SupabaseAuthRepository implements AuthRepository {
     if (name == null) return null;
     return Role.values.firstWhere((r) => r.name == name);
   }
+
+  @override
+  Future<bool> isActivated() async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) return false;
+      final data = await _client.from('profiles').select('activated').eq('id', user.id).single();
+      return data['activated'] == true;
+    } catch (e, st) {
+      debugPrint('SupabaseAuthRepo.isActivated error: $e\n$st');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> claimPromoCode(String code) async {
+    try {
+      final result = await _client.rpc('claim_promo_code', params: {'promo_code': code.trim().toUpperCase()});
+      return result == true;
+    } catch (e, st) {
+      debugPrint('SupabaseAuthRepo.claimPromoCode error: $e\n$st');
+      return false;
+    }
+  }
 }

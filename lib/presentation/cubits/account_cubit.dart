@@ -20,9 +20,10 @@ String _errorKey(Object e) {
 
 class AccountState {
   final bool isLoggedIn;
+  final bool isActivated;
   final String? email;
   final String? errorMessage;
-  const AccountState({this.isLoggedIn = false, this.email, this.errorMessage});
+  const AccountState({this.isLoggedIn = false, this.isActivated = false, this.email, this.errorMessage});
 }
 
 class AccountCubit extends Cubit<AccountState> {
@@ -36,7 +37,8 @@ class AccountCubit extends Cubit<AccountState> {
       final savedEmail = prefs.getString('account_email');
       final savedLoggedIn = prefs.getBool('account_logged_in') ?? false;
       if (savedLoggedIn && savedEmail != null) {
-        emit(AccountState(isLoggedIn: true, email: savedEmail));
+        final activated = await _repo.isActivated();
+        emit(AccountState(isLoggedIn: true, isActivated: activated, email: savedEmail));
         return;
       }
       final session = await _repo.isAccountCreated();
@@ -44,7 +46,8 @@ class AccountCubit extends Cubit<AccountState> {
       if (session && email != null) {
         await prefs.setBool('account_logged_in', true);
         await prefs.setString('account_email', email);
-        emit(AccountState(isLoggedIn: true, email: email));
+        final activated = await _repo.isActivated();
+        emit(AccountState(isLoggedIn: true, isActivated: activated, email: email));
       }
     } catch (e, st) {
       debugPrint('AccountCubit.load error: $e\n$st');
@@ -53,6 +56,7 @@ class AccountCubit extends Cubit<AccountState> {
 
   void clearError() => emit(AccountState(
     isLoggedIn: state.isLoggedIn,
+    isActivated: state.isActivated,
     email: state.email,
   ));
 
@@ -62,8 +66,10 @@ class AccountCubit extends Cubit<AccountState> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('account_logged_in', true);
       await prefs.setString('account_email', email.trim().toLowerCase());
+      final activated = await _repo.isActivated();
       emit(AccountState(
         isLoggedIn: true,
+        isActivated: activated,
         email: email.trim().toLowerCase(),
       ));
     } catch (e, st) {
@@ -80,8 +86,10 @@ class AccountCubit extends Cubit<AccountState> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('account_logged_in', true);
         await prefs.setString('account_email', email.trim().toLowerCase());
+        final activated = await _repo.isActivated();
         emit(AccountState(
           isLoggedIn: true,
+          isActivated: activated,
           email: email.trim().toLowerCase(),
         ));
       }
@@ -90,6 +98,20 @@ class AccountCubit extends Cubit<AccountState> {
       debugPrint('AccountCubit.login error: $e\n$st');
       emit(AccountState(errorMessage: _errorKey(e)));
       return false;
+    }
+  }
+
+  Future<void> claimPromoCode(String code) async {
+    try {
+      final ok = await _repo.claimPromoCode(code);
+      if (ok) {
+        emit(AccountState(isLoggedIn: true, isActivated: true, email: state.email));
+      } else {
+        emit(AccountState(isLoggedIn: true, isActivated: false, email: state.email, errorMessage: 'err_invalid_promo'));
+      }
+    } catch (e, st) {
+      debugPrint('AccountCubit.claimPromoCode error: $e\n$st');
+      emit(AccountState(isLoggedIn: true, isActivated: false, email: state.email, errorMessage: 'error_occurred'));
     }
   }
 
@@ -108,10 +130,10 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> updateEmail(String newEmail) async {
     try {
       await _repo.updateEmail(newEmail);
-      emit(AccountState(isLoggedIn: true, email: newEmail.trim().toLowerCase()));
+      emit(AccountState(isLoggedIn: true, isActivated: state.isActivated, email: newEmail.trim().toLowerCase()));
     } catch (e, st) {
       debugPrint('AccountCubit.updateEmail error: $e\n$st');
-      emit(AccountState(isLoggedIn: true, email: state.email, errorMessage: '$e'));
+      emit(AccountState(isLoggedIn: true, isActivated: state.isActivated, email: state.email, errorMessage: '$e'));
       rethrow;
     }
   }
@@ -121,10 +143,10 @@ class AccountCubit extends Cubit<AccountState> {
       await _repo.updatePassword(currentPassword, newPassword);
     } catch (e, st) {
       debugPrint('AccountCubit.updatePassword error: $e\n$st');
-      emit(AccountState(isLoggedIn: true, email: state.email, errorMessage: '$e'));
+      emit(AccountState(isLoggedIn: true, isActivated: state.isActivated, email: state.email, errorMessage: '$e'));
       rethrow;
     }
   }
 
-  void dismissError() => emit(AccountState(isLoggedIn: state.isLoggedIn, email: state.email));
+  void dismissError() => emit(AccountState(isLoggedIn: state.isLoggedIn, isActivated: state.isActivated, email: state.email));
 }

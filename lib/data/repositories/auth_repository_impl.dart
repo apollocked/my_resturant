@@ -112,4 +112,17 @@ class LocalAuthRepository implements AuthRepository {
     if (name == null) return null;
     return Role.values.firstWhere((r) => r.name == name);
   }
+
+  @override
+  Future<bool> isActivated() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('account_activated') ?? false;
+  }
+
+  @override
+  Future<bool> claimPromoCode(String code) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('account_activated', true);
+    return true;
+  }
 }

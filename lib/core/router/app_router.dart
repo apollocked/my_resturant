@@ -5,6 +5,7 @@ import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/pages/auth/account_auth_page.dart';
+import 'package:my_resturant/presentation/pages/auth/promo_code_page.dart';
 import 'package:my_resturant/presentation/pages/auth/role_login_page.dart';
 import 'package:my_resturant/presentation/pages/menu/cart_page.dart';
 import 'package:my_resturant/presentation/pages/menu/menu_page.dart';
@@ -41,6 +42,11 @@ final appRouter = GoRouter(
       return null;
     }
 
+    if (!acct.isActivated) {
+      if (loc != '/promo-code') return '/promo-code';
+      return null;
+    }
+
     if (!rs.isConfigured) {
       if (loc != '/setup') return '/setup';
       return null;
@@ -61,6 +67,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', redirect: (_, _) => '/menu'),
     GoRoute(path: '/account-auth', builder: (_, _) => const AccountAuthPage()),
+    GoRoute(path: '/promo-code', builder: (_, _) => const PromoCodePage()),
     GoRoute(path: '/role-login', builder: (_, _) => const RoleLoginPage()),
     GoRoute(path: '/setup', builder: (_, _) => const SetupPage()),
     StatefulShellRoute.indexedStack(

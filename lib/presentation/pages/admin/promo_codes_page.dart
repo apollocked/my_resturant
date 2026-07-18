@@ -41,12 +41,12 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('New Promo Code'),
-        content: TextField(
+          content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.characters,
           decoration: InputDecoration(
-            hintText: _generateCode(),
+            hintText: 'Enter code or tap generate',
             suffixIcon: IconButton(
               icon: const Icon(Icons.casino_outlined, size: 20),
               tooltip: 'Generate random',

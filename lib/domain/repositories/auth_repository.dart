@@ -8,6 +8,8 @@ abstract class AuthRepository {
   Future<String?> getAccountEmail();
   Future<void> updateEmail(String newEmail);
   Future<void> updatePassword(String currentPassword, String newPassword);
+  Future<bool> isActivated();
+  Future<bool> claimPromoCode(String code);
 
   Future<bool> arePasscodesConfigured();
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin);
