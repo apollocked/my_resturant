@@ -195,4 +195,6 @@ const Map<String, String> ku = {
   'time_under_1m': '<١خ',
   'time_m': '{m}خ',
   'time_hm': '{h}ک {m}خ',
+  'or': 'یان',
+  'google_sign_in': 'چوونەوە بە Google',
 };

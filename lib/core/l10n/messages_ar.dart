@@ -195,4 +195,6 @@ const Map<String, String> ar = {
   'time_under_1m': '<١د',
   'time_m': '{m}د',
   'time_hm': '{h}س {m}د',
+  'or': 'أو',
+  'google_sign_in': 'تسجيل الدخول عبر Google',
 };

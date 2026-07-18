@@ -195,4 +195,6 @@ const Map<String, String> en = {
   'time_under_1m': '<1m',
   'time_m': '{m}m',
   'time_hm': '{h}h {m}m',
+  'or': 'or',
+  'google_sign_in': 'Sign in with Google',
 };

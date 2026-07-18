@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
@@ -190,5 +191,27 @@ class SupabaseAuthRepository implements AuthRepository {
       debugPrint('SupabaseAuthRepo.claimPromoCode error: $e\n$st');
       return false;
     }
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    const webClientId = String.fromEnvironment('WEB_CLIENT_ID', defaultValue: '');
+
+    final googleSignIn = GoogleSignIn.instance;
+    await googleSignIn.initialize(serverClientId: webClientId.isNotEmpty ? webClientId : null);
+
+    final googleUser = await googleSignIn.authenticate();
+
+    final authorization = await googleUser.authorizationClient.authorizationForScopes(['email', 'profile'])
+        ?? await googleUser.authorizationClient.authorizeScopes(['email', 'profile']);
+
+    final idToken = googleUser.authentication.idToken;
+    if (idToken == null) throw const AuthException('No ID token from Google');
+
+    await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: authorization.accessToken,
+    );
   }
 }

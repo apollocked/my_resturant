@@ -115,6 +115,21 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      await _repo.signInWithGoogle();
+      final email = await _repo.getAccountEmail();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('account_logged_in', true);
+      if (email != null) await prefs.setString('account_email', email);
+      final activated = await _repo.isActivated();
+      emit(AccountState(isLoggedIn: true, isActivated: activated, email: email));
+    } catch (e, st) {
+      debugPrint('AccountCubit.signInWithGoogle error: $e\n$st');
+      emit(const AccountState(errorMessage: 'error_occurred'));
+    }
+  }
+
   Future<void> logout() async {
     try {
       await _repo.logout();

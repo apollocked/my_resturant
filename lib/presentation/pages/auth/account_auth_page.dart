@@ -152,6 +152,26 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      Row(children: [
+                        const Expanded(child: Divider()),
+                        Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(t('or'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontSm(context)))),
+                        const Expanded(child: Divider()),
+                      ]),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: OutlinedButton.icon(
+                          onPressed: _loading ? null : _googleSignIn,
+                          icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                          label: Text(t('google_sign_in'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: cs.outline),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       if (context.watch<AccountCubit>().state.errorMessage case final err?)
                         Padding(
                           padding: const EdgeInsets.only(top: 12),
@@ -219,6 +239,20 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
     if (mounted) {
       setState(() => _loading = false);
       context.go('/role-login');
+    }
+  }
+
+  Future<void> _googleSignIn() async {
+    setState(() => _loading = true);
+    context.read<AccountCubit>().clearError();
+    try {
+      await context.read<AccountCubit>().signInWithGoogle();
+      if (mounted) await context.read<RoleCubit>().load();
+    } catch (_) {}
+    if (mounted) {
+      setState(() => _loading = false);
+      final acct = context.read<AccountCubit>().state;
+      if (acct.isLoggedIn) context.go('/role-login');
     }
   }
 }

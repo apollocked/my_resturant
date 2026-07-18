@@ -10,6 +10,7 @@ abstract class AuthRepository {
   Future<void> updatePassword(String currentPassword, String newPassword);
   Future<bool> isActivated();
   Future<bool> claimPromoCode(String code);
+  Future<void> signInWithGoogle();
 
   Future<bool> arePasscodesConfigured();
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin);

@@ -132,4 +132,9 @@ class LocalAuthRepository implements AuthRepository {
     await prefs.setBool('account_activated', true);
     return true;
   }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    throw UnsupportedError('Google sign-in not supported in local mode');
+  }
 }
