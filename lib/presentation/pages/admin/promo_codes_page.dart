@@ -35,43 +35,74 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
     return List.generate(8, (_) => chars[rng.nextInt(chars.length)]).join();
   }
 
+  bool _isExpired(Map<String, dynamic> code) {
+    final expires = code['expires_at'];
+    if (expires == null) return false;
+    return DateTime.parse(expires.toString()).isBefore(DateTime.now());
+  }
+
   Future<void> _createCode() async {
     final controller = TextEditingController();
-    final result = await showDialog<String>(
+    int selectedMonths = 12;
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('New Promo Code'),
-          content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.characters,
-          decoration: InputDecoration(
-            hintText: 'Enter code or tap generate',
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.casino_outlined, size: 20),
-              tooltip: 'Generate random',
-              onPressed: () {
-                controller.text = _generateCode();
-                controller.selection = TextSelection.collapsed(offset: controller.text.length);
-              },
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('New Promo Code'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              textCapitalization: TextCapitalization.characters,
+              decoration: InputDecoration(
+                hintText: 'Enter code or tap generate',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.casino_outlined, size: 20),
+                  tooltip: 'Generate random',
+                  onPressed: () {
+                    controller.text = _generateCode();
+                    controller.selection = TextSelection.collapsed(offset: controller.text.length);
+                  },
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<int>(
+              initialValue: selectedMonths,
+              decoration: const InputDecoration(labelText: 'Expires in', border: OutlineInputBorder()),
+              items: const [
+                DropdownMenuItem(value: 3, child: Text('3 Months')),
+                DropdownMenuItem(value: 6, child: Text('6 Months')),
+                DropdownMenuItem(value: 12, child: Text('1 Year')),
+              ],
+              onChanged: (v) { if (v != null) setDialogState(() => selectedMonths = v); },
+            ),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            FilledButton(
+              onPressed: () {
+                if (controller.text.trim().isEmpty) return;
+                Navigator.pop(ctx, {'code': controller.text.trim().toUpperCase(), 'months': selectedMonths});
+              },
+              child: const Text('Create'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.isNotEmpty ? controller.text : null),
-            child: const Text('Create'),
-          ),
-        ],
       ),
     );
-    if (result == null || result.trim().isEmpty) return;
+    if (result == null) return;
+    final code = result['code'] as String;
+    final months = result['months'] as int;
+    final expiresAt = DateTime.now().add(Duration(days: months * 30));
     try {
-      await _db.from('promo_codes').insert({'code': result.trim().toUpperCase()});
+      await _db.from('promo_codes').insert({
+        'code': code,
+        'expires_at': expiresAt.toUtc().toIso8601String(),
+      });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Code "${result.trim().toUpperCase()}" created'), backgroundColor: AppColors.primary));
+        SnackBar(content: Text('Code "$code" created (expires in $months months)'), backgroundColor: AppColors.primary));
       _load();
     } catch (e) {
       if (!mounted) return;
@@ -95,6 +126,24 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
     if (confirm != true) return;
     await _db.from('promo_codes').delete().eq('code', code);
     _load();
+  }
+
+  String _statusText(Map<String, dynamic> code) {
+    if (code['used_by'] != null) return 'Used';
+    if (_isExpired(code)) return 'Expired';
+    return 'Available';
+  }
+
+  Color _statusColor(Map<String, dynamic> code) {
+    if (code['used_by'] != null) return Colors.orange;
+    if (_isExpired(code)) return Colors.red;
+    return Colors.green;
+  }
+
+  IconData _statusIcon(Map<String, dynamic> code) {
+    if (code['used_by'] != null) return Icons.lock_outline;
+    if (_isExpired(code)) return Icons.timer_off_outlined;
+    return Icons.vpn_key;
   }
 
   @override
@@ -137,17 +186,20 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
           border: Border.all(color: cs.outlineVariant),
         ),
         child: Table(
-          columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(2), 2: FlexColumnWidth(1.5), 3: FlexColumnWidth(1)},
+          columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1.5), 2: FlexColumnWidth(1.5), 3: FlexColumnWidth(1.5), 4: FlexColumnWidth(1)},
           children: [
             TableRow(decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-              children: [_th('Code', cs), _th('Used By', cs), _th('Date', cs), _th('', cs)]),
+              children: [_th('Code', cs), _th('Status', cs), _th('Created', cs), _th('Expires', cs), _th('', cs)]),
             for (int i = 0; i < _codes.length; i++)
               TableRow(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.3))),
                 borderRadius: i == _codes.length - 1 ? const BorderRadius.vertical(bottom: Radius.circular(16)) : null),
-                children: [_td(_codes[i]['code'] ?? '', cs, bold: true),
-                  _td(_codes[i]['used_by'] != null ? 'Used' : 'Available', cs, color: _codes[i]['used_by'] != null ? Colors.orange : Colors.green),
+                children: [
+                  _td(_codes[i]['code'] ?? '', cs, bold: true),
+                  _td(_statusText(_codes[i]), cs, color: _statusColor(_codes[i])),
                   _td(_formatDate(_codes[i]['created_at']), cs),
-                  _tdAction(_codes[i], cs)]),
+                  _td(_formatDate(_codes[i]['expires_at']), cs),
+                  _tdAction(_codes[i], cs),
+                ]),
           ],
         ),
       ),
@@ -161,7 +213,7 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
     padding: const EdgeInsets.all(12), child: Text(text, style: TextStyle(fontWeight: bold ? FontWeight.w600 : FontWeight.w400, color: color ?? cs.onSurface, fontSize: 14)));
 
   Widget _tdAction(Map<String, dynamic> code, ColorScheme cs) {
-    final used = code['used_by'] != null;
+    final canDelete = code['used_by'] == null;
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(children: [
@@ -173,7 +225,7 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied'), duration: Duration(seconds: 1)));
           },
         ),
-        if (!used) IconButton(
+        if (canDelete) IconButton(
           icon: Icon(Icons.delete_outline, size: 18, color: cs.error),
           tooltip: 'Delete',
           onPressed: () => _deleteCode(code['code']),
@@ -188,17 +240,18 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       itemCount: _codes.length,
       itemBuilder: (context, i) {
         final c = _codes[i];
-        final used = c['used_by'] != null;
+        final status = _statusText(c);
+        final color = _statusColor(c);
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: used ? Colors.orange.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-              child: Icon(used ? Icons.lock_outline : Icons.vpn_key, color: used ? Colors.orange : Colors.green, size: 20),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+              child: Icon(_statusIcon(c), color: color, size: 20),
             ),
             title: Text(c['code'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontFamily: 'monospace', fontSize: 16)),
-            subtitle: Text(used ? 'Used' : 'Available', style: TextStyle(color: used ? Colors.orange : Colors.green, fontSize: 12)),
+            subtitle: Text('$status • expires ${_formatDate(c['expires_at'])}', style: TextStyle(color: color, fontSize: 12)),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: [
               IconButton(
                 icon: Icon(Icons.copy_rounded, size: 18, color: cs.primary),
@@ -207,7 +260,7 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied'), duration: Duration(seconds: 1)));
                 },
               ),
-              if (!used) IconButton(
+              if (c['used_by'] == null) IconButton(
                 icon: Icon(Icons.delete_outline, size: 18, color: cs.error),
                 onPressed: () => _deleteCode(c['code']),
               ),

@@ -51,7 +51,10 @@ class LocalAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> updatePassword(String currentPassword, String newPassword) async {
+  Future<void> updatePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_passKey, newPassword);
   }
@@ -65,7 +68,11 @@ class LocalAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin) async {
+  Future<void> savePasscodes(
+    String waiterPin,
+    String kitchenPin,
+    String adminPin,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_pinWaiter, waiterPin);
     await prefs.setString(_pinKitchen, kitchenPin);
