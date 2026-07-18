@@ -239,7 +239,9 @@ class ShimmerListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-      child: Column(
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         children: List.generate(
           itemCount,
           (_) => Padding(

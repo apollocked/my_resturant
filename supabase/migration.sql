@@ -330,3 +330,62 @@ ALTER TABLE recipes ADD CONSTRAINT recipes_price_check CHECK (price > 0);
 -- Validate order status
 ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check;
 ALTER TABLE orders ADD CONSTRAINT orders_status_check CHECK (status IN ('pending', 'preparing', 'served'));
+
+-- ============================================================
+-- Promo Codes
+-- ============================================================
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS activated BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS promo_codes (
+  code TEXT PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  used_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  used_at TIMESTAMPTZ
+);
+
+ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read all promo codes"
+  ON promo_codes FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert promo codes"
+  ON promo_codes FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can delete unused promo codes"
+  ON promo_codes FOR DELETE
+  TO authenticated
+  USING (used_by IS NULL);
+
+CREATE OR REPLACE FUNCTION public.claim_promo_code(promo_code TEXT)
+RETURNS BOOLEAN AS $$
+DECLARE
+  code_record RECORD;
+BEGIN
+  SELECT * INTO code_record
+  FROM public.promo_codes
+  WHERE code = promo_code AND used_by IS NULL;
+
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+
+  UPDATE public.promo_codes
+  SET used_by = auth.uid(), used_at = NOW()
+  WHERE code = promo_code AND used_by IS NULL;
+
+  UPDATE public.profiles
+  SET activated = TRUE
+  WHERE id = auth.uid();
+
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION public.is_activated()
+RETURNS BOOLEAN AS $$
+  SELECT COALESCE((SELECT activated FROM public.profiles WHERE id = auth.uid()), FALSE);
+$$ LANGUAGE SQL STABLE SECURITY DEFINER;

@@ -19,13 +19,14 @@ import 'package:my_resturant/presentation/pages/admin/report_page.dart';
 import 'package:my_resturant/presentation/pages/admin/dish_form_page.dart';
 import 'package:my_resturant/presentation/pages/admin/category_form_page.dart';
 import 'package:my_resturant/presentation/pages/admin/change_passcodes_page.dart';
+import 'package:my_resturant/presentation/pages/admin/promo_codes_page.dart';
 import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 
-final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form'];
+final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/promo-codes'];
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigator,
@@ -88,5 +89,7 @@ final appRouter = GoRouter(
       builder: (_, _) => const CategoryFormPage()),
     GoRoute(path: '/change-passcodes', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const ChangePasscodesPage()),
+    GoRoute(path: '/promo-codes', parentNavigatorKey: _rootNavigator,
+      builder: (_, _) => const PromoCodesPage()),
   ],
 );
