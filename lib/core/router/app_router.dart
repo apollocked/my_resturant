@@ -97,6 +97,12 @@ final appRouter = GoRouter(
     GoRoute(path: '/change-passcodes', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const ChangePasscodesPage()),
     GoRoute(path: '/promo-codes', parentNavigatorKey: _rootNavigator,
-      builder: (_, _) => const PromoCodesPage()),
+      builder: (context, _) {
+        final acct = context.read<AccountCubit>().state;
+        if (acct.email != 'hamabarznji1990@gmail.com') {
+          return const Scaffold(body: Center(child: Text('Not found')));
+        }
+        return const PromoCodesPage();
+      }),
   ],
 );
