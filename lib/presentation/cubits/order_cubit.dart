@@ -6,18 +6,27 @@ import 'package:uuid/uuid.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_state.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/data_repository.dart';
+import 'package:my_resturant/core/notifications/order_notification_service.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   final DataRepository _repo;
   final List<StreamSubscription> _subs = [];
   Timer? _pollTimer;
+  final OrderNotificationService _notifService = OrderNotificationService();
+  Role? _currentRole;
+  List<Order> _previousOrders = [];
 
   OrderCubit({DataRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
+    _notifService.init();
+    _notifService.requestPermission();
     _load();
   }
+
+  void setCurrentRole(Role? role) => _currentRole = role;
 
   Future<void> _load() async {
     try {
@@ -32,6 +41,10 @@ class OrderCubit extends Cubit<OrderState> {
     }
 
     _subscribe(_repo.watchOrders(), (o) {
+      if (_currentRole != null) {
+        _notifService.checkOrderChanges(_previousOrders, o, _currentRole!);
+      }
+      _previousOrders = List.from(o);
       if (!isClosed) emit(state.copyWith(orders: o));
     });
     _subscribe(_repo.watchRecipes(), (r) {

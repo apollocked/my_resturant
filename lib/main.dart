@@ -63,6 +63,9 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
+    final role = context.watch<RoleCubit>().state;
+    final orderCubit = context.read<OrderCubit>();
+    orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
     String t(String key) => Tr.get(key, settings.locale);
     return PopScope(
       canPop: true,
