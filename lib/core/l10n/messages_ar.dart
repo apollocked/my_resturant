@@ -201,4 +201,8 @@ const Map<String, String> ar = {
   'time_hm': '{h}س {m}د',
   'or': 'أو',
   'google_sign_in': 'تسجيل الدخول عبر Google',
+  'notif_new_order': 'طلب جديد — طاولة {table}',
+  'notif_items_count': '{count} عنصر • {price} د.ع',
+  'notif_table_ready': 'طاولة {table} جاهزة',
+  'notif_order_served': 'تم تقديم الطلب — جاهز للتقديم',
 };

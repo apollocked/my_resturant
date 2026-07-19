@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -18,6 +19,7 @@ class OrderCubit extends Cubit<OrderState> {
   Timer? _pollTimer;
   final OrderNotificationService _notifService = OrderNotificationService();
   Role? _currentRole;
+  Locale _currentLocale = const Locale('ku');
   List<Order> _previousOrders = [];
 
   OrderCubit({DataRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
@@ -27,6 +29,8 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   void setCurrentRole(Role? role) => _currentRole = role;
+
+  void setCurrentLocale(Locale locale) => _currentLocale = locale;
 
   Future<void> _load() async {
     try {
@@ -42,7 +46,7 @@ class OrderCubit extends Cubit<OrderState> {
 
     _subscribe(_repo.watchOrders(), (o) {
       if (_currentRole != null) {
-        _notifService.checkOrderChanges(_previousOrders, o, _currentRole!);
+        _notifService.checkOrderChanges(_previousOrders, o, _currentRole!, _currentLocale);
       }
       _previousOrders = List.from(o);
       if (!isClosed) emit(state.copyWith(orders: o));

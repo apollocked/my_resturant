@@ -66,6 +66,7 @@ class AppView extends StatelessWidget {
     final role = context.watch<RoleCubit>().state;
     final orderCubit = context.read<OrderCubit>();
     orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
+    orderCubit.setCurrentLocale(settings.locale);
     String t(String key) => Tr.get(key, settings.locale);
     return PopScope(
       canPop: true,

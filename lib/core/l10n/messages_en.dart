@@ -201,4 +201,8 @@ const Map<String, String> en = {
   'time_hm': '{h}h {m}m',
   'or': 'or',
   'google_sign_in': 'Sign in with Google',
+  'notif_new_order': 'New Order — Table {table}',
+  'notif_items_count': '{count} items • {price} IQD',
+  'notif_table_ready': 'Table {table} Ready',
+  'notif_order_served': 'Order served — ready to deliver',
 };
