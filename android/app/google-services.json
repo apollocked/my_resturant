@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "745719121683",
+    "project_id": "apollo-my-restaurant-app",
+    "storage_bucket": "apollo-my-restaurant-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745719121683:android:e8ead58d78e3a9890fbce6",
+        "android_client_info": {
+          "package_name": "com.example.my_resturant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCexA6bcCA9Qytk76AxMdC85YV4swsOZCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
