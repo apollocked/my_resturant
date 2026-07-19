@@ -66,7 +66,6 @@ const Map<String, String> en = {
   'no_cleared_tables': 'No cleared tables',
   'cleared_table_subtitle': 'Table has been cleared',
   'unclear_table': 'Undo clear',
-  'table': 'Table',
   'restaurant_name': 'My Restaurant',
   'table_management': 'Tables',
   'table_management_sub': 'Manage table numbers and names',

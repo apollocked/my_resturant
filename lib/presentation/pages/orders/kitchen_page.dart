@@ -63,7 +63,7 @@ class _KitchenPageState extends State<KitchenPage> {
             ? _orderList(activeOrders, cubit, context, t, canEdit)
             : _tabIndex == 1
                 ? _orderList(servedOrders, cubit, context, t, canEdit)
-                : _clearedList(clearedTableNums, orderState, cubit, context, t, cs, isDesktop),
+                : _cleanList(cubit, context, t, cs),
       )),
     ])));
   }
@@ -87,6 +87,7 @@ class _KitchenPageState extends State<KitchenPage> {
 
   Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t, bool canEdit) {
     final isDesktop = R.isDesktop(context);
+    final cs = Theme.of(context).colorScheme;
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
         return isDesktop
@@ -96,7 +97,6 @@ class _KitchenPageState extends State<KitchenPage> {
                 children: List.generate(4, (_) => const ShimmerOrderCard()))
             : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
       }
-      final cs = Theme.of(context).colorScheme;
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
           decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
@@ -114,16 +114,6 @@ class _KitchenPageState extends State<KitchenPage> {
           onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
       );
     }).toList();
-    final serveOrderState = context.read<OrderCubit>().state;
-    final clearableOnServed = <int>{};
-    if (_tabIndex == 1) {
-      for (final o in orders) {
-        if (!serveOrderState.clearedTables.contains(o.tableNumber)) {
-          clearableOnServed.add(o.tableNumber);
-        }
-      }
-    }
-    final clearableList = clearableOnServed.toList()..sort();
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
       child: isDesktop
@@ -131,32 +121,21 @@ class _KitchenPageState extends State<KitchenPage> {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0,
                 crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
               children: orderWidgets)
-          : ListView(key: ValueKey('list_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)), children: [
-              if (clearableList.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12, top: 4),
-                  child: Text(t('clear_table_section'), style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
-                ),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: clearableList.map((n) => ActionChip(
-                    avatar: const Icon(Icons.cleaning_services, size: 18, color: Colors.green),
-                    label: Text('${t('clear_table')} $n', style: const TextStyle(fontWeight: FontWeight.w600)),
-                    backgroundColor: Colors.green.withValues(alpha: 0.1),
-                    side: BorderSide(color: Colors.green.withValues(alpha: 0.3)),
-                    onPressed: () => cubit.clearTable(n),
-                  )).toList(),
-                ),
-                const SizedBox(height: 12),
-              ],
-              ...orderWidgets,
-            ]),
+          : ListView(key: ValueKey('list_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)), children: orderWidgets),
     );
   }
 
-  Widget _clearedList(List<int> clearedTableNums, dynamic orderState, OrderCubit cubit, BuildContext context, String Function(String) t, ColorScheme cs, bool isDesktop) {
-    if (clearedTableNums.isEmpty) {
+  Widget _cleanList(OrderCubit cubit, BuildContext context, String Function(String) t, ColorScheme cs) {
+    final orderState = cubit.state;
+    final servedTableNums = <int>{};
+    for (final o in orderState.orders.where((o) => o.status == OrderStatus.served)) {
+      if (!orderState.clearedTables.contains(o.tableNumber)) {
+        servedTableNums.add(o.tableNumber);
+      }
+    }
+    final tableList = servedTableNums.toList()..sort();
+    if (tableList.isEmpty) {
+      final isDesktop = R.isDesktop(context);
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
           decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
@@ -166,13 +145,13 @@ class _KitchenPageState extends State<KitchenPage> {
       ]));
     }
     return RefreshIndicator(
-      onRefresh: () async => context.read<OrderCubit>().refresh(),
+      onRefresh: () async => cubit.refresh(),
       child: ListView.builder(
-        key: ValueKey('cleared_$_tabIndex'),
+        key: ValueKey('clean_$_tabIndex'),
         padding: EdgeInsets.symmetric(horizontal: R.padding(context), vertical: 8),
-        itemCount: clearedTableNums.length,
+        itemCount: tableList.length,
         itemBuilder: (context, index) {
-          final n = clearedTableNums[index];
+          final n = tableList[index];
           final tableName = orderState.getTableName(n);
           return Card(
             margin: const EdgeInsets.only(bottom: 8),
@@ -180,15 +159,16 @@ class _KitchenPageState extends State<KitchenPage> {
               leading: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                child: const Icon(Icons.check_circle_outline, color: Colors.green, size: 22),
+                child: const Icon(Icons.cleaning_services, color: Colors.green, size: 22),
               ),
               title: Text('${t('table')} $n${tableName != '${t('table')} $n' ? ' — $tableName' : ''}',
                   style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-              subtitle: Text(t('cleared_table_subtitle'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
-              trailing: IconButton(
-                icon: Icon(Icons.undo, color: cs.primary, size: 20),
-                tooltip: t('unclear_table'),
-                onPressed: () => cubit.unclearTable(n),
+              subtitle: Text(t('clear_table'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+              trailing: FilledButton.icon(
+                icon: const Icon(Icons.check, size: 18),
+                label: Text(t('clear_table'), style: const TextStyle(fontWeight: FontWeight.w600)),
+                style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                onPressed: () => cubit.clearTable(n),
               ),
             ),
           );

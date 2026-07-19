@@ -66,7 +66,6 @@ const Map<String, String> ar = {
   'no_cleared_tables': 'لا توجد طاولات مُخلّاة',
   'cleared_table_subtitle': 'تم إخلاء الطاولة',
   'unclear_table': 'إلغاء الإخلاء',
-  'table': 'طاولة',
   'restaurant_name': 'مطعمي',
   'table_management': 'الطاولات',
   'table_management_sub': 'إدارة أرقام وأسماء الطاولات',
