@@ -94,7 +94,7 @@ class _CartPageState extends State<CartPage> {
           totalLabel: t('total'), sendLabel: t('send_order'),
           currencySuffix: t('currency_suffix'), total: state.cartTotal,
           canSubmit: state.selectedTable > 0 && cart.isNotEmpty,
-          onSubmit: () { context.read<OrderCubit>().submitOrder(_notesCtrl.text); _notesCtrl.clear(); context.go('/kitchen'); },
+          onSubmit: () async { final notes = _notesCtrl.text; _notesCtrl.clear(); final cubit = context.read<OrderCubit>(); await cubit.submitOrder(notes); if (mounted) { if (!context.mounted) return; context.go('/kitchen'); } },
         ),
       ],
     ]));

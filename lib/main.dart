@@ -68,15 +68,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AppView extends StatelessWidget {
+class AppView extends StatefulWidget {
   const AppView({super.key});
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
+  RoleState? _lastRole;
+  Locale? _lastLocale;
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
     final role = context.watch<RoleCubit>().state;
     final orderCubit = context.read<OrderCubit>();
-    orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
-    orderCubit.setCurrentLocale(settings.locale);
+    if (role.isLoggedIn != _lastRole?.isLoggedIn || role.role != _lastRole?.role) {
+      _lastRole = role;
+      orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
+    }
+    if (_lastLocale != settings.locale) {
+      _lastLocale = settings.locale;
+      orderCubit.setCurrentLocale(settings.locale);
+    }
     String t(String key) => Tr.get(key, settings.locale);
     return PopScope(
       canPop: true,

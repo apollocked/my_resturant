@@ -240,17 +240,21 @@ class _SetupPageState extends State<SetupPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     context.read<RoleCubit>().clearError();
+    bool ok = false;
     try {
       await context.read<RoleCubit>().configure(
         _waiterCtl.text,
         _kitchenCtl.text,
         _adminCtl.text,
       );
+      ok = true;
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
-      await _showPasscodesDialog(context);
-      if (mounted) context.go('/role-login');
+      if (ok) {
+        await _showPasscodesDialog(context);
+        if (mounted) context.go('/role-login');
+      }
     }
   }
 }

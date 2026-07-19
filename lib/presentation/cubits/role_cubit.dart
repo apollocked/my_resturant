@@ -59,7 +59,7 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   bool login(Role role, String pin) {
-    throw UnimplementedError('use loginAsync');
+    throw UnsupportedError('Use loginAsync instead');
   }
 
   Future<bool> loginAsync(Role role, String pin) async {
@@ -80,15 +80,20 @@ class RoleCubit extends Cubit<RoleState> {
     }
   }
 
-  Future<void> switchRole(Role role, {String? pin}) async {
+  Future<bool> switchRole(Role role, {String? pin}) async {
     if (state.role == Role.admin) {
       await _setRole(role);
-      return;
+      return true;
     }
     if (pin != null) {
       final ok = await _repo.verifyPasscode(role, pin);
-      if (ok) await _setRole(role);
+      if (ok) {
+        await _setRole(role);
+        return true;
+      }
+      emit(RoleState(isConfigured: state.isConfigured, isLoggedIn: state.isLoggedIn, role: state.role, errorMessage: 'pin_invalid'));
     }
+    return false;
   }
 
   Future<void> _setRole(Role role) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -44,22 +45,25 @@ class TableSelector extends StatelessWidget {
         const SizedBox(height: 20),
         Text(t('select_table_title'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
         const SizedBox(height: 20),
-        Wrap(spacing: 10, runSpacing: 10, children: List.generate(20, (i) {
-          final n = i + 1;
-          final sel = n == selectedTable;
-          final locked = reservedTables.contains(n) && n != selectedTable;
-          return SizedBox(width: 56, height: 44, child: OutlinedButton(
-            onPressed: locked ? null : () { onChanged(n); Navigator.pop(ctx); },
-            style: OutlinedButton.styleFrom(
-              backgroundColor: locked ? cs.surfaceContainerHighest : (sel ? AppColors.primary : cs.surface),
-              foregroundColor: locked ? cs.onSurfaceVariant : (sel ? cs.onPrimary : cs.onSurface),
-              side: BorderSide(color: locked ? cs.outlineVariant : (sel ? AppColors.primary : cs.outlineVariant)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-            child: locked
-                ? Icon(Icons.lock, size: 14, color: cs.onSurfaceVariant)
-                : Text('$n', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-          ));
-        })),
+        Builder(builder: (ctx2) {
+          final tableCount = context.read<OrderCubit>().state.tableCount;
+          return Wrap(spacing: 10, runSpacing: 10, children: List.generate(tableCount, (i) {
+            final n = i + 1;
+            final sel = n == selectedTable;
+            final locked = reservedTables.contains(n) && n != selectedTable;
+            return SizedBox(width: 56, height: 44, child: OutlinedButton(
+              onPressed: locked ? null : () { onChanged(n); Navigator.pop(ctx); },
+              style: OutlinedButton.styleFrom(
+                backgroundColor: locked ? cs.surfaceContainerHighest : (sel ? AppColors.primary : cs.surface),
+                foregroundColor: locked ? cs.onSurfaceVariant : (sel ? cs.onPrimary : cs.onSurface),
+                side: BorderSide(color: locked ? cs.outlineVariant : (sel ? AppColors.primary : cs.outlineVariant)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+              child: locked
+                  ? Icon(Icons.lock, size: 14, color: cs.onSurfaceVariant)
+                  : Text('$n', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            ));
+          }));
+        }),
         const SizedBox(height: 12),
       ])),
     );

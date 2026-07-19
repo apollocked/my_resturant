@@ -22,7 +22,9 @@ class OrderCubit extends Cubit<OrderState> {
   Locale _currentLocale = const Locale('ku');
   List<Order> _previousOrders = [];
 
-  OrderCubit({DataRepository? repo}) : _repo = repo ?? AppRepository(), super(const OrderState()) {
+  OrderCubit({DataRepository? repo})
+    : _repo = repo ?? AppRepository(),
+      super(const OrderState()) {
     _notifService.init();
     _notifService.requestPermission();
     _load();
@@ -39,14 +41,28 @@ class OrderCubit extends Cubit<OrderState> {
       final settings = await _repo.loadSettings();
       final cats = await _repo.loadCategories();
       _applySettings(settings);
-      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders, categories: cats, isLoading: false));
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            recipes: recipes,
+            orders: orders,
+            categories: cats,
+            isLoading: false,
+          ),
+        );
+      }
     } catch (e) {
       if (!isClosed) debugPrint('OrderCubit._load error: $e');
     }
 
     _subscribe(_repo.watchOrders(), (o) {
       if (_currentRole != null) {
-        _notifService.checkOrderChanges(_previousOrders, o, _currentRole!, _currentLocale);
+        _notifService.checkOrderChanges(
+          _previousOrders,
+          o,
+          _currentRole!,
+          _currentLocale,
+        );
       }
       _previousOrders = List.from(o);
       if (!isClosed) emit(state.copyWith(orders: o));
@@ -64,6 +80,8 @@ class OrderCubit extends Cubit<OrderState> {
     _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => _poll());
   }
 
+  static const int _maxReconnectAttempts = 10;
+
   void _subscribe<T>(Stream<T> stream, void Function(T) onData) {
     final sub = stream.listen(
       onData,
@@ -72,15 +90,20 @@ class OrderCubit extends Cubit<OrderState> {
     _subs.add(sub);
   }
 
-  void _reconnect<T>(Stream<T> stream, void Function(T) onData, [int attempt = 0]) {
-    if (isClosed) return;
+  void _reconnect<T>(
+    Stream<T> stream,
+    void Function(T) onData, [
+    int attempt = 0,
+  ]) {
+    if (isClosed || attempt >= _maxReconnectAttempts) return;
     final delay = Duration(seconds: min(1 << attempt, 30));
     Future.delayed(delay, () {
       if (isClosed) return;
-      stream.listen(
+      final sub = stream.listen(
         onData,
         onError: (_) => _reconnect(stream, onData, attempt + 1),
       );
+      _subs.add(sub);
     });
   }
 
@@ -94,6 +117,7 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   void _applySettings(Map<String, String> settings) {
+    if (isClosed) return;
     final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
     final names = <int, String>{};
     final cleared = <int>{};
@@ -107,17 +131,41 @@ class OrderCubit extends Cubit<OrderState> {
         if (n != null) cleared.add(n);
       }
     }
-    emit(state.copyWith(tableCount: tableCount, tableNames: names, clearedTables: cleared));
+    emit(
+      state.copyWith(
+        tableCount: tableCount,
+        tableNames: names,
+        clearedTables: cleared,
+      ),
+    );
   }
 
   void addToCart(Recipe recipe) {
     final cart = List<CartItem>.from(state.cart);
     final idx = cart.indexWhere((c) => c.recipe.id == recipe.id);
     if (idx >= 0) {
-      cart[idx] = CartItem(recipe: cart[idx].recipe, quantity: cart[idx].quantity + 1, notes: cart[idx].notes);
+      final pending = state.pendingNotes[recipe.id];
+      final newNotes = pending != null && pending.isNotEmpty
+          ? pending
+          : cart[idx].notes;
+      cart[idx] = CartItem(
+        recipe: cart[idx].recipe,
+        quantity: cart[idx].quantity + 1,
+        notes: newNotes,
+      );
+      final updatedPending = pending != null
+          ? (Map<String, String>.from(state.pendingNotes)..remove(recipe.id))
+          : null;
+      emit(
+        state.copyWith(
+          cart: cart,
+          pendingNotes: updatedPending ?? state.pendingNotes,
+        ),
+      );
     } else {
       final notes = state.pendingNotes[recipe.id] ?? '';
-      final pending = Map<String, String>.from(state.pendingNotes)..remove(recipe.id);
+      final pending = Map<String, String>.from(state.pendingNotes)
+        ..remove(recipe.id);
       cart.add(CartItem(recipe: recipe, notes: notes));
       emit(state.copyWith(cart: cart, pendingNotes: pending));
       return;
@@ -130,7 +178,11 @@ class OrderCubit extends Cubit<OrderState> {
     final idx = cart.indexWhere((c) => c.recipe.id == recipeId);
     if (idx < 0) return;
     if (cart[idx].quantity > 1) {
-      cart[idx] = CartItem(recipe: cart[idx].recipe, quantity: cart[idx].quantity - 1, notes: cart[idx].notes);
+      cart[idx] = CartItem(
+        recipe: cart[idx].recipe,
+        quantity: cart[idx].quantity - 1,
+        notes: cart[idx].notes,
+      );
     } else {
       cart.removeAt(idx);
     }
@@ -144,7 +196,11 @@ class OrderCubit extends Cubit<OrderState> {
     if (newQty <= 0) {
       cart.removeAt(index);
     } else {
-      cart[index] = CartItem(recipe: cart[index].recipe, quantity: newQty.clamp(1, 99), notes: cart[index].notes);
+      cart[index] = CartItem(
+        recipe: cart[index].recipe,
+        quantity: newQty.clamp(1, 99),
+        notes: cart[index].notes,
+      );
     }
     emit(state.copyWith(cart: cart));
   }
@@ -165,10 +221,15 @@ class OrderCubit extends Cubit<OrderState> {
     final cart = List<CartItem>.from(state.cart);
     final idx = cart.indexWhere((c) => c.recipe.id == recipeId);
     if (idx >= 0) {
-      cart[idx] = CartItem(recipe: cart[idx].recipe, quantity: cart[idx].quantity, notes: notes);
+      cart[idx] = CartItem(
+        recipe: cart[idx].recipe,
+        quantity: cart[idx].quantity,
+        notes: notes,
+      );
       emit(state.copyWith(cart: cart));
     } else {
-      final pending = Map<String, String>.from(state.pendingNotes)..[recipeId] = notes;
+      final pending = Map<String, String>.from(state.pendingNotes)
+        ..[recipeId] = notes;
       emit(state.copyWith(pendingNotes: pending));
     }
   }
@@ -176,7 +237,11 @@ class OrderCubit extends Cubit<OrderState> {
   void updateNotes(int index, String notes) {
     if (index < 0 || index >= state.cart.length) return;
     final cart = List<CartItem>.from(state.cart);
-    cart[index] = CartItem(recipe: cart[index].recipe, quantity: cart[index].quantity, notes: notes);
+    cart[index] = CartItem(
+      recipe: cart[index].recipe,
+      quantity: cart[index].quantity,
+      notes: notes,
+    );
     emit(state.copyWith(cart: cart));
   }
 
@@ -193,7 +258,11 @@ class OrderCubit extends Cubit<OrderState> {
 
   void setTableName(int n, String name) {
     final names = Map<int, String>.from(state.tableNames);
-    if (name.trim().isEmpty) { names.remove(n); } else { names[n] = name.trim(); }
+    if (name.trim().isEmpty) {
+      names.remove(n);
+    } else {
+      names[n] = name.trim();
+    }
     emit(state.copyWith(tableNames: names));
     _repo.saveSetting('tableName_$n', name.trim());
   }
@@ -202,8 +271,19 @@ class OrderCubit extends Cubit<OrderState> {
 
   Future<void> deleteRecipe(String id) async => _repo.removeRecipe(id);
 
-  Future<void> updateRecipe(String id, {String? name, double? price, String? category, String? description}) async =>
-      _repo.editRecipe(id, name: name, price: price, category: category, description: description);
+  Future<void> updateRecipe(
+    String id, {
+    String? name,
+    double? price,
+    String? category,
+    String? description,
+  }) async => _repo.editRecipe(
+    id,
+    name: name,
+    price: price,
+    category: category,
+    description: description,
+  );
 
   Future<void> toggleAvailability(String id) async => _repo.toggleRecipe(id);
 
@@ -221,12 +301,21 @@ class OrderCubit extends Cubit<OrderState> {
       id: const Uuid().v4(),
       tableNumber: state.selectedTable,
       tableName: state.getTableName(state.selectedTable),
-      items: List.from(state.cart), notes: notes,
+      items: List.from(state.cart),
+      notes: notes,
     );
     await _repo.saveOrder(order);
-    final cleared = Set<int>.from(state.clearedTables)..remove(state.selectedTable);
+    final cleared = Set<int>.from(state.clearedTables)
+      ..remove(state.selectedTable);
     _repo.saveSetting('cleared_${state.selectedTable}', 'false');
-    emit(state.copyWith(cart: [], selectedTable: 0, pendingNotes: const {}, clearedTables: cleared));
+    emit(
+      state.copyWith(
+        cart: [],
+        selectedTable: 0,
+        pendingNotes: const {},
+        clearedTables: cleared,
+      ),
+    );
   }
 
   void clearTable(int tableNumber) {
@@ -255,7 +344,16 @@ class OrderCubit extends Cubit<OrderState> {
     final orders = await _repo.loadOrders();
     final recipes = await _repo.loadRecipes();
     final cats = await _repo.loadCategories();
-    if (!isClosed) emit(state.copyWith(orders: orders, recipes: recipes, categories: cats, isLoading: false));
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          orders: orders,
+          recipes: recipes,
+          categories: cats,
+          isLoading: false,
+        ),
+      );
+    }
   }
 
   @override

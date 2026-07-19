@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
@@ -27,7 +28,8 @@ class _PromoCodePageState extends State<PromoCodePage> {
     final code = _controller.text.trim();
     if (code.isEmpty) return;
     setState(() => _loading = true);
-    context.read<AccountCubit>().claimPromoCode(code);
+    await context.read<AccountCubit>().claimPromoCode(code);
+    if (mounted) setState(() => _loading = false);
   }
 
   @override
@@ -36,7 +38,7 @@ class _PromoCodePageState extends State<PromoCodePage> {
     final acct = context.watch<AccountCubit>().state;
     if (acct.isActivated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) Navigator.of(context).pushReplacementNamed('/setup');
+        if (mounted) context.go('/setup');
       });
     }
     return Scaffold(

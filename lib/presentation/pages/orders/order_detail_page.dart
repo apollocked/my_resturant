@@ -61,13 +61,13 @@ class OrderDetailPage extends StatelessWidget {
             SizedBox(height: isDesktop ? 40 : 32),
             if (hasNext)
               SizedBox(width: double.infinity, child: FilledButton(
-                onPressed: () { cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); context.pop(); },
+                onPressed: () async { await cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); if (context.mounted) context.pop(); },
                 style: FilledButton.styleFrom(backgroundColor: color, padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
                 child: Text(nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
               ))
             else
               SizedBox(width: double.infinity, child: OutlinedButton(
-                onPressed: () { cubit.updateOrderStatus(order.id, OrderStatus.pending); context.pop(); },
+                onPressed: () async { await cubit.updateOrderStatus(order.id, OrderStatus.pending); if (context.mounted) context.pop(); },
                 style: OutlinedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
                 child: Text(t('again'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
               )),
