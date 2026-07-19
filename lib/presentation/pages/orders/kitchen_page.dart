@@ -27,10 +27,12 @@ class _KitchenPageState extends State<KitchenPage> {
     final role = context.watch<RoleCubit>().state.role;
     final canEdit = role != Role.waiter;
     String t(String key) => Tr.get(key, settings.locale);
-    final orders = context.watch<OrderCubit>().state.orders;
+    final orderState = context.watch<OrderCubit>().state;
+    final orders = orderState.orders;
     final cubit = context.read<OrderCubit>();
     final activeOrders = orders.where((o) => o.status != OrderStatus.served).toList();
     final servedOrders = orders.where((o) => o.status == OrderStatus.served).toList();
+    final clearedTableNums = orderState.clearedTables.toList()..sort();
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
 
@@ -49,6 +51,8 @@ class _KitchenPageState extends State<KitchenPage> {
             _pill('${t('active')} ${activeOrders.length}', 0, cs, isDesktop),
             const SizedBox(width: 4),
             _pill('${t('served')} ${servedOrders.length}', 1, cs, isDesktop),
+            const SizedBox(width: 4),
+            _pill('${t('cleared')} ${clearedTableNums.length}', 2, cs, isDesktop),
           ]),
         ),
       ])),
@@ -57,7 +61,9 @@ class _KitchenPageState extends State<KitchenPage> {
         duration: const Duration(milliseconds: 250),
         child: _tabIndex == 0
             ? _orderList(activeOrders, cubit, context, t, canEdit)
-            : _orderList(servedOrders, cubit, context, t, canEdit),
+            : _tabIndex == 1
+                ? _orderList(servedOrders, cubit, context, t, canEdit)
+                : _clearedList(clearedTableNums, orderState, cubit, context, t, cs, isDesktop),
       )),
     ])));
   }
@@ -80,16 +86,7 @@ class _KitchenPageState extends State<KitchenPage> {
   }
 
   Widget _orderList(List<Order> orders, OrderCubit cubit, BuildContext context, String Function(String) t, bool canEdit) {
-    final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
-    final orderState = cubit.state;
-    final servedTables = <int, List<Order>>{};
-    if (_tabIndex == 1) {
-      for (final o in orders) {
-        servedTables.putIfAbsent(o.tableNumber, () => []).add(o);
-      }
-    }
-    final clearableTables = servedTables.keys.where((n) => !orderState.clearedTables.contains(n)).toList();
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
         return isDesktop
@@ -99,6 +96,7 @@ class _KitchenPageState extends State<KitchenPage> {
                 children: List.generate(4, (_) => const ShimmerOrderCard()))
             : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
       }
+      final cs = Theme.of(context).colorScheme;
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
           decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
@@ -116,43 +114,85 @@ class _KitchenPageState extends State<KitchenPage> {
           onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
       );
     }).toList();
-    if (_tabIndex == 0) {
-      return RefreshIndicator(
-        onRefresh: () async => context.read<OrderCubit>().refresh(),
-        child: isDesktop
-            ? GridView(key: ValueKey('grid_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0,
-                  crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
-                children: orderWidgets)
-            : ListView(key: ValueKey('list_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)), children: orderWidgets),
-      );
+    final serveOrderState = context.read<OrderCubit>().state;
+    final clearableOnServed = <int>{};
+    if (_tabIndex == 1) {
+      for (final o in orders) {
+        if (!serveOrderState.clearedTables.contains(o.tableNumber)) {
+          clearableOnServed.add(o.tableNumber);
+        }
+      }
+    }
+    final clearableList = clearableOnServed.toList()..sort();
+    return RefreshIndicator(
+      onRefresh: () async => context.read<OrderCubit>().refresh(),
+      child: isDesktop
+          ? GridView(key: ValueKey('grid_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0,
+                crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
+              children: orderWidgets)
+          : ListView(key: ValueKey('list_$_tabIndex'), padding: EdgeInsets.symmetric(horizontal: R.padding(context)), children: [
+              if (clearableList.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12, top: 4),
+                  child: Text(t('clear_table_section'), style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
+                ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: clearableList.map((n) => ActionChip(
+                    avatar: const Icon(Icons.cleaning_services, size: 18, color: Colors.green),
+                    label: Text('${t('clear_table')} $n', style: const TextStyle(fontWeight: FontWeight.w600)),
+                    backgroundColor: Colors.green.withValues(alpha: 0.1),
+                    side: BorderSide(color: Colors.green.withValues(alpha: 0.3)),
+                    onPressed: () => cubit.clearTable(n),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+              ],
+              ...orderWidgets,
+            ]),
+    );
+  }
+
+  Widget _clearedList(List<int> clearedTableNums, dynamic orderState, OrderCubit cubit, BuildContext context, String Function(String) t, ColorScheme cs, bool isDesktop) {
+    if (clearedTableNums.isEmpty) {
+      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
+          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+          child: Icon(Icons.cleaning_services, size: isDesktop ? 64 : R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
+        const SizedBox(height: 20),
+        Text(t('no_cleared_tables'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
+      ]));
     }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
-      child: ListView(
-        key: ValueKey('list_$_tabIndex'),
-        padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-        children: [
-          if (clearableTables.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(t('clear_table_section'), style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
+      child: ListView.builder(
+        key: ValueKey('cleared_$_tabIndex'),
+        padding: EdgeInsets.symmetric(horizontal: R.padding(context), vertical: 8),
+        itemCount: clearedTableNums.length,
+        itemBuilder: (context, index) {
+          final n = clearedTableNums[index];
+          final tableName = orderState.getTableName(n);
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                child: const Icon(Icons.check_circle_outline, color: Colors.green, size: 22),
+              ),
+              title: Text('${t('table')} $n${tableName != '${t('table')} $n' ? ' — $tableName' : ''}',
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              subtitle: Text(t('cleared_table_subtitle'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+              trailing: IconButton(
+                icon: Icon(Icons.undo, color: cs.primary, size: 20),
+                tooltip: t('unclear_table'),
+                onPressed: () => cubit.unclearTable(n),
+              ),
             ),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: clearableTables.map((n) => ActionChip(
-                avatar: const Icon(Icons.cleaning_services, size: 18, color: Colors.green),
-                label: Text('${t('clear_table')} $n', style: const TextStyle(fontWeight: FontWeight.w600)),
-                backgroundColor: Colors.green.withValues(alpha: 0.1),
-                side: BorderSide(color: Colors.green.withValues(alpha: 0.3)),
-                onPressed: () => cubit.clearTable(n),
-              )).toList(),
-            ),
-            const SizedBox(height: 12),
-          ],
-          ...orderWidgets,
-        ],
+          );
+        },
       ),
     );
   }

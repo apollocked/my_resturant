@@ -231,6 +231,12 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(clearedTables: cleared));
   }
 
+  void unclearTable(int tableNumber) {
+    final cleared = Set<int>.from(state.clearedTables)..remove(tableNumber);
+    _repo.saveSetting('cleared_$tableNumber', 'false');
+    emit(state.copyWith(clearedTables: cleared));
+  }
+
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
     await _repo.changeOrderStatus(orderId, status);
     await refresh();
