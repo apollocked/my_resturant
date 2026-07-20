@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -195,7 +196,7 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signInWithGoogle() async {
-    const webClientId = String.fromEnvironment('WEB_CLIENT_ID', defaultValue: '');
+    final webClientId = dotenv.env['WEB_CLIENT_ID'] ?? '';
 
     final googleSignIn = GoogleSignIn.instance;
     await googleSignIn.initialize(serverClientId: webClientId.isNotEmpty ? webClientId : null);
