@@ -46,6 +46,7 @@ dev_dependencies:
   drift_dev: ^2.24.0
   build_runner: ^2.4.15
   flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.3
 
 flutter:
   uses-material-design: true
@@ -60,3 +61,18 @@ flutter:
     - family: NRT
       fonts:
         - asset: assets/fonts/Nrt.ttf
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/icons/my Restaurant.png
+  image_dark: assets/icons/my Restaurant.png
+  color_dark: "#1C1B1A"
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#1C1B1A"
+    image: assets/icons/my Restaurant.png
+    image_dark: assets/icons/my Restaurant.png
+  android: true
+  ios: true
+  web: true
+  fullscreen: true
