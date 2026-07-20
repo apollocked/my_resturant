@@ -56,10 +56,13 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                           color: AppColors.primarySoft,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          _isSignUp ? Icons.person_add_outlined : Icons.restaurant,
-                          size: R.avatarSize(context) * 0.5,
-                          color: AppColors.primary,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/icons/my Restaurant.png',
+                            width: R.avatarSize(context),
+                            height: R.avatarSize(context),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),

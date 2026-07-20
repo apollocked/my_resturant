@@ -49,10 +49,13 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
                       color: AppColors.primarySoft,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.restaurant,
-                      size: 36,
-                      color: AppColors.primary,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/icons/my Restaurant.png',
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

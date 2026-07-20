@@ -54,10 +54,14 @@ class MainShell extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.restaurant,
-                      size: 36,
-                      color: AppColors.primary,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/icons/my Restaurant.png',
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -126,12 +130,16 @@ class MainShell extends StatelessWidget {
               labelType: NavigationRailLabelType.all,
               backgroundColor: cs.surface,
               indicatorColor: AppColors.primarySoft,
-              leading: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: Icon(
-                  Icons.restaurant,
-                  size: 32,
-                  color: AppColors.primary,
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/icons/my Restaurant.png',
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               destinations: items
