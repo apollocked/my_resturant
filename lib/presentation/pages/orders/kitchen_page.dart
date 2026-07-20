@@ -28,11 +28,17 @@ class _KitchenPageState extends State<KitchenPage> {
     final canEdit = role != Role.waiter;
     String t(String key) => Tr.get(key, settings.locale);
     final orderState = context.watch<OrderCubit>().state;
-    final orders = orderState.orders;
+    final now = DateTime.now();
+    final todayOrders = orderState.orders.where((o) => o.createdAt.year == now.year && o.createdAt.month == now.month && o.createdAt.day == now.day).toList();
     final cubit = context.read<OrderCubit>();
-    final activeOrders = orders.where((o) => o.status != OrderStatus.served).toList();
-    final servedOrders = orders.where((o) => o.status == OrderStatus.served).toList();
-    final clearedTableNums = orderState.clearedTables.toList()..sort();
+    final activeOrders = todayOrders.where((o) => o.status != OrderStatus.served).toList();
+    final servedOrders = todayOrders.where((o) => o.status == OrderStatus.served).toList();
+    final servedTableNums = <int>{};
+    for (final o in servedOrders) {
+      servedTableNums.add(o.tableNumber);
+    }
+    final clearedToday = servedTableNums.where((n) => orderState.clearedTables.contains(n)).toSet();
+    final needCleaning = servedTableNums.difference(clearedToday).toList()..sort();
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
 
@@ -41,7 +47,7 @@ class _KitchenPageState extends State<KitchenPage> {
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(t('kitchen_title'), style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface)),
           const SizedBox(height: 2),
-          Text(t('orders_count').replaceAll('{count}', '${orders.length}'),
+          Text(t('orders_count').replaceAll('{count}', '${todayOrders.length}'),
               style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         ])),
         Container(
@@ -52,7 +58,7 @@ class _KitchenPageState extends State<KitchenPage> {
             const SizedBox(width: 4),
             _pill('${t('served')} ${servedOrders.length}', 1, cs, isDesktop),
             const SizedBox(width: 4),
-            _pill('${t('cleared')} ${clearedTableNums.length}', 2, cs, isDesktop),
+            _pill('${t('cleared')} ${needCleaning.length}', 2, cs, isDesktop),
           ]),
         ),
       ])),
@@ -63,7 +69,7 @@ class _KitchenPageState extends State<KitchenPage> {
             ? _orderList(activeOrders, cubit, context, t, canEdit)
             : _tabIndex == 1
                 ? _orderList(servedOrders, cubit, context, t, canEdit)
-                : _cleanList(cubit, context, t, cs),
+                : _cleanList(needCleaning, cubit, context, t, cs),
       )),
     ])));
   }
@@ -125,15 +131,8 @@ class _KitchenPageState extends State<KitchenPage> {
     );
   }
 
-  Widget _cleanList(OrderCubit cubit, BuildContext context, String Function(String) t, ColorScheme cs) {
+  Widget _cleanList(List<int> tableList, OrderCubit cubit, BuildContext context, String Function(String) t, ColorScheme cs) {
     final orderState = cubit.state;
-    final servedTableNums = <int>{};
-    for (final o in orderState.orders.where((o) => o.status == OrderStatus.served)) {
-      if (!orderState.clearedTables.contains(o.tableNumber)) {
-        servedTableNums.add(o.tableNumber);
-      }
-    }
-    final tableList = servedTableNums.toList()..sort();
     if (tableList.isEmpty) {
       final isDesktop = R.isDesktop(context);
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
