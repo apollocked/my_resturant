@@ -110,6 +110,7 @@ const Map<String, String> en = {
   'table_mgmt_title': 'Table Management',
   'table_count': 'Number of Tables',
   'table_names': 'Table Names',
+  'no_tables': 'No tables configured',
   'status_pending': 'Pending',
   'status_preparing': 'Preparing',
   'status_served': 'Served',

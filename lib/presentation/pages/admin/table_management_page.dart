@@ -72,7 +72,19 @@ class _TableManagementPageState extends State<TableManagementPage> {
         const SizedBox(height: 20),
         Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
         const SizedBox(height: 12),
-        ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
+        if (state.tableNumbers.isEmpty)
+          Center(child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            child: Column(children: [
+              Container(width: R.hp(context, 16), height: R.hp(context, 16),
+                decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
+                child: Icon(Icons.table_restaurant, size: isDesktop ? 48 : 36, color: cs.onSurfaceVariant)),
+              const SizedBox(height: 16),
+              Text(t('no_tables'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
+            ]),
+          ))
+        else
+          ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
         ],
       ]))),
     );

@@ -110,6 +110,7 @@ const Map<String, String> ar = {
   'table_mgmt_title': 'إدارة الطاولات',
   'table_count': 'عدد الطاولات',
   'table_names': 'أسماء الطاولات',
+  'no_tables': 'لا توجد طاولات',
   'status_pending': 'قيد الانتظار',
   'status_preparing': 'قيد التحضير',
   'status_served': 'تم التقديم',

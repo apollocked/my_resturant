@@ -110,6 +110,7 @@ const Map<String, String> ku = {
   'table_mgmt_title': 'بەڕێوەبردنی مێزەکان',
   'table_count': 'ژمارەی مێزەکان',
   'table_names': 'ناوەکانی مێزەکان',
+  'no_tables': 'هیچ مێزێک نەبووە ڕێکخراو',
   'status_pending': 'چاوەڕوانی',
   'status_preparing': 'ئامادەکراو',
   'status_served': 'پێشکەشکرا',
