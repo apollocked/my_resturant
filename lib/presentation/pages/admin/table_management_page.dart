@@ -7,6 +7,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/table_name_row.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class TableManagementPage extends StatefulWidget {
   const TableManagementPage({super.key});
@@ -16,13 +17,12 @@ class TableManagementPage extends StatefulWidget {
 class _TableManagementPageState extends State<TableManagementPage> {
   Widget _countBtn(IconData icon, ColorScheme cs, VoidCallback onTap, bool isDesktop) {
     final size = isDesktop ? 52.0 : 44.0;
-    return Material(
-      color: cs.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
-      elevation: 0,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(isDesktop ? 16 : 12),
-        onTap: onTap,
+    return PressableScale(
+      onTap: onTap,
+      child: Material(
+        color: cs.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
+        elevation: 0,
         child: Container(width: size, height: size, alignment: Alignment.center,
           child: Icon(icon, size: isDesktop ? 26 : 22, color: AppColors.primary)),
       ),

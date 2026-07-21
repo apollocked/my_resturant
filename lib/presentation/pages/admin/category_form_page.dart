@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 const List<String> _icons = [
   '🍽',
@@ -122,7 +123,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     itemBuilder: (context, index) {
                       final icon = _icons[index];
                       final sel = icon == _selectedIcon;
-                      return GestureDetector(
+                      return PressableScale(
                         onTap: () => setState(() => _selectedIcon = icon),
                         child: Container(
                           decoration: BoxDecoration(
@@ -149,11 +150,14 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 SizedBox(
                   width: double.infinity,
                   height: 48,
-                  child: ElevatedButton(
-                    onPressed: _saving ? null : _save,
-                    child: _saving
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                        : Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                  child: PressableScale(
+                    onTap: _saving ? null : _save,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: _saving
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                          : Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    ),
                   ),
                 ),
               ],

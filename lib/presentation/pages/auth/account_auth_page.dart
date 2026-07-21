@@ -7,6 +7,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class AccountAuthPage extends StatefulWidget {
   const AccountAuthPage({super.key});
@@ -134,24 +135,27 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       SizedBox(
                         width: double.infinity,
                         height: 48,
-                        child: FilledButton(
-                          onPressed: _loading ? null : _submit,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                        child: PressableScale(
+                          onTap: _loading ? null : _submit,
+                          child: FilledButton(
+                            onPressed: null,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                             ),
+                            child: _loading
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
+                                  )
+                                : Text(
+                                    _isSignUp ? t('create_account_btn') : t('login'),
+                                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context)),
+                                  ),
                           ),
-                          child: _loading
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
-                                )
-                              : Text(
-                                  _isSignUp ? t('create_account_btn') : t('login'),
-                                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context)),
-                                ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -164,13 +168,16 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                       SizedBox(
                         width: double.infinity,
                         height: 48,
-                        child: OutlinedButton.icon(
-                          onPressed: _loading ? null : _googleSignIn,
-                          icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
-                          label: Text(t('google_sign_in'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: cs.outline),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        child: PressableScale(
+                          onTap: _loading ? null : _googleSignIn,
+                          child: OutlinedButton.icon(
+                            onPressed: null,
+                            icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                            label: Text(t('google_sign_in'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: cs.outline),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
                           ),
                         ),
                       ),

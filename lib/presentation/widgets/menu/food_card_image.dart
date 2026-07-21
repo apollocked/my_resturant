@@ -7,6 +7,7 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class FoodCardImage extends StatelessWidget {
   final Recipe recipe;
@@ -32,9 +33,11 @@ class FoodCardImage extends StatelessWidget {
     final notesIconSize = isDesktop ? 22.0 : isTablet ? 18.0 : 16.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     return Expanded(
-      child: GestureDetector(
-        onTap: () { HapticFeedback.lightImpact(); onTap?.call(); }, onLongPress: onLongPress,
-        child: Stack(fit: StackFit.expand, children: [
+      child: PressableScale(
+        onTap: () { HapticFeedback.lightImpact(); onTap?.call(); },
+        child: GestureDetector(
+          onLongPress: onLongPress,
+          child: Stack(fit: StackFit.expand, children: [
           AppImage(recipe.imageUrl, width: double.infinity),
           Positioned.fill(
             child: IgnorePointer(
@@ -62,7 +65,7 @@ class FoodCardImage extends StatelessWidget {
                   style: TextStyle(color: cs.onPrimary, fontSize: badgeFontSize, fontWeight: FontWeight.bold)),
             )),
           if (isSelected && onRemove != null)
-            Positioned(bottom: 10, left: 10, child: GestureDetector(
+            Positioned(bottom: 10, left: 10, child: PressableScale(
               onTap: () { HapticFeedback.mediumImpact(); onRemove?.call(); },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: isDesktop ? 12 : isTablet ? 10 : 8, vertical: isDesktop ? 7 : isTablet ? 6 : 5),
@@ -87,7 +90,8 @@ class FoodCardImage extends StatelessWidget {
               decoration: BoxDecoration(color: cs.surface.withValues(alpha: 0.85), shape: BoxShape.circle),
               child: Icon(Icons.edit_note, size: notesIconSize, color: AppColors.primary),
             )),
-        ]),
+          ]),
+        ),
       ),
     );
   }

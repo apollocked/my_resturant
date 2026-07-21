@@ -16,6 +16,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/admin/dish_form_fields.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class DishFormPage extends StatefulWidget {
   final Recipe? recipe;
@@ -270,13 +271,16 @@ class _DishFormPageState extends State<DishFormPage> {
                 SizedBox(
                   width: double.infinity,
                   height: R.isDesktop(context) ? 56 : 48,
-                  child: ElevatedButton(
-                    onPressed: _save,
-                    child: Text(
-                      _isEditing ? _t('update_btn') : _t('add_btn'),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: R.fontMd(context),
+                  child: PressableScale(
+                    onTap: _save,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: Text(
+                        _isEditing ? _t('update_btn') : _t('add_btn'),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: R.fontMd(context),
+                        ),
                       ),
                     ),
                   ),

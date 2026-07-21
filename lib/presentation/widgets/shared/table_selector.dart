@@ -4,6 +4,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class TableSelector extends StatelessWidget {
   final int selectedTable;
@@ -16,9 +17,8 @@ class TableSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>();
     String t(String key) => Tr.get(key, settings.state.locale);
-    return InkWell(
+    return PressableScale(
       onTap: () => _showPicker(context),
-      borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(

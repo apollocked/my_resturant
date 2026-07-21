@@ -6,6 +6,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class ItemOnHoldSheet extends StatefulWidget {
   final Recipe recipe;
@@ -137,13 +138,16 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
                 child: SizedBox(
                   width: double.infinity,
                   height: isDesktop ? 52 : isTablet ? 48 : 46,
-                  child: FilledButton(
-                    onPressed: () => Navigator.pop(context, _notesCtrl.text),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  child: PressableScale(
+                    onTap: () => Navigator.pop(context, _notesCtrl.text),
+                    child: FilledButton(
+                      onPressed: null,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text(t('save'), style: TextStyle(fontSize: isDesktop ? 16 : isTablet ? 15 : 14, fontWeight: FontWeight.w700)),
                     ),
-                    child: Text(t('save'), style: TextStyle(fontSize: isDesktop ? 16 : isTablet ? 15 : 14, fontWeight: FontWeight.w700)),
                   ),
                 ),
               ),

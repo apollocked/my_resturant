@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class CategoryChip extends StatelessWidget {
   final String icon, name;
@@ -25,7 +26,7 @@ class CategoryChip extends StatelessWidget {
     final spacing = isDesktop ? 10.0 : isTablet ? 8.0 : 6.0;
     return Padding(
       padding: EdgeInsets.only(left: index == 0 ? (isDesktop ? 24.0 : 20.0) : 0, right: index > 0 ? (isDesktop ? 14.0 : 8.0) : 0),
-      child: GestureDetector(
+      child: PressableScale(
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200), curve: Curves.easeOut,

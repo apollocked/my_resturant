@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class QuantitySelector extends StatelessWidget {
   final int quantity;
@@ -22,12 +23,11 @@ class QuantitySelector extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          InkWell(
+          PressableScale(
             onTap: () {
               HapticFeedback.lightImpact();
               onChanged(-1);
             },
-            borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: const BoxDecoration(
@@ -50,14 +50,13 @@ class QuantitySelector extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
             ),
           ),
-          InkWell(
+          PressableScale(
             onTap: quantity < 99
                 ? () {
                     HapticFeedback.lightImpact();
                     onChanged(1);
                   }
                 : null,
-            borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Icon(

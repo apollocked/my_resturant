@@ -6,6 +6,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -116,27 +117,30 @@ class _SetupPageState extends State<SetupPage> {
                       SizedBox(
                         width: double.infinity,
                         height: 48,
-                        child: FilledButton(
-                          onPressed: _loading ? null : _submit,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                        child: PressableScale(
+                          onTap: _loading ? null : _submit,
+                          child: FilledButton(
+                            onPressed: null,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                             ),
-                          ),
-                          child: _loading
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
-                                )
-                              : Text(
-                                  t('setup_btn'),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: R.fontMd(context),
+                            child: _loading
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
+                                  )
+                                : Text(
+                                    t('setup_btn'),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: R.fontMd(context),
+                                    ),
                                   ),
-                                ),
+                          ),
                         ),
                       ),
                     ],

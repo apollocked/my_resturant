@@ -11,6 +11,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -60,16 +61,22 @@ class OrderDetailPage extends StatelessWidget {
           if (canEdit) ...[
             SizedBox(height: isDesktop ? 40 : 32),
             if (hasNext)
-              SizedBox(width: double.infinity, child: FilledButton(
-                onPressed: () async { await cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); if (context.mounted) context.pop(); },
-                style: FilledButton.styleFrom(backgroundColor: color, padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
-                child: Text(nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
+              SizedBox(width: double.infinity, child: PressableScale(
+                onTap: () async { await cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); if (context.mounted) context.pop(); },
+                child: FilledButton(
+                  onPressed: null,
+                  style: FilledButton.styleFrom(backgroundColor: color, padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
+                  child: Text(nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
+                ),
               ))
             else
-              SizedBox(width: double.infinity, child: OutlinedButton(
-                onPressed: () async { await cubit.updateOrderStatus(order.id, OrderStatus.pending); if (context.mounted) context.pop(); },
-                style: OutlinedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
-                child: Text(t('again'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
+              SizedBox(width: double.infinity, child: PressableScale(
+                onTap: () async { await cubit.updateOrderStatus(order.id, OrderStatus.pending); if (context.mounted) context.pop(); },
+                child: OutlinedButton(
+                  onPressed: null,
+                  style: OutlinedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
+                  child: Text(t('again'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
+                ),
               )),
           ],
         ]),

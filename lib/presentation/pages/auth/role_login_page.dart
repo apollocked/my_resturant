@@ -9,6 +9,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/profile/settings_dialog.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class RoleLoginPage extends StatefulWidget {
   const RoleLoginPage({super.key});
@@ -140,8 +141,10 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                     SizedBox(
                       width: double.infinity,
                       height: 48,
+                    child: PressableScale(
+                      onTap: _loading ? null : _login,
                       child: FilledButton(
-                        onPressed: _loading ? null : _login,
+                        onPressed: null,
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
@@ -166,6 +169,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                               ),
                       ),
                     ),
+                    ),
                   ],
                 ),
               ),
@@ -189,7 +193,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     ColorScheme cs,
     String Function(String) t,
   ) {
-    return GestureDetector(
+    return PressableScale(
       onTap: () => setState(() => _selected = r),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

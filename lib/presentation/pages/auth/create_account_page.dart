@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -138,30 +139,33 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   SizedBox(
                     width: double.infinity,
                     height: 48,
-                    child: FilledButton(
-                      onPressed: _loading ? null : _create,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    child: PressableScale(
+                      onTap: _loading ? null : _create,
+                      child: FilledButton(
+                        onPressed: null,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
+                        child: _loading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: cs.onPrimary,
+                                ),
+                              )
+                            : Text(
+                                t('create_account_btn'),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: R.fontMd(context),
+                                ),
+                              ),
                       ),
-                      child: _loading
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: cs.onPrimary,
-                              ),
-                            )
-                          : Text(
-                              t('create_account_btn'),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: R.fontMd(context),
-                              ),
-                            ),
                     ),
                   ),
                 ],

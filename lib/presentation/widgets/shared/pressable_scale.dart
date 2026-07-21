@@ -12,8 +12,8 @@ class PressableScale extends StatefulWidget {
     required this.child,
     this.onTap,
     this.scaleDown = 0.95,
-    this.duration = const Duration(milliseconds: 120),
-    this.curve = Curves.easeOutCubic,
+    this.duration = const Duration(milliseconds: 60),
+    this.curve = Curves.easeOut,
   });
 
   @override

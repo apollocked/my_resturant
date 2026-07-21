@@ -5,6 +5,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class CategoryFilterBar extends StatelessWidget {
   final int selectedIndex;
@@ -37,7 +38,7 @@ class CategoryFilterBar extends StatelessWidget {
           final isSel = selectedIndex == i;
           final catKey = cats[i]['key']!;
           final label = t('cat_$catKey');
-          return Padding(padding: EdgeInsets.only(left: isDesktop ? 12 : 8), child: GestureDetector(
+          return Padding(padding: EdgeInsets.only(left: isDesktop ? 12 : 8), child: PressableScale(
             onTap: () => onChanged(i),
             child: AnimatedContainer(duration: const Duration(milliseconds: 200),
               padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: paddingV),

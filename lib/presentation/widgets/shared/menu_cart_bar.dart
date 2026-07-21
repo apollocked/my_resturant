@@ -4,6 +4,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class MenuCartBar extends StatelessWidget {
   final int cartCount;
@@ -27,16 +28,19 @@ class MenuCartBar extends StatelessWidget {
           Text(t('items').replaceAll('{count}', '$cartCount'), style: TextStyle(fontSize: isDesktop ? 13 : 11, color: cs.onSurfaceVariant)),
         ])),
         SizedBox(width: isDesktop ? 24 : 16),
-        SizedBox(height: isDesktop ? 52 : 46, child: ElevatedButton(
-          onPressed: onViewCart,
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
-            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 28 : 20),
+        SizedBox(height: isDesktop ? 52 : 46, child: PressableScale(
+          onTap: onViewCart,
+          child: ElevatedButton(
+            onPressed: null,
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
+              padding: EdgeInsets.symmetric(horizontal: isDesktop ? 28 : 20),
+            ),
+            child: Row(children: [
+              Icon(Icons.shopping_bag, size: isDesktop ? 22 : 18), SizedBox(width: isDesktop ? 10 : 6),
+              Text(t('view_order'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 16 : 13)),
+            ]),
           ),
-          child: Row(children: [
-            Icon(Icons.shopping_bag, size: isDesktop ? 22 : 18), SizedBox(width: isDesktop ? 10 : 6),
-            Text(t('view_order'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 16 : 13)),
-          ]),
         )),
       ])),
     );

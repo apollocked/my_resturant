@@ -12,6 +12,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/profile/action_buttons_row.dart';
 import 'package:my_resturant/presentation/widgets/profile/settings_button.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -64,38 +65,42 @@ class ProfilePage extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.email_outlined,
-                  color: AppColors.primary,
-                ),
-                title: Text(
-                  t('update_email'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: R.fontMd(context),
+            PressableScale(
+              onTap: () => _showUpdateEmail(context, accountCubit, t, cs),
+              child: Card(
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.email_outlined,
+                    color: AppColors.primary,
                   ),
+                  title: Text(
+                    t('update_email'),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: R.fontMd(context),
+                    ),
+                  ),
+                  trailing: const Icon(Icons.chevron_left, size: 18),
                 ),
-                trailing: const Icon(Icons.chevron_left, size: 18),
-                onTap: () => _showUpdateEmail(context, accountCubit, t, cs),
               ),
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.lock_outline,
-                  color: AppColors.primary,
-                ),
-                title: Text(
-                  t('update_password'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: R.fontMd(context),
+            PressableScale(
+              onTap: () => _showUpdatePassword(context, accountCubit, t, cs),
+              child: Card(
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.lock_outline,
+                    color: AppColors.primary,
                   ),
+                  title: Text(
+                    t('update_password'),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: R.fontMd(context),
+                    ),
+                  ),
+                  trailing: const Icon(Icons.chevron_left, size: 18),
                 ),
-                trailing: const Icon(Icons.chevron_left, size: 18),
-                onTap: () => _showUpdatePassword(context, accountCubit, t, cs),
               ),
             ),
 
@@ -222,8 +227,10 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
+              child: PressableScale(
+                onTap: () => context.push('/change-passcodes'),
                 child: OutlinedButton.icon(
-                  onPressed: () => context.push('/change-passcodes'),
+                  onPressed: null,
                   icon: const Icon(Icons.lock_outline, size: 18),
                   label: Text(t('change_pins')),
                   style: OutlinedButton.styleFrom(
@@ -238,22 +245,26 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
+              ),
               const SizedBox(height: 8),
               if (acctState.email == 'hamabarznji1990@gmail.com') ...[
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/promo-codes'),
-                    icon: const Icon(Icons.vpn_key_outlined, size: 18),
-                    label: const Text('Promo Codes'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  child: PressableScale(
+                    onTap: () => context.push('/promo-codes'),
+                    child: OutlinedButton.icon(
+                      onPressed: null,
+                      icon: const Icon(Icons.vpn_key_outlined, size: 18),
+                      label: const Text('Promo Codes'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -264,23 +275,26 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () =>
+              child: PressableScale(
+                onTap: () =>
                     _confirmLogout(context, accountCubit, roleCubit, t),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.error,
-                  side: const BorderSide(color: AppColors.error),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                child: OutlinedButton(
+                  onPressed: null,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.logout, size: 18),
-                    const SizedBox(width: 8),
-                    Text(t('logout')),
-                  ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.logout, size: 18),
+                      const SizedBox(width: 8),
+                      Text(t('logout')),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -321,22 +335,24 @@ class ProfilePage extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Card(
-        child: ListTile(
-          leading: Icon(icon, color: AppColors.primary),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: R.fontMd(context),
+      child: PressableScale(
+        onTap: () => context.push(route),
+        child: Card(
+          child: ListTile(
+            leading: Icon(icon, color: AppColors.primary),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: R.fontMd(context),
+              ),
             ),
+            subtitle: Text(
+              sub,
+              style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+            ),
+            trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
           ),
-          subtitle: Text(
-            sub,
-            style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
-          ),
-          trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
-          onTap: () => context.push(route),
         ),
       ),
     );
@@ -350,47 +366,49 @@ class ProfilePage extends StatelessWidget {
     String Function(String) t,
     ColorScheme cs,
   ) {
-    return Card(
-      child: ListTile(
-        leading: Icon(
-          _roleIcon(r),
-          color: isCurrent ? AppColors.primary : cs.onSurfaceVariant,
-        ),
-        title: Text(
-          t(r.name),
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-            color: isCurrent ? AppColors.primary : cs.onSurface,
+    return PressableScale(
+      onTap: isCurrent ? null : () => _switchTo(context, r, cubit, t),
+      child: Card(
+        child: ListTile(
+          leading: Icon(
+            _roleIcon(r),
+            color: isCurrent ? AppColors.primary : cs.onSurfaceVariant,
           ),
-        ),
-        subtitle: isCurrent
-            ? Text(
-                t('current_role'),
-                style: const TextStyle(fontSize: 11, color: AppColors.primary),
-              )
-            : null,
-        trailing: isCurrent
-            ? Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  t('active'),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+          title: Text(
+            t(r.name),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: isCurrent ? AppColors.primary : cs.onSurface,
+            ),
+          ),
+          subtitle: isCurrent
+              ? Text(
+                  t('current_role'),
+                  style: const TextStyle(fontSize: 11, color: AppColors.primary),
+                )
+              : null,
+          trailing: isCurrent
+              ? Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
                   ),
-                ),
-              )
-            : null,
-        onTap: isCurrent ? null : () => _switchTo(context, r, cubit, t),
+                  decoration: BoxDecoration(
+                    color: AppColors.primarySoft,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    t('active'),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                )
+              : null,
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class PromoCodePage extends StatefulWidget {
   const PromoCodePage({super.key});
@@ -91,15 +92,18 @@ class _PromoCodePageState extends State<PromoCodePage> {
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity, height: 52,
-                child: FilledButton(
-                  onPressed: _loading ? null : _submit,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: PressableScale(
+                  onTap: _loading ? null : _submit,
+                  child: FilledButton(
+                    onPressed: null,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: _loading
+                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                        : const Text('Activate', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                   ),
-                  child: _loading
-                      ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
-                      : const Text('Activate', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                 ),
               ),
             ]),
