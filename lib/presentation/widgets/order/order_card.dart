@@ -5,6 +5,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class OrderCard extends StatelessWidget {
   final Order order;
@@ -115,25 +116,27 @@ class OrderCard extends StatelessWidget {
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant))
           else if (onNextStatus != null)
-            SizedBox(
-              height: isDesktop ? 38.0 : 32.0,
-              child: FilledButton.icon(
-                onPressed: onNextStatus,
-                icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
-                label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14.0 : 12.0)),
-                style: FilledButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-              ),
-            )
+            PressableScale(onTap: onNextStatus,
+              child: SizedBox(
+                height: isDesktop ? 38.0 : 32.0,
+                child: FilledButton.icon(
+                  onPressed: null,
+                  icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
+                  label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14.0 : 12.0)),
+                  style: FilledButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                ),
+              ))
           else if (onReset != null)
-            SizedBox(
-              height: isDesktop ? 38.0 : 32.0,
-              child: OutlinedButton.icon(
-                onPressed: onReset,
-                icon: const Icon(Icons.refresh, size: 14),
-                label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14.0 : 12.0, fontWeight: FontWeight.w600)),
-                style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-              ),
-            ),
+            PressableScale(onTap: onReset,
+              child: SizedBox(
+                height: isDesktop ? 38.0 : 32.0,
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.refresh, size: 14),
+                  label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14.0 : 12.0, fontWeight: FontWeight.w600)),
+                  style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                ),
+              )),
           Container(
             padding: EdgeInsets.symmetric(horizontal: isDesktop ? 16.0 : 12.0, vertical: isDesktop ? 8.0 : 6.0),
             decoration: BoxDecoration(

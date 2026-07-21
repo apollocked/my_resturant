@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class FoodCardControls extends StatelessWidget {
   final int quantity;
@@ -35,7 +36,7 @@ class FoodCardControls extends StatelessWidget {
       if (quantity > 0)
         Column(mainAxisSize: MainAxisSize.min, children: [
           FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
-            InkWell(onTap: () { HapticFeedback.lightImpact(); onDecrement?.call(); }, borderRadius: BorderRadius.circular(btnRadius),
+            PressableScale(onTap: () { HapticFeedback.lightImpact(); onDecrement?.call(); },
               child: Container(width: btnW, height: btnH, alignment: Alignment.center,
                 decoration: BoxDecoration(color: AppColors.primary,
                   borderRadius: BorderRadius.circular(btnRadius)),
@@ -43,7 +44,7 @@ class FoodCardControls extends StatelessWidget {
             SizedBox(width: gap),
             Text('$quantity', style: TextStyle(fontWeight: FontWeight.w800, fontSize: qtyFont, color: AppColors.primary)),
             SizedBox(width: gap),
-            InkWell(onTap: () { HapticFeedback.lightImpact(); onIncrement?.call(); }, borderRadius: BorderRadius.circular(btnRadius),
+            PressableScale(onTap: () { HapticFeedback.lightImpact(); onIncrement?.call(); },
               child: Container(width: btnW, height: btnH, alignment: Alignment.center,
                 decoration: BoxDecoration(color: AppColors.primary,
                   borderRadius: BorderRadius.circular(btnRadius)),
@@ -54,18 +55,19 @@ class FoodCardControls extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: totalFont, color: AppColors.primary)),
         ])
       else
-        SizedBox(width: double.infinity, height: addBtnH,
-          child: ElevatedButton(onPressed: () { HapticFeedback.lightImpact(); onIncrement?.call(); },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(btnRadius)),
-              elevation: 0, padding: EdgeInsets.zero,
-            ),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.add, size: addIcon),
-              const SizedBox(width: 6),
-              Text(t('add'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: addFont)),
-            ]))),
+        PressableScale(onTap: () { HapticFeedback.lightImpact(); onIncrement?.call(); },
+          child: SizedBox(width: double.infinity, height: addBtnH,
+            child: ElevatedButton(onPressed: null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(btnRadius)),
+                elevation: 0, padding: EdgeInsets.zero,
+              ),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.add, size: addIcon),
+                const SizedBox(width: 6),
+                Text(t('add'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: addFont)),
+              ])))),
     ]);
   }
 }

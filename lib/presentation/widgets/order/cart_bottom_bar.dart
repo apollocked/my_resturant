@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class CartBottomBar extends StatelessWidget {
   final TextEditingController notesCtrl;
@@ -26,20 +27,23 @@ class CartBottomBar extends StatelessWidget {
       ),
       child: SafeArea(child: isDesktop
         ? Row(children: [
-            SizedBox(
-              height: 48,
-              child: ElevatedButton(
-                onPressed: canSubmit ? onSubmit : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 32),
+            PressableScale(
+              onTap: canSubmit ? onSubmit : null,
+              child: SizedBox(
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 32),
+                  ),
+                  child: Row(children: [
+                    const Icon(Icons.send_rounded, size: 18),
+                    const SizedBox(width: 8),
+                    Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                  ]),
                 ),
-                child: Row(children: [
-                  const Icon(Icons.send_rounded, size: 18),
-                  const SizedBox(width: 8),
-                  Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                ]),
               ),
             ),
             const Spacer(),
@@ -60,19 +64,22 @@ class CartBottomBar extends StatelessWidget {
               )),
             const SizedBox(height: 14),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              SizedBox(height: 48,
-                child: ElevatedButton(
-                  onPressed: canSubmit ? onSubmit : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
+              PressableScale(
+                onTap: canSubmit ? onSubmit : null,
+                child: SizedBox(height: 48,
+                  child: ElevatedButton(
+                    onPressed: null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: Row(children: [
+                      const Icon(Icons.send_rounded, size: 18),
+                      const SizedBox(width: 8),
+                      Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                    ]),
                   ),
-                  child: Row(children: [
-                    const Icon(Icons.send_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                  ]),
                 ),
               ),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [

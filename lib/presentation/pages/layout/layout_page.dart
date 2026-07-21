@@ -9,6 +9,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/widgets/shared/connectivity_banner.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class _Nav {
   final IconData outline, filled;
@@ -266,11 +267,12 @@ class MainShell extends StatelessWidget {
   ) {
     final cs = Theme.of(context).colorScheme;
     final sel = selectedIndex == index;
-    return GestureDetector(
+    return PressableScale(
       onTap: () => navigationShell.goBranch(
         index,
         initialLocation: index == navigationShell.currentIndex,
       ),
+      scaleDown: 0.9,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

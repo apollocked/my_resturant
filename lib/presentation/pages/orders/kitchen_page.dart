@@ -10,6 +10,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenPage extends StatefulWidget {
@@ -113,7 +114,7 @@ class _KitchenPageState extends State<KitchenPage> {
     }
     final orderWidgets = orders.map((o) {
       final hasNext = OrderCard.nextStatus.containsKey(o.status);
-      return GestureDetector(
+      return PressableScale(
         onTap: () => context.push('/order-detail', extra: o),
         child: OrderCard(order: o, showTimeline: true,
           onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
@@ -163,12 +164,14 @@ class _KitchenPageState extends State<KitchenPage> {
               title: Text('${t('table')} $n${tableName != '${t('table')} $n' ? ' — $tableName' : ''}',
                   style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
               subtitle: Text(t('clear_table'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
-              trailing: FilledButton.icon(
-                icon: const Icon(Icons.check, size: 18),
-                label: Text(t('clear_table'), style: const TextStyle(fontWeight: FontWeight.w600)),
-                style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-                onPressed: () => cubit.clearTable(n),
-              ),
+              trailing: PressableScale(
+                onTap: () => cubit.clearTable(n),
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.check, size: 18),
+                  label: Text(t('clear_table'), style: const TextStyle(fontWeight: FontWeight.w600)),
+                  style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                  onPressed: null,
+                )),
             ),
           );
         },
