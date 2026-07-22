@@ -5,10 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsState {
   final ThemeMode themeMode;
   final Locale locale;
-  const SettingsState({this.themeMode = ThemeMode.light, this.locale = const Locale('ku')});
+  final bool onboardingComplete;
+  const SettingsState({this.themeMode = ThemeMode.light, this.locale = const Locale('ku'), this.onboardingComplete = false});
 
-  SettingsState copyWith({ThemeMode? themeMode, Locale? locale}) =>
-      SettingsState(themeMode: themeMode ?? this.themeMode, locale: locale ?? this.locale);
+  SettingsState copyWith({ThemeMode? themeMode, Locale? locale, bool? onboardingComplete}) =>
+      SettingsState(themeMode: themeMode ?? this.themeMode, locale: locale ?? this.locale, onboardingComplete: onboardingComplete ?? this.onboardingComplete);
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
@@ -20,10 +21,18 @@ class SettingsCubit extends Cubit<SettingsState> {
     final prefs = await SharedPreferences.getInstance();
     final themeStr = prefs.getString('themeMode');
     final localeStr = prefs.getString('locale');
+    final onboarding = prefs.getBool('onboarding_complete') ?? false;
     emit(SettingsState(
       themeMode: switch (themeStr) { 'dark' => ThemeMode.dark, _ => ThemeMode.light },
       locale: Locale(localeStr ?? 'ku'),
+      onboardingComplete: onboarding,
     ));
+  }
+
+  Future<void> completeOnboarding() async {
+    emit(state.copyWith(onboardingComplete: true));
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_complete', true);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

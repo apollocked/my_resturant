@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/pages/auth/account_auth_page.dart';
 import 'package:my_resturant/presentation/pages/auth/promo_code_page.dart';
 import 'package:my_resturant/presentation/pages/auth/role_login_page.dart';
@@ -23,6 +24,7 @@ import 'package:my_resturant/presentation/pages/admin/change_passcodes_page.dart
 import 'package:my_resturant/presentation/pages/admin/promo_codes_page.dart';
 import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
+import 'package:my_resturant/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
@@ -35,7 +37,13 @@ final appRouter = GoRouter(
   redirect: (context, state) {
     final acct = context.read<AccountCubit>().state;
     final rs = context.read<RoleCubit>().state;
+    final settings = context.read<SettingsCubit>().state;
     final loc = state.matchedLocation;
+
+    if (!settings.onboardingComplete) {
+      if (loc != '/onboarding') return '/onboarding';
+      return null;
+    }
 
     if (!acct.isLoggedIn) {
       if (loc != '/account-auth') return '/account-auth';
@@ -67,6 +75,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', redirect: (_, _) => '/menu'),
     GoRoute(path: '/account-auth', builder: (_, _) => const AccountAuthPage()),
+    GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingPage()),
     GoRoute(path: '/promo-code', builder: (_, _) => const PromoCodePage()),
     GoRoute(path: '/role-login', builder: (_, _) => const RoleLoginPage()),
     GoRoute(path: '/setup', builder: (_, _) => const SetupPage()),

@@ -83,7 +83,8 @@ class _AppViewState extends State<AppView> {
     final settings = context.watch<SettingsCubit>().state;
     final role = context.watch<RoleCubit>().state;
     final orderCubit = context.read<OrderCubit>();
-    if (role.isLoggedIn != _lastRole?.isLoggedIn || role.role != _lastRole?.role) {
+    if (role.isLoggedIn != _lastRole?.isLoggedIn ||
+        role.role != _lastRole?.role) {
       _lastRole = role;
       orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
     }
