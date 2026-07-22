@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/presentation/pages/onboarding/onb_colors.dart';
 import 'package:my_resturant/presentation/widgets/onboarding/mesh_background.dart';
 import 'package:my_resturant/presentation/widgets/onboarding/onboarding_bottom_bar.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onboarding_data.dart';
@@ -54,22 +55,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
+    final ob = OnbColors.of(context);
     String t(String key) => Tr.get(key, settings.locale);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.dark,
-        statusBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarBrightness: ob.isDark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: ob.isDark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: ob.scaffoldBg,
         body: Stack(
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 600),
               child: MeshBackground(
-                key: ValueKey(_page),
-                colors: _pages[_page].gradient,
+                key: ValueKey('$_page-${settings.themeMode}'),
+                colors: ob.meshGradient(_pages[_page].gradient),
               ),
             ),
             SafeArea(
