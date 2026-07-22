@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,16 +15,12 @@ class OnboardingPage extends StatefulWidget {
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStateMixin {
+class _OnboardingPageState extends State<OnboardingPage>
+    with TickerProviderStateMixin {
   late final PageController _pageCtl;
   int _page = 0;
 
-  static const _accentColors = [
-    Color(0xFFE8611A),
-    Color(0xFF3B82F6),
-    Color(0xFF2EC153),
-    Color(0xFF8B5CF6),
-  ];
+  static const _pages = _PageData.values;
 
   @override
   void initState() {
@@ -37,8 +35,11 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
   }
 
   void _next() {
-    if (_page < 3) {
-      _pageCtl.nextPage(duration: const Duration(milliseconds: 350), curve: Curves.easeInOut);
+    if (_page < _pages.length - 1) {
+      _pageCtl.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOutCubic,
+      );
     } else {
       _finish();
     }
@@ -52,100 +53,541 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>().state;
-    final cs = Theme.of(context).colorScheme;
     String t(String key) => Tr.get(key, settings.locale);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: _page < 3
-                    ? TextButton(
-                        onPressed: _finish,
-                        child: Text(t('onboarding_skip'),
-                            style: TextStyle(color: cs.onSurfaceVariant, fontWeight: FontWeight.w600, fontSize: 15)),
-                      )
-                    : const SizedBox(height: 48),
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 600),
+              child: _MeshBackground(
+                key: ValueKey(_page),
+                colors: _pages[_page].gradient,
               ),
-              Expanded(
-                child: PageView(
-                  controller: _pageCtl,
-                  onPageChanged: (i) => setState(() => _page = i),
-                  children: [
-                    _WelcomePage(t: t),
-                    _FeaturePage(
-                      accent: _accentColors[0],
-                      icon: Icons.restaurant_menu_rounded,
-                      title: t('onboarding_menu_title'),
-                      desc: t('onboarding_menu_desc'),
-                      features: [t('onboarding_feat_table'), t('onboarding_feat_categories'), t('onboarding_feat_notes'), t('onboarding_feat_search')],
-                      t: t,
+            ),
+            SafeArea(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: _page < _pages.length - 1
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 8, right: 8),
+                            child: PressableScale(
+                              onTap: _finish,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.15),
+                                  ),
+                                ),
+                                child: Text(
+                                  t('onboarding_skip'),
+                                  style: TextStyle(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.8),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(height: 52),
+                  ),
+                  Expanded(
+                    child: PageView(
+                      controller: _pageCtl,
+                      onPageChanged: (i) =>
+                          setState(() => _page = i),
+                      children: [
+                        _WelcomePage(t: t),
+                        ..._pages.skip(1).map((p) => _FeaturePage(
+                              data: p,
+                              t: t,
+                            )),
+                      ],
                     ),
-                    _FeaturePage(
-                      accent: _accentColors[1],
-                      icon: Icons.kitchen_rounded,
-                      title: t('onboarding_kitchen_title'),
-                      desc: t('onboarding_kitchen_desc'),
-                      features: [t('onboarding_feat_pipeline'), t('onboarding_feat_notifications'), t('onboarding_feat_clearing'), t('onboarding_feat_status')],
-                      t: t,
-                    ),
-                    _FeaturePage(
-                      accent: _accentColors[2],
-                      icon: Icons.analytics_rounded,
-                      title: t('onboarding_reports_title'),
-                      desc: t('onboarding_reports_desc'),
-                      features: [t('onboarding_feat_revenue'), t('onboarding_feat_ranking'), t('onboarding_feat_history'), t('onboarding_feat_stats')],
-                      t: t,
+                  ),
+                  _BottomBar(
+                    page: _page,
+                    totalPages: _pages.length,
+                    accent: _pages[_page].gradient[0],
+                    onNext: _next,
+                    t: t,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _PageData {
+  welcome,
+  menu,
+  kitchen,
+  reports;
+
+  List<Color> get gradient => switch (this) {
+        welcome => const [
+            Color(0xFFE8611A),
+            Color(0xFFD44A0A),
+            Color(0xFF8B2FC9),
+          ],
+        menu => const [
+            Color(0xFF3B82F6),
+            Color(0xFF6366F1),
+            Color(0xFF8B5CF6),
+          ],
+        kitchen => const [
+            Color(0xFFF97316),
+            Color(0xFFEF4444),
+            Color(0xFFEC4899),
+          ],
+        reports => const [
+            Color(0xFF10B981),
+            Color(0xFF06B6D4),
+            Color(0xFF3B82F6),
+          ],
+      };
+
+  IconData get icon => switch (this) {
+        welcome => Icons.restaurant_rounded,
+        menu => Icons.restaurant_menu_rounded,
+        kitchen => Icons.kitchen_rounded,
+        reports => Icons.analytics_rounded,
+      };
+
+  String titleKey(String locale) => switch (this) {
+        welcome => 'onboarding_welcome_title',
+        menu => 'onboarding_menu_title',
+        kitchen => 'onboarding_kitchen_title',
+        reports => 'onboarding_reports_title',
+      };
+
+  String descKey(String locale) => switch (this) {
+        welcome => 'onboarding_welcome_desc',
+        menu => 'onboarding_menu_desc',
+        kitchen => 'onboarding_kitchen_desc',
+        reports => 'onboarding_reports_desc',
+      };
+
+  String subKey(String locale) => switch (this) {
+        welcome => 'onboarding_welcome_sub',
+        _ => '',
+      };
+
+  List<String> featuresKeys() => switch (this) {
+        welcome => [],
+        menu => [
+            'onboarding_feat_table',
+            'onboarding_feat_categories',
+            'onboarding_feat_notes',
+            'onboarding_feat_search',
+          ],
+        kitchen => [
+            'onboarding_feat_pipeline',
+            'onboarding_feat_notifications',
+            'onboarding_feat_clearing',
+            'onboarding_feat_status',
+          ],
+        reports => [
+            'onboarding_feat_revenue',
+            'onboarding_feat_ranking',
+            'onboarding_feat_history',
+            'onboarding_feat_stats',
+          ],
+      };
+}
+
+class _MeshBackground extends StatefulWidget {
+  final List<Color> colors;
+  const _MeshBackground({super.key, required this.colors});
+
+  @override
+  State<_MeshBackground> createState() => _MeshBackgroundState();
+}
+
+class _MeshBackgroundState extends State<_MeshBackground>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctl,
+      builder: (_, __) {
+        final t = _ctl.value;
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(
+                -1.0 + t * 0.5,
+                -1.0 + t * 0.3,
+              ),
+              end: Alignment(
+                1.0 - t * 0.5,
+                1.0 - t * 0.3,
+              ),
+              colors: [
+                widget.colors[0],
+                widget.colors[1],
+                widget.colors[2],
+              ],
+              stops: const [0.0, 0.5, 1.0],
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -80 + t * 40,
+                left: -60 + t * 30,
+                child: _Blob(
+                  size: 280,
+                  color: Colors.white.withValues(alpha: 0.06),
+                ),
+              ),
+              Positioned(
+                bottom: -100 + t * 50,
+                right: -80 + t * 40,
+                child: _Blob(
+                  size: 320,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.3,
+                right: -40 + t * 20,
+                child: _Blob(
+                  size: 200,
+                  color: Colors.white.withValues(alpha: 0.04),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _Blob extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _Blob({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+    );
+  }
+}
+
+class AnimatedBuilder extends AnimatedWidget {
+  final Widget Function(BuildContext, Widget?) builder;
+  const AnimatedBuilder({
+    super.key,
+    required super.listenable,
+    required this.builder,
+  });
+
+  Animation<double> get animation => listenable as Animation<double>;
+
+  @override
+  Widget build(BuildContext context) {
+    return builder(context, null);
+  }
+}
+
+class _WelcomePage extends StatelessWidget {
+  final String Function(String) t;
+  const _WelcomePage({required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    final pad = R.padding(context);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: pad),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Spacer(flex: 2),
+          Container(
+            width: 140,
+            height: 140,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.12),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  spreadRadius: 10,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/icons/my Restaurant.png',
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), R.padding(context)),
-                child: Row(
-                  children: [
-                    ...List.generate(4, (i) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.only(right: 6),
-                      width: _page == i ? 28 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _page == i ? _accentColors[_page] : cs.outlineVariant,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    )),
-                    const Spacer(),
-                    PressableScale(
-                      onTap: _next,
-                      child: Container(
-                        height: 52,
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        decoration: BoxDecoration(
-                          color: _accentColors[_page],
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _page < 3 ? t('onboarding_next') : t('onboarding_get_started'),
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(_page < 3 ? Icons.arrow_forward_rounded : Icons.check_rounded, color: Colors.white, size: 20),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+            ),
+          ),
+          const SizedBox(height: 48),
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [Colors.white, Color(0xFFFFD4B0)],
+            ).createShader(bounds),
+            child: Text(
+              t('onboarding_welcome_title'),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 38,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+                height: 1.1,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            t('onboarding_welcome_sub'),
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.3,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 28),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
+            ),
+            child: Text(
+              t('onboarding_welcome_desc'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 14.5,
+                height: 1.6,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const Spacer(flex: 3),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeaturePage extends StatelessWidget {
+  final _PageData data;
+  final String Function(String) t;
+  const _FeaturePage({required this.data, required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final pad = R.padding(context);
+    final locale =
+        context.watch<SettingsCubit>().state.locale;
+    final features = data.featuresKeys().map((k) => t(k)).toList();
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: pad),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Spacer(flex: 1),
+          _GlowingIcon(
+            icon: data.icon,
+            color: data.gradient[0],
+          ),
+          const SizedBox(height: 44),
+          Text(
+            t(data.titleKey(locale)),
+            style: TextStyle(
+              fontSize: R.fontXl(context) + 4,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: -0.5,
+              height: 1.15,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            t(data.descKey(locale)),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: R.fontMd(context),
+              color: Colors.white.withValues(alpha: 0.75),
+              height: 1.55,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 36),
+          ...features.map((f) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _GlassFeatureTile(
+                  label: f,
+                  accent: data.gradient[0],
+                ),
+              )),
+          const Spacer(flex: 2),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlowingIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  const _GlowingIcon({required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 110,
+      height: 110,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.35),
+            blurRadius: 50,
+            spreadRadius: 15,
+          ),
+        ],
+      ),
+      child: Container(
+        width: 110,
+        height: 110,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white.withValues(alpha: 0.1),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.18),
+            width: 1.5,
+          ),
+        ),
+        child: Icon(icon, size: 52, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class _GlassFeatureTile extends StatelessWidget {
+  final String label;
+  final Color accent;
+  const _GlassFeatureTile({required this.label, required this.accent});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.check_rounded, size: 18, color: accent),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: R.fontMd(context),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.92),
+                  ),
                 ),
               ),
             ],
@@ -156,117 +598,89 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
   }
 }
 
-class _WelcomePage extends StatelessWidget {
-  final String Function(String) t;
-  const _WelcomePage({required this.t});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFE8611A), Color(0xFFD44A0A), Color(0xFFB73E08)],
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: ClipOval(
-                  child: Image.asset('assets/icons/my Restaurant.png', width: 96, height: 96, fit: BoxFit.cover),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          Text(t('onboarding_welcome_title'),
-              style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 8),
-          Text(t('onboarding_welcome_sub'),
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 17, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(t('onboarding_welcome_desc'),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 14, height: 1.5)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FeaturePage extends StatelessWidget {
+class _BottomBar extends StatelessWidget {
+  final int page;
+  final int totalPages;
   final Color accent;
-  final IconData icon;
-  final String title, desc;
-  final List<String> features;
+  final VoidCallback onNext;
   final String Function(String) t;
 
-  const _FeaturePage({
+  const _BottomBar({
+    required this.page,
+    required this.totalPages,
     required this.accent,
-    required this.icon,
-    required this.title,
-    required this.desc,
-    required this.features,
+    required this.onNext,
     required this.t,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final pad = R.padding(context);
+    final isLast = page == totalPages - 1;
+
     return Padding(
-      padding: EdgeInsets.all(R.padding(context)),
-      child: Column(
+      padding: EdgeInsets.fromLTRB(pad, 0, pad, pad + 8),
+      child: Row(
         children: [
-          const SizedBox(height: 20),
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 48, color: accent),
-          ),
-          const SizedBox(height: 32),
-          Text(title,
-              style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w900, color: cs.onSurface)),
-          const SizedBox(height: 12),
-          Text(desc,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: R.fontMd(context), color: cs.onSurfaceVariant, height: 1.5)),
-          const SizedBox(height: 32),
-          ...features.map((f) => Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(color: accent.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                  child: Icon(Icons.check_rounded, size: 18, color: accent),
+          ...List.generate(totalPages, (i) {
+            final isActive = page == i;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOutCubic,
+              margin: const EdgeInsets.only(right: 6),
+              width: isActive ? 32 : 10,
+              height: 10,
+              decoration: BoxDecoration(
+                gradient: isActive
+                    ? LinearGradient(colors: [accent, accent.withValues(alpha: 0.6)])
+                    : null,
+                color: isActive ? null : Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            );
+          }),
+          const Spacer(),
+          PressableScale(
+            onTap: onNext,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 54,
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [accent, accent.withValues(alpha: 0.75)],
                 ),
-                const SizedBox(width: 14),
-                Text(f, style: TextStyle(fontSize: R.fontMd(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
-              ],
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: accent.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isLast ? t('onboarding_get_started') : t('onboarding_next'),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Icon(
+                    isLast ? Icons.arrow_forward_rounded : Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
