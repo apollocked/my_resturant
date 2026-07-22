@@ -236,4 +236,10 @@ const Map<String, String> en = {
   'onboarding_feat_food_mgmt': 'Food Management',
   'onboarding_feat_table_mgmt': 'Table Management',
   'onboarding_feat_categories_mgmt': 'Category Management',
+  'onboarding_settings_title': 'Language & Theme',
+  'onboarding_settings_desc': 'Choose your preferred language and theme.',
+  'onboarding_select_language': 'Select Language',
+  'onboarding_select_theme': 'Select Theme',
+  'onboarding_light_mode': 'Light',
+  'onboarding_dark_mode': 'Dark',
 };

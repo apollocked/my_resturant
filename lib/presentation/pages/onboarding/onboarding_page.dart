@@ -10,6 +10,7 @@ import 'package:my_resturant/presentation/pages/onboarding/onboarding_data.dart'
 import 'package:my_resturant/presentation/pages/onboarding/skip_button.dart';
 import 'package:my_resturant/presentation/pages/onboarding/welcome_page.dart';
 import 'package:my_resturant/presentation/pages/onboarding/feature_page.dart';
+import 'package:my_resturant/presentation/pages/onboarding/settings_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -81,7 +82,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       onPageChanged: (i) => setState(() => _page = i),
                       children: [
                         WelcomePage(t: t),
-                        ..._pages.skip(1).map((p) => FeaturePage(data: p, t: t)),
+                        OnboardingSettingsPage(t: t),
+                        ..._pages.skip(2).map((p) => FeaturePage(data: p, t: t)),
                       ],
                     ),
                   ),

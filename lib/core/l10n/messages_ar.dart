@@ -236,4 +236,10 @@ const Map<String, String> ar = {
   'onboarding_feat_food_mgmt': 'إدارة الأطعمة',
   'onboarding_feat_table_mgmt': 'إدارة الطاولات',
   'onboarding_feat_categories_mgmt': 'إدارة الأقسام',
+  'onboarding_settings_title': 'اللغة والمظهر',
+  'onboarding_settings_desc': 'اختر لغتك والمظهر المفضل لديك.',
+  'onboarding_select_language': 'اختر اللغة',
+  'onboarding_select_theme': 'اختر المظهر',
+  'onboarding_light_mode': 'فاتح',
+  'onboarding_dark_mode': 'داكن',
 };

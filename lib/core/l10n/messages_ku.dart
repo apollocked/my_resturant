@@ -236,4 +236,10 @@ const Map<String, String> ku = {
   'onboarding_feat_food_mgmt': 'بەڕێوەبری خواردن',
   'onboarding_feat_table_mgmt': 'بەڕێوەبری مێز',
   'onboarding_feat_categories_mgmt': 'بەڕێوەبری بەشەکان',
+  'onboarding_settings_title': 'زمان و ڕوانگە',
+  'onboarding_settings_desc': 'زمان و ڕوانگەی دڵخوازت هەلبژێرە.',
+  'onboarding_select_language': 'زمان هەڵبژێرە',
+  'onboarding_select_theme': 'ڕوانگە هەڵبژێرە',
+  'onboarding_light_mode': 'ڕوون',
+  'onboarding_dark_mode': 'تاریک',
 };
