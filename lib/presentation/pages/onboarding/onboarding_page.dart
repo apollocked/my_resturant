@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -110,8 +109,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                   Expanded(
                     child: PageView(
                       controller: _pageCtl,
-                      onPageChanged: (i) =>
-                          setState(() => _page = i),
+                      onPageChanged: (i) => setState(() => _page = i),
                       children: [
                         _WelcomePage(t: t),
                         ..._pages.skip(1).map((p) => _FeaturePage(
@@ -174,26 +172,26 @@ enum _PageData {
         reports => Icons.analytics_rounded,
       };
 
-  String titleKey(String locale) => switch (this) {
+  String get titleKey => switch (this) {
         welcome => 'onboarding_welcome_title',
         menu => 'onboarding_menu_title',
         kitchen => 'onboarding_kitchen_title',
         reports => 'onboarding_reports_title',
       };
 
-  String descKey(String locale) => switch (this) {
+  String get descKey => switch (this) {
         welcome => 'onboarding_welcome_desc',
         menu => 'onboarding_menu_desc',
         kitchen => 'onboarding_kitchen_desc',
         reports => 'onboarding_reports_desc',
       };
 
-  String subKey(String locale) => switch (this) {
+  String get subKey => switch (this) {
         welcome => 'onboarding_welcome_sub',
         _ => '',
       };
 
-  List<String> featuresKeys() => switch (this) {
+  List<String> get featuresKeys => switch (this) {
         welcome => [],
         menu => [
             'onboarding_feat_table',
@@ -247,19 +245,13 @@ class _MeshBackgroundState extends State<_MeshBackground>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _ctl,
-      builder: (_, __) {
+      builder: (_, _) {
         final t = _ctl.value;
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment(
-                -1.0 + t * 0.5,
-                -1.0 + t * 0.3,
-              ),
-              end: Alignment(
-                1.0 - t * 0.5,
-                1.0 - t * 0.3,
-              ),
+              begin: Alignment(-1.0 + t * 0.5, -1.0 + t * 0.3),
+              end: Alignment(1.0 - t * 0.5, 1.0 - t * 0.3),
               colors: [
                 widget.colors[0],
                 widget.colors[1],
@@ -317,22 +309,6 @@ class _Blob extends StatelessWidget {
         color: color,
       ),
     );
-  }
-}
-
-class AnimatedBuilder extends AnimatedWidget {
-  final Widget Function(BuildContext, Widget?) builder;
-  const AnimatedBuilder({
-    super.key,
-    required super.listenable,
-    required this.builder,
-  });
-
-  Animation<double> get animation => listenable as Animation<double>;
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context, null);
   }
 }
 
@@ -456,11 +432,8 @@ class _FeaturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     final pad = R.padding(context);
-    final locale =
-        context.watch<SettingsCubit>().state.locale;
-    final features = data.featuresKeys().map((k) => t(k)).toList();
+    final features = data.featuresKeys.map((k) => t(k)).toList();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: pad),
@@ -474,7 +447,7 @@ class _FeaturePage extends StatelessWidget {
           ),
           const SizedBox(height: 44),
           Text(
-            t(data.titleKey(locale)),
+            t(data.titleKey),
             style: TextStyle(
               fontSize: R.fontXl(context) + 4,
               fontWeight: FontWeight.w900,
@@ -486,7 +459,7 @@ class _FeaturePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            t(data.descKey(locale)),
+            t(data.descKey),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: R.fontMd(context),
@@ -632,7 +605,12 @@ class _BottomBar extends StatelessWidget {
               height: 10,
               decoration: BoxDecoration(
                 gradient: isActive
-                    ? LinearGradient(colors: [accent, accent.withValues(alpha: 0.6)])
+                    ? LinearGradient(
+                        colors: [
+                          accent,
+                          accent.withValues(alpha: 0.6),
+                        ],
+                      )
                     : null,
                 color: isActive ? null : Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(5),
@@ -663,7 +641,9 @@ class _BottomBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isLast ? t('onboarding_get_started') : t('onboarding_next'),
+                    isLast
+                        ? t('onboarding_get_started')
+                        : t('onboarding_next'),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -672,8 +652,8 @@ class _BottomBar extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Icon(
-                    isLast ? Icons.arrow_forward_rounded : Icons.arrow_forward_rounded,
+                  const Icon(
+                    Icons.arrow_forward_rounded,
                     color: Colors.white,
                     size: 20,
                   ),
