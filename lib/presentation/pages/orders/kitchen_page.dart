@@ -169,7 +169,7 @@ class _KitchenPageState extends State<KitchenPage> {
                 child: FilledButton.icon(
                   icon: const Icon(Icons.check, size: 18),
                   label: Text(t('clear_table'), style: const TextStyle(fontWeight: FontWeight.w600)),
-                  style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                  style: FilledButton.styleFrom(backgroundColor: Colors.green, disabledBackgroundColor: Colors.green, disabledForegroundColor: Colors.white, foregroundColor: Colors.white),
                   onPressed: null,
                 )),
             ),

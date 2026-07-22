@@ -65,7 +65,7 @@ class OrderDetailPage extends StatelessWidget {
                 onTap: () async { await cubit.updateOrderStatus(order.id, _nextStatus[order.status]!); if (context.mounted) context.pop(); },
                 child: FilledButton(
                   onPressed: null,
-                  style: FilledButton.styleFrom(backgroundColor: color, padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
+                  style: FilledButton.styleFrom(backgroundColor: color, disabledBackgroundColor: color, disabledForegroundColor: cs.onPrimary, padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
                   child: Text(nextLabel[order.status]!, style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
                 ),
               ))
@@ -74,7 +74,9 @@ class OrderDetailPage extends StatelessWidget {
                 onTap: () async { await cubit.updateOrderStatus(order.id, OrderStatus.pending); if (context.mounted) context.pop(); },
                 child: OutlinedButton(
                   onPressed: null,
-                  style: OutlinedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
+                  style: OutlinedButton.styleFrom(
+                    disabledForegroundColor: cs.onSurface,
+                    padding: EdgeInsets.symmetric(vertical: isDesktop ? 18 : 14)),
                   child: Text(t('again'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context))),
                 ),
               )),

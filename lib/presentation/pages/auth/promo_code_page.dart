@@ -98,6 +98,8 @@ class _PromoCodePageState extends State<PromoCodePage> {
                     onPressed: null,
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primary,
+                      disabledForegroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
                     child: _loading

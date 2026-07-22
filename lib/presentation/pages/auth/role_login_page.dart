@@ -147,6 +147,8 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                         onPressed: null,
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: AppColors.primary,
+                          disabledForegroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),

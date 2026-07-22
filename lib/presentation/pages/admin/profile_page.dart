@@ -235,6 +235,7 @@ class ProfilePage extends StatelessWidget {
                   label: Text(t('change_pins')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
+                    disabledForegroundColor: AppColors.primary,
                     side: const BorderSide(
                       color: AppColors.primary,
                       width: 1.5,
@@ -258,6 +259,7 @@ class ProfilePage extends StatelessWidget {
                       label: const Text('Promo Codes'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
+                        disabledForegroundColor: AppColors.primary,
                         side: const BorderSide(
                           color: AppColors.primary,
                           width: 1.5,
@@ -282,6 +284,7 @@ class ProfilePage extends StatelessWidget {
                   onPressed: null,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
+                    disabledForegroundColor: AppColors.error,
                     side: const BorderSide(color: AppColors.error),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

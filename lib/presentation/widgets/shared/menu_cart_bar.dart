@@ -33,6 +33,10 @@ class MenuCartBar extends StatelessWidget {
           child: ElevatedButton(
             onPressed: null,
             style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+              disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 16 : 12)),
               padding: EdgeInsets.symmetric(horizontal: isDesktop ? 28 : 20),
             ),

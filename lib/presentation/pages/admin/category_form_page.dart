@@ -154,6 +154,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     onTap: _saving ? null : _save,
                     child: ElevatedButton(
                       onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+                        disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
+                      ),
                       child: _saving
                           ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                           : Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),

@@ -82,6 +82,8 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
                       onPressed: null,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
+                        disabledBackgroundColor: AppColors.primary,
+                        disabledForegroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),

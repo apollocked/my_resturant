@@ -275,6 +275,12 @@ class _DishFormPageState extends State<DishFormPage> {
                     onTap: _save,
                     child: ElevatedButton(
                       onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+                        disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
+                      ),
                       child: Text(
                         _isEditing ? _t('update_btn') : _t('add_btn'),
                         style: TextStyle(

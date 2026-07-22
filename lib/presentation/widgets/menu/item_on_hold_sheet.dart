@@ -144,6 +144,8 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
                       onPressed: null,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
+                        disabledBackgroundColor: AppColors.primary,
+                        disabledForegroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                       child: Text(t('save'), style: TextStyle(fontSize: isDesktop ? 16 : isTablet ? 15 : 14, fontWeight: FontWeight.w700)),

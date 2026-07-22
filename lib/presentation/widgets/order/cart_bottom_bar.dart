@@ -35,6 +35,7 @@ class CartBottomBar extends StatelessWidget {
                   onPressed: null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                    disabledBackgroundColor: AppColors.primary, disabledForegroundColor: cs.onPrimary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 32),
                   ),
@@ -71,6 +72,7 @@ class CartBottomBar extends StatelessWidget {
                     onPressed: null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary, foregroundColor: cs.onPrimary,
+                      disabledBackgroundColor: AppColors.primary, disabledForegroundColor: cs.onPrimary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
                     ),

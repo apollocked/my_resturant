@@ -141,6 +141,8 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                             onPressed: null,
                             style: FilledButton.styleFrom(
                               backgroundColor: AppColors.primary,
+                              disabledBackgroundColor: AppColors.primary,
+                              disabledForegroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
@@ -173,8 +175,10 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
                           child: OutlinedButton.icon(
                             onPressed: null,
                             icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
-                            label: Text(t('google_sign_in'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context))),
+                            label: Text(t('google_sign_in'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface)),
                             style: OutlinedButton.styleFrom(
+                              foregroundColor: cs.onSurface,
+                              disabledForegroundColor: cs.onSurface,
                               side: BorderSide(color: cs.outline),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                             ),

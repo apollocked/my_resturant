@@ -26,6 +26,7 @@ class ActionButtonsRow extends StatelessWidget {
                   onPressed: null,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
+                    disabledForegroundColor: AppColors.primary,
                     side: BorderSide(
                       color: AppColors.primary.withValues(alpha: 0.3),
                     ),
@@ -60,6 +61,10 @@ class ActionButtonsRow extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: null,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+                    disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

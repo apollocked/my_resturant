@@ -123,7 +123,7 @@ class OrderCard extends StatelessWidget {
                   onPressed: null,
                   icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
                   label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14.0 : 12.0)),
-                  style: FilledButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  style: FilledButton.styleFrom(backgroundColor: color, disabledBackgroundColor: color, disabledForegroundColor: cs.onPrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                 ),
               ))
           else if (onReset != null)
@@ -134,7 +134,7 @@ class OrderCard extends StatelessWidget {
                   onPressed: null,
                   icon: const Icon(Icons.refresh, size: 14),
                   label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14.0 : 12.0, fontWeight: FontWeight.w600)),
-                  style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  style: OutlinedButton.styleFrom(disabledForegroundColor: cs.onSurface, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                 ),
               )),
           Container(
