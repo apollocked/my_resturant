@@ -18,11 +18,11 @@ class MenuCartBar extends StatelessWidget {
     final isDesktop = R.isDesktop(context);
     String t(String key) => Tr.get(key, settings.state.locale);
     return Container(
-      padding: EdgeInsets.fromLTRB(R.padding(context), isDesktop ? 16 : 12, R.padding(context), isDesktop ? 16 : 12),
+      padding: EdgeInsets.fromLTRB(R.padding(context), isDesktop ? 16 : 12, R.padding(context), isDesktop ? 16 + 100 : 12 + 100),
       decoration: BoxDecoration(color: cs.surface,
         boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
         border: Border(top: BorderSide(color: cs.outlineVariant))),
-      child: SafeArea(child: Row(children: [
+      child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('${cartTotal.toInt()} ${t('currency_suffix')}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? 22 : 18, color: AppColors.primary)),
           Text(t('items').replaceAll('{count}', '$cartCount'), style: TextStyle(fontSize: isDesktop ? 13 : 11, color: cs.onSurfaceVariant)),
@@ -46,7 +46,7 @@ class MenuCartBar extends StatelessWidget {
             ]),
           ),
         )),
-      ])),
+      ]),
     );
   }
 }

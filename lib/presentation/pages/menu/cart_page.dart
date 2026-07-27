@@ -42,7 +42,7 @@ class _CartPageState extends State<CartPage> {
     final cart = state.cart;
     final isDesktop = R.isDesktop(context);
 
-    return SafeArea(child: Column(children: [
+    return Column(children: [
       Padding(
         padding: EdgeInsets.fromLTRB(R.padding(context), 8, R.padding(context), 0),
         child: Row(children: [
@@ -67,7 +67,7 @@ class _CartPageState extends State<CartPage> {
         const SizedBox(height: 8),
         Expanded(child: isDesktop
           ? GridView.builder(
-              padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+              padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 1.15,
@@ -81,7 +81,7 @@ class _CartPageState extends State<CartPage> {
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+              padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
               itemCount: cart.length,
               itemBuilder: (context, index) => CartItemCard(
                 item: cart[index], index: index,
@@ -97,6 +97,6 @@ class _CartPageState extends State<CartPage> {
           onSubmit: () async { final notes = _notesCtrl.text; _notesCtrl.clear(); final cubit = context.read<OrderCubit>(); await cubit.submitOrder(notes); if (mounted) { if (!context.mounted) return; context.go('/kitchen'); } },
         ),
       ],
-    ]));
+    ]);
   }
 }

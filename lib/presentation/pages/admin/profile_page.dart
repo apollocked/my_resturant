@@ -27,9 +27,8 @@ class ProfilePage extends StatelessWidget {
     final acctState = context.watch<AccountCubit>().state;
     final isDesktop = R.isDesktop(context);
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(R.padding(context)),
+    return SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(R.padding(context), R.padding(context), R.padding(context), R.padding(context) + 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -304,7 +303,6 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 20),
           ],
         ),
-      ),
     );
   }
 

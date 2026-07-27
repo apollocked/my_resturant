@@ -115,8 +115,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             ),
         ],
       ),
-      body: SafeArea(
-        child: Directionality(
+      body: Directionality(
           textDirection: TextDirection.rtl,
           child: cubit.state.isLoading && allOrders.isEmpty
               ? Column(
@@ -257,7 +256,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                               context.read<OrderCubit>().refresh(),
                           child: isDesktop
                               ? GridView.builder(
-                                  padding: EdgeInsets.symmetric(horizontal: p),
+                                  padding: EdgeInsets.fromLTRB(p, 0, p, 100),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
@@ -306,7 +305,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                   },
                                 )
                               : ListView.builder(
-                                  padding: EdgeInsets.symmetric(horizontal: p),
+                                  padding: EdgeInsets.fromLTRB(p, 0, p, 100),
                                   itemCount: dayOrders.length,
                                   itemBuilder: (context, index) {
                                     final order = dayOrders[index];
@@ -349,7 +348,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ),
                   ],
                 ),
-        ),
       ),
     );
   }

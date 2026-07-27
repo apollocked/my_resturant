@@ -311,116 +311,114 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     List<Map<String, String>> cats,
   ) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async => context.read<OrderCubit>().refresh(),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(height: R.isTablet(context) ? 20 : 16),
+      body: Column(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => context.read<OrderCubit>().refresh(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SizedBox(height: R.isTablet(context) ? 20 : 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: R.padding(context),
+                      ),
+                      child: SearchBarWidget(
+                        onChanged: (v) => setState(() => _searchQuery = v),
+                      ),
+                    ),
+                    SizedBox(height: R.isTablet(context) ? 32 : 28),
+                    Padding(
+                      padding: EdgeInsets.only(right: R.padding(context)),
+                      child: Text(
+                        t('categories'),
+                        style: TextStyle(
+                          fontSize: R.isTablet(context) ? 16 : 14,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: R.isTablet(context) ? 48 : 40,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        itemCount: cats.length,
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) => CategoryChip(
+                          icon: cats[index]['icon']!,
+                          name: t('cat_${cats[index]['key']!}'),
+                          isSelected: _selectedCategoryIndex == index,
+                          index: index,
+                          onTap: () =>
+                              setState(() => _selectedCategoryIndex = index),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: R.isTablet(context) ? 28 : 24),
+                    if (meals.isEmpty)
+                      SizedBox(
+                        height: 160,
+                        child: Center(
+                          child: Text(
+                            t('no_food_found'),
+                            style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: R.padding(context),
                         ),
-                        child: SearchBarWidget(
-                          onChanged: (v) => setState(() => _searchQuery = v),
-                        ),
-                      ),
-                      SizedBox(height: R.isTablet(context) ? 32 : 28),
-                      Padding(
-                        padding: EdgeInsets.only(right: R.padding(context)),
-                        child: Text(
-                          t('categories'),
-                          style: TextStyle(
-                            fontSize: R.isTablet(context) ? 16 : 14,
-                            fontWeight: FontWeight.w700,
-                            color: cs.onSurface.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        height: R.isTablet(context) ? 48 : 40,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          reverse: true,
-                          itemCount: cats.length,
-                          padding: EdgeInsets.zero,
-                          itemBuilder: (context, index) => CategoryChip(
-                            icon: cats[index]['icon']!,
-                            name: t('cat_${cats[index]['key']!}'),
-                            isSelected: _selectedCategoryIndex == index,
-                            index: index,
-                            onTap: () =>
-                                setState(() => _selectedCategoryIndex = index),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: R.isTablet(context) ? 28 : 24),
-                      if (meals.isEmpty)
-                        SizedBox(
-                          height: 160,
-                          child: Center(
-                            child: Text(
-                              t('no_food_found'),
-                              style: TextStyle(
-                                color: cs.onSurfaceVariant,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: R.padding(context),
-                          ),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: meals.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: R.menuGridColumns(context),
-                                  childAspectRatio: R.menuGridAspectRatio(
-                                    context,
-                                  ),
-                                  crossAxisSpacing: R.gridSpacing(context),
-                                  mainAxisSpacing: R.gridSpacing(context),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: meals.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: R.menuGridColumns(context),
+                                childAspectRatio: R.menuGridAspectRatio(
+                                  context,
                                 ),
-                            itemBuilder: (context, index) {
-                              final r = meals[index];
-                              return FoodCard(
-                                recipe: r,
-                                quantity: state.getQuantity(r.id),
-                                notes: state.getNotes(r.id),
-                                onIncrement: () => _increment(r),
-                                onDecrement: () => _decrement(r),
-                                onRemove: () => _remove(r),
-                                onLongPress: () => _notes(r),
-                              );
-                            },
-                          ),
+                                crossAxisSpacing: R.gridSpacing(context),
+                                mainAxisSpacing: R.gridSpacing(context),
+                              ),
+                          itemBuilder: (context, index) {
+                            final r = meals[index];
+                            return FoodCard(
+                              recipe: r,
+                              quantity: state.getQuantity(r.id),
+                              notes: state.getNotes(r.id),
+                              onIncrement: () => _increment(r),
+                              onDecrement: () => _decrement(r),
+                              onRemove: () => _remove(r),
+                              onLongPress: () => _notes(r),
+                            );
+                          },
                         ),
-                      const SizedBox(height: 100),
-                    ],
-                  ),
+                      ),
+                    const SizedBox(height: 100),
+                  ],
                 ),
               ),
             ),
-            if (state.cartCount > 0)
-              MenuCartBar(
-                cartCount: state.cartCount,
-                cartTotal: state.cartTotal.toInt(),
-                onViewCart: () => context.go('/cart'),
-              ),
-          ],
-        ),
+          ),
+          if (state.cartCount > 0)
+            MenuCartBar(
+              cartCount: state.cartCount,
+              cartTotal: state.cartTotal.toInt(),
+              onViewCart: () => context.go('/cart'),
+            ),
+        ],
       ),
     );
   }

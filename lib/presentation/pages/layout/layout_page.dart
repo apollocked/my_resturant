@@ -112,24 +112,22 @@ class MainShell extends StatelessWidget {
       );
     }
 
-    return SafeArea(
-      child: ConnectivityBanner(
-        child: Scaffold(
-          extendBody: true,
-          body: navigationShell,
-          bottomNavigationBar: LiquidGlassNavBar(
-            items: items.map((item) => LiquidNavItem(
-              icon: item.outline,
-              activeIcon: item.filled,
-              label: t(item.labelKey),
-            )).toList(),
-            selectedIndex: selectedIndex,
-            onTap: (i) => navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex),
-            badgeCount: state.cartCount,
-            badgeIndex: 0,
-            accentColor: AppColors.primary,
-            isDark: isDark,
-          ),
+    return ConnectivityBanner(
+      child: Scaffold(
+        extendBody: true,
+        body: navigationShell,
+        bottomNavigationBar: LiquidGlassNavBar(
+          items: items.map((item) => LiquidNavItem(
+            icon: item.outline,
+            activeIcon: item.filled,
+            label: t(item.labelKey),
+          )).toList(),
+          selectedIndex: selectedIndex,
+          onTap: (i) => navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex),
+          badgeCount: state.cartCount,
+          badgeIndex: 0,
+          accentColor: AppColors.primary,
+          isDark: isDark,
         ),
       ),
     );

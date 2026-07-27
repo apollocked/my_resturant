@@ -17,99 +17,67 @@ class LiquidGlassNavBar extends StatefulWidget {
   final int? badgeIndex;
   final Color accentColor;
   final bool isDark;
-
-  const LiquidGlassNavBar({
-    super.key,
-    required this.items,
-    required this.selectedIndex,
-    required this.onTap,
-    this.badgeCount,
-    this.badgeIndex,
-    this.accentColor = const Color(0xFFE8611A),
-    this.isDark = true,
-  });
-
+  const LiquidGlassNavBar({super.key, required this.items, required this.selectedIndex, required this.onTap, this.badgeCount, this.badgeIndex, this.accentColor = const Color(0xFFE8611A), this.isDark = true});
   @override
   State<LiquidGlassNavBar> createState() => _LiquidGlassNavBarState();
 }
 
-class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _indicatorCtl;
-
+class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTickerProviderStateMixin {
+  late AnimationController _ctl;
   @override
   void initState() {
     super.initState();
-    _indicatorCtl = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
-    _indicatorCtl.value = widget.selectedIndex.toDouble();
+    _ctl = AnimationController(vsync: this, duration: const Duration(milliseconds: 400))..value = widget.selectedIndex.toDouble();
   }
-
   @override
   void didUpdateWidget(covariant LiquidGlassNavBar old) {
     super.didUpdateWidget(old);
-    if (old.selectedIndex != widget.selectedIndex) {
-      _indicatorCtl.animateTo(
-        widget.selectedIndex.toDouble(),
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOutQuint,
-      );
-    }
+    if (old.selectedIndex != widget.selectedIndex) _ctl.animateTo(widget.selectedIndex.toDouble(), duration: const Duration(milliseconds: 400), curve: Curves.easeOutQuint);
   }
-
   @override
-  void dispose() {
-    _indicatorCtl.dispose();
-    super.dispose();
-  }
+  void dispose() { _ctl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
-    final itemCount = widget.items.length;
-    final selColor = widget.isDark ? Colors.white : widget.accentColor;
-    final unselColor = widget.isDark ? Colors.white54 : Colors.black45;
-    final glassColor = widget.isDark
-        ? const Color(0x0DFFFFFF)
-        : const Color(0x0D000000);
-    final borderColor = widget.isDark
-        ? const Color(0x1AFFFFFF)
-        : const Color(0x1A000000);
-    final indicatorColor = widget.isDark
-        ? const Color(0x1AFFFFFF)
-        : widget.accentColor.withValues(alpha: 0.12);
+    final dark = widget.isDark;
+    final sel = dark ? Colors.white : widget.accentColor;
+    final unsel = dark ? Colors.white54 : Colors.black45;
+    final bgColor = dark ? const Color(0xCC1A1A2E) : const Color(0xCCF8F8F8);
+    final borderColor = dark ? const Color(0x33FFFFFF) : const Color(0x22000000);
+    final indColor = dark ? const Color(0x26FFFFFF) : widget.accentColor.withValues(alpha: 0.15);
+    final shadowColor = (dark ? Colors.black : Colors.black26).withValues(alpha: dark ? 0.4 : 0.12);
+    final glowColor = widget.accentColor.withValues(alpha: dark ? 0.15 : 0.08);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       child: AnimatedBuilder(
-        animation: _indicatorAnim,
-        builder: (_, _) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+        animation: _ctl,
+        builder: (_, _) => Container(
+          height: 72,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(color: shadowColor, blurRadius: 40, offset: const Offset(0, 12), spreadRadius: -4),
+              BoxShadow(color: glowColor, blurRadius: 24, offset: const Offset(0, 4), spreadRadius: -2),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
               child: Container(
-                height: 68,
                 decoration: BoxDecoration(
-                  color: glassColor,
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: borderColor, width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (widget.isDark ? Colors.black : Colors.black26).withValues(alpha: widget.isDark ? 0.25 : 0.08),
-                      blurRadius: 40,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: borderColor, width: 0.5),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(itemCount, (i) {
+                  children: List.generate(widget.items.length, (i) {
                     final item = widget.items[i];
-                    final isSelected = widget.selectedIndex == i;
+                    final active = widget.selectedIndex == i;
                     return GestureDetector(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        widget.onTap(i);
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); widget.onTap(i); },
                       behavior: HitTestBehavior.opaque,
                       child: SizedBox(
                         width: 64,
@@ -120,62 +88,24 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                               clipBehavior: Clip.none,
                               children: [
                                 AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutQuint,
-                                  width: isSelected ? 48 : 36,
-                                  height: isSelected ? 32 : 28,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? indicatorColor : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    isSelected ? item.activeIcon : item.icon,
-                                    size: isSelected ? 24 : 22,
-                                    color: isSelected ? selColor : unselColor,
-                                  ),
+                                  duration: const Duration(milliseconds: 350), curve: Curves.easeOutQuint,
+                                  width: active ? 48 : 36, height: active ? 32 : 28,
+                                  decoration: BoxDecoration(color: active ? indColor : Colors.transparent, borderRadius: BorderRadius.circular(12)),
+                                  child: Icon(active ? item.activeIcon : item.icon, size: active ? 24 : 22, color: active ? sel : unsel),
                                 ),
                                 if (widget.badgeIndex == i && (widget.badgeCount ?? 0) > 0)
                                   Positioned(
-                                    top: -4,
-                                    right: -2,
+                                    top: -4, right: -2,
                                     child: Container(
-                                      width: 18,
-                                      height: 18,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: widget.accentColor,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: widget.isDark
-                                              ? const Color(0xFF1A1A2E)
-                                              : Colors.white,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        '${widget.badgeCount}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          height: 1,
-                                        ),
-                                      ),
+                                      width: 18, height: 18, alignment: Alignment.center,
+                                      decoration: BoxDecoration(color: widget.accentColor, shape: BoxShape.circle, border: Border.all(color: dark ? const Color(0xCC1A1A2E) : Colors.white, width: 2)),
+                                      child: Text('${widget.badgeCount}', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800, height: 1)),
                                     ),
                                   ),
                               ],
                             ),
                             const SizedBox(height: 2),
-                            Text(
-                              item.label,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                color: isSelected ? selColor : unselColor,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            Text(item.label, style: TextStyle(fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500, color: active ? sel : unsel), maxLines: 1, overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),
@@ -184,21 +114,9 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
-}
-
-class AnimatedBuilder extends AnimatedWidget {
-  final Widget Function(BuildContext, Widget?) builder;
-  const AnimatedBuilder({
-    super.key,
-    required super.listenable,
-    required this.builder,
-  });
-
-  @override
-  Widget build(BuildContext context) => builder(context, null);
 }

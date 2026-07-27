@@ -19,13 +19,13 @@ class CartBottomBar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 16),
+      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 116),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
         border: Border(top: BorderSide(color: cs.outlineVariant)),
       ),
-      child: SafeArea(child: isDesktop
+      child: isDesktop
         ? Row(children: [
             PressableScale(
               onTap: canSubmit ? onSubmit : null,
@@ -91,7 +91,6 @@ class CartBottomBar extends StatelessWidget {
               ]),
             ]),
           ]),
-      ),
     );
   }
 }
