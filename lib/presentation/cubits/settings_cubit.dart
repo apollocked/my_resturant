@@ -6,25 +6,41 @@ class SettingsState {
   final ThemeMode themeMode;
   final Locale locale;
   final bool onboardingComplete;
-  const SettingsState({this.themeMode = ThemeMode.light, this.locale = const Locale('ku'), this.onboardingComplete = false});
+  const SettingsState({
+    this.themeMode = ThemeMode.light,
+    this.locale = const Locale('ku'),
+    this.onboardingComplete = false,
+  });
 
-  SettingsState copyWith({ThemeMode? themeMode, Locale? locale, bool? onboardingComplete}) =>
-      SettingsState(themeMode: themeMode ?? this.themeMode, locale: locale ?? this.locale, onboardingComplete: onboardingComplete ?? this.onboardingComplete);
+  SettingsState copyWith({
+    ThemeMode? themeMode,
+    Locale? locale,
+    bool? onboardingComplete,
+  }) => SettingsState(
+    themeMode: themeMode ?? this.themeMode,
+    locale: locale ?? this.locale,
+    onboardingComplete: onboardingComplete ?? this.onboardingComplete,
+  );
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit._(SettingsState initial) : super(initial);
+  SettingsCubit._(super.initial);
 
   static Future<SettingsCubit> create() async {
     final prefs = await SharedPreferences.getInstance();
     final themeStr = prefs.getString('themeMode');
     final localeStr = prefs.getString('locale');
     final onboarding = prefs.getBool('onboarding_complete') ?? false;
-    return SettingsCubit._(SettingsState(
-      themeMode: switch (themeStr) { 'dark' => ThemeMode.dark, _ => ThemeMode.light },
-      locale: Locale(localeStr ?? 'ku'),
-      onboardingComplete: onboarding,
-    ));
+    return SettingsCubit._(
+      SettingsState(
+        themeMode: switch (themeStr) {
+          'dark' => ThemeMode.dark,
+          _ => ThemeMode.light,
+        },
+        locale: Locale(localeStr ?? 'ku'),
+        onboardingComplete: onboarding,
+      ),
+    );
   }
 
   Future<void> completeOnboarding() async {
@@ -36,7 +52,10 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> setThemeMode(ThemeMode mode) async {
     emit(state.copyWith(themeMode: mode));
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('themeMode', mode == ThemeMode.dark ? 'dark' : 'light');
+    await prefs.setString(
+      'themeMode',
+      mode == ThemeMode.dark ? 'dark' : 'light',
+    );
   }
 
   Future<void> setLocale(Locale locale) async {
