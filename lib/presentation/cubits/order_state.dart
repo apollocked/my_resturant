@@ -32,7 +32,14 @@ class OrderState {
   int get totalOrders => orders.length;
   double get totalRevenue => orders.fold(0.0, (s, o) => s + o.totalPrice);
   List<int> get tableNumbers => List.generate(tableCount, (i) => i + 1);
-  Set<int> get reservedTables => orders.map((o) => o.tableNumber).toSet().difference(clearedTables);
+  Set<int> get reservedTables {
+    final now = DateTime.now();
+    return orders
+      .where((o) => o.createdAt.year == now.year && o.createdAt.month == now.month && o.createdAt.day == now.day && o.status != OrderStatus.served)
+      .map((o) => o.tableNumber)
+      .toSet()
+      .difference(clearedTables);
+  }
 
   String getTableName(int n) => tableNames[n] ?? 'Table $n';
   int getQuantity(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;

@@ -13,16 +13,14 @@ class SettingsState {
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit() : super(const SettingsState()) {
-    _load();
-  }
+  SettingsCubit._(SettingsState initial) : super(initial);
 
-  Future<void> _load() async {
+  static Future<SettingsCubit> create() async {
     final prefs = await SharedPreferences.getInstance();
     final themeStr = prefs.getString('themeMode');
     final localeStr = prefs.getString('locale');
     final onboarding = prefs.getBool('onboarding_complete') ?? false;
-    emit(SettingsState(
+    return SettingsCubit._(SettingsState(
       themeMode: switch (themeStr) { 'dark' => ThemeMode.dark, _ => ThemeMode.light },
       locale: Locale(localeStr ?? 'ku'),
       onboardingComplete: onboarding,

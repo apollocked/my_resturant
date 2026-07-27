@@ -36,30 +36,32 @@ void main() async {
   );
   final authRepo = SupabaseAuthRepository();
   final dataRepo = SupabaseDataRepository();
-
   final acct = AccountCubit(repo: authRepo);
   await acct.load();
   final role = RoleCubit(repo: authRepo);
   await role.load();
-  runApp(MyApp(repo: dataRepo, acct: acct, role: role));
+  final settings = await SettingsCubit.create();
+  runApp(MyApp(repo: dataRepo, acct: acct, role: role, settings: settings));
 }
 
 class MyApp extends StatelessWidget {
   final DataRepository repo;
   final AccountCubit acct;
   final RoleCubit role;
+  final SettingsCubit settings;
   const MyApp({
     super.key,
     required this.repo,
     required this.acct,
     required this.role,
+    required this.settings,
   });
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => OrderCubit(repo: repo)),
-        BlocProvider(create: (_) => SettingsCubit()),
+        BlocProvider(create: (_) => settings),
         BlocProvider(create: (_) => acct),
         BlocProvider(create: (_) => role),
       ],
