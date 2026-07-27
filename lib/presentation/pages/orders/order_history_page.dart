@@ -53,7 +53,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final p = R.padding(context);
-
     final daysWithOrders = <int>{};
     for (final o in allOrders) {
       if (o.createdAt.year == _viewMonth.year &&
@@ -83,17 +82,100 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         textDirection: TextDirection.rtl,
         child: cubit.state.isLoading && allOrders.isEmpty
             ? _buildShimmer(p)
-            : _buildContent(
-                t,
-                cs,
-                p,
-                cubit,
-                dayOrders,
-                dayTotal,
-                dayItems,
-                daysWithOrders,
-                role,
+            : Column(
+                children: [
+                  _monthNav(t, p),
+                  CalendarGrid(
+                    year: _viewMonth.year,
+                    month: _viewMonth.month,
+                    selectedDay: _selectedDate.day,
+                    daysWithOrders: daysWithOrders,
+                    onDayTap: (day) {
+                      if (day <= DateTime.now().day ||
+                          _viewMonth.month < DateTime.now().month ||
+                          _viewMonth.year < DateTime.now().year) {
+                        setState(
+                          () => _selectedDate = DateTime(
+                            _viewMonth.year,
+                            _viewMonth.month,
+                            day,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
+                    child: Row(
+                      children: [
+                        StatChip(
+                          icon: Icons.receipt_long,
+                          label: '${dayOrders.length} ${t('orders')}',
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        StatChip(
+                          icon: Icons.shopping_bag,
+                          label: '$dayItems ${t('total_items')}',
+                          color: cs.tertiary,
+                        ),
+                        const SizedBox(width: 8),
+                        StatChip(
+                          icon: Icons.attach_money,
+                          label:
+                              '${dayTotal.toStringAsFixed(0)} ${t('currency_suffix')}',
+                          color: Colors.green,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: HistoryOrderList(
+                      orders: dayOrders,
+                      role: role,
+                      t: t,
+                    ),
+                  ),
+                ],
               ),
+      ),
+    );
+  }
+
+  Widget _monthNav(String Function(String) t, double p) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            onPressed: () => setState(
+              () =>
+                  _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1),
+            ),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          TextButton.icon(
+            onPressed: _pick,
+            icon: const Icon(Icons.calendar_month, size: 18),
+            label: Text(
+              '${_viewMonth.year} / ${_viewMonth.month.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: R.fontLg(context),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => setState(
+              () =>
+                  _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1),
+            ),
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
       ),
     );
   }
@@ -116,108 +198,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       ShimmerGrid(itemCount: 6, itemBuilder: () => const ShimmerOrderCard()),
     ],
   );
-
-  Widget _buildContent(
-    String Function(String) t,
-    ColorScheme cs,
-    double p,
-    OrderCubit cubit,
-    List dayOrders,
-    double dayTotal,
-    int dayItems,
-    Set<int> daysWithOrders,
-    Role? role,
-  ) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () => setState(
-                  () => _viewMonth = DateTime(
-                    _viewMonth.year,
-                    _viewMonth.month - 1,
-                  ),
-                ),
-                icon: const Icon(Icons.chevron_left),
-              ),
-              TextButton.icon(
-                onPressed: _pick,
-                icon: const Icon(Icons.calendar_month, size: 18),
-                label: Text(
-                  '${_viewMonth.year} / ${_viewMonth.month.toString().padLeft(2, '0')}',
-                  style: TextStyle(
-                    fontSize: R.fontLg(context),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () => setState(
-                  () => _viewMonth = DateTime(
-                    _viewMonth.year,
-                    _viewMonth.month + 1,
-                  ),
-                ),
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
-          ),
-        ),
-        CalendarGrid(
-          year: _viewMonth.year,
-          month: _viewMonth.month,
-          selectedDay: _selectedDate.day,
-          daysWithOrders: daysWithOrders,
-          onDayTap: (day) {
-            if (day <= DateTime.now().day ||
-                _viewMonth.month < DateTime.now().month ||
-                _viewMonth.year < DateTime.now().year) {
-              setState(
-                () => _selectedDate = DateTime(
-                  _viewMonth.year,
-                  _viewMonth.month,
-                  day,
-                ),
-              );
-            }
-          },
-        ),
-        const Divider(height: 1),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
-          child: Row(
-            children: [
-              StatChip(
-                icon: Icons.receipt_long,
-                label: '${dayOrders.length} ${t('orders')}',
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: 8),
-              StatChip(
-                icon: Icons.shopping_bag,
-                label: '$dayItems ${t('total_items')}',
-                color: cs.tertiary,
-              ),
-              const SizedBox(width: 8),
-              StatChip(
-                icon: Icons.attach_money,
-                label: '${dayTotal.toStringAsFixed(0)} ${t('currency_suffix')}',
-                color: Colors.green,
-              ),
-            ],
-          ),
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: HistoryOrderList(orders: dayOrders, role: role, t: t),
-        ),
-      ],
-    );
-  }
 
   void _confirmClearAll(String Function(String) t, ColorScheme cs) {
     showDialog(
