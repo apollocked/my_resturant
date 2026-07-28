@@ -39,17 +39,18 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     final dark = widget.isDark;
     final sel = dark ? Colors.white : widget.accentColor;
     final unsel = dark ? Colors.white54 : Colors.black45;
-    final bgColor = dark ? const Color(0xCC1A1A2E) : const Color(0xCCF8F8F8);
-    final borderColor = dark ? const Color(0x33FFFFFF) : const Color(0x22000000);
-    final indColor = dark ? const Color(0x26FFFFFF) : widget.accentColor.withValues(alpha: 0.15);
-    final shadowColor = (dark ? Colors.black : Colors.black26).withValues(alpha: dark ? 0.4 : 0.12);
-    final glowColor = widget.accentColor.withValues(alpha: dark ? 0.15 : 0.08);
+    final bgColor = dark ? const Color(0x881A1A2E) : const Color(0x99F8F8F8);
+    final borderColor = dark ? const Color(0x22FFFFFF) : const Color(0x18000000);
+    final indColor = dark ? const Color(0x1AFFFFFF) : widget.accentColor.withValues(alpha: 0.12);
+    final shadowColor = (dark ? Colors.black : Colors.black26).withValues(alpha: dark ? 0.5 : 0.15);
+    final glowColor = widget.accentColor.withValues(alpha: dark ? 0.2 : 0.1);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 16 + bottomInset),
       child: AnimatedBuilder(
         animation: _ctl,
         builder: (_, _) => Container(
@@ -64,10 +65,19 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+              filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
               child: Container(
                 decoration: BoxDecoration(
-                  color: bgColor,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      bgColor.withValues(alpha: 0.7),
+                      bgColor,
+                      bgColor.withValues(alpha: 0.85),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: borderColor, width: 0.5),
                 ),

@@ -115,7 +115,7 @@ class MainShell extends StatelessWidget {
     return ConnectivityBanner(
       child: Scaffold(
         extendBody: true,
-        body: navigationShell,
+        body: SafeArea(top: true, bottom: false, child: navigationShell),
         bottomNavigationBar: LiquidGlassNavBar(
           items: items.map((item) => LiquidNavItem(
             icon: item.outline,
