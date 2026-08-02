@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
@@ -182,11 +183,17 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Future<void> _create() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
-    await context.read<AccountCubit>().createAccount(
-      _emailCtl.text,
-      _passCtl.text,
-    );
-    if (!mounted) return;
-    setState(() => _loading = false);
+    try {
+      await context.read<AccountCubit>().createAccount(
+        _emailCtl.text,
+        _passCtl.text,
+      );
+      if (!mounted) return;
+      setState(() => _loading = false);
+      context.go('/role-login');
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+    }
   }
 }

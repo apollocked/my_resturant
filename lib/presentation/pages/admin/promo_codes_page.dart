@@ -24,10 +24,18 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
-    final data = await _db.from('promo_codes').select().order('created_at', ascending: false);
     if (!mounted) return;
-    setState(() { _codes = data; _loading = false; });
+    setState(() => _loading = true);
+    try {
+      final data = await _db.from('promo_codes').select().order('created_at', ascending: false);
+      if (!mounted) return;
+      setState(() { _codes = data; _loading = false; });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Theme.of(context).colorScheme.error));
+    }
   }
 
   String _generateCode() {
@@ -125,8 +133,15 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       ),
     );
     if (confirm != true) return;
-    await _db.from('promo_codes').delete().eq('code', code);
-    _load();
+    try {
+      await _db.from('promo_codes').delete().eq('code', code);
+      if (!mounted) return;
+      _load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Theme.of(context).colorScheme.error));
+    }
   }
 
   String _statusText(Map<String, dynamic> code) {

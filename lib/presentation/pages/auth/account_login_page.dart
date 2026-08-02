@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
@@ -171,18 +172,20 @@ class _AccountLoginPageState extends State<AccountLoginPage> {
     );
     if (!mounted) return;
     setState(() => _loading = false);
-    if (!ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            Tr.get(
-              'account_invalid',
-              context.read<SettingsCubit>().state.locale,
-            ),
-          ),
-          backgroundColor: AppColors.error,
-        ),
-      );
+    if (ok) {
+      context.go('/role-login');
+      return;
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          Tr.get(
+            'account_invalid',
+            context.read<SettingsCubit>().state.locale,
+          ),
+        ),
+        backgroundColor: AppColors.error,
+      ),
+    );
   }
 }

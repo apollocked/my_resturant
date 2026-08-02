@@ -52,10 +52,13 @@ class OrderCubit extends Cubit<OrderState> {
         );
       }
     } catch (e) {
-      if (!isClosed) debugPrint('OrderCubit._load error: $e');
+      if (!isClosed) {
+        debugPrint('OrderCubit._load error: $e');
+        emit(state.copyWith(isLoading: false));
+      }
     }
 
-    _subscribe(_repo.watchOrders(), (o) {
+    _subscribe(_repo.watchOrders, (o) {
       if (_currentRole != null) {
         _notifService.checkOrderChanges(
           _previousOrders,
@@ -67,13 +70,13 @@ class OrderCubit extends Cubit<OrderState> {
       _previousOrders = List.from(o);
       if (!isClosed) emit(state.copyWith(orders: o));
     });
-    _subscribe(_repo.watchRecipes(), (r) {
+    _subscribe(_repo.watchRecipes, (r) {
       if (!isClosed) emit(state.copyWith(recipes: r));
     });
-    _subscribe(_repo.watchSettings(), (s) {
+    _subscribe(_repo.watchSettings, (s) {
       if (!isClosed) _applySettings(s);
     });
-    _subscribe(_repo.watchCategories(), (c) {
+    _subscribe(_repo.watchCategories, (c) {
       if (!isClosed) emit(state.copyWith(categories: c));
     });
 
@@ -82,16 +85,16 @@ class OrderCubit extends Cubit<OrderState> {
 
   static const int _maxReconnectAttempts = 10;
 
-  void _subscribe<T>(Stream<T> stream, void Function(T) onData) {
-    final sub = stream.listen(
+  void _subscribe<T>(Stream<T> Function() streamFactory, void Function(T) onData) {
+    final sub = streamFactory().listen(
       onData,
-      onError: (_) => _reconnect(stream, onData),
+      onError: (_, _) => _reconnect(streamFactory, onData),
     );
     _subs.add(sub);
   }
 
   void _reconnect<T>(
-    Stream<T> stream,
+    Stream<T> Function() streamFactory,
     void Function(T) onData, [
     int attempt = 0,
   ]) {
@@ -99,9 +102,9 @@ class OrderCubit extends Cubit<OrderState> {
     final delay = Duration(seconds: min(1 << attempt, 30));
     Future.delayed(delay, () {
       if (isClosed) return;
-      final sub = stream.listen(
+      final sub = streamFactory().listen(
         onData,
-        onError: (_) => _reconnect(stream, onData, attempt + 1),
+        onError: (_, _) => _reconnect(streamFactory, onData, attempt + 1),
       );
       _subs.add(sub);
     });
@@ -307,15 +310,17 @@ class OrderCubit extends Cubit<OrderState> {
     await _repo.saveOrder(order);
     final cleared = Set<int>.from(state.clearedTables)
       ..remove(state.selectedTable);
-    _repo.saveSetting('cleared_${state.selectedTable}', 'false');
-    emit(
-      state.copyWith(
-        cart: [],
-        selectedTable: 0,
-        pendingNotes: const {},
-        clearedTables: cleared,
-      ),
-    );
+    await _repo.saveSetting('cleared_${state.selectedTable}', 'false');
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          cart: [],
+          selectedTable: 0,
+          pendingNotes: const {},
+          clearedTables: cleared,
+        ),
+      );
+    }
   }
 
   void clearTable(int tableNumber) {

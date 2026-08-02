@@ -29,7 +29,7 @@ import 'package:my_resturant/domain/entities/order_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 
-final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/promo-codes'];
+final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/promo-codes', '/change-passcodes'];
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigator,
@@ -69,6 +69,7 @@ final appRouter = GoRouter(
 
     if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) return '/kitchen';
     if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) return '/menu';
+    if (loc == '/order-detail' && state.extra is! Order) return '/menu';
 
     return null;
   },

@@ -420,7 +420,7 @@ class _OrdersChart extends StatelessWidget {
                       }
                       final wd = weekData[i].date.weekday;
                       return Text(
-                        dayAbbr[wd == 7 ? 0 : wd],
+                        dayAbbr[(wd + 1) % 7],
                         style: TextStyle(
                           fontSize: 10,
                           color: cs.onSurfaceVariant,
@@ -535,7 +535,7 @@ class _RevenueChart extends StatelessWidget {
                       }
                       final wd = weekData[i].date.weekday;
                       return Text(
-                        dayAbbr[wd == 7 ? 0 : wd],
+                        dayAbbr[(wd + 1) % 7],
                         style: TextStyle(
                           fontSize: 10,
                           color: cs.onSurfaceVariant,

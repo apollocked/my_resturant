@@ -19,17 +19,22 @@ class SupabaseDataRepository implements DataRepository {
   Recipe _mapRecipe(Map<String, dynamic> row) => Recipe(
     id: row['id'] as String,
     name: row['name'] as String,
-    imageUrl: row['image_url'] as String,
-    price: (row['price'] as num).toDouble(),
-    description: row['description'] as String,
-    category: row['category'] as String,
-    available: row['available'] as bool,
+    imageUrl: (row['image_url'] as String?) ?? '',
+    price: (row['price'] as num?)?.toDouble() ?? 0,
+    description: (row['description'] as String?) ?? '',
+    category: (row['category'] as String?) ?? '',
+    available: (row['available'] as bool?) ?? true,
   );
 
   @override
   Future<List<Recipe>> loadRecipes() async {
     if (!_isAuthed) return [];
-    final data = await _client.from('recipes').select();
+    final uid = _userId;
+    if (uid == null) return [];
+    final data = await _client
+        .from('recipes')
+        .select()
+        .eq('restaurant_id', uid);
     return data.map(_mapRecipe).toList();
   }
 
@@ -135,9 +140,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Stream<List<Recipe>> watchRecipes() {
     if (!_isAuthed) return const Stream.empty();
+    final uid = _userId;
+    if (uid == null) return const Stream.empty();
     return _client
         .from('recipes')
         .stream(primaryKey: ['id'])
+        .eq('restaurant_id', uid)
         .map((data) => data.map(_mapRecipe).toList());
   }
 
@@ -178,9 +186,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Future<List<Order>> loadOrders() async {
     if (!_isAuthed) return [];
+    final uid = _userId;
+    if (uid == null) return [];
     final data = await _client
         .from('orders')
         .select()
+        .eq('restaurant_id', uid)
         .order('created_at', ascending: false);
     return data.map(_mapOrder).toList();
   }
@@ -257,7 +268,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Future<Map<String, String>> loadSettings() async {
     if (!_isAuthed) return {};
-    final data = await _client.from('app_settings').select();
+    final uid = _userId;
+    if (uid == null) return {};
+    final data = await _client
+        .from('app_settings')
+        .select()
+        .eq('restaurant_id', uid);
     return {
       for (final row in data) row['key'] as String: row['value'] as String,
     };
@@ -277,9 +293,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Stream<Map<String, String>> watchSettings() {
     if (!_isAuthed) return const Stream.empty();
+    final uid = _userId;
+    if (uid == null) return const Stream.empty();
     return _client
         .from('app_settings')
         .stream(primaryKey: ['key', 'restaurant_id'])
+        .eq('restaurant_id', uid)
         .map(
           (data) => {
             for (final row in data)
@@ -299,7 +318,12 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Future<List<Map<String, String>>> loadCategories() async {
     if (!_isAuthed) return [];
-    final data = await _client.from('categories').select();
+    final uid = _userId;
+    if (uid == null) return [];
+    final data = await _client
+        .from('categories')
+        .select()
+        .eq('restaurant_id', uid);
     return data.map(_mapCategory).toList();
   }
 
