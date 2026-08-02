@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenCleanList extends StatelessWidget {
@@ -14,14 +15,12 @@ class KitchenCleanList extends StatelessWidget {
   Widget build(BuildContext context) {
     final orderState = cubit.state;
     if (tableList.isEmpty) {
-      final isDesktop = R.isDesktop(context);
-      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
-          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-          child: Icon(Icons.cleaning_services, size: isDesktop ? 64 : R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
-        const SizedBox(height: 20),
-        Text(t('no_cleared_tables'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
-      ]));
+      return EmptyState(
+        icon: Icons.cleaning_services,
+        title: t('no_cleared_tables'),
+        subtitle: t('no_cleared_tables_subtitle'),
+        color: Colors.green,
+      );
     }
     return RefreshIndicator(
       onRefresh: () async => cubit.refresh(),

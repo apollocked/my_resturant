@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 
 class PromoCodesPage extends StatefulWidget {
   const PromoCodesPage({super.key});
@@ -164,11 +165,8 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _codes.isEmpty
-              ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(Icons.vpn_key_off_outlined, size: 64, color: cs.onSurfaceVariant),
-                  const SizedBox(height: 16),
-                  Text('No promo codes yet', style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontLg(context))),
-                ]))
+              ? const EmptyState(icon: Icons.vpn_key_off_outlined, title: 'No promo codes yet',
+                  subtitle: 'Create a code to let restaurants activate their account.')
               : RefreshIndicator(
                   onRefresh: _load,
                   child: isDesktop ? _buildTable(cs) : _buildList(cs),

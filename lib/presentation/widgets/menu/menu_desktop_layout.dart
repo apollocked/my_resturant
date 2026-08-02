@@ -7,6 +7,7 @@ import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart'
 import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class MenuDesktopLayout extends StatelessWidget {
@@ -55,7 +56,7 @@ class MenuDesktopLayout extends StatelessWidget {
               SearchBarWidget(onChanged: onSearchChanged),
               const SizedBox(height: 28),
               if (meals.isEmpty)
-                SizedBox(height: 200, child: Center(child: Text(t('no_food_found'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontMd(context)))))
+                SizedBox(height: 280, child: EmptyState(icon: Icons.search_off, title: t('no_food_found')))
               else
                 GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
                   itemCount: meals.length,

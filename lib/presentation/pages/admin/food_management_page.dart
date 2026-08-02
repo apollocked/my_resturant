@@ -10,6 +10,7 @@ import 'package:my_resturant/presentation/widgets/admin/edit_recipe_dialog.dart'
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_filter_bar.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class FoodManagementPage extends StatefulWidget {
@@ -98,13 +99,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                             children: List.generate(6, (_) => const ShimmerListTile()))
                         : ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
                     : dishes.isEmpty
-                    ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                        Container(width: isDesktop ? 120 : 100, height: isDesktop ? 120 : 100,
-                          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-                          child: Icon(Icons.restaurant_menu, size: isDesktop ? 56 : 44, color: cs.onSurfaceVariant)),
-                        const SizedBox(height: 20),
-                        Text(t('no_food_found'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
-                      ]))
+                    ? EmptyState(icon: Icons.restaurant_menu, title: t('no_food_found'), subtitle: t('no_food_found_subtitle'))
                     : isDesktop
                         ? GridView.builder(
                             padding: EdgeInsets.symmetric(horizontal: R.padding(context)),

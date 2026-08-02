@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class HistoryOrderList extends StatelessWidget {
@@ -21,35 +22,10 @@ class HistoryOrderList extends StatelessWidget {
     final isDesktop = R.isDesktop(context);
     final p = R.padding(context);
     if (orders.isEmpty) {
-      final cs = Theme.of(context).colorScheme;
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: R.hp(context, isDesktop ? 16 : 18),
-              height: R.hp(context, isDesktop ? 16 : 18),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.history,
-                size: isDesktop ? 48 : 36,
-                color: cs.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              t('history_empty'),
-              style: TextStyle(
-                fontSize: R.fontLg(context),
-                fontWeight: FontWeight.w600,
-                color: cs.onSurface,
-              ),
-            ),
-          ],
-        ),
+      return EmptyState(
+        icon: Icons.history,
+        title: t('history_empty'),
+        subtitle: t('history_empty_subtitle'),
       );
     }
     return RefreshIndicator(

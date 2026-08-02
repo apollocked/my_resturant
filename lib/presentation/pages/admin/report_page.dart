@@ -7,6 +7,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/profile/stat_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class ReportPage extends StatelessWidget {
@@ -109,8 +110,14 @@ class ReportPage extends StatelessWidget {
                     ),
                   ],
                 )
-              : ListView(
-                  padding: EdgeInsets.all(p),
+              : state.orders.isEmpty
+                  ? EmptyState(
+                      icon: Icons.analytics_outlined,
+                      title: t('report_empty'),
+                      subtitle: t('report_empty_subtitle'),
+                    )
+                  : ListView(
+                      padding: EdgeInsets.all(p),
                   children: [
                     if (isDesktop)
                       Row(

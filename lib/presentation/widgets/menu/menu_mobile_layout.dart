@@ -7,6 +7,7 @@ import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart'
 import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class MenuMobileLayout extends StatelessWidget {
@@ -46,7 +47,7 @@ class MenuMobileLayout extends StatelessWidget {
                   isSelected: selectedIndex == i, index: i, onTap: () => onCategoryChanged(i)))),
             SizedBox(height: R.isTablet(context) ? 28 : 24),
             if (meals.isEmpty)
-              SizedBox(height: 160, child: Center(child: Text(t('no_food_found'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14))))
+              SizedBox(height: 240, child: EmptyState(icon: Icons.search_off, title: t('no_food_found')))
             else
               Padding(padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
                 child: GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),

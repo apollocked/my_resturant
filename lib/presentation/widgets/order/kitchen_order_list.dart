@@ -6,6 +6,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenOrderList extends StatelessWidget {
@@ -19,7 +20,6 @@ class KitchenOrderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = R.isDesktop(context);
-    final cs = Theme.of(context).colorScheme;
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
         return isDesktop
@@ -28,13 +28,11 @@ class KitchenOrderList extends StatelessWidget {
                 children: List.generate(4, (_) => const ShimmerOrderCard()))
             : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
       }
-      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
-          decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-          child: Icon(Icons.receipt_long_outlined, size: isDesktop ? 64 : R.isTablet(context) ? 52 : 44, color: cs.onSurfaceVariant)),
-        const SizedBox(height: 20),
-        Text(t('kitchen_empty'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
-      ]));
+      return EmptyState(
+        icon: Icons.receipt_long_outlined,
+        title: t('kitchen_empty'),
+        subtitle: t('kitchen_empty_subtitle'),
+      );
     }
     final widgets = orders.map((o) {
       final hasNext = OrderCard.nextStatus.containsKey(o.status);

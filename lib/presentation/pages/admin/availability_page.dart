@@ -6,6 +6,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class AvailabilityPage extends StatelessWidget {
@@ -18,19 +19,12 @@ class AvailabilityPage extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final recipes = cubit.state.recipes;
     final isDesktop = R.isDesktop(context);
-    final isTablet = R.isTablet(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('availability_title'))),
       body: SafeArea(child: cubit.state.isLoading && recipes.isEmpty
         ? ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
         : recipes.isEmpty
-        ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: R.hp(context, isDesktop ? 18 : 22), height: R.hp(context, isDesktop ? 18 : 22),
-              decoration: BoxDecoration(color: cs.surfaceContainerHighest, shape: BoxShape.circle),
-              child: Icon(Icons.restaurant_menu, size: isDesktop ? 64 : isTablet ? 52 : 44, color: cs.onSurfaceVariant)),
-            const SizedBox(height: 20),
-            Text(t('no_food_found'), style: TextStyle(fontSize: R.fontLg(context), fontWeight: FontWeight.w600, color: cs.onSurface)),
-          ]))
+        ? EmptyState(icon: Icons.restaurant_menu, title: t('no_food_found'), subtitle: t('no_food_found_subtitle'))
         : Directionality(textDirection: TextDirection.rtl, child: isDesktop
             ? GridView.builder(
                 padding: EdgeInsets.all(R.padding(context)),
