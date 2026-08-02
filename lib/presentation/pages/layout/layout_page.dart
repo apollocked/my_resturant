@@ -123,7 +123,10 @@ class MainShell extends StatelessWidget {
             label: t(item.labelKey),
           )).toList(),
           selectedIndex: selectedIndex,
-          onTap: (i) => navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex),
+          onTap: (i) {
+            debugPrint('[NAV] goBranch branch=${items[i].index} tappedIndex=$i current=${navigationShell.currentIndex} item=${items[i].labelKey}');
+            navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex);
+          },
           badgeCount: state.cartCount,
           badgeIndex: 0,
           accentColor: AppColors.primary,

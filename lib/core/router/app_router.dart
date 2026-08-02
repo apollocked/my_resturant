@@ -40,38 +40,30 @@ final appRouter = GoRouter(
     final settings = context.read<SettingsCubit>().state;
     final loc = state.matchedLocation;
 
+    String? result;
     if (!settings.onboardingComplete) {
-      if (loc != '/onboarding') return '/onboarding';
-      return null;
+      result = loc != '/onboarding' ? '/onboarding' : null;
+    } else if (!acct.isLoggedIn) {
+      result = loc != '/account-auth' ? '/account-auth' : null;
+    } else if (!acct.isActivated) {
+      result = loc != '/promo-code' ? '/promo-code' : null;
+    } else if (!rs.isConfigured) {
+      result = loc != '/setup' ? '/setup' : null;
+    } else if (!rs.isLoggedIn) {
+      result = loc != '/role-login' ? '/role-login' : null;
+    } else if (loc == '/role-login') {
+      result = '/menu';
+    } else if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) {
+      result = '/kitchen';
+    } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
+      result = '/menu';
+    } else if (loc == '/order-detail' && state.extra is! Order) {
+      result = '/menu';
     }
-
-    if (!acct.isLoggedIn) {
-      if (loc != '/account-auth') return '/account-auth';
-      return null;
-    }
-
-    if (!acct.isActivated) {
-      if (loc != '/promo-code') return '/promo-code';
-      return null;
-    }
-
-    if (!rs.isConfigured) {
-      if (loc != '/setup') return '/setup';
-      return null;
-    }
-
-    if (!rs.isLoggedIn) {
-      if (loc != '/role-login') return '/role-login';
-      return null;
-    }
-
-    if (loc == '/role-login') return '/menu';
-
-    if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) return '/kitchen';
-    if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) return '/menu';
-    if (loc == '/order-detail' && state.extra is! Order) return '/menu';
-
-    return null;
+    debugPrint('[NAV] redirect: loc=$loc role=${rs.role} onboarding=${settings.onboardingComplete} '
+        'loggedIn=${acct.isLoggedIn} activated=${acct.isActivated} configured=${rs.isConfigured} '
+        'roleLoggedIn=${rs.isLoggedIn} cartExtra=${state.extra is Order} => ${result ?? 'no-redirect'}');
+    return result;
   },
   routes: [
     GoRoute(path: '/', redirect: (_, _) => '/menu'),

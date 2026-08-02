@@ -91,7 +91,11 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
                         final item = widget.items[i];
                         final active = widget.selectedIndex == i;
                         return GestureDetector(
-                          onTap: () { HapticFeedback.lightImpact(); widget.onTap(i); },
+                          onTap: () {
+                            debugPrint('[NAV] bar-tap index=$i label=${item.label}');
+                            HapticFeedback.lightImpact();
+                            widget.onTap(i);
+                          },
                           behavior: HitTestBehavior.opaque,
                           child: SizedBox(
                             width: 64,
@@ -129,13 +133,15 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
                   ),
                   Positioned(
                     top: -40, left: -40,
-                    child: Container(
-                      width: 200, height: 120,
-                      decoration: BoxDecoration(
-                        gradient: RadialGradient(
-                          colors: [Colors.white.withValues(alpha: dark ? 0.08 : 0.12), Colors.transparent],
+                    child: IgnorePointer(
+                      child: Container(
+                        width: 200, height: 120,
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            colors: [Colors.white.withValues(alpha: dark ? 0.08 : 0.12), Colors.transparent],
+                          ),
+                          borderRadius: BorderRadius.circular(28),
                         ),
-                        borderRadius: BorderRadius.circular(28),
                       ),
                     ),
                   ),
