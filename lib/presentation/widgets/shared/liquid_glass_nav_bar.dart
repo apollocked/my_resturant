@@ -65,7 +65,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+              filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
               child: Stack(
                 children: [
                   Container(
