@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -117,6 +118,7 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
       obscureText: _obscure,
       maxLength: 6,
       keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         counterText: '',
         labelText: t(r.name),

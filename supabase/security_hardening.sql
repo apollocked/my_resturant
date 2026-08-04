@@ -15,6 +15,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- 1. Profiles — read-only for clients, writes via RPCs only
 -- ------------------------------------------------------------
 DROP POLICY IF EXISTS "Users can manage own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 
 CREATE POLICY "Users can read own profile"
   ON public.profiles FOR SELECT
@@ -156,6 +157,14 @@ END;
 $$;
 
 -- ------------------------------------------------------------
+-- IMPORTANT: existing PINs were stored as unsalted SHA-256 hashes,
+-- which bcrypt's crypt() cannot verify. Clear them so every owner
+-- re-sets their passcodes from the setup page (app will show setup
+-- because passcodes_configured() now returns false).
+-- ------------------------------------------------------------
+UPDATE public.profiles SET pin_waiter = '', pin_kitchen = '', pin_admin = '';
+
+-- ------------------------------------------------------------
 -- 4. Promo codes — admin only, atomic claim with expiry
 -- ------------------------------------------------------------
 ALTER TABLE public.promo_codes ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
@@ -255,6 +264,9 @@ ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.profiles;
 -- ------------------------------------------------------------
 -- 6. Length caps (server-side)
 -- ------------------------------------------------------------
+ALTER TABLE public.recipes DROP CONSTRAINT IF EXISTS recipes_name_len;
 ALTER TABLE public.recipes ADD CONSTRAINT recipes_name_len CHECK (length(name) <= 80) NOT VALID;
+ALTER TABLE public.recipes DROP CONSTRAINT IF EXISTS recipes_desc_len;
 ALTER TABLE public.recipes ADD CONSTRAINT recipes_desc_len CHECK (length(description) <= 1000) NOT VALID;
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_notes_len;
 ALTER TABLE public.orders ADD CONSTRAINT orders_notes_len CHECK (length(notes) <= 1000) NOT VALID;

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
@@ -18,11 +17,11 @@ class RoleCubit extends Cubit<RoleState> {
   RoleCubit({required this._repo}) : super(const RoleState());
 
   // A role session is never restored from local prefs: staff must re-enter
-  // their PIN after every cold start.
+  // their PIN after every cold start. Configured state always comes from the
+  // server so a stale local cache can never lock the owner out after a reset.
   Future<void> load() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final configured = prefs.getBool('passcodes_configured') ?? await _repo.arePasscodesConfigured();
+      final configured = await _repo.arePasscodesConfigured();
       emit(RoleState(isConfigured: configured));
     } catch (e, st) {
       debugPrint('RoleCubit.load error: $e\n$st');
@@ -39,8 +38,6 @@ class RoleCubit extends Cubit<RoleState> {
   Future<void> configure(String waiterPin, String kitchenPin, String adminPin) async {
     try {
       await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('passcodes_configured', true);
       emit(const RoleState(isConfigured: true));
     } catch (e, st) {
       debugPrint('RoleCubit.configure error: $e\n$st');
