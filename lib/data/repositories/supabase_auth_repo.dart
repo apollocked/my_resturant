@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,8 +7,6 @@ import 'package:my_resturant/domain/repositories/auth_repository.dart';
 
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseClient get _client => Supabase.instance.client;
-
-  String _hash(String input) => sha256.convert(utf8.encode(input)).toString();
 
   @override
   Future<bool> isAccountCreated() async {
