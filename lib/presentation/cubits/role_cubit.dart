@@ -16,13 +16,23 @@ class RoleCubit extends Cubit<RoleState> {
 
   RoleCubit({required this._repo}) : super(const RoleState());
 
-  // A role session is never restored from local prefs: staff must re-enter
-  // their PIN after every cold start. Configured state always comes from the
-  // server so a stale local cache can never lock the owner out after a reset.
+  // The role session is restored from the server (profiles.role), never from
+  // local prefs, so a tampered local cache cannot grant a role. Returning to
+  // the last-used role on cold start needs no PIN; PINs still gate switching
+  // into admin from a non-admin role.
   Future<void> load() async {
     try {
       final configured = await _repo.arePasscodesConfigured();
-      emit(RoleState(isConfigured: configured));
+      if (!configured) {
+        emit(const RoleState());
+        return;
+      }
+      final role = await _repo.getLoggedInRole();
+      emit(RoleState(
+        isConfigured: true,
+        isLoggedIn: role != null,
+        role: role ?? Role.admin,
+      ));
     } catch (e, st) {
       debugPrint('RoleCubit.load error: $e\n$st');
       emit(const RoleState());

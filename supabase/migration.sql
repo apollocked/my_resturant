@@ -74,7 +74,7 @@ REVOKE ALL ON TABLE public.pin_attempts FROM anon, authenticated;
 
 CREATE OR REPLACE FUNCTION public.save_passcodes(p_waiter TEXT, p_kitchen TEXT, p_admin TEXT)
 RETURNS VOID
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();
@@ -93,7 +93,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.change_passcode(p_role TEXT, p_pin TEXT)
 RETURNS VOID
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();
@@ -111,7 +111,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.verify_pin(p_role TEXT, p_pin TEXT)
 RETURNS BOOLEAN
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();

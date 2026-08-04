@@ -54,7 +54,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.save_passcodes(p_waiter TEXT, p_kitchen TEXT, p_admin TEXT)
 RETURNS VOID
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();
@@ -73,7 +73,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.change_passcode(p_role TEXT, p_pin TEXT)
 RETURNS VOID
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();
@@ -91,7 +91,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.verify_pin(p_role TEXT, p_pin TEXT)
 RETURNS BOOLEAN
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 DECLARE
   uid uuid := auth.uid();
@@ -259,7 +259,17 @@ $$;
 -- ------------------------------------------------------------
 -- 5. Realtime — stop streaming profiles (contains hashes/email)
 -- ------------------------------------------------------------
-ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.profiles;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'profiles'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime DROP TABLE public.profiles;
+  END IF;
+END $$;
 
 -- ------------------------------------------------------------
 -- 6. Length caps (server-side)
@@ -270,3 +280,68 @@ ALTER TABLE public.recipes DROP CONSTRAINT IF EXISTS recipes_desc_len;
 ALTER TABLE public.recipes ADD CONSTRAINT recipes_desc_len CHECK (length(description) <= 1000) NOT VALID;
 ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_notes_len;
 ALTER TABLE public.orders ADD CONSTRAINT orders_notes_len CHECK (length(notes) <= 1000) NOT VALID;
+
+-- ------------------------------------------------------------
+-- 7. Client can no longer execute any SECURITY DEFINER functions
+--    except the auth RPCs, which are restricted to authenticated
+-- ------------------------------------------------------------
+REVOKE EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.passcodes_configured() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.set_role(TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.set_role(TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.claim_promo_code(TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.claim_promo_code(TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.is_activated() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.is_activated() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.is_admin() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+
+-- infra-only functions: no client role may call them via RPC
+REVOKE EXECUTE ON FUNCTION public.auto_confirm_user() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.cleanup_old_orders() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.check_restaurant_limit() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.check_recipe_limit() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.check_category_limit() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.check_order_limit() FROM PUBLIC, anon, authenticated;
+
+-- pin search_path on remaining trigger functions
+CREATE OR REPLACE FUNCTION public.check_recipe_limit()
+RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
+AS $function$
+BEGIN
+  IF (SELECT count(*) FROM public.recipes WHERE restaurant_id = NEW.restaurant_id) >= 50 THEN
+    RAISE EXCEPTION 'Maximum number of recipes (50) reached for this restaurant.';
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.check_category_limit()
+RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
+AS $function$
+BEGIN
+  IF (SELECT count(*) FROM public.categories WHERE restaurant_id = NEW.restaurant_id) >= 15 THEN
+    RAISE EXCEPTION 'Maximum number of categories (15) reached for this restaurant.';
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.check_order_limit()
+RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
+AS $function$
+BEGIN
+  IF (SELECT count(*) FROM public.orders WHERE restaurant_id = NEW.restaurant_id) >= 10000 THEN
+    RAISE EXCEPTION 'Maximum number of active orders (10000) reached. Please archive old orders.';
+  END IF;
+  RETURN NEW;
+END;
+$function$;

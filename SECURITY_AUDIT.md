@@ -71,8 +71,11 @@ server (`passcodes_configured()`), so the stale local cache cannot suppress the 
 `RoleCubit.load()` replayed `role_name`/`role_logged_in` from SharedPreferences without a
 server check, so editing prefs granted admin UI.
 
-**[FIXED]** Cold start now requires re-entering a PIN (no auto-restore). Prefs role keys are
-no longer read or written; role is set server-side via `set_role()`.
+**[FIXED]** The last-used role is now restored from the **server** (`profiles.role`, written
+only via the `set_role()` RPC), never from local prefs — so a tampered cache cannot grant a
+role. Cold start returns to the last role without a PIN; PINs still gate switching into admin
+from a non-admin role. (An earlier iteration required a PIN on every cold start; that was
+reverted for UX since the server-side restore already closes the tampering hole.)
 
 ### 2.3 Hardcoded dev-email admin gate
 `/promo-codes` gated by `acct.email == 'hamabarznji1990@gmail.com'` in the router; the account
@@ -179,19 +182,26 @@ exploitable. Optional cleanup: re-read email from the server after `updateUser`.
 
 ---
 
-## 6. How to apply the fixes
+## 6. How to apply the fixes — DONE
 
-1. **Apply the SQL to the live project** — open the Supabase Dashboard →
-   SQL Editor → New query → paste the entire contents of
-   `supabase/security_hardening.sql` → Run. (Idempotent; safe to re-run.)
-   ⚠️ After this, every account's PINs are cleared — owners must re-enter passcodes
-   on the setup screen on next app start.
-2. Rebuild/reinstall the app so the new RPC-based auth code ships to devices.
+1. ✅ **SQL applied to the live project `wwzvywkvblftreqdusay`** via the Supabase MCP
+   on 2026-08-04 (`security_hardening` + `restrict_rpc_execute` migrations + a
+   `cleanup_old_orders` search_path fix). The full delta is `supabase/security_hardening.sql`.
+   - All 8 RPCs verified present: `save_passcodes`, `change_passcode`, `verify_pin`,
+     `passcodes_configured`, `set_role`, `is_admin`, `claim_promo_code`, `is_activated`.
+   - PostgREST schema reloaded (`NOTIFY pgrst, 'reload schema'`).
+   - ⚠️ Every account's PINs were cleared — owners must re-enter passcodes on the setup
+     screen on next app start.
+2. Client EXECUTE locked down: `anon` can no longer execute any SECURITY DEFINER function;
+   the 8 auth RPCs are granted to `authenticated` only. `cleanup_old_orders`,
+   `auto_confirm_user`, `rls_auto_enable`, and the limit-check triggers are fully revoked
+   from client roles (cron/triggers run as the owner and are unaffected).
 3. **Manual follow-ups** (see §2.4, §2.5): release keystore, rotate anon key, purge git history.
+   Also recommend enabling Auth → "Leaked password protection" in the dashboard.
 
 ## 7. Files changed
 - `supabase/migration.sql` — hardened profiles/promo RLS, RPCs, realtime, constraints
-- `supabase/security_hardening.sql` — NEW: apply-to-live delta (idempotent)
+- `supabase/security_hardening.sql` — apply-to-live delta (idempotent), incl. RPC EXECUTE lockdown + search_path on trigger fns
 - `lib/data/repositories/supabase_auth_repo.dart` — RPC calls, removed client hashing
 - `lib/data/repositories/supabase_data_repo.dart` — tenant filters, jsonDecode guard, category cap, tracking code
 - `lib/presentation/cubits/role_cubit.dart` — server-trusted config, no prefs role restore
