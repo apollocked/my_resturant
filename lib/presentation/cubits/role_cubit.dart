@@ -17,21 +17,12 @@ class RoleCubit extends Cubit<RoleState> {
 
   RoleCubit({required this._repo}) : super(const RoleState());
 
+  // A role session is never restored from local prefs: staff must re-enter
+  // their PIN after every cold start.
   Future<void> load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final configured = prefs.getBool('passcodes_configured') ?? await _repo.arePasscodesConfigured();
-      final roleLoggedIn = prefs.getBool('role_logged_in') ?? false;
-      if (roleLoggedIn) {
-        final roleName = prefs.getString('role_name');
-        if (roleName != null) {
-          final role = Role.values.cast<Role?>().firstWhere((r) => r!.name == roleName, orElse: () => null);
-          if (role != null) {
-            emit(RoleState(isConfigured: configured, isLoggedIn: true, role: role));
-            return;
-          }
-        }
-      }
       emit(RoleState(isConfigured: configured));
     } catch (e, st) {
       debugPrint('RoleCubit.load error: $e\n$st');
@@ -67,9 +58,6 @@ class RoleCubit extends Cubit<RoleState> {
       final ok = await _repo.verifyPasscode(role, pin);
       if (ok) {
         await _repo.saveLoggedInRole(role);
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('role_logged_in', true);
-        await prefs.setString('role_name', role.name);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;
@@ -98,17 +86,11 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> _setRole(Role role) async {
     await _repo.saveLoggedInRole(role);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('role_logged_in', true);
-    await prefs.setString('role_name', role.name);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }
 
   Future<void> logout() async {
     await _repo.saveLoggedInRole(null);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('role_logged_in');
-    await prefs.remove('role_name');
     emit(const RoleState(isConfigured: true));
   }
 

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/core/constants/app_constants.dart';
@@ -74,14 +75,15 @@ class SupabaseDataRepository implements DataRepository {
     String? category,
     String? description,
   }) async {
-    if (!_isAuthed) return;
+    final uid = _userId;
+    if (!_isAuthed || uid == null) return;
     final updates = <String, dynamic>{};
     if (name != null) updates['name'] = name;
     if (price != null) updates['price'] = price;
     if (category != null) updates['category'] = category;
     if (description != null) updates['description'] = description;
     if (updates.isNotEmpty) {
-      await _client.from('recipes').update(updates).eq('id', id);
+      await _client.from('recipes').update(updates).eq('id', id).eq('restaurant_id', uid);
     }
   }
 
@@ -119,22 +121,26 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> removeRecipe(String id) async {
-    if (!_isAuthed) return;
-    await _client.from('recipes').delete().eq('id', id);
+    final uid = _userId;
+    if (!_isAuthed || uid == null) return;
+    await _client.from('recipes').delete().eq('id', id).eq('restaurant_id', uid);
   }
 
   @override
   Future<void> toggleRecipe(String id) async {
-    if (!_isAuthed) return;
+    final uid = _userId;
+    if (!_isAuthed || uid == null) return;
     final data = await _client
         .from('recipes')
         .select('available')
         .eq('id', id)
+        .eq('restaurant_id', uid)
         .single();
     await _client
         .from('recipes')
         .update({'available': !(data['available'] as bool)})
-        .eq('id', id);
+        .eq('id', id)
+        .eq('restaurant_id', uid);
   }
 
   @override
@@ -152,32 +158,38 @@ class SupabaseDataRepository implements DataRepository {
   // ── Orders ────────────────────────────────────────────────
 
   Order _mapOrder(Map<String, dynamic> row) {
-    final items = (jsonDecode(row['items_json'] as String) as List).map((item) {
-      return CartItem(
-        recipe: Recipe(
-          id: item['recipe_id'],
-          name: item['recipe_name'],
-          imageUrl: item['recipe_image_url'] ?? '',
-          price: (item['recipe_price'] as num).toDouble(),
-          description: '',
-          category: '',
-          available: true,
-        ),
-        quantity: item['quantity'] as int,
-        notes: item['notes'] as String? ?? '',
-      );
-    }).toList();
+    List<CartItem> items = [];
+    try {
+      final raw = jsonDecode(row['items_json'] as String? ?? '[]') as List;
+      items = raw.map((item) {
+        return CartItem(
+          recipe: Recipe(
+            id: item['recipe_id'] as String? ?? '',
+            name: item['recipe_name'] as String? ?? '',
+            imageUrl: item['recipe_image_url'] as String? ?? '',
+            price: (item['recipe_price'] as num?)?.toDouble() ?? 0,
+            description: '',
+            category: '',
+            available: true,
+          ),
+          quantity: (item['quantity'] as num?)?.toInt() ?? 1,
+          notes: item['notes'] as String? ?? '',
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('SupabaseDataRepo._mapOrder: corrupt items_json, falling back to empty: $e');
+    }
 
     return Order(
       id: row['id'] as String,
-      tableNumber: row['table_number'] as int,
+      tableNumber: (row['table_number'] as num?)?.toInt() ?? 0,
       tableName: row['table_label'] as String?,
       items: items,
       status: OrderStatus.values.firstWhere(
         (s) => s.name == row['status'],
         orElse: () => OrderStatus.pending,
       ),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row['created_at'] as int),
+      createdAt: DateTime.fromMillisecondsSinceEpoch((row['created_at'] as num?)?.toInt() ?? 0),
       notes: row['notes'] as String? ?? '',
       trackingCode: row['tracking_code'] as String? ?? '',
     );
@@ -223,7 +235,7 @@ class SupabaseDataRepository implements DataRepository {
           .toList(),
     );
 
-    final trackingCode = 'ORD-${DateTime.now().millisecondsSinceEpoch}';
+    final trackingCode = 'ORD-${DateTime.now().millisecondsSinceEpoch}-${Random.secure().nextInt(10000)}';
 
     await _client.from('orders').insert({
       'id': order.id,
@@ -240,8 +252,9 @@ class SupabaseDataRepository implements DataRepository {
 
   @override
   Future<void> changeOrderStatus(String id, OrderStatus status) async {
-    if (!_isAuthed) return;
-    await _client.from('orders').update({'status': status.name}).eq('id', id);
+    final uid = _userId;
+    if (!_isAuthed || uid == null) return;
+    await _client.from('orders').update({'status': status.name}).eq('id', id).eq('restaurant_id', uid);
   }
 
   @override
@@ -331,6 +344,17 @@ class SupabaseDataRepository implements DataRepository {
   Future<void> addCategory(String key, String name, String icon) async {
     final uid = _userId;
     if (uid == null) return;
+    if (key.isEmpty || key.length > 32) {
+      throw Exception('Invalid category key');
+    }
+    final count = await _client
+        .from('categories')
+        .select('key')
+        .eq('restaurant_id', uid)
+        .count();
+    if (count.count >= AppConstants.maxCategoriesPerRestaurant) {
+      throw Exception('Maximum ${AppConstants.maxCategoriesPerRestaurant} categories reached');
+    }
     await _client.from('categories').upsert({
       'key': key,
       'name': name,

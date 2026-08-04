@@ -76,16 +76,7 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<bool> arePasscodesConfigured() async {
     try {
-      final user = _client.auth.currentUser;
-      if (user == null) return false;
-      final data = await _client
-          .from('profiles')
-          .select('pin_waiter, pin_kitchen, pin_admin')
-          .eq('id', user.id)
-          .single();
-      return (data['pin_waiter']?.isNotEmpty == true &&
-          data['pin_kitchen']?.isNotEmpty == true &&
-          data['pin_admin']?.isNotEmpty == true);
+      return await _client.rpc('passcodes_configured') == true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.arePasscodesConfigured error: $e\n$st');
       return false;
@@ -94,33 +85,20 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin) async {
-    final user = _client.auth.currentUser;
-    if (user == null) throw Exception('Not logged in');
-    await _client.from('profiles').upsert({
-      'id': user.id,
-      'email': user.email,
-      'pin_waiter': _hash(waiterPin),
-      'pin_kitchen': _hash(kitchenPin),
-      'pin_admin': _hash(adminPin),
+    await _client.rpc('save_passcodes', params: {
+      'p_waiter': waiterPin,
+      'p_kitchen': kitchenPin,
+      'p_admin': adminPin,
     });
   }
 
   @override
   Future<bool> verifyPasscode(Role role, String pin) async {
     try {
-      final user = _client.auth.currentUser;
-      if (user == null) return false;
-      final column = switch (role) {
-        Role.waiter => 'pin_waiter',
-        Role.kitchen => 'pin_kitchen',
-        Role.admin => 'pin_admin',
-      };
-      final data = await _client
-          .from('profiles')
-          .select(column)
-          .eq('id', user.id)
-          .single();
-      return data[column] == _hash(pin);
+      return await _client.rpc('verify_pin', params: {
+        'p_role': role.name,
+        'p_pin': pin,
+      }) == true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.verifyPasscode error: $e\n$st');
       return false;
@@ -129,31 +107,15 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> changePasscode(Role role, String newPin) async {
-    final user = _client.auth.currentUser;
-    if (user == null) throw Exception('Not logged in');
-    final column = switch (role) {
-      Role.waiter => 'pin_waiter',
-      Role.kitchen => 'pin_kitchen',
-      Role.admin => 'pin_admin',
-    };
-    final existing = await _client.from('profiles').select('pin_waiter, pin_kitchen, pin_admin').eq('id', user.id).maybeSingle();
-    await _client.from('profiles').upsert({
-      'id': user.id,
-      'pin_waiter': existing?['pin_waiter'] ?? '',
-      'pin_kitchen': existing?['pin_kitchen'] ?? '',
-      'pin_admin': existing?['pin_admin'] ?? '',
-      column: _hash(newPin),
+    await _client.rpc('change_passcode', params: {
+      'p_role': role.name,
+      'p_pin': newPin,
     });
   }
 
   @override
   Future<void> saveLoggedInRole(Role? role) async {
-    final user = _client.auth.currentUser;
-    if (user == null) return;
-    await _client.from('profiles').upsert({
-      'id': user.id,
-      'role': role?.name,
-    });
+    await _client.rpc('set_role', params: {'p_role': role?.name});
   }
 
   @override

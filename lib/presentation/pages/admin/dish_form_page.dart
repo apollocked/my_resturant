@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/constants/app_constants.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -179,9 +180,7 @@ class _DishFormPageState extends State<DishFormPage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final id = _isEditing ? widget.recipe!.id : const Uuid().v4();
-    String imageUrl = _imageUrl.value.isEmpty
-        ? 'https://picsum.photos/seed/${_nameCtrl.text.trim()}/400/300'
-        : _imageUrl.value;
+    String imageUrl = _imageUrl.value;
     if (!imageUrl.startsWith('http')) {
       if (!mounted) return;
       showDialog(
@@ -226,6 +225,9 @@ class _DishFormPageState extends State<DishFormPage> {
       format: CompressFormat.jpeg,
     );
     if (bytes == null || bytes.isEmpty) throw Exception('Compression failed');
+    if (bytes.length > AppConstants.maxImageSizeBytes) {
+      throw Exception('Image too large. Maximum size is ${AppConstants.maxImageSizeBytes ~/ (1024 * 1024)}MB');
+    }
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) throw Exception('Not logged in');
     final path = '$uid/$recipeId.jpg';

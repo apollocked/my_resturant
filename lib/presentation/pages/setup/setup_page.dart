@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -177,6 +178,7 @@ class _SetupPageState extends State<SetupPage> {
       obscureText: obscure,
       maxLength: 6,
       keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         counterText: '',
         prefixIcon: Icon(icon, size: 20),

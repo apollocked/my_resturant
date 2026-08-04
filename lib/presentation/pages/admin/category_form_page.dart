@@ -53,6 +53,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   String _selectedIcon = '🍽';
   bool _saving = false;
 
+  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
+
   @override
   void dispose() {
     _nameCtrl.dispose();
@@ -63,6 +65,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty || _saving) return;
     final key = name.replaceAll(RegExp(r'\s+'), '_').toLowerCase();
+    if (!RegExp(r'^[a-z0-9_]{1,32}$').hasMatch(key) || key == 'all') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_t('invalid_category')), backgroundColor: AppColors.error),
+      );
+      return;
+    }
     final existing = context.read<OrderCubit>().state.categories;
     if (existing.any((c) => c['key'] == key)) return;
     setState(() => _saving = true);
@@ -97,6 +105,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               children: [
                 TextField(
                   controller: _nameCtrl,
+                  maxLength: 32,
                   decoration: InputDecoration(
                     labelText: t('category_name'),
                     filled: true,

@@ -64,6 +64,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
           const SizedBox(height: 16),
           TextFormField(
             controller: widget.nameCtrl,
+            maxLength: 80,
             decoration: InputDecoration(
               labelText: widget.t('dish_name'),
               filled: true,
@@ -91,6 +92,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
           TextFormField(
             controller: widget.descCtrl,
             maxLines: 2,
+            maxLength: 1000,
             decoration: InputDecoration(
               labelText: widget.t('description'),
               filled: true,

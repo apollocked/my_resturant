@@ -61,8 +61,10 @@ class CartBottomBar extends StatelessWidget {
           ])
         : Column(children: [
             TextField(controller: notesCtrl, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
+              maxLength: 200,
               decoration: InputDecoration(hintText: notesHint,
                 hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12),
+                counterText: '',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
                 enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: cs.outlineVariant)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

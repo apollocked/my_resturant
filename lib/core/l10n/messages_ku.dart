@@ -110,6 +110,7 @@ const Map<String, String> ku = {
   'add_btn': 'زیادکردن',
   'add_category': 'زیادکردنی بەش',
   'category_name': 'ناوی بەش',
+  'invalid_category': 'ناوی بەش تەنها دەتوانێت پیت و ژمارە و بەشێکی زەبری لەخۆبگرێت',
   'choose_icon': 'هەڵبژاردنی ئایکۆن:',
   'add': 'زیادکردن',
   'table_mgmt_title': 'بەڕێوەبردنی مێزەکان',

@@ -110,6 +110,7 @@ const Map<String, String> ar = {
   'add_btn': 'إضافة',
   'add_category': 'إضافة قسم',
   'category_name': 'اسم القسم',
+  'invalid_category': 'اسم القسم يجب أن يحتوي على أحرف وأرقام وشرطات سفلية فقط',
   'choose_icon': 'اختيار أيقونة:',
   'add': 'إضافة',
   'table_mgmt_title': 'إدارة الطاولات',

@@ -110,6 +110,7 @@ const Map<String, String> en = {
   'add_btn': 'Add',
   'add_category': 'Add Category',
   'category_name': 'Category Name',
+  'invalid_category': 'Category name can only contain letters, numbers and underscores',
   'choose_icon': 'Choose Icon:',
   'add': 'Add',
   'table_mgmt_title': 'Table Management',
