@@ -8,11 +8,20 @@ class CartBottomBar extends StatelessWidget {
   final String notesHint, totalLabel, sendLabel, currencySuffix;
   final double total;
   final bool canSubmit;
+  final bool isSubmitting;
   final VoidCallback onSubmit;
 
   const CartBottomBar({super.key, required this.notesCtrl, required this.notesHint,
     required this.totalLabel, required this.sendLabel, required this.currencySuffix,
-    required this.total, required this.canSubmit, required this.onSubmit});
+    required this.total, required this.canSubmit, required this.isSubmitting, required this.onSubmit});
+
+  Widget _buttonChild(ColorScheme cs, double fontSize) => isSubmitting
+      ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary))
+      : Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.send_rounded, size: 18),
+          const SizedBox(width: 8),
+          Text(sendLabel, style: TextStyle(fontWeight: FontWeight.w700, fontSize: fontSize)),
+        ]);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class CartBottomBar extends StatelessWidget {
       child: isDesktop
         ? Row(children: [
             PressableScale(
-              onTap: canSubmit ? onSubmit : null,
+              onTap: canSubmit && !isSubmitting ? onSubmit : null,
               child: SizedBox(
                 height: 48,
                 child: ElevatedButton(
@@ -39,11 +48,7 @@ class CartBottomBar extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 32),
                   ),
-                  child: Row(children: [
-                    const Icon(Icons.send_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                  ]),
+                  child: _buttonChild(cs, 16),
                 ),
               ),
             ),
@@ -66,7 +71,7 @@ class CartBottomBar extends StatelessWidget {
             const SizedBox(height: 14),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               PressableScale(
-                onTap: canSubmit ? onSubmit : null,
+                onTap: canSubmit && !isSubmitting ? onSubmit : null,
                 child: SizedBox(height: 48,
                   child: ElevatedButton(
                     onPressed: null,
@@ -76,11 +81,7 @@ class CartBottomBar extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 24),
                     ),
-                    child: Row(children: [
-                      const Icon(Icons.send_rounded, size: 18),
-                      const SizedBox(width: 8),
-                      Text(sendLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                    ]),
+                    child: _buttonChild(cs, 14),
                   ),
                 ),
               ),

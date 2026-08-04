@@ -299,27 +299,34 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> submitOrder(String notes) async {
-    if (state.cart.isEmpty || state.selectedTable == 0) return;
-    final order = Order(
-      id: const Uuid().v4(),
-      tableNumber: state.selectedTable,
-      tableName: state.getTableName(state.selectedTable),
-      items: List.from(state.cart),
-      notes: notes,
-    );
-    await _repo.saveOrder(order);
-    final cleared = Set<int>.from(state.clearedTables)
-      ..remove(state.selectedTable);
-    await _repo.saveSetting('cleared_${state.selectedTable}', 'false');
-    if (!isClosed) {
-      emit(
-        state.copyWith(
-          cart: [],
-          selectedTable: 0,
-          pendingNotes: const {},
-          clearedTables: cleared,
-        ),
+    if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) return;
+    if (!isClosed) emit(state.copyWith(isSubmitting: true));
+    try {
+      final order = Order(
+        id: const Uuid().v4(),
+        tableNumber: state.selectedTable,
+        tableName: state.getTableName(state.selectedTable),
+        items: List.from(state.cart),
+        notes: notes,
       );
+      await _repo.saveOrder(order);
+      final cleared = Set<int>.from(state.clearedTables)
+        ..remove(state.selectedTable);
+      await _repo.saveSetting('cleared_${state.selectedTable}', 'false');
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            cart: [],
+            selectedTable: 0,
+            pendingNotes: const {},
+            clearedTables: cleared,
+            isSubmitting: false,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(isSubmitting: false));
+      rethrow;
     }
   }
 

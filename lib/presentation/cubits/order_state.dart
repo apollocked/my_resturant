@@ -13,6 +13,7 @@ class OrderState {
   final Map<String, String> pendingNotes;
   final bool isLoading;
   final Set<int> clearedTables;
+  final bool isSubmitting;
 
   const OrderState({
     this.recipes = const [],
@@ -25,6 +26,7 @@ class OrderState {
     this.pendingNotes = const {},
     this.isLoading = true,
     this.clearedTables = const {},
+    this.isSubmitting = false,
   });
 
   int get cartCount => cart.fold(0, (s, i) => s + i.quantity);
@@ -62,10 +64,10 @@ class OrderState {
   List<Order> ordersByDate(DateTime d) => orders.where((o) =>
     o.createdAt.year == d.year && o.createdAt.month == d.month && o.createdAt.day == d.day).toList();
 
-  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, List<Map<String, String>>? categories, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes, bool? isLoading, Set<int>? clearedTables}) =>
+  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, List<Map<String, String>>? categories, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes, bool? isLoading, Set<int>? clearedTables, bool? isSubmitting}) =>
     OrderState(recipes: recipes ?? this.recipes, cart: cart ?? this.cart, orders: orders ?? this.orders,
       categories: categories ?? this.categories, selectedTable: selectedTable ?? this.selectedTable,
       tableCount: tableCount ?? this.tableCount, tableNames: tableNames ?? this.tableNames,
       pendingNotes: pendingNotes ?? this.pendingNotes, isLoading: isLoading ?? this.isLoading,
-      clearedTables: clearedTables ?? this.clearedTables);
+      clearedTables: clearedTables ?? this.clearedTables, isSubmitting: isSubmitting ?? this.isSubmitting);
 }
