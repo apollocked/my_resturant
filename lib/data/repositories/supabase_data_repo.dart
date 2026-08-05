@@ -18,8 +18,8 @@ class SupabaseDataRepository implements DataRepository {
   String? get _userId => _client.auth.currentUser?.id;
 
   Recipe _mapRecipe(Map<String, dynamic> row) => Recipe(
-    id: row['id'] as String,
-    name: row['name'] as String,
+    id: row['id'] as String? ?? '',
+    name: row['name'] as String? ?? '',
     imageUrl: (row['image_url'] as String?) ?? '',
     price: (row['price'] as num?)?.toDouble() ?? 0,
     description: (row['description'] as String?) ?? '',
@@ -130,17 +130,22 @@ class SupabaseDataRepository implements DataRepository {
   Future<void> toggleRecipe(String id) async {
     final uid = _userId;
     if (!_isAuthed || uid == null) return;
-    final data = await _client
-        .from('recipes')
-        .select('available')
-        .eq('id', id)
-        .eq('restaurant_id', uid)
-        .single();
-    await _client
-        .from('recipes')
-        .update({'available': !(data['available'] as bool)})
-        .eq('id', id)
-        .eq('restaurant_id', uid);
+    try {
+      final data = await _client
+          .from('recipes')
+          .select('available')
+          .eq('id', id)
+          .eq('restaurant_id', uid)
+          .maybeSingle();
+      if (data == null) return;
+      await _client
+          .from('recipes')
+          .update({'available': !(data['available'] as bool? ?? false)})
+          .eq('id', id)
+          .eq('restaurant_id', uid);
+    } catch (e) {
+      debugPrint('SupabaseDataRepo.toggleRecipe error: $e');
+    }
   }
 
   @override
@@ -160,7 +165,15 @@ class SupabaseDataRepository implements DataRepository {
   Order _mapOrder(Map<String, dynamic> row) {
     List<CartItem> items = [];
     try {
-      final raw = jsonDecode(row['items_json'] as String? ?? '[]') as List;
+      final rawJson = row['items_json'];
+      final List<dynamic> raw;
+      if (rawJson is List) {
+        raw = rawJson;
+      } else if (rawJson is String) {
+        raw = jsonDecode(rawJson.isEmpty ? '[]' : rawJson) as List;
+      } else {
+        raw = const [];
+      }
       items = raw.map((item) {
         return CartItem(
           recipe: Recipe(
@@ -181,7 +194,7 @@ class SupabaseDataRepository implements DataRepository {
     }
 
     return Order(
-      id: row['id'] as String,
+      id: row['id'] as String? ?? '',
       tableNumber: (row['table_number'] as num?)?.toInt() ?? 0,
       tableName: row['table_label'] as String?,
       items: items,
@@ -189,10 +202,21 @@ class SupabaseDataRepository implements DataRepository {
         (s) => s.name == row['status'],
         orElse: () => OrderStatus.pending,
       ),
-      createdAt: DateTime.fromMillisecondsSinceEpoch((row['created_at'] as num?)?.toInt() ?? 0),
+      createdAt: _parseCreatedAt(row['created_at']),
       notes: row['notes'] as String? ?? '',
       trackingCode: row['tracking_code'] as String? ?? '',
     );
+  }
+
+  DateTime _parseCreatedAt(dynamic v) {
+    if (v is num) return DateTime.fromMillisecondsSinceEpoch(v.toInt());
+    if (v is String) {
+      final epoch = int.tryParse(v);
+      if (epoch != null) return DateTime.fromMillisecondsSinceEpoch(epoch);
+      final parsed = DateTime.tryParse(v);
+      if (parsed != null) return parsed;
+    }
+    return DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   @override
@@ -288,7 +312,8 @@ class SupabaseDataRepository implements DataRepository {
         .select()
         .eq('restaurant_id', uid);
     return {
-      for (final row in data) row['key'] as String: row['value'] as String,
+      for (final row in data)
+        (row['key'] as String? ?? ''): (row['value'] as String? ?? ''),
     };
   }
 
@@ -315,7 +340,7 @@ class SupabaseDataRepository implements DataRepository {
         .map(
           (data) => {
             for (final row in data)
-              row['key'] as String: row['value'] as String,
+              (row['key'] as String? ?? ''): (row['value'] as String? ?? ''),
           },
         );
   }
@@ -323,9 +348,9 @@ class SupabaseDataRepository implements DataRepository {
   // ── Categories ────────────────────────────────────────────
 
   Map<String, String> _mapCategory(Map<String, dynamic> row) => {
-    'key': row['key'] as String,
-    'name': row['name'] as String,
-    'icon': row['icon'] as String,
+    'key': (row['key'] as String?) ?? '',
+    'name': (row['name'] as String?) ?? '',
+    'icon': (row['icon'] as String?) ?? '',
   };
 
   @override
