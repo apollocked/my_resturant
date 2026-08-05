@@ -47,7 +47,8 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   bool _isExpired(Map<String, dynamic> code) {
     final expires = code['expires_at'];
     if (expires == null) return false;
-    return DateTime.parse(expires.toString()).isBefore(DateTime.now());
+    final d = DateTime.tryParse(expires.toString());
+    return d != null && d.isBefore(DateTime.now());
   }
 
   Future<void> _createCode() async {
@@ -286,7 +287,8 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
 
   String _formatDate(dynamic v) {
     if (v == null) return '-';
-    final d = DateTime.parse(v.toString()).toLocal();
+    final d = DateTime.tryParse(v.toString())?.toLocal();
+    if (d == null) return '-';
     return '${d.day}/${d.month}/${d.year}';
   }
 }

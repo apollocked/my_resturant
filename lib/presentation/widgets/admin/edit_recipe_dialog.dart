@@ -55,7 +55,7 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(widget.t('cancel'))),
         FilledButton(onPressed: () => Navigator.pop(context, {
-          'name': _nameCtl.text, 'price': double.tryParse(_priceCtl.text), 'description': _descCtl.text, 'category': _cat,
+          'name': _nameCtl.text, 'price': double.tryParse(_priceCtl.text) ?? widget.price, 'description': _descCtl.text, 'category': _cat,
         }), style: FilledButton.styleFrom(backgroundColor: AppColors.primary), child: Text(widget.t('update'))),
       ],
     ));

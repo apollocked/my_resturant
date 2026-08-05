@@ -95,7 +95,20 @@ class _CartPageState extends State<CartPage> {
           currencySuffix: t('currency_suffix'), total: state.cartTotal,
           canSubmit: state.selectedTable > 0 && cart.isNotEmpty && !state.isSubmitting,
           isSubmitting: state.isSubmitting,
-          onSubmit: () async { final notes = _notesCtrl.text; _notesCtrl.clear(); final cubit = context.read<OrderCubit>(); await cubit.submitOrder(notes); if (mounted) { if (!context.mounted) return; context.go('/kitchen'); } },
+          onSubmit: () async {
+            final notes = _notesCtrl.text;
+            final cubit = context.read<OrderCubit>();
+            try {
+              await cubit.submitOrder(notes);
+            } catch (_) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('error_occurred'))));
+              return;
+            }
+            _notesCtrl.clear();
+            if (!context.mounted) return;
+            context.go('/kitchen');
+          },
         ),
       ],
     ]);

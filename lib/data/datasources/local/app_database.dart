@@ -96,7 +96,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> toggleRecipeAvailability(String id) async {
-    final r = await (select(recipes)..where((t) => t.id.equals(id))).getSingle();
+    final rows = await (select(recipes)..where((t) => t.id.equals(id))).get();
+    if (rows.isEmpty) return;
+    final r = rows.first;
     await (update(recipes)..where((t) => t.id.equals(id))).write(RecipesCompanion(available: Value(!r.available)));
   }
 
@@ -125,7 +127,10 @@ class AppDatabase extends _$AppDatabase {
     return rows.map((o) => Order(
       id: o.id, tableNumber: o.tableNumber, tableName: o.tableLabel,
       items: itemsByOrder[o.id] ?? [],
-      status: OrderStatus.values.firstWhere((s) => s.name == o.status),
+      status: OrderStatus.values.firstWhere(
+        (s) => s.name == o.status,
+        orElse: () => OrderStatus.pending,
+      ),
       createdAt: DateTime.fromMillisecondsSinceEpoch(o.createdAt),
       notes: o.notes,
     )).toList();

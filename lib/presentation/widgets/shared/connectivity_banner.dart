@@ -26,6 +26,7 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
 
   Future<void> _init() async {
     final results = await Connectivity().checkConnectivity();
+    if (!mounted) return;
     _updateState(results.any((r) => r != ConnectivityResult.none));
     _sub = Connectivity().onConnectivityChanged.listen((results) {
       _updateState(results.any((r) => r != ConnectivityResult.none));

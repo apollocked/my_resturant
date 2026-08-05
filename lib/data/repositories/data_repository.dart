@@ -12,14 +12,14 @@ class AppRepository implements DataRepository {
   final _orderCtrl = StreamController<List<Order>>.broadcast();
   final _recipeCtrl = StreamController<List<Recipe>>.broadcast();
   final _settingCtrl = StreamController<Map<String, String>>.broadcast();
+  final _categoryCtrl = StreamController<List<Map<String, String>>>.broadcast();
 
   void close() {
     _orderCtrl.close();
     _recipeCtrl.close();
     _settingCtrl.close();
+    _categoryCtrl.close();
   }
-
-  final _categoryCtrl = StreamController<List<Map<String, String>>>.broadcast();
 
   Future<void> _emitOrders() async => _orderCtrl.add(await loadOrders());
   Future<void> _emitRecipes() async => _recipeCtrl.add(await loadRecipes());

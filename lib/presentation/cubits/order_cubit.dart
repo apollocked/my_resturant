@@ -58,6 +58,8 @@ class OrderCubit extends Cubit<OrderState> {
       }
     }
 
+    if (isClosed) return;
+
     _subscribe(_repo.watchOrders, (o) {
       if (_currentRole != null) {
         _notifService.checkOrderChanges(

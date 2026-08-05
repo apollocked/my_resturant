@@ -174,7 +174,7 @@ class _DishFormPageState extends State<DishFormPage> {
         IOSUiSettings(title: _t('crop_image')),
       ],
     );
-    if (cropped != null) _imageUrl.value = cropped.path;
+    if (cropped != null && mounted) _imageUrl.value = cropped.path;
   }
 
   Future<void> _save() async {

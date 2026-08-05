@@ -37,7 +37,11 @@ class SettingsCubit extends Cubit<SettingsState> {
           'dark' => ThemeMode.dark,
           _ => ThemeMode.light,
         },
-        locale: Locale(localeStr ?? 'ku'),
+        locale: switch (localeStr) {
+          'en' => const Locale('en'),
+          'ar' => const Locale('ar'),
+          _ => const Locale('ku'),
+        },
         onboardingComplete: onboarding,
       ),
     );

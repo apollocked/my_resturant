@@ -36,6 +36,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       lastDate: DateTime.now(),
     );
     if (d != null) {
+      if (!mounted) return;
       setState(() {
         _selectedDate = d;
         _viewMonth = DateTime(d.year, d.month);

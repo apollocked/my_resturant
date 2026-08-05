@@ -122,10 +122,17 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<Role?> getLoggedInRole() async {
     final user = _client.auth.currentUser;
     if (user == null) return null;
-    final data = await _client.from('profiles').select('role').eq('id', user.id).single();
-    final name = data['role'] as String?;
-    if (name == null) return null;
-    return Role.values.firstWhere((r) => r.name == name);
+    try {
+      final data = await _client.from('profiles').select('role').eq('id', user.id).maybeSingle();
+      final name = data?['role'] as String?;
+      if (name == null) return null;
+      for (final r in Role.values) {
+        if (r.name == name) return r;
+      }
+    } catch (e, st) {
+      debugPrint('SupabaseAuthRepo.getLoggedInRole error: $e\n$st');
+    }
+    return null;
   }
 
   @override
@@ -133,8 +140,8 @@ class SupabaseAuthRepository implements AuthRepository {
     try {
       final user = _client.auth.currentUser;
       if (user == null) return false;
-      final data = await _client.from('profiles').select('activated').eq('id', user.id).single();
-      return data['activated'] == true;
+      final data = await _client.from('profiles').select('activated').eq('id', user.id).maybeSingle();
+      return data?['activated'] == true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.isActivated error: $e\n$st');
       return false;
