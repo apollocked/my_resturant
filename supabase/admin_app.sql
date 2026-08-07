@@ -148,3 +148,126 @@ REVOKE EXECUTE ON FUNCTION public.admin_list_restaurants() FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.admin_list_restaurants() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.admin_list_promo_codes() FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.admin_list_promo_codes() TO authenticated;
+
+-- Aggregated reports for the platform admin: account activity + orders &
+-- revenue in one JSON payload (accounts, promos, orders by status/day,
+-- per-restaurant breakdown, top selling items).
+CREATE OR REPLACE FUNCTION public.admin_reports()
+RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public, extensions
+AS $$
+DECLARE
+  v jsonb;
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Forbidden';
+  END IF;
+
+  v := jsonb_build_object(
+    'generated_at', now(),
+    'accounts', jsonb_build_object(
+      'total',        (SELECT count(*) FROM public.profiles),
+      'activated',    (SELECT count(*) FROM public.profiles WHERE activated),
+      'not_activated',(SELECT count(*) FROM public.profiles WHERE NOT activated),
+      'joined_30d',   (SELECT count(*) FROM public.profiles WHERE created_at >= now() - interval '30 days'),
+      'joined_90d',   (SELECT count(*) FROM public.profiles WHERE created_at >= now() - interval '90 days'),
+      'with_admin_pin',   (SELECT count(*) FROM public.profiles WHERE pin_admin <> ''),
+      'with_waiter_pin',  (SELECT count(*) FROM public.profiles WHERE pin_waiter <> ''),
+      'with_kitchen_pin', (SELECT count(*) FROM public.profiles WHERE pin_kitchen <> '')
+    ),
+    'promos', jsonb_build_object(
+      'total',         (SELECT count(*) FROM public.promo_codes),
+      'used',          (SELECT count(*) FROM public.promo_codes WHERE used_by IS NOT NULL),
+      'available',     (SELECT count(*) FROM public.promo_codes WHERE used_by IS NULL AND expires_at > now()),
+      'expired',       (SELECT count(*) FROM public.promo_codes WHERE expires_at <= now()),
+      'expiring_30d',  (SELECT count(*) FROM public.promo_codes WHERE used_by IS NULL AND expires_at > now() AND expires_at <= now() + interval '30 days')
+    ),
+    'orders', jsonb_build_object(
+      'total',   (SELECT count(*) FROM public.orders),
+      'revenue', COALESCE((SELECT sum((it ->> 'quantity')::int * (it ->> 'recipe_price')::numeric)
+                           FROM public.orders o
+                           CROSS JOIN jsonb_array_elements(
+                             CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+                           ) it), 0),
+      'items',   COALESCE((SELECT sum((it ->> 'quantity')::int)
+                           FROM public.orders o
+                           CROSS JOIN jsonb_array_elements(
+                             CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+                           ) it), 0),
+      'by_status', COALESCE((
+        SELECT jsonb_object_agg(status, cnt)
+        FROM (SELECT status, count(*) cnt FROM public.orders GROUP BY status) s
+      ), '{}'::jsonb),
+      'by_day', COALESCE((
+        SELECT jsonb_agg(jsonb_build_object('day', day, 'orders', orders, 'revenue', revenue) ORDER BY day)
+        FROM (
+          SELECT d.day::date AS day,
+                 count(o.id) AS orders,
+                 COALESCE(sum(ord.rev), 0) AS revenue
+          FROM generate_series(now() - interval '13 days', now(), interval '1 day') d(day)
+          LEFT JOIN public.orders o
+            ON to_timestamp(o.created_at / 1000.0)::date = d.day::date
+          LEFT JOIN LATERAL (
+            SELECT sum((it ->> 'quantity')::int * (it ->> 'recipe_price')::numeric) AS rev
+            FROM jsonb_array_elements(
+              CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+            ) it
+          ) ord ON TRUE
+          GROUP BY d.day::date
+        ) s
+      ), '[]'::jsonb)
+    ),
+    'restaurants', COALESCE((
+      SELECT jsonb_agg(row ORDER BY (row ->> 'orders')::int DESC)
+      FROM (
+        SELECT jsonb_build_object(
+          'email', p.email,
+          'activated', p.activated,
+          'joined', p.created_at,
+          'promo_code', pc.code,
+          'promo_expires', pc.expires_at,
+          'pin_admin', p.pin_admin <> '',
+          'pin_waiter', p.pin_waiter <> '',
+          'pin_kitchen', p.pin_kitchen <> '',
+          'recipes', (SELECT count(*) FROM public.recipes r WHERE r.restaurant_id = p.id),
+          'orders', (SELECT count(*) FROM public.orders o WHERE o.restaurant_id = p.id),
+          'items', COALESCE((SELECT sum((it ->> 'quantity')::int)
+                             FROM public.orders o
+                             CROSS JOIN jsonb_array_elements(
+                               CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+                             ) it
+                             WHERE o.restaurant_id = p.id), 0),
+          'revenue', COALESCE((SELECT sum((it ->> 'quantity')::int * (it ->> 'recipe_price')::numeric)
+                               FROM public.orders o
+                               CROSS JOIN jsonb_array_elements(
+                                 CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+                               ) it
+                               WHERE o.restaurant_id = p.id), 0)
+        ) row
+        FROM public.profiles p
+        LEFT JOIN public.promo_codes pc ON pc.used_by = p.id
+      ) t
+    ), '[]'::jsonb),
+    'top_items', COALESCE((
+      SELECT jsonb_agg(jsonb_build_object('name', name, 'qty', qty, 'revenue', rev))
+      FROM (
+        SELECT it ->> 'recipe_name' AS name,
+               sum((it ->> 'quantity')::int) AS qty,
+               sum((it ->> 'quantity')::int * (it ->> 'recipe_price')::numeric) AS rev
+        FROM public.orders o
+        CROSS JOIN jsonb_array_elements(
+          CASE WHEN o.items_json IS NULL OR o.items_json = '' THEN '[]'::jsonb ELSE o.items_json::jsonb END
+        ) it
+        GROUP BY it ->> 'recipe_name'
+        ORDER BY qty DESC, rev DESC
+        LIMIT 10
+      ) t
+    ), '[]'::jsonb)
+  );
+
+  RETURN v;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.admin_reports() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.admin_reports() TO authenticated;

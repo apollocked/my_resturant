@@ -291,14 +291,14 @@ REVOKE EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION public.passcodes_configured() FROM PUBLIC, anon;
-GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.passcodes_configured() FROM PUBLIC;
+GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.set_role(TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.set_role(TEXT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.claim_promo_code(TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.claim_promo_code(TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION public.is_activated() FROM PUBLIC, anon;
-GRANT  EXECUTE ON FUNCTION public.is_activated() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.is_activated() FROM PUBLIC;
+GRANT  EXECUTE ON FUNCTION public.is_activated() TO anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.is_admin() FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.is_admin() TO authenticated;
 
