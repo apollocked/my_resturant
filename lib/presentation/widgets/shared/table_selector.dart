@@ -34,38 +34,60 @@ class TableSelector extends StatelessWidget {
     );
   }
 
+  String _firstLetters(String s) {
+    final trimmed = s.trim();
+    if (trimmed.isEmpty) return '';
+    return trimmed.split('').take(3).join();
+  }
+
   void _showPicker(BuildContext context) {
     final settings = context.read<SettingsCubit>();
     final cs = Theme.of(context).colorScheme;
+    final isRtl = settings.state.locale.languageCode != 'en';
     String t(String key) => Tr.get(key, settings.state.locale);
-    showModalBottomSheet(context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(width: 36, height: 4, decoration: BoxDecoration(color: cs.outlineVariant, borderRadius: BorderRadius.circular(2))),
-        const SizedBox(height: 20),
-        Text(t('select_table_title'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 20),
-        Builder(builder: (ctx2) {
-          final tableCount = context.read<OrderCubit>().state.tableCount;
-          return Wrap(spacing: 10, runSpacing: 10, children: List.generate(tableCount, (i) {
-            final n = i + 1;
-            final sel = n == selectedTable;
-            final locked = reservedTables.contains(n) && n != selectedTable;
-            return SizedBox(width: 56, height: 44, child: OutlinedButton(
-              onPressed: locked ? null : () { onChanged(n); Navigator.pop(ctx); },
-              style: OutlinedButton.styleFrom(
-                backgroundColor: locked ? cs.surfaceContainerHighest : (sel ? AppColors.primary : cs.surface),
-                foregroundColor: locked ? cs.onSurfaceVariant : (sel ? cs.onPrimary : cs.onSurface),
-                side: BorderSide(color: locked ? cs.outlineVariant : (sel ? AppColors.primary : cs.outlineVariant)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-              child: locked
-                  ? Icon(Icons.lock, size: 14, color: cs.onSurfaceVariant)
-                  : Text('$n', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-            ));
-          }));
-        }),
-        const SizedBox(height: 12),
-      ])),
+    showDialog(
+      context: context,
+      builder: (ctx) => Directionality(
+        textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+        child: AlertDialog(
+          title: Text(t('select_table_title'), textAlign: isRtl ? TextAlign.right : TextAlign.left),
+          content: SingleChildScrollView(
+            child: Builder(builder: (ctx2) {
+              final orderState = context.read<OrderCubit>().state;
+              return Wrap(spacing: 10, runSpacing: 10, children: List.generate(orderState.tableCount, (i) {
+                final n = i + 1;
+                final sel = n == selectedTable;
+                final locked = reservedTables.contains(n) && n != selectedTable;
+                final customName = orderState.tableNames[n]?.trim();
+                final hasCustom = customName != null && customName.isNotEmpty;
+                final labelColor = sel ? cs.onPrimary : cs.onSurface;
+                return SizedBox(width: 56, height: 44, child: OutlinedButton(
+                  onPressed: locked ? null : () { onChanged(n); Navigator.pop(ctx); },
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: locked ? cs.surfaceContainerHighest : (sel ? AppColors.primary : cs.surface),
+                    foregroundColor: locked ? cs.onSurfaceVariant : labelColor,
+                    side: BorderSide(color: locked ? cs.outlineVariant : (sel ? AppColors.primary : cs.outlineVariant)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  child: locked
+                      ? Icon(Icons.lock, size: 14, color: cs.onSurfaceVariant)
+                      : hasCustom
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(_firstLetters(customName),
+                                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: labelColor)),
+                                Text('$n',
+                                    style: TextStyle(fontSize: 8, fontWeight: FontWeight.w500, color: sel ? cs.onPrimary.withValues(alpha: 0.85) : cs.onSurfaceVariant)),
+                              ],
+                            )
+                          : Text('$n', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                ));
+              }));
+            }),
+          ),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('cancel')))],
+        ),
+      ),
     );
   }
 }

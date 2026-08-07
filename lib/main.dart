@@ -47,6 +47,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final DataRepository repo;
   final AccountCubit acct;
+
   final RoleCubit role;
   final SettingsCubit settings;
   const MyApp({
