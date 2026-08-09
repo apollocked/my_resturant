@@ -55,6 +55,13 @@ class ProfileAdminPanel extends StatelessWidget {
       ),
       _card(
         context,
+        Icons.category_outlined,
+        t('category_management'),
+        t('category_management_sub'),
+        '/category-management',
+      ),
+      _card(
+        context,
         Icons.toggle_on_outlined,
         t('available_foods'),
         t('available_foods_sub'),
