@@ -141,7 +141,20 @@ class ActionButtonsRowPlaceholder extends StatelessWidget {
         final orderCubit = context.read<OrderCubit>();
         if (route == '/dish-form') {
           final r = await router.push<Recipe>('/dish-form');
-          if (r != null) orderCubit.addRecipe(r);
+          if (r != null) {
+            try {
+              await orderCubit.addRecipe(r);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('dish_added'))));
+              }
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${t('error_occurred')}: $e')),
+                );
+              }
+            }
+          }
         } else {
           final ok = await router.push<bool>(route);
           if (ok == true) orderCubit.refresh();

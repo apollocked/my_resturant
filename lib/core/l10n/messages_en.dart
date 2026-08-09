@@ -99,6 +99,7 @@ const Map<String, String> en = {
   'crop_image': 'Crop Image',
   'edit_dish': 'Edit Dish',
   'add_dish': 'Add Dish',
+  'dish_added': 'Dish added successfully',
   'dish_name': 'Dish Name',
   'dish_name_required': 'Dish name is required',
   'price_dinar': 'Price (Dinar)',

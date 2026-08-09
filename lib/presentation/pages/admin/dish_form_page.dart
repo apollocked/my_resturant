@@ -181,7 +181,7 @@ class _DishFormPageState extends State<DishFormPage> {
     if (!_formKey.currentState!.validate()) return;
     final id = _isEditing ? widget.recipe!.id : const Uuid().v4();
     String imageUrl = _imageUrl.value;
-    if (!imageUrl.startsWith('http')) {
+    if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
       if (!mounted) return;
       showDialog(
         context: context,

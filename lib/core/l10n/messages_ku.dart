@@ -99,6 +99,7 @@ const Map<String, String> ku = {
   'crop_image': 'بڕینی وێنە',
   'edit_dish': 'نووسینەوەی خواردن',
   'add_dish': 'زیادکردنی خواردن',
+  'dish_added': 'خواردنەکە بە سەرکەوتوویی زیاد کرا',
   'dish_name': 'ناوی خواردن',
   'dish_name_required': 'ناوی خواردن بەتاڵە',
   'price_dinar': 'نرخ (دینار)',
