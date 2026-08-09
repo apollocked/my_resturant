@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -64,11 +65,14 @@ class _RoleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return PressableScale(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap?.call();
+      },
       child: Card(
         child: ListTile(
           leading: Icon(
-            _icon(role),
+            role.icon,
             color: isCurrent ? AppColors.primary : cs.onSurfaceVariant,
           ),
           title: Text(
@@ -112,10 +116,4 @@ class _RoleRow extends StatelessWidget {
       ),
     );
   }
-
-  IconData _icon(Role r) => switch (r) {
-    Role.waiter => Icons.room_service_outlined,
-    Role.kitchen => Icons.restaurant_outlined,
-    Role.admin => Icons.admin_panel_settings_outlined,
-  };
 }

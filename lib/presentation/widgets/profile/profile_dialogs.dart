@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -12,46 +14,50 @@ class ProfileDialogs {
     RoleCubit cubit,
     String Function(String) t,
   ) async {
+    var ok = true;
     if (cubit.state.role == Role.admin) {
       await cubit.switchRole(r);
-      return;
-    }
-    final ctl = TextEditingController();
-    String? pin;
-    try {
-      pin = await showDialog<String>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(t('enter_pin_for').replaceAll('{role}', t(r.name))),
-          content: TextField(
-            controller: ctl,
-            obscureText: true,
-            maxLength: 6,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: t('pin_hint'),
+    } else {
+      final ctl = TextEditingController();
+      String? pin;
+      try {
+        pin = await showDialog<String>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(t('enter_pin_for').replaceAll('{role}', t(r.name))),
+            content: TextField(
+              controller: ctl,
+              obscureText: true,
+              maxLength: 6,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: t('pin_hint'),
+              ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(t('cancel')),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, ctl.text),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+                child: Text(t('verify')),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(t('cancel')),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, ctl.text),
-              style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-              child: Text(t('verify')),
-            ),
-          ],
-        ),
-      );
-    } finally {
-      Future.delayed(const Duration(milliseconds: 300), () => ctl.dispose());
+        );
+      } finally {
+        Future.delayed(const Duration(milliseconds: 300), () => ctl.dispose());
+      }
+      if (pin == null || pin.isEmpty) return;
+      ok = await cubit.switchRole(r, pin: pin);
     }
-    if (pin == null || pin.isEmpty) return;
-    await cubit.switchRole(r, pin: pin);
-    if (context.mounted && cubit.state.role != r) {
+    if (!context.mounted) return;
+    if (ok && cubit.state.role == r) {
+      await _showRoleTransition(context, r, t);
+    } else if (cubit.state.role != r) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(t('pin_invalid')),
@@ -59,6 +65,30 @@ class ProfileDialogs {
         ),
       );
     }
+  }
+
+  static Future<void> _showRoleTransition(
+    BuildContext context,
+    Role role,
+    String Function(String) t,
+  ) {
+    return showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: '',
+      barrierColor: Colors.black.withValues(alpha: 0.65),
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (ctx, _, _) => _RoleTransitionOverlay(role: role, label: t(role.name)),
+      transitionBuilder: (ctx, anim, _, child) => FadeTransition(
+        opacity: anim,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.6, end: 1).animate(
+            CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+          ),
+          child: child,
+        ),
+      ),
+    );
   }
 
   static void confirmLogout(
@@ -226,5 +256,62 @@ class ProfileDialogs {
       curCtl.dispose();
       newCtl.dispose();
     });
+  }
+}
+
+class _RoleTransitionOverlay extends StatefulWidget {
+  final Role role;
+  final String label;
+  const _RoleTransitionOverlay({required this.role, required this.label});
+
+  @override
+  State<_RoleTransitionOverlay> createState() => _RoleTransitionOverlayState();
+}
+
+class _RoleTransitionOverlayState extends State<_RoleTransitionOverlay> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(const Duration(milliseconds: 1400), () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 104,
+            height: 104,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(widget.role.icon, size: 48, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            widget.label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

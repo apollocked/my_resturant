@@ -196,7 +196,10 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     String Function(String) t,
   ) {
     return PressableScale(
-      onTap: () => setState(() => _selected = r),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _selected = r);
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -220,7 +223,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
         child: Column(
           children: [
             Icon(
-              _roleIcon(r),
+              r.icon,
               size: 28,
               color: selected ? cs.onPrimary : AppColors.primary,
             ),
@@ -237,17 +240,6 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
         ),
       ),
     );
-  }
-
-  IconData _roleIcon(Role r) {
-    switch (r) {
-      case Role.waiter:
-        return Icons.room_service_outlined;
-      case Role.kitchen:
-        return Icons.restaurant_outlined;
-      case Role.admin:
-        return Icons.admin_panel_settings_outlined;
-    }
   }
 
   Future<void> _login() async {

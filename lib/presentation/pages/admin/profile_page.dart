@@ -35,9 +35,24 @@ class ProfilePage extends StatelessWidget {
         R.padding(context),
         R.padding(context) + 100,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, anim) => FadeTransition(
+          opacity: anim,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.06),
+              end: Offset.zero,
+            ).animate(anim),
+            child: child,
+          ),
+        ),
+        child: Column(
+          key: ValueKey(role),
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
           const Row(children: [SettingsButton(), Spacer()]),
           const SizedBox(height: 8),
           const ProfileAvatar(),
@@ -165,6 +180,7 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
         ],
+        ),
       ),
     );
   }

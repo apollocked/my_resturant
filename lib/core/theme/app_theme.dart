@@ -5,6 +5,8 @@ class AppTheme {
   static ThemeData get light => ThemeData(
     fontFamily: 'NRT',
     useMaterial3: true,
+    splashFactory: InkSparkle.splashFactory,
+    pageTransitionsTheme: _pageTransitions,
     scaffoldBackgroundColor: AppColors.background,
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
@@ -72,6 +74,8 @@ class AppTheme {
   static ThemeData get dark => ThemeData(
     fontFamily: 'NRT',
     useMaterial3: true,
+    splashFactory: InkSparkle.splashFactory,
+    pageTransitionsTheme: _pageTransitions,
     scaffoldBackgroundColor: const Color(0xFF121212),
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primary,
@@ -134,5 +138,15 @@ class AppTheme {
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
+  );
+
+  static const PageTransitionsTheme _pageTransitions = PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.macOS: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+    },
   );
 }

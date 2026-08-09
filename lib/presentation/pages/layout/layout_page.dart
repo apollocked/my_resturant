@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
@@ -10,6 +11,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/widgets/shared/connectivity_banner.dart';
 import 'package:my_resturant/presentation/widgets/shared/liquid_glass_nav_bar.dart';
+import 'package:my_resturant/presentation/widgets/shared/tab_entrance.dart';
 
 class _Nav {
   final IconData outline, filled;
@@ -44,7 +46,10 @@ class MainShell extends StatelessWidget {
               children: [
                 NavigationRail(
                   selectedIndex: selectedIndex,
-                  onDestinationSelected: (i) => navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex),
+                  onDestinationSelected: (i) {
+                    HapticFeedback.selectionClick();
+                    navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex);
+                  },
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: cs.surface,
                   indicatorColor: AppColors.primarySoft,
@@ -69,7 +74,7 @@ class MainShell extends StatelessWidget {
                   )).toList(),
                 ),
                 const VerticalDivider(width: 1),
-                Expanded(child: navigationShell),
+                Expanded(child: TabEntrance(index: selectedIndex, child: navigationShell)),
               ],
             ),
           ),
@@ -85,7 +90,10 @@ class MainShell extends StatelessWidget {
               children: [
                 NavigationRail(
                   selectedIndex: selectedIndex,
-                  onDestinationSelected: (i) => navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex),
+                  onDestinationSelected: (i) {
+                    HapticFeedback.selectionClick();
+                    navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex);
+                  },
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: cs.surface,
                   indicatorColor: AppColors.primarySoft,
@@ -104,7 +112,7 @@ class MainShell extends StatelessWidget {
                   )).toList(),
                 ),
                 const VerticalDivider(width: 1),
-                Expanded(child: navigationShell),
+                Expanded(child: TabEntrance(index: selectedIndex, child: navigationShell)),
               ],
             ),
           ),
@@ -115,7 +123,7 @@ class MainShell extends StatelessWidget {
     return ConnectivityBanner(
       child: Scaffold(
         extendBody: true,
-        body: SafeArea(top: true, bottom: false, child: navigationShell),
+        body: SafeArea(top: true, bottom: false, child: TabEntrance(index: selectedIndex, child: navigationShell)),
         bottomNavigationBar: LiquidGlassNavBar(
           items: items.map((item) => LiquidNavItem(
             icon: item.outline,
@@ -125,6 +133,7 @@ class MainShell extends StatelessWidget {
           selectedIndex: selectedIndex,
           onTap: (i) {
             debugPrint('[NAV] goBranch branch=${items[i].index} tappedIndex=$i current=${navigationShell.currentIndex} item=${items[i].labelKey}');
+            HapticFeedback.selectionClick();
             navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex);
           },
           badgeCount: state.cartCount,
