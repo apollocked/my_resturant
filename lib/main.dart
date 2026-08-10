@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/router/app_router.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
@@ -96,61 +94,28 @@ class _AppViewState extends State<AppView> {
       orderCubit.setCurrentLocale(settings.locale);
     }
     String t(String key) => Tr.get(key, settings.locale);
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _showExitDialog(context, t);
+    return MaterialApp.router(
+      title: t('app_name'),
+      debugShowCheckedModeBanner: false,
+      locale: settings.locale,
+      supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (locale, supported) {
+        if (locale == null) return const Locale('en');
+        if (supported.contains(locale) &&
+            GlobalMaterialLocalizations.delegate.isSupported(locale)) {
+          return locale;
+        }
+        return const Locale('en');
       },
-      child: MaterialApp.router(
-        title: t('app_name'),
-        debugShowCheckedModeBanner: false,
-        locale: settings.locale,
-        supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        localeResolutionCallback: (locale, supported) {
-          if (locale == null) return const Locale('en');
-          if (supported.contains(locale) &&
-              GlobalMaterialLocalizations.delegate.isSupported(locale)) {
-            return locale;
-          }
-          return const Locale('en');
-        },
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        themeMode: settings.themeMode,
-        routerConfig: appRouter,
-      ),
-    );
-  }
-
-  void _showExitDialog(BuildContext context, String Function(String) t) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(t('app_name')),
-        content: Text(t('exit_confirm')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(t('cancel')),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () {
-              Navigator.pop(ctx);
-              SystemNavigator.pop();
-            },
-            child: Text(
-              t('exit'),
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-        ],
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: settings.themeMode,
+      routerConfig: appRouter,
     );
   }
 }

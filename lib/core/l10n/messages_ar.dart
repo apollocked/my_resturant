@@ -93,6 +93,7 @@ const Map<String, String> ar = {
   'description': 'الوصف',
   'update': 'تحديث',
   'delete_food': 'حذف الطعام',
+  'delete_from_order': 'إزالة من الطلب',
   'delete_confirm': 'هل أنت متأكد من حذف {name}؟',
   'delete': 'حذف',
   'permission_needed': 'يجب منح إذن المعرض',

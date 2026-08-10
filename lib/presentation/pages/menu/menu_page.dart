@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/menu/item_on_hold_sheet.dart';
@@ -47,7 +48,32 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   void _increment(Recipe r) => context.read<OrderCubit>().addToCart(r);
   void _decrement(Recipe r) =>
       context.read<OrderCubit>().decrementOrRemove(r.id);
-  void _remove(Recipe r) => context.read<OrderCubit>().removeFromCartById(r.id);
+  Future<void> _remove(Recipe r) async {
+    if (!mounted) return;
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('delete_from_order')),
+        content: Text(t('delete_confirm').replaceAll('{name}', r.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(t('cancel')),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(t('delete')),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && mounted) {
+      context.read<OrderCubit>().removeFromCartById(r.id);
+    }
+  }
 
   Future<void> _notes(Recipe recipe) async {
     if (!mounted) return;

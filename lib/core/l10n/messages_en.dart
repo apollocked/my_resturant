@@ -93,6 +93,7 @@ const Map<String, String> en = {
   'description': 'Description',
   'update': 'Update',
   'delete_food': 'Delete Food',
+  'delete_from_order': 'Remove from order',
   'delete_confirm': 'Are you sure you want to delete {name}?',
   'delete': 'Delete',
   'permission_needed': 'Gallery permission is required',

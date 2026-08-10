@@ -39,7 +39,7 @@ class MainShell extends StatelessWidget {
     final items = _buildNavItems(role);
 
     if (isDesktop && R.height(context) >= 500) {
-      return SafeArea(
+      return _exitScope(context, t, SafeArea(
         child: ConnectivityBanner(
           child: Scaffold(
             body: Row(
@@ -79,11 +79,11 @@ class MainShell extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ));
     }
 
     if (isTablet && R.height(context) >= 500) {
-      return SafeArea(
+      return _exitScope(context, t, SafeArea(
         child: ConnectivityBanner(
           child: Scaffold(
             body: Row(
@@ -117,10 +117,10 @@ class MainShell extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ));
     }
 
-    return ConnectivityBanner(
+    return _exitScope(context, t, ConnectivityBanner(
       child: Scaffold(
         extendBody: true,
         body: SafeArea(top: true, bottom: false, child: TabEntrance(index: selectedIndex, child: navigationShell)),
@@ -142,7 +142,42 @@ class MainShell extends StatelessWidget {
           isDark: isDark,
         ),
       ),
+    ));
+  }
+
+  Widget _exitScope(BuildContext context, String Function(String) t, Widget child) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _confirmExit(context, t);
+      },
+      child: child,
     );
+  }
+
+  Future<void> _confirmExit(BuildContext context, String Function(String) t) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('app_name')),
+        content: Text(t('exit_confirm')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(t('cancel')),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              t('exit'),
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) SystemNavigator.pop();
   }
 
   List<_Nav> _buildNavItems(Role role) {

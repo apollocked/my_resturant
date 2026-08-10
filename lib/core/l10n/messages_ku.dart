@@ -93,6 +93,7 @@ const Map<String, String> ku = {
   'description': 'وەسف',
   'update': 'نوێکردنەوە',
   'delete_food': 'سڕینەوەی خواردن',
+  'delete_from_order': 'لابردن لە داواکارییەکە',
   'delete_confirm': 'دڵنیای لە سڕینەوەی {name}؟',
   'delete': 'سڕینەوە',
   'permission_needed': 'پێویستە مۆڵەتی گالەری بدەیت',
