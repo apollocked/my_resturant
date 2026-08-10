@@ -42,6 +42,7 @@ class AppRepository implements DataRepository {
     double? price,
     String? category,
     String? description,
+    String? imageUrl,
   }) async {
     await db.updateRecipeRecord(
       id,
@@ -49,6 +50,7 @@ class AppRepository implements DataRepository {
       price: price,
       category: category,
       description: description,
+      imageUrl: imageUrl,
     );
     _emitRecipes();
   }

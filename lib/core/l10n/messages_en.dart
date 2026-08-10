@@ -100,6 +100,7 @@ const Map<String, String> en = {
   'edit_dish': 'Edit Dish',
   'add_dish': 'Add Dish',
   'dish_added': 'Dish added successfully',
+  'dish_updated': 'Dish updated successfully',
   'dish_name': 'Dish Name',
   'dish_name_required': 'Dish name is required',
   'price_dinar': 'Price (Dinar)',

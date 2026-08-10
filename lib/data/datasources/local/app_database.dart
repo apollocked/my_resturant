@@ -82,12 +82,13 @@ class AppDatabase extends _$AppDatabase {
     ));
   }
 
-  Future<void> updateRecipeRecord(String id, {String? name, double? price, String? category, String? description}) async {
+  Future<void> updateRecipeRecord(String id, {String? name, double? price, String? category, String? description, String? imageUrl}) async {
     await (update(recipes)..where((t) => t.id.equals(id))).write(RecipesCompanion(
       name: name != null ? Value(name) : const Value.absent(),
       price: price != null ? Value(price) : const Value.absent(),
       category: category != null ? Value(category) : const Value.absent(),
       description: description != null ? Value(description) : const Value.absent(),
+      imageUrl: imageUrl != null ? Value(imageUrl) : const Value.absent(),
     ));
   }
 

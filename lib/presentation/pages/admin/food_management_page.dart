@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
@@ -7,7 +8,6 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
-import 'package:my_resturant/presentation/widgets/admin/edit_recipe_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_filter_bar.dart';
 import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
@@ -38,21 +38,28 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   Future<void> _editRecipe(Recipe r) async {
     if (!mounted) return;
     final orderCubit = context.read<OrderCubit>();
-    final result = await showDialog<Map<String, dynamic>>(
-      context: context,
-      builder: (_) => EditRecipeDialog(
-        name: r.name, price: r.price, description: r.description, category: r.category, t: _t,
-        categories: orderCubit.state.categories,
-      ),
-    );
-    if (!mounted) return;
-    if (result != null) {
-      orderCubit.updateRecipe(r.id,
-        name: result['name'] as String,
-        price: result['price'] as double?,
-        description: result['description'] as String?,
-        category: result['category'] as String?,
+    final result = await context.push<Recipe>('/dish-form', extra: r);
+    if (!mounted || result == null) return;
+    try {
+      await orderCubit.updateRecipe(
+        result.id,
+        name: result.name,
+        price: result.price,
+        description: result.description,
+        category: result.category,
+        imageUrl: result.imageUrl,
       );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_t('dish_updated'))),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${_t('error_occurred')}: $e')),
+        );
+      }
     }
   }
 

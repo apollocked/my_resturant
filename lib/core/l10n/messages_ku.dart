@@ -100,6 +100,7 @@ const Map<String, String> ku = {
   'edit_dish': 'نووسینەوەی خواردن',
   'add_dish': 'زیادکردنی خواردن',
   'dish_added': 'خواردنەکە بە سەرکەوتوویی زیاد کرا',
+  'dish_updated': 'خواردنەکە بە سەرکەوتوویی نوێ کرایەوە',
   'dish_name': 'ناوی خواردن',
   'dish_name_required': 'ناوی خواردن بەتاڵە',
   'price_dinar': 'نرخ (دینار)',

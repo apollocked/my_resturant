@@ -27,6 +27,7 @@ import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/domain/entities/recipe.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 
@@ -94,7 +95,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/report', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const ReportPage()),
     GoRoute(path: '/dish-form', parentNavigatorKey: _rootNavigator,
-      builder: (_, _) => const DishFormPage()),
+      builder: (_, state) => DishFormPage(recipe: state.extra as Recipe?)),
     GoRoute(path: '/category-form', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const CategoryFormPage()),
     GoRoute(path: '/category-management', parentNavigatorKey: _rootNavigator,

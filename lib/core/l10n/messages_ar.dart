@@ -100,6 +100,7 @@ const Map<String, String> ar = {
   'edit_dish': 'تعديل الطعام',
   'add_dish': 'إضافة طعام',
   'dish_added': 'تمت إضافة الطعام بنجاح',
+  'dish_updated': 'تم تحديث الطعام بنجاح',
   'dish_name': 'اسم الطعام',
   'dish_name_required': 'اسم الطعام مطلوب',
   'price_dinar': 'السعر (دينار)',

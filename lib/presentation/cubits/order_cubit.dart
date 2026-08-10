@@ -282,12 +282,14 @@ class OrderCubit extends Cubit<OrderState> {
     double? price,
     String? category,
     String? description,
+    String? imageUrl,
   }) async => _repo.editRecipe(
     id,
     name: name,
     price: price,
     category: category,
     description: description,
+    imageUrl: imageUrl,
   );
 
   Future<void> toggleAvailability(String id) async => _repo.toggleRecipe(id);

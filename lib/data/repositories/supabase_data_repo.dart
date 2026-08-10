@@ -74,6 +74,7 @@ class SupabaseDataRepository implements DataRepository {
     double? price,
     String? category,
     String? description,
+    String? imageUrl,
   }) async {
     final uid = _userId;
     if (!_isAuthed || uid == null) return;
@@ -82,6 +83,7 @@ class SupabaseDataRepository implements DataRepository {
     if (price != null) updates['price'] = price;
     if (category != null) updates['category'] = category;
     if (description != null) updates['description'] = description;
+    if (imageUrl != null) updates['image_url'] = imageUrl;
     if (updates.isNotEmpty) {
       await _client.from('recipes').update(updates).eq('id', id).eq('restaurant_id', uid);
     }
