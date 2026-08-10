@@ -32,11 +32,10 @@ class MainShell extends StatelessWidget {
     final role = context.watch<RoleCubit>().state.role;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     String t(String key) => Tr.get(key, settings.locale);
-    final selectedIndex = navigationShell.currentIndex;
+    final items = _buildNavItems(role);
+    final selectedIndex = items.indexWhere((item) => item.index == navigationShell.currentIndex);
     final isDesktop = R.isDesktop(context);
     final isTablet = R.isTablet(context);
-
-    final items = _buildNavItems(role);
 
     if (isDesktop && R.height(context) >= 500) {
       return _exitScope(context, t, SafeArea(
@@ -48,7 +47,8 @@ class MainShell extends StatelessWidget {
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (i) {
                     HapticFeedback.selectionClick();
-                    navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex);
+                    final branch = items[i].index;
+                    navigationShell.goBranch(branch, initialLocation: branch == navigationShell.currentIndex);
                   },
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: cs.surface,
@@ -92,7 +92,8 @@ class MainShell extends StatelessWidget {
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (i) {
                     HapticFeedback.selectionClick();
-                    navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex);
+                    final branch = items[i].index;
+                    navigationShell.goBranch(branch, initialLocation: branch == navigationShell.currentIndex);
                   },
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: cs.surface,
