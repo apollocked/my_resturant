@@ -5,6 +5,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/confirm_dialog.dart';
 
 class HistoryOrderList extends StatelessWidget {
   final List orders;
@@ -55,7 +56,15 @@ class HistoryOrderList extends StatelessWidget {
       order: order,
       showTime: true,
       onReset: role == Role.admin
-          ? () {
+          ? () async {
+              final confirmed = await showConfirmDialog(
+                context,
+                title: t('again'),
+                message: t('again_confirm_cart'),
+                confirmLabel: t('again'),
+                cancelLabel: t('cancel'),
+              );
+              if (!confirmed || !context.mounted) return;
               final c = context.read<OrderCubit>();
               for (final item in order.items) {
                 for (int i = 0; i < item.quantity; i++) {

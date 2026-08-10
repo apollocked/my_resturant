@@ -132,6 +132,8 @@ const Map<String, String> ku = {
   'next_prepare': 'ئامادەکردن',
   'next_serve': 'پێشکەشکردن',
   'again': 'دووبارە',
+  'again_confirm_served': 'ئەم داواکارییە بگەڕێنەوە بۆ چاوەڕوانی؟',
+  'again_confirm_cart': 'ئەم خواردنانە بگەڕێنەوە بۆ سەبەتە؟',
   'foods': 'خواردنەکان',
   'order_detail_notes': 'تێبینی:',
   'history_title': 'مێژووی داواکاری',

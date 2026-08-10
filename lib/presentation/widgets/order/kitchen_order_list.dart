@@ -8,6 +8,7 @@ import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart'
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/shared/confirm_dialog.dart';
 
 class KitchenOrderList extends StatelessWidget {
   final List<Order> orders;
@@ -40,7 +41,16 @@ class KitchenOrderList extends StatelessWidget {
         onTap: () => context.push('/order-detail', extra: o),
         child: OrderCard(order: o, showTimeline: true,
           onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-          onReset: canEdit && !hasNext ? () => cubit.updateOrderStatus(o.id, OrderStatus.pending) : null),
+          onReset: canEdit && !hasNext ? () async {
+            final confirmed = await showConfirmDialog(
+              context,
+              title: t('again'),
+              message: t('again_confirm_served'),
+              confirmLabel: t('again'),
+              cancelLabel: t('cancel'),
+            );
+            if (confirmed) cubit.updateOrderStatus(o.id, OrderStatus.pending);
+          } : null),
       );
     }).toList();
     return RefreshIndicator(

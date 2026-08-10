@@ -12,6 +12,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/shared/confirm_dialog.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -71,7 +72,18 @@ class OrderDetailPage extends StatelessWidget {
               ))
             else
               SizedBox(width: double.infinity, child: PressableScale(
-                onTap: () async { await cubit.updateOrderStatus(order.id, OrderStatus.pending); if (context.mounted) context.pop(); },
+                onTap: () async {
+                  final confirmed = await showConfirmDialog(
+                    context,
+                    title: t('again'),
+                    message: t('again_confirm_served'),
+                    confirmLabel: t('again'),
+                    cancelLabel: t('cancel'),
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await cubit.updateOrderStatus(order.id, OrderStatus.pending);
+                  if (context.mounted) context.pop();
+                },
                 child: OutlinedButton(
                   onPressed: null,
                   style: OutlinedButton.styleFrom(

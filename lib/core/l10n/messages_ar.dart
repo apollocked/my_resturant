@@ -132,6 +132,8 @@ const Map<String, String> ar = {
   'next_prepare': 'تحضير',
   'next_serve': 'تقديم',
   'again': 'إعادة',
+  'again_confirm_served': 'إعادة هذا الطلب إلى قيد الانتظار؟',
+  'again_confirm_cart': 'إعادة إضافة هذه الأصناف إلى السلة؟',
   'foods': 'الأطعمة',
   'order_detail_notes': 'ملاحظات:',
   'history_title': 'سجل الطلبات',

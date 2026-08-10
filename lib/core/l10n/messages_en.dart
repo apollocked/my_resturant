@@ -132,6 +132,8 @@ const Map<String, String> en = {
   'next_prepare': 'Prepare',
   'next_serve': 'Serve',
   'again': 'Again',
+  'again_confirm_served': 'Return this order to pending?',
+  'again_confirm_cart': 'Re-add these items to the cart?',
   'foods': 'Foods',
   'order_detail_notes': 'Notes:',
   'history_title': 'Order History',
