@@ -33,120 +33,227 @@ class MainShell extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     String t(String key) => Tr.get(key, settings.locale);
     final items = _buildNavItems(role);
-    final selectedIndex = items.indexWhere((item) => item.index == navigationShell.currentIndex);
+    var selectedIndex = items.indexWhere((item) => item.index == navigationShell.currentIndex);
+    if (selectedIndex == -1) selectedIndex = 0;
     final isDesktop = R.isDesktop(context);
     final isTablet = R.isTablet(context);
 
     if (isDesktop && R.height(context) >= 500) {
-      return _exitScope(context, t, SafeArea(
-        child: ConnectivityBanner(
-          child: Scaffold(
-            body: Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (i) {
-                    HapticFeedback.selectionClick();
-                    final branch = items[i].index;
-                    navigationShell.goBranch(branch, initialLocation: branch == navigationShell.currentIndex);
-                  },
-                  labelType: NavigationRailLabelType.all,
-                  backgroundColor: cs.surface,
-                  indicatorColor: AppColors.primarySoft,
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.asset('assets/icons/my Restaurant.png', width: 36, height: 36, fit: BoxFit.cover)),
-                      const SizedBox(height: 4),
-                      Text(t('app_name'), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary)),
-                    ]),
+      return _exitScope(
+        context,
+        t,
+        SafeArea(
+          child: ConnectivityBanner(
+            child: Scaffold(
+              body: Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (i) {
+                      HapticFeedback.selectionClick();
+                      final branch = items[i].index;
+                      navigationShell.goBranch(
+                        branch,
+                        initialLocation: branch == navigationShell.currentIndex,
+                      );
+                    },
+                    labelType: NavigationRailLabelType.all,
+                    backgroundColor: cs.surface,
+                    indicatorColor: AppColors.primarySoft,
+                    leading: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              'assets/icons/my Restaurant.png',
+                              width: 36,
+                              height: 36,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            t('app_name'),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    minWidth: 100,
+                    groupAlignment: 0,
+                    destinations: items
+                        .map(
+                          (item) => NavigationRailDestination(
+                            icon: item.index == 0 && state.cartCount > 0
+                                ? Badge(
+                                    label: Text(
+                                      '${state.cartCount}',
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                    child: Icon(item.outline, size: 24),
+                                  )
+                                : Icon(item.outline, size: 24),
+                            selectedIcon: item.index == 0 && state.cartCount > 0
+                                ? Badge(
+                                    label: Text(
+                                      '${state.cartCount}',
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                    child: Icon(item.filled, size: 24),
+                                  )
+                                : Icon(item.filled, size: 24),
+                            label: Text(
+                              t(item.labelKey),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
-                  minWidth: 100,
-                  groupAlignment: 0,
-                  destinations: items.map((item) => NavigationRailDestination(
-                    icon: item.index == 0 && state.cartCount > 0
-                        ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline, size: 24))
-                        : Icon(item.outline, size: 24),
-                    selectedIcon: item.index == 0 && state.cartCount > 0
-                        ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled, size: 24))
-                        : Icon(item.filled, size: 24),
-                    label: Text(t(item.labelKey), style: const TextStyle(fontSize: 12)),
-                  )).toList(),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(child: TabEntrance(index: selectedIndex, child: navigationShell)),
-              ],
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    child: TabEntrance(
+                      index: selectedIndex,
+                      child: navigationShell,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ));
+      );
     }
 
     if (isTablet && R.height(context) >= 500) {
-      return _exitScope(context, t, SafeArea(
-        child: ConnectivityBanner(
-          child: Scaffold(
-            body: Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (i) {
-                    HapticFeedback.selectionClick();
-                    final branch = items[i].index;
-                    navigationShell.goBranch(branch, initialLocation: branch == navigationShell.currentIndex);
-                  },
-                  labelType: NavigationRailLabelType.all,
-                  backgroundColor: cs.surface,
-                  indicatorColor: AppColors.primarySoft,
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.asset('assets/icons/my Restaurant.png', width: 32, height: 32, fit: BoxFit.cover)),
+      return _exitScope(
+        context,
+        t,
+        SafeArea(
+          child: ConnectivityBanner(
+            child: Scaffold(
+              body: Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (i) {
+                      HapticFeedback.selectionClick();
+                      final branch = items[i].index;
+                      navigationShell.goBranch(
+                        branch,
+                        initialLocation: branch == navigationShell.currentIndex,
+                      );
+                    },
+                    labelType: NavigationRailLabelType.all,
+                    backgroundColor: cs.surface,
+                    indicatorColor: AppColors.primarySoft,
+                    leading: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          'assets/icons/my Restaurant.png',
+                          width: 32,
+                          height: 32,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    destinations: items
+                        .map(
+                          (item) => NavigationRailDestination(
+                            icon: item.index == 0 && state.cartCount > 0
+                                ? Badge(
+                                    label: Text(
+                                      '${state.cartCount}',
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                    child: Icon(item.outline),
+                                  )
+                                : Icon(item.outline),
+                            selectedIcon: item.index == 0 && state.cartCount > 0
+                                ? Badge(
+                                    label: Text(
+                                      '${state.cartCount}',
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                    child: Icon(item.filled),
+                                  )
+                                : Icon(item.filled),
+                            label: Text(t(item.labelKey)),
+                          ),
+                        )
+                        .toList(),
                   ),
-                  destinations: items.map((item) => NavigationRailDestination(
-                    icon: item.index == 0 && state.cartCount > 0
-                        ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.outline))
-                        : Icon(item.outline),
-                    selectedIcon: item.index == 0 && state.cartCount > 0
-                        ? Badge(label: Text('${state.cartCount}', style: const TextStyle(fontSize: 9)), child: Icon(item.filled))
-                        : Icon(item.filled),
-                    label: Text(t(item.labelKey)),
-                  )).toList(),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(child: TabEntrance(index: selectedIndex, child: navigationShell)),
-              ],
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    child: TabEntrance(
+                      index: selectedIndex,
+                      child: navigationShell,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ));
+      );
     }
 
-    return _exitScope(context, t, ConnectivityBanner(
-      child: Scaffold(
-        extendBody: true,
-        body: SafeArea(top: true, bottom: false, child: TabEntrance(index: selectedIndex, child: navigationShell)),
-        bottomNavigationBar: LiquidGlassNavBar(
-          items: items.map((item) => LiquidNavItem(
-            icon: item.outline,
-            activeIcon: item.filled,
-            label: t(item.labelKey),
-          )).toList(),
-          selectedIndex: selectedIndex,
-          onTap: (i) {
-            debugPrint('[NAV] goBranch branch=${items[i].index} tappedIndex=$i current=${navigationShell.currentIndex} item=${items[i].labelKey}');
-            HapticFeedback.selectionClick();
-            navigationShell.goBranch(items[i].index, initialLocation: items[i].index == navigationShell.currentIndex);
-          },
-          badgeCount: state.cartCount,
-          badgeIndex: 0,
-          accentColor: AppColors.primary,
-          isDark: isDark,
+    return _exitScope(
+      context,
+      t,
+      ConnectivityBanner(
+        child: Scaffold(
+          extendBody: true,
+          body: SafeArea(
+            top: true,
+            bottom: false,
+            child: TabEntrance(index: selectedIndex, child: navigationShell),
+          ),
+          bottomNavigationBar: LiquidGlassNavBar(
+            items: items
+                .map(
+                  (item) => LiquidNavItem(
+                    icon: item.outline,
+                    activeIcon: item.filled,
+                    label: t(item.labelKey),
+                  ),
+                )
+                .toList(),
+            selectedIndex: selectedIndex,
+            onTap: (i) {
+              debugPrint(
+                '[NAV] goBranch branch=${items[i].index} tappedIndex=$i current=${navigationShell.currentIndex} item=${items[i].labelKey}',
+              );
+              HapticFeedback.selectionClick();
+              navigationShell.goBranch(
+                items[i].index,
+                initialLocation: items[i].index == navigationShell.currentIndex,
+              );
+            },
+            badgeCount: state.cartCount,
+            badgeIndex: 0,
+            accentColor: AppColors.primary,
+            isDark: isDark,
+          ),
         ),
       ),
-    ));
+    );
   }
 
-  Widget _exitScope(BuildContext context, String Function(String) t, Widget child) {
+  Widget _exitScope(
+    BuildContext context,
+    String Function(String) t,
+    Widget child,
+  ) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -156,7 +263,10 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmExit(BuildContext context, String Function(String) t) async {
+  Future<void> _confirmExit(
+    BuildContext context,
+    String Function(String) t,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -184,7 +294,13 @@ class MainShell extends StatelessWidget {
   List<_Nav> _buildNavItems(Role role) {
     if (role == Role.kitchen) {
       return [
-        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+        const _Nav(
+          Icons.receipt_long_outlined,
+          Icons.receipt_long,
+          'kitchen',
+          2,
+        ),
         const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
         const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
       ];
@@ -193,7 +309,12 @@ class MainShell extends StatelessWidget {
       return [
         const _Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
         const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
-        const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'kitchen', 2),
+        const _Nav(
+          Icons.receipt_long_outlined,
+          Icons.receipt_long,
+          'kitchen',
+          2,
+        ),
         const _Nav(Icons.history_outlined, Icons.history, 'history', 3),
         const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
       ];

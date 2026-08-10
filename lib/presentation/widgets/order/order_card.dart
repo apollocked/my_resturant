@@ -62,20 +62,28 @@ class OrderCard extends StatelessWidget {
         side: BorderSide(color: order.status == OrderStatus.served ? cs.outlineVariant : Colors.transparent)),
       child: Padding(padding: EdgeInsets.all(cardPadding), child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 14 : 10, vertical: isDesktop ? 7 : 5),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [color.withValues(alpha: 0.8), color], begin: Alignment.topLeft, end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: isDesktop ? 14 : 10, vertical: isDesktop ? 7 : 5),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [color.withValues(alpha: 0.8), color], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))],
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Flexible(
+                  child: Text(_label(order.status, locale), maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: statusFont)),
+                ),
+                if (order.trackingCode.isNotEmpty || order.displayTrackingCode.isNotEmpty) ...[
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(order.displayTrackingCode, maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: cs.onPrimary.withValues(alpha: 0.7), fontWeight: FontWeight.w500, fontSize: statusFont - 1)),
+                  ),
+                ],
+              ]),
             ),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Text(_label(order.status, locale), style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: statusFont)),
-              if (order.trackingCode.isNotEmpty || order.displayTrackingCode.isNotEmpty) ...[
-                const SizedBox(width: 6),
-                Text(order.displayTrackingCode, style: TextStyle(color: cs.onPrimary.withValues(alpha: 0.7), fontWeight: FontWeight.w500, fontSize: statusFont - 1)),
-              ],
-            ]),
           ),
           Row(children: [
             if (order.status != OrderStatus.served && elapsedMin > 0)

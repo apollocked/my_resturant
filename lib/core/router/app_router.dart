@@ -55,8 +55,6 @@ final appRouter = GoRouter(
       result = loc != '/role-login' ? '/role-login' : null;
     } else if (loc == '/role-login') {
       result = '/menu';
-    } else if (rs.role == Role.kitchen && (loc == '/cart' || loc == '/menu')) {
-      result = '/kitchen';
     } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
       result = '/menu';
     } else if (loc == '/order-detail' && state.extra is! Order) {
