@@ -13,6 +13,7 @@ import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 import 'package:my_resturant/presentation/widgets/shared/confirm_dialog.dart';
+import 'package:my_resturant/presentation/widgets/order/add_order_items_sheet.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -35,6 +36,13 @@ class OrderDetailPage extends StatelessWidget {
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
       appBar: AppBar(title: Text('${order.displayTable} — ${order.displayTrackingCode}')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _addItems(context),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add_shopping_cart, size: 20),
+        label: Text(t('add_items'), style: const TextStyle(fontWeight: FontWeight.w700)),
+      ),
       body: SafeArea(child: SingleChildScrollView(
         padding: EdgeInsets.all(R.padding(context)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -96,6 +104,29 @@ class OrderDetailPage extends StatelessWidget {
         ]),
       )),
     );
+  }
+
+  Future<void> _addItems(BuildContext context) async {
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final state = context.read<OrderCubit>().state;
+    final items = await showModalBottomSheet<List<CartItem>>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AddOrderItemsSheet(recipes: state.recipes),
+    );
+    if (!context.mounted || items == null || items.isEmpty) return;
+    final cubit = context.read<OrderCubit>();
+    try {
+      await cubit.addItemsToOrder(order.id, items);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('items_added'))));
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('error_occurred'))));
+    }
   }
 
   Widget _itemCard(CartItem item, String Function(String) t, ColorScheme cs, bool isDesktop) {

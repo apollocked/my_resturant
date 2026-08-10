@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:io';
 import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/datasources/local/app_database.dart';
@@ -110,6 +111,12 @@ class AppRepository implements DataRepository {
   @override
   Future<void> changeOrderStatus(String id, OrderStatus status) async {
     await db.updateOrderStatusRecord(id, status);
+    _emitOrders();
+  }
+
+  @override
+  Future<void> appendItemsToOrder(String orderId, List<CartItem> items) async {
+    await db.appendOrderItems(orderId, items);
     _emitOrders();
   }
 

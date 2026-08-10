@@ -153,6 +153,16 @@ class AppDatabase extends _$AppDatabase {
     await (update(orders)..where((t) => t.id.equals(orderId))).write(OrdersCompanion(status: Value(status.name)));
   }
 
+  Future<void> appendOrderItems(String orderId, List<CartItem> items) async {
+    final order = await (select(orders)..where((t) => t.id.equals(orderId))).getSingleOrNull();
+    if (order == null) return;
+    for (final item in items) {
+      await into(orderItems).insert(OrderItemsCompanion.insert(
+        orderId: orderId, recipeId: item.recipe.id, quantity: item.quantity, notes: item.notes,
+      ));
+    }
+  }
+
   Future<void> deleteAllOrders() async {
     await delete(orderItems).go();
     await delete(orders).go();

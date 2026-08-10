@@ -367,6 +367,12 @@ class OrderCubit extends Cubit<OrderState> {
     await refresh();
   }
 
+  Future<void> addItemsToOrder(String orderId, List<CartItem> items) async {
+    if (items.isEmpty) return;
+    await _repo.appendItemsToOrder(orderId, items);
+    await refresh();
+  }
+
   Future<void> deleteAllOrders() async {
     await _repo.deleteAllOrders();
     if (!isClosed) emit(state.copyWith(orders: []));

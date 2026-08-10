@@ -284,6 +284,25 @@ class SupabaseDataRepository implements DataRepository {
   }
 
   @override
+  Future<void> appendItemsToOrder(String orderId, List<CartItem> items) async {
+    final uid = _userId;
+    if (!_isAuthed || uid == null || items.isEmpty) return;
+    await _client.rpc('append_order_items', params: {
+      'p_order_id': orderId,
+      'p_items': items.map((item) {
+        return {
+          'recipe_id': item.recipe.id,
+          'recipe_name': item.recipe.name,
+          'recipe_price': item.recipe.price,
+          'recipe_image_url': item.recipe.imageUrl,
+          'quantity': item.quantity,
+          'notes': item.notes,
+        };
+      }).toList(),
+    });
+  }
+
+  @override
   Future<void> deleteAllOrders() async {
     final uid = _userId;
     if (uid == null) return;
