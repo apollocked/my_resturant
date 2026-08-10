@@ -56,7 +56,7 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
     final locale = context.watch<SettingsCubit>().state.locale;
     final msg = Tr.get(_connected ? 'back_online' : 'no_connection', locale);
 
-    return Column(children: [
+    return SafeArea(bottom: false, child: Column(children: [
       AnimatedBuilder(
         animation: _animCtrl,
         builder: (context, child) {
@@ -109,6 +109,6 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
         },
       ),
       Expanded(child: widget.child),
-    ]);
+    ]));
   }
 }

@@ -111,8 +111,8 @@ class ProfileDialogs {
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () async {
               Navigator.pop(ctx);
-              await acct.logout();
               await role.logout();
+              await acct.logout();
               if (!context.mounted) return;
               context.go('/account-auth');
             },
