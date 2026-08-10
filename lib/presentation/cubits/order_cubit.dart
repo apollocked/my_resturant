@@ -12,11 +12,15 @@ import 'package:my_resturant/presentation/cubits/order_state.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/data_repository.dart';
 import 'package:my_resturant/core/notifications/order_notification_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 
 class OrderCubit extends Cubit<OrderState> {
   final DataRepository _repo;
   final List<StreamSubscription> _subs = [];
   Timer? _pollTimer;
+  StreamSubscription? _authSub;
+  bool _wasAuthed = false;
+  int _gen = 0;
   final OrderNotificationService _notifService = OrderNotificationService();
   Role? _currentRole;
   Locale _currentLocale = const Locale('ku');
@@ -25,9 +29,19 @@ class OrderCubit extends Cubit<OrderState> {
   OrderCubit({DataRepository? repo})
     : _repo = repo ?? AppRepository(),
       super(const OrderState()) {
+    _wasAuthed = Supabase.instance.client.auth.currentSession != null;
     _notifService.init();
     _notifService.requestPermission();
     _load();
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((state) {
+      final authed = state.session != null;
+      if (authed && !_wasAuthed) {
+        _load();
+      } else if (!authed && _wasAuthed) {
+        _disposeSubs();
+      }
+      _wasAuthed = authed;
+    });
   }
 
   void setCurrentRole(Role? role) => _currentRole = role;
@@ -35,6 +49,8 @@ class OrderCubit extends Cubit<OrderState> {
   void setCurrentLocale(Locale locale) => _currentLocale = locale;
 
   Future<void> _load() async {
+    final gen = ++_gen;
+    _disposeSubs();
     try {
       final recipes = await _repo.loadRecipes();
       final orders = await _repo.loadOrders();
@@ -58,7 +74,7 @@ class OrderCubit extends Cubit<OrderState> {
       }
     }
 
-    if (isClosed) return;
+    if (isClosed || gen != _gen) return;
 
     _subscribe(_repo.watchOrders, (o) {
       if (_currentRole != null) {
@@ -374,10 +390,17 @@ class OrderCubit extends Cubit<OrderState> {
 
   @override
   Future<void> close() {
+    _disposeSubs();
+    _authSub?.cancel();
+    return super.close();
+  }
+
+  void _disposeSubs() {
     _pollTimer?.cancel();
+    _pollTimer = null;
     for (final s in _subs) {
       s.cancel();
     }
-    return super.close();
+    _subs.clear();
   }
 }

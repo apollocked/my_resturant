@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoleState {
   final Role role;
@@ -13,6 +14,7 @@ class RoleState {
 
 class RoleCubit extends Cubit<RoleState> {
   final AuthRepository _repo;
+  static const _prefRole = 'role_logged_in';
 
   RoleCubit({required this._repo}) : super(const RoleState());
 
@@ -27,7 +29,12 @@ class RoleCubit extends Cubit<RoleState> {
         emit(const RoleState());
         return;
       }
-      final role = await _repo.getLoggedInRole();
+      var role = await _repo.getLoggedInRole();
+      if (role == null) {
+        role = await _localRole();
+      } else {
+        await _saveLocal(role);
+      }
       emit(RoleState(
         isConfigured: true,
         isLoggedIn: role != null,
@@ -65,6 +72,7 @@ class RoleCubit extends Cubit<RoleState> {
       final ok = await _repo.verifyPasscode(role, pin);
       if (ok) {
         await _repo.saveLoggedInRole(role);
+        await _saveLocal(role);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;
@@ -93,6 +101,7 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> _setRole(Role role) async {
     await _repo.saveLoggedInRole(role);
+    await _saveLocal(role);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }
 
@@ -102,6 +111,7 @@ class RoleCubit extends Cubit<RoleState> {
     } catch (e, st) {
       debugPrint('RoleCubit.logout error (best-effort): $e\n$st');
     }
+    await _clearLocal();
     emit(const RoleState(isConfigured: true));
   }
 
@@ -110,4 +120,21 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   bool canSwitchFreely(Role target) => state.role == Role.admin;
+
+  Future<void> _saveLocal(Role role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefRole, role.name);
+  }
+
+  Future<Role?> _localRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString(_prefRole);
+    if (name == null) return null;
+    return RoleExtension.fromKey(name);
+  }
+
+  Future<void> _clearLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_prefRole);
+  }
 }
