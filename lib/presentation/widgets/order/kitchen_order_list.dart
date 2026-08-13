@@ -56,9 +56,19 @@ class KitchenOrderList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
       child: isGrid
-          ? GridView(key: ValueKey('grid_$tabKey'), padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 520, childAspectRatio: 0.9, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
-              children: widgets)
+          ? SingleChildScrollView(
+              key: ValueKey('grid_$tabKey'),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
+              child: Wrap(
+                spacing: R.gridSpacing(context),
+                runSpacing: R.gridSpacing(context),
+                children: [
+                  for (final w in widgets)
+                    SizedBox(width: R.orderCardWidth(context), child: w),
+                ],
+              ),
+            )
           : ListView(key: ValueKey('list_$tabKey'), padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100), children: widgets),
     );
   }

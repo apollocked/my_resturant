@@ -32,16 +32,17 @@ class HistoryOrderList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
       child: isGrid
-          ? GridView.builder(
+          ? SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.fromLTRB(p, 0, p, 100),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 520,
-                childAspectRatio: 0.9,
-                crossAxisSpacing: R.gridSpacing(context),
-                mainAxisSpacing: R.gridSpacing(context),
+              child: Wrap(
+                spacing: R.gridSpacing(context),
+                runSpacing: R.gridSpacing(context),
+                children: [
+                  for (final o in orders)
+                    SizedBox(width: R.orderCardWidth(context), child: _buildCard(context, o)),
+                ],
               ),
-              itemCount: orders.length,
-              itemBuilder: (ctx, i) => _buildCard(ctx, orders[i]),
             )
           : ListView.builder(
               padding: EdgeInsets.fromLTRB(p, 0, p, 100),

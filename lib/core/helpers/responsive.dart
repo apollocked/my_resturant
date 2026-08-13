@@ -68,6 +68,12 @@ abstract class R {
     return 12.0;
   }
 
+  static double orderCardWidth(BuildContext context, {double maxExtent = 520}) {
+    final avail = width(context) - 2 * padding(context);
+    final cols = (avail / maxExtent).ceil().clamp(1, 6);
+    return (avail - (cols - 1) * gridSpacing(context)) / cols;
+  }
+
   static double fontSm(BuildContext context) {
     if (isDesktop(context)) return 14.0;
     if (isTablet(context)) return 13.0;
