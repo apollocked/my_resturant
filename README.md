@@ -17,20 +17,26 @@ Built with **Flutter** & **Supabase** — real-time orders, role-based access, a
 
 ## Features
 
-| Feature                | Description                                                |
-| ---------------------- | ---------------------------------------------------------- |
-| **Multi-Tenant SaaS**  | Fully isolated data per restaurant with row-level security |
-| **Role-Based Access**  | Waiter, Kitchen, Admin — each with PIN-based login         |
-| **Real-Time Orders**   | Live order updates via Supabase Realtime                   |
-| **Menu Management**    | Image upload, categories, pricing, descriptions            |
-| **Order Workflow**     | Pending → Preparing → Served, with tracking codes          |
-| **Table Management**   | Configurable tables with reservation and cleaning states   |
-| **Daily Reports**      | Revenue, item counts, most-ordered dishes                  |
-| **Promo Codes**        | Activation system for new restaurant onboarding            |
-| **Multi-Language**     | Kurdish (Sorani), Arabic, English — full RTL support       |
-| **Responsive**         | Phone, tablet, and desktop layouts                         |
-| **Offline Fallback**   | Local SQLite via Drift when network is unavailable         |
-| **Push Notifications** | Role-based Firebase Cloud Messaging alerts                 |
+| Feature                 | Description                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| **Multi-Tenant SaaS**   | Fully isolated data per restaurant with row-level security and per-restaurant limits |
+| **Role-Based Access**   | Waiter, Kitchen, Admin — each with its own PIN login and PIN change screens  |
+| **Google Sign-In**      | Restaurant account authentication via Google OAuth                           |
+| **Promo Code Activation**| Onboarding activation system with redeemable codes and admin management     |
+| **Real-Time Orders**    | Live order updates via Supabase Realtime with auto-reconnect and polling     |
+| **Menu Management**     | Dishes with image upload, pricing, descriptions, categories with icons, search |
+| **Availability**        | Toggle dish availability on/off from a dedicated management screen           |
+| **Order Workflow**      | Pending → Preparing → Served with tracking codes, urgency timers, and "order again" |
+| **Add Items to Order**  | Append items to an existing order straight from the order detail screen      |
+| **Kitchen Board**       | Active / Served / To-clean tabs with status timelines and table cleanup states |
+| **Order History**       | Calendar view with daily stats, restore past orders to cart, clear all       |
+| **Table Management**    | Configurable table count and names, selection, reservation and cleaning states |
+| **Daily Reports**       | Revenue, order/item counts, weekly charts, and most-ordered dishes           |
+| **Push Notifications**  | Local alerts + Firebase Cloud Messaging (via the `notify-manager` edge function) |
+| **Offline Fallback**    | Local SQLite via Drift when the network is unavailable, with connectivity banner |
+| **Multi-Language**      | Kurdish (Sorani), Arabic, English — full RTL support                         |
+| **Responsive**          | Phone (liquid glass nav), tablet, and desktop (navigation rail) layouts      |
+| **Onboarding Flow**     | Welcome → onboarding → language/theme settings → account → restaurant setup  |
 
 ## Architecture
 
@@ -44,16 +50,19 @@ lib/
 
 ## Tech Stack
 
-| Layer            | Technology                                   |
-| ---------------- | -------------------------------------------- |
-| UI Framework     | Flutter 3.12+                                |
-| State Management | flutter_bloc                                 |
-| Routing          | go_router                                    |
-| Backend          | Supabase (Auth, Postgres, Storage, Realtime) |
-| Local Database   | Drift (SQLite)                               |
-| Notifications    | flutter_local_notifications + Firebase       |
-| Image Handling   | image_picker + flutter_image_compress        |
-| i18n             | Custom `Tr.get()` with 3 locales             |
+| Layer            | Technology                                        |
+| ---------------- | ------------------------------------------------- |
+| UI Framework     | Flutter 3.12+                                     |
+| State Management | flutter_bloc                                      |
+| Routing          | go_router (stateful shell + role redirects)       |
+| Backend          | Supabase (Auth, Postgres, Storage, Realtime, Edge Functions) |
+| Local Database   | Drift (SQLite)                                    |
+| Local Storage    | shared_preferences                                |
+| Notifications    | flutter_local_notifications + Firebase Messaging  |
+| Charts           | fl_chart                                          |
+| Images           | image_picker, image_cropper, file_picker, flutter_image_compress |
+| Auth             | google_sign_in + Supabase Auth                    |
+| i18n             | Custom `Tr.get()` with 3 locales                  |
 
 ## Getting Started
 
@@ -61,7 +70,7 @@ lib/
 
 - Flutter 3.12+
 - A [Supabase](https://supabase.com) project
-- (Optional) Firebase project for push notifications
+- (Optional) A [Firebase](https://firebase.google.com) project for push notifications
 
 ### Setup
 
@@ -87,13 +96,22 @@ flutter run
 
 ### Database
 
-Apply the migration to your Supabase project:
+Apply the SQL files under `supabase/` to your Supabase project in order:
 
 ```bash
 supabase db push
 ```
 
-Or paste `supabase/migration.sql` into the Supabase SQL Editor.
+Or paste the contents of `supabase/migration.sql` (and the companion scripts) into the Supabase SQL Editor.
+
+### Push Notifications
+
+1. Add your `google-services.json` (Android) / `GoogleService-Info.plist` (iOS) for Firebase.
+2. Deploy the `notify-manager` edge function:
+
+```bash
+supabase functions deploy notify-manager
+```
 
 ## Building
 
