@@ -86,42 +86,47 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             : Column(
                 children: [
                   _monthNav(t, p),
-                  CalendarGrid(
-                    year: _viewMonth.year,
-                    month: _viewMonth.month,
-                    selectedDay: _selectedDate.day,
-                    daysWithOrders: daysWithOrders,
-                    onDayTap: (day) {
-                      if (day <= DateTime.now().day ||
-                          _viewMonth.month < DateTime.now().month ||
-                          _viewMonth.year < DateTime.now().year) {
-                        setState(
-                          () => _selectedDate = DateTime(
-                            _viewMonth.year,
-                            _viewMonth.month,
-                            day,
-                          ),
-                        );
-                      }
-                    },
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 480),
+                      child: CalendarGrid(
+                        year: _viewMonth.year,
+                        month: _viewMonth.month,
+                        selectedDay: _selectedDate.day,
+                        daysWithOrders: daysWithOrders,
+                        onDayTap: (day) {
+                          if (day <= DateTime.now().day ||
+                              _viewMonth.month < DateTime.now().month ||
+                              _viewMonth.year < DateTime.now().year) {
+                            setState(
+                              () => _selectedDate = DateTime(
+                                _viewMonth.year,
+                                _viewMonth.month,
+                                day,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
                   const Divider(height: 1),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
-                    child: Row(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         StatChip(
                           icon: Icons.receipt_long,
                           label: '${dayOrders.length} ${t('orders')}',
                           color: AppColors.primary,
                         ),
-                        const SizedBox(width: 8),
                         StatChip(
                           icon: Icons.shopping_bag,
                           label: '$dayItems ${t('total_items')}',
                           color: cs.tertiary,
                         ),
-                        const SizedBox(width: 8),
                         StatChip(
                           icon: Icons.attach_money,
                           label:

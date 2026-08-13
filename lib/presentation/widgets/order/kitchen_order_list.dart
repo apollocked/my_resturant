@@ -20,12 +20,12 @@ class KitchenOrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = R.isDesktop(context);
+    final isGrid = !R.isPhone(context);
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
-        return isDesktop
+        return isGrid
             ? GridView(padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 520, childAspectRatio: 0.9, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
                 children: List.generate(4, (_) => const ShimmerOrderCard()))
             : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
       }
@@ -55,9 +55,9 @@ class KitchenOrderList extends StatelessWidget {
     }).toList();
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
-      child: isDesktop
+      child: isGrid
           ? GridView(key: ValueKey('grid_$tabKey'), padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 520, childAspectRatio: 0.9, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
               children: widgets)
           : ListView(key: ValueKey('list_$tabKey'), padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100), children: widgets),
     );

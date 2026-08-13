@@ -58,36 +58,39 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
+          scrollable: true,
           title: const Text('New Promo Code'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            TextField(
-              controller: controller,
-              autofocus: true,
-              textCapitalization: TextCapitalization.characters,
-              decoration: InputDecoration(
-                hintText: 'Enter code or tap generate',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.casino_outlined, size: 20),
-                  tooltip: 'Generate random',
-                  onPressed: () {
-                    controller.text = _generateCode();
-                    controller.selection = TextSelection.collapsed(offset: controller.text.length);
-                  },
+          content: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              TextField(
+                controller: controller,
+                autofocus: true,
+                textCapitalization: TextCapitalization.characters,
+                decoration: InputDecoration(
+                  hintText: 'Enter code or tap generate',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.casino_outlined, size: 20),
+                    tooltip: 'Generate random',
+                    onPressed: () {
+                      controller.text = _generateCode();
+                      controller.selection = TextSelection.collapsed(offset: controller.text.length);
+                    },
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<int>(
-              initialValue: selectedMonths,
-              decoration: const InputDecoration(labelText: 'Expires in', border: OutlineInputBorder()),
-              items: const [
-                DropdownMenuItem(value: 3, child: Text('3 Months')),
-                DropdownMenuItem(value: 6, child: Text('6 Months')),
-                DropdownMenuItem(value: 12, child: Text('1 Year')),
-              ],
-              onChanged: (v) { if (v != null) setDialogState(() => selectedMonths = v); },
-            ),
-          ]),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<int>(
+                initialValue: selectedMonths,
+                decoration: const InputDecoration(labelText: 'Expires in', border: OutlineInputBorder()),
+                items: const [
+                  DropdownMenuItem(value: 3, child: Text('3 Months')),
+                  DropdownMenuItem(value: 6, child: Text('6 Months')),
+                  DropdownMenuItem(value: 12, child: Text('1 Year')),
+                ],
+                onChanged: (v) { if (v != null) setDialogState(() => selectedMonths = v); },
+              ),
+            ]),
+          ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
             FilledButton(
@@ -193,38 +196,41 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   Widget _buildTable(ColorScheme cs) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(R.padding(context)),
-      child: Container(
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: cs.outlineVariant),
-        ),
-        child: Table(
-          columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1.5), 2: FlexColumnWidth(1.5), 3: FlexColumnWidth(1.5), 4: FlexColumnWidth(1)},
-          children: [
-            TableRow(decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-              children: [_th('Code', cs), _th('Status', cs), _th('Created', cs), _th('Expires', cs), _th('', cs)]),
-            for (int i = 0; i < _codes.length; i++)
-              TableRow(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.3))),
-                borderRadius: i == _codes.length - 1 ? const BorderRadius.vertical(bottom: Radius.circular(16)) : null),
-                children: [
-                  _td(_codes[i]['code'] ?? '', cs, bold: true),
-                  _td(_statusText(_codes[i]), cs, color: _statusColor(_codes[i])),
-                  _td(_formatDate(_codes[i]['created_at']), cs),
-                  _td(_formatDate(_codes[i]['expires_at']), cs),
-                  _tdAction(_codes[i], cs),
-                ]),
-          ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          decoration: BoxDecoration(
+            color: cs.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: cs.outlineVariant),
+          ),
+          child: Table(
+            columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1.5), 2: FlexColumnWidth(1.5), 3: FlexColumnWidth(1.5), 4: FlexColumnWidth(1)},
+            children: [
+              TableRow(decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+                children: [_th('Code', cs), _th('Status', cs), _th('Created', cs), _th('Expires', cs), _th('', cs)]),
+              for (int i = 0; i < _codes.length; i++)
+                TableRow(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.3))),
+                  borderRadius: i == _codes.length - 1 ? const BorderRadius.vertical(bottom: Radius.circular(16)) : null),
+                  children: [
+                    _td(_codes[i]['code'] ?? '', cs, bold: true),
+                    _td(_statusText(_codes[i]), cs, color: _statusColor(_codes[i])),
+                    _td(_formatDate(_codes[i]['created_at']), cs),
+                    _td(_formatDate(_codes[i]['expires_at']), cs),
+                    _tdAction(_codes[i], cs),
+                  ]),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _th(String text, ColorScheme cs) => Padding(
-    padding: const EdgeInsets.all(12), child: Text(text, style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurfaceVariant, fontSize: 13)));
+    padding: const EdgeInsets.all(12), child: Text(text, style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurfaceVariant, fontSize: R.fontSm(context))));
 
   Widget _td(String text, ColorScheme cs, {bool bold = false, Color? color}) => Padding(
-    padding: const EdgeInsets.all(12), child: Text(text, style: TextStyle(fontWeight: bold ? FontWeight.w600 : FontWeight.w400, color: color ?? cs.onSurface, fontSize: 14)));
+    padding: const EdgeInsets.all(12), child: Text(text, style: TextStyle(fontWeight: bold ? FontWeight.w600 : FontWeight.w400, color: color ?? cs.onSurface, fontSize: R.fontMd(context))));
 
   Widget _tdAction(Map<String, dynamic> code, ColorScheme cs) {
     final canDelete = code['used_by'] == null;

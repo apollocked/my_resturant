@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 
@@ -34,29 +35,47 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
   @override
   Widget build(BuildContext context) {
     final cats = effectiveCategories(widget.categories);
+    final isWide = R.isDesktop(context) || R.isTablet(context);
+    final nameField = TextField(controller: _nameCtl, decoration: InputDecoration(labelText: widget.t('name'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl);
+    final priceField = TextField(controller: _priceCtl, decoration: InputDecoration(labelText: widget.t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl);
+    final categoryField = StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
+      initialValue: _cat,
+      decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
+      items: cats.map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
+      onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
+    ));
+    final descField = TextField(controller: _descCtl, decoration: InputDecoration(labelText: widget.t('description'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2);
     return Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
       title: Text(widget.t('edit_food')),
+      constraints: isWide ? const BoxConstraints(maxWidth: 560) : null,
       content: SingleChildScrollView(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          TextField(controller: _nameCtl, decoration: InputDecoration(labelText: widget.t('name'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl),
-          const SizedBox(height: 12),
-          TextField(controller: _priceCtl, decoration: InputDecoration(labelText: widget.t('price'), border: const OutlineInputBorder()), keyboardType: TextInputType.number, textDirection: TextDirection.rtl),
-          const SizedBox(height: 12),
-          StatefulBuilder(builder: (ctx, setLocal) => DropdownButtonFormField<String>(
-            initialValue: _cat,
-            decoration: InputDecoration(labelText: widget.t('category'), border: const OutlineInputBorder()),
-            items: cats.map((c) => DropdownMenuItem(value: c['key'], child: Text('${c['icon']} ${c['name']}'))).toList(),
-            onChanged: (v) { if (v != null) setLocal(() => _cat = v); },
-          )),
-          const SizedBox(height: 12),
-          TextField(controller: _descCtl, decoration: InputDecoration(labelText: widget.t('description'), border: const OutlineInputBorder()), textDirection: TextDirection.rtl, maxLines: 2),
-        ]),
+        child: isWide
+            ? LayoutBuilder(builder: (ctx, c) {
+                final half = (c.maxWidth - 12) / 2;
+                return Wrap(spacing: 12, runSpacing: 12, children: [
+                  SizedBox(width: half, child: nameField),
+                  SizedBox(width: half, child: priceField),
+                  SizedBox(width: c.maxWidth, child: categoryField),
+                  SizedBox(width: c.maxWidth, child: descField),
+                ]);
+              })
+            : Column(mainAxisSize: MainAxisSize.min, children: [
+                nameField,
+                const SizedBox(height: 12),
+                priceField,
+                const SizedBox(height: 12),
+                categoryField,
+                const SizedBox(height: 12),
+                descField,
+              ]),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(widget.t('cancel'))),
-        FilledButton(onPressed: () => Navigator.pop(context, {
-          'name': _nameCtl.text, 'price': double.tryParse(_priceCtl.text) ?? widget.price, 'description': _descCtl.text, 'category': _cat,
-        }), style: FilledButton.styleFrom(backgroundColor: AppColors.primary), child: Text(widget.t('update'))),
+        OverflowBar(spacing: 8, alignment: MainAxisAlignment.end, children: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(widget.t('cancel'))),
+          FilledButton(onPressed: () => Navigator.pop(context, {
+            'name': _nameCtl.text, 'price': double.tryParse(_priceCtl.text) ?? widget.price, 'description': _descCtl.text, 'category': _cat,
+          }), style: FilledButton.styleFrom(backgroundColor: AppColors.primary), child: Text(widget.t('update'))),
+        ]),
       ],
     ));
   }

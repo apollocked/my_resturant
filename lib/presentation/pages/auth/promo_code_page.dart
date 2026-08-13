@@ -43,75 +43,144 @@ class _PromoCodePageState extends State<PromoCodePage> {
       });
     }
     return Scaffold(
-      body: SafeArea(child: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                width: 80, height: 80,
-                decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
-                child: const Icon(Icons.vpn_key, size: 40, color: AppColors.primary),
-              ),
-              const SizedBox(height: 24),
-              Text('Enter Promo Code', style: TextStyle(fontSize: R.fontXl(context), fontWeight: FontWeight.w800, color: cs.onSurface)),
-              const SizedBox(height: 8),
-              Text('Contact the developer to get your activation code.',
-                  textAlign: TextAlign.center, style: TextStyle(fontSize: R.fontMd(context), color: cs.onSurfaceVariant)),
-              const SizedBox(height: 32),
-              TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                autofocus: true,
-                textCapitalization: TextCapitalization.characters,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: 6, color: cs.onSurface),
-                decoration: InputDecoration(
-                  hintText: 'XXXX-XXXX',
-                  hintStyle: TextStyle(letterSpacing: 6, color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
-                  filled: true,
-                  fillColor: cs.surfaceContainerHighest,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.primary, width: 2)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9\-]')),
-                  LengthLimitingTextInputFormatter(9),
-                ],
-                onSubmitted: (_) => _submit(),
-              ),
-              if (acct.errorMessage != null) ...[
-                const SizedBox(height: 12),
-                Text(
-                  acct.errorMessage == 'err_invalid_promo' ? 'Invalid or already used promo code.' : 'Something went wrong.',
-                  style: TextStyle(color: cs.error, fontSize: R.fontSm(context)),
-                ),
-              ],
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity, height: 52,
-                child: PressableScale(
-                  onTap: _loading ? null : _submit,
-                  child: FilledButton(
-                    onPressed: null,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      disabledBackgroundColor: AppColors.primary,
-                      disabledForegroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: R.avatarSize(context),
+                    height: R.avatarSize(context),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
                     ),
-                    child: _loading
-                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
-                        : const Text('Activate', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                    child: const Icon(
+                      Icons.vpn_key,
+                      size: 40,
+                      color: AppColors.primary,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Enter Promo Code',
+                    style: TextStyle(
+                      fontSize: R.fontXl(context),
+                      fontWeight: FontWeight.w800,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Contact the developer to get your activation code.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: R.fontMd(context),
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.characters,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 6,
+                      color: cs.onSurface,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'XXXX-XXXX',
+                      hintStyle: TextStyle(
+                        letterSpacing: 6,
+                        color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                      ),
+                      filled: true,
+                      fillColor: cs.surfaceContainerHighest,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 18,
+                      ),
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[A-Za-z0-9\-]'),
+                      ),
+                      LengthLimitingTextInputFormatter(9),
+                    ],
+                    onSubmitted: (_) => _submit(),
+                  ),
+                  if (acct.errorMessage != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      acct.errorMessage == 'err_invalid_promo'
+                          ? 'Invalid or already used promo code.'
+                          : 'Something went wrong.',
+                      style: TextStyle(
+                        color: cs.error,
+                        fontSize: R.fontSm(context),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: PressableScale(
+                      onTap: _loading ? null : _submit,
+                      child: FilledButton(
+                        onPressed: null,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: AppColors.primary,
+                          disabledForegroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: _loading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                'Activate',
+                                style: TextStyle(
+                                  fontSize: R.fontMd(context),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ]),
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

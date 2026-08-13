@@ -46,107 +46,110 @@ class _SetupPageState extends State<SetupPage> {
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(R.padding(context)),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primarySoft,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.lock_outline,
-                          size: 36,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        t('setup_title'),
-                        style: TextStyle(
-                          fontSize: R.fontXl(context),
-                          fontWeight: FontWeight.w800,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        t('setup_subtitle'),
-                        style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      _passField(
-                        _waiterCtl,
-                        t('waiter'),
-                        Icons.room_service_outlined,
-                        _obscureWaiter,
-                        () => setState(() => _obscureWaiter = !_obscureWaiter),
-                        t,
-                        cs,
-                      ),
-                      const SizedBox(height: 14),
-                      _passField(
-                        _kitchenCtl,
-                        t('kitchen'),
-                        Icons.restaurant_outlined,
-                        _obscureKitchen,
-                        () => setState(() => _obscureKitchen = !_obscureKitchen),
-                        t,
-                        cs,
-                      ),
-                      const SizedBox(height: 14),
-                      _passField(
-                        _adminCtl,
-                        t('admin'),
-                        Icons.admin_panel_settings_outlined,
-                        _obscureAdmin,
-                        () => setState(() => _obscureAdmin = !_obscureAdmin),
-                        t,
-                        cs,
-                      ),
-                      const SizedBox(height: 28),
-                      if (context.watch<RoleCubit>().state.errorMessage case final err?)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
-                        ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: PressableScale(
-                          onTap: _loading ? null : _submit,
-                          child: FilledButton(
-                            onPressed: null,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              disabledBackgroundColor: AppColors.primary,
-                              disabledForegroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: _loading
-                                ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
-                                  )
-                                : Text(
-                                    t('setup_btn'),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: R.fontMd(context),
-                                    ),
-                                  ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: R.avatarSize(context),
+                          height: R.avatarSize(context),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primarySoft,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.lock_outline,
+                            size: R.avatarSize(context) * 0.5,
+                            color: AppColors.primary,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        Text(
+                          t('setup_title'),
+                          style: TextStyle(
+                            fontSize: R.fontXl(context),
+                            fontWeight: FontWeight.w800,
+                            color: cs.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          t('setup_subtitle'),
+                          style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 32),
+                        _passField(
+                          _waiterCtl,
+                          t('waiter'),
+                          Icons.room_service_outlined,
+                          _obscureWaiter,
+                          () => setState(() => _obscureWaiter = !_obscureWaiter),
+                          t,
+                          cs,
+                        ),
+                        const SizedBox(height: 14),
+                        _passField(
+                          _kitchenCtl,
+                          t('kitchen'),
+                          Icons.restaurant_outlined,
+                          _obscureKitchen,
+                          () => setState(() => _obscureKitchen = !_obscureKitchen),
+                          t,
+                          cs,
+                        ),
+                        const SizedBox(height: 14),
+                        _passField(
+                          _adminCtl,
+                          t('admin'),
+                          Icons.admin_panel_settings_outlined,
+                          _obscureAdmin,
+                          () => setState(() => _obscureAdmin = !_obscureAdmin),
+                          t,
+                          cs,
+                        ),
+                        const SizedBox(height: 28),
+                        if (context.watch<RoleCubit>().state.errorMessage case final err?)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
+                          ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: PressableScale(
+                            onTap: _loading ? null : _submit,
+                            child: FilledButton(
+                              onPressed: null,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                disabledBackgroundColor: AppColors.primary,
+                                disabledForegroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: _loading
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
+                                    )
+                                  : Text(
+                                      t('setup_btn'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: R.fontMd(context),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -204,6 +207,7 @@ class _SetupPageState extends State<SetupPage> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         title: const Row(
           children: [
             Icon(Icons.check_circle, color: Colors.green, size: 28),
@@ -239,7 +243,9 @@ class _SetupPageState extends State<SetupPage> {
         Icon(icon, size: 18, color: AppColors.primary),
         const SizedBox(width: 10),
         Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w600)),
-        Text(code, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 3)),
+        Flexible(
+          child: Text(code, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 3)),
+        ),
       ],
     );
   }

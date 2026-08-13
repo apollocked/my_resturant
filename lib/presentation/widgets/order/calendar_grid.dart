@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class CalendarGrid extends StatelessWidget {
   final int year, month, selectedDay;
@@ -23,6 +24,7 @@ class CalendarGrid extends StatelessWidget {
     final now = DateTime.now();
 
     final cells = <Widget>[];
+    final cellHeight = 38 * MediaQuery.textScalerOf(context).scale(1);
     for (int i = 0; i < satStartIndex; i++) {
       cells.add(const SizedBox());
     }
@@ -46,7 +48,7 @@ class CalendarGrid extends StatelessWidget {
                 Text(
                   '$d',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: R.fontSm(context),
                     fontWeight: sel ? FontWeight.w700 : FontWeight.w500,
                     color: sel
                         ? Colors.white
@@ -86,7 +88,7 @@ class CalendarGrid extends StatelessWidget {
                     child: Text(
                       l,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: R.fontSm(context),
                         fontWeight: FontWeight.w600,
                         color: cs.onSurfaceVariant,
                       ),
@@ -103,7 +105,14 @@ class CalendarGrid extends StatelessWidget {
         Row(
           children: cells
               .sublist(i, i + 7)
-              .map((c) => Expanded(child: SizedBox(height: 38, child: c)))
+              .map(
+                (c) => Expanded(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: cellHeight),
+                    child: c,
+                  ),
+                ),
+              )
               .toList(),
         ),
       );

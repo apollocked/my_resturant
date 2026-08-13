@@ -43,17 +43,16 @@ class OrderCard extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final screen = R.screenSize(context);
     final isDesktop = screen == ScreenSize.desktop;
-    final isTablet = screen == ScreenSize.tablet;
     final color = _colors[order.status]!;
     final elapsedMin = DateTime.now().difference(order.createdAt).inMinutes;
     final urgency = _urgencyColor(elapsedMin);
-    final cardPadding = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
-    final statusFont = isDesktop ? 13.0 : isTablet ? 12.0 : 11.0;
-    final tableFont = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
-    final totalFont = isDesktop ? 15.0 : isTablet ? 14.0 : 13.0;
-    final itemFont = isDesktop ? 13.0 : isTablet ? 12.5 : 12.0;
-    final notesFont = isDesktop ? 12.0 : isTablet ? 11.5 : 11.0;
-    final timelineFont = isDesktop ? 10.0 : isTablet ? 9.5 : 9.0;
+    final cardPadding = R.cardPadding(context);
+    final statusFont = R.fontSm(context);
+    final tableFont = R.fontLg(context);
+    final totalFont = R.fontMd(context);
+    final itemFont = R.fontSm(context);
+    final notesFont = R.fontSm(context);
+    final timelineFont = R.fontSm(context);
 
     return Card(
       margin: EdgeInsets.only(bottom: isDesktop ? 0 : 10),
@@ -85,26 +84,31 @@ class OrderCard extends StatelessWidget {
               ]),
             ),
           ),
-          Row(children: [
-            if (order.status != OrderStatus.served && elapsedMin > 0)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: urgency.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.schedule, size: 12, color: urgency),
-                  const SizedBox(width: 3),
-                  Text(_elapsed(order.createdAt, locale), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11, color: urgency)),
-                ]),
+          Flexible(
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              if (order.status != OrderStatus.served && elapsedMin > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(color: urgency.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.schedule, size: 12, color: urgency),
+                    const SizedBox(width: 3),
+                    Text(_elapsed(order.createdAt, locale), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context), color: urgency)),
+                  ]),
+                ),
+              if (order.status != OrderStatus.served && elapsedMin > 0) const SizedBox(width: 8),
+              Flexible(
+                child: Text(order.displayTable, maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: tableFont, color: cs.onSurface)),
               ),
-            if (order.status != OrderStatus.served && elapsedMin > 0) const SizedBox(width: 8),
-            Text(order.displayTable, style: TextStyle(fontWeight: FontWeight.w800, fontSize: tableFont, color: cs.onSurface)),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-              child: Icon(Icons.table_restaurant_outlined, size: isDesktop ? 20 : 16, color: AppColors.primary),
-            ),
-          ]),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
+                child: Icon(Icons.table_restaurant_outlined, size: isDesktop ? 20 : 16, color: AppColors.primary),
+              ),
+            ]),
+          ),
         ]),
         if (showTimeline) ...[
           SizedBox(height: isDesktop ? 16.0 : 14.0),
@@ -122,29 +126,33 @@ class OrderCard extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           if (showTime)
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
-                style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant))
+                style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant))
           else if (onNextStatus != null)
-            PressableScale(onTap: onNextStatus,
-              child: SizedBox(
-                height: isDesktop ? 38.0 : 32.0,
-                child: FilledButton.icon(
-                  onPressed: null,
-                  icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
-                  label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: isDesktop ? 14.0 : 12.0)),
-                  style: FilledButton.styleFrom(backgroundColor: color, disabledBackgroundColor: color, disabledForegroundColor: cs.onPrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                ),
-              ))
+            Flexible(
+              child: PressableScale(onTap: onNextStatus,
+                child: SizedBox(
+                  height: isDesktop ? 38.0 : 32.0,
+                  child: FilledButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.arrow_forward, size: isDesktop ? 16.0 : 14.0),
+                    label: Text(_nextLabel(order.status, locale), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontSm(context))),
+                    style: FilledButton.styleFrom(backgroundColor: color, disabledBackgroundColor: color, disabledForegroundColor: cs.onPrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  ),
+                )),
+            )
           else if (onReset != null)
-            PressableScale(onTap: onReset,
-              child: SizedBox(
-                height: isDesktop ? 38.0 : 32.0,
-                child: OutlinedButton.icon(
-                  onPressed: null,
-                  icon: const Icon(Icons.refresh, size: 14),
-                  label: Text(Tr.get('again', locale), style: TextStyle(fontSize: isDesktop ? 14.0 : 12.0, fontWeight: FontWeight.w600)),
-                  style: OutlinedButton.styleFrom(disabledForegroundColor: cs.onSurface, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                ),
-              )),
+            Flexible(
+              child: PressableScale(onTap: onReset,
+                child: SizedBox(
+                  height: isDesktop ? 38.0 : 32.0,
+                  child: OutlinedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.refresh, size: 14),
+                    label: Text(Tr.get('again', locale), style: TextStyle(fontSize: R.fontSm(context), fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(disabledForegroundColor: cs.onSurface, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  ),
+                )),
+            ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: isDesktop ? 16.0 : 12.0, vertical: isDesktop ? 8.0 : 6.0),
             decoration: BoxDecoration(

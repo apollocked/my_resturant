@@ -40,28 +40,82 @@ class CategoryManagementPage extends StatelessWidget {
                   title: t('categories_empty'),
                   subtitle: t('categories_empty_subtitle'),
                 )
-              : ListView.builder(
-                  padding: EdgeInsets.all(R.padding(context)),
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    final c = categories[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        leading: Text(c['icon'] ?? '🍽', style: const TextStyle(fontSize: 26)),
-                        title: Text(
-                          c['name'] ?? '',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface),
-                        ),
-                        subtitle: Text(c['key'] ?? '', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
-                          onPressed: () => _confirmDelete(context, c, t),
-                        ),
+              : R.isPhone(context)
+                  ? ListView.builder(
+                      padding: EdgeInsets.all(R.padding(context)),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) => _categoryTile(context, categories[index], cs, t, compact: false),
+                    )
+                  : GridView.builder(
+                      padding: EdgeInsets.all(R.padding(context)),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: R.tableGridColumns(context),
+                        childAspectRatio: 0.7,
+                        crossAxisSpacing: R.gridSpacing(context),
+                        mainAxisSpacing: R.gridSpacing(context),
                       ),
-                    );
-                  },
-                ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) => _categoryTile(context, categories[index], cs, t, compact: true),
+                    ),
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryTile(
+    BuildContext context,
+    Map<String, String> c,
+    ColorScheme cs,
+    String Function(String) t, {
+    required bool compact,
+  }) {
+    final emoji = c['icon'] ?? '🍽';
+    final name = c['name'] ?? '';
+    final key = c['key'] ?? '';
+    final deleteBtn = IconButton(
+      icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+      onPressed: () => _confirmDelete(context, c, t),
+    );
+    if (!compact) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: 8),
+        child: ListTile(
+          leading: Text(emoji, style: TextStyle(fontSize: R.fontXl(context))),
+          title: Text(
+            name,
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface),
+          ),
+          subtitle: Text(key, style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+          trailing: deleteBtn,
+        ),
+      );
+    }
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(R.cardPadding(context)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(emoji, style: TextStyle(fontSize: R.fontXl(context))),
+            const SizedBox(height: 6),
+            Flexible(
+              child: Text(name,
+                  maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface)),
+            ),
+            const SizedBox(height: 2),
+            Flexible(
+              child: Text(key,
+                  maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+            ),
+            const SizedBox(height: 4),
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => _confirmDelete(context, c, t),
+            ),
+          ],
         ),
       ),
     );

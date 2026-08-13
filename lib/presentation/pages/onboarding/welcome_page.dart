@@ -11,47 +11,56 @@ class WelcomePage extends StatelessWidget {
     final pad = R.padding(context);
     final ob = OnbColors.of(context);
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: pad),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Spacer(flex: 2),
-          _HeroLogo(ob: ob),
-          const SizedBox(height: 48),
-          ShaderMask(
-            shaderCallback: (bounds) => LinearGradient(
-              colors: ob.isDark
-                  ? [Colors.white, const Color(0xFFFFD4B0)]
-                  : [ob.textPrimary, ob.textPrimary],
-            ).createShader(bounds),
-            child: Text(
-              t('onboarding_welcome_title'),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 38,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -1,
-                height: 1.1,
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: pad),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
+                  _HeroLogo(ob: ob),
+                  const SizedBox(height: 48),
+                  ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: ob.isDark
+                          ? [Colors.white, const Color(0xFFFFD4B0)]
+                          : [ob.textPrimary, ob.textPrimary],
+                    ).createShader(bounds),
+                    child: Text(
+                      t('onboarding_welcome_title'),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: R.fontXxl(context),
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1,
+                        height: 1.1,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    t('onboarding_welcome_sub'),
+                    style: TextStyle(
+                      color: ob.textSecondary,
+                      fontSize: R.fontLg(context),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  _DescriptionCard(text: t('onboarding_welcome_desc'), ob: ob),
+                  const Spacer(flex: 3),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 14),
-          Text(
-            t('onboarding_welcome_sub'),
-            style: TextStyle(
-              color: ob.textSecondary,
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 28),
-          _DescriptionCard(text: t('onboarding_welcome_desc'), ob: ob),
-          const Spacer(flex: 3),
-        ],
+        ),
       ),
     );
   }
@@ -63,9 +72,11 @@ class _HeroLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final outer = R.avatarSize(context);
+    final inner = outer * 0.78;
     return Container(
-      width: 140,
-      height: 140,
+      width: outer,
+      height: outer,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: ob.iconCircleBg,
@@ -80,8 +91,8 @@ class _HeroLogo extends StatelessWidget {
       ),
       child: Center(
         child: Container(
-          width: 110,
-          height: 110,
+          width: inner,
+          height: inner,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
@@ -96,8 +107,8 @@ class _HeroLogo extends StatelessWidget {
           child: ClipOval(
             child: Image.asset(
               'assets/icons/my Restaurant.png',
-              width: 110,
-              height: 110,
+              width: inner,
+              height: inner,
               fit: BoxFit.cover,
             ),
           ),

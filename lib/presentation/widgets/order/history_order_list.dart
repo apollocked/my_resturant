@@ -20,7 +20,7 @@ class HistoryOrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = R.isDesktop(context);
+    final isGrid = !R.isPhone(context);
     final p = R.padding(context);
     if (orders.isEmpty) {
       return EmptyState(
@@ -31,12 +31,12 @@ class HistoryOrderList extends StatelessWidget {
     }
     return RefreshIndicator(
       onRefresh: () async => context.read<OrderCubit>().refresh(),
-      child: isDesktop
+      child: isGrid
           ? GridView.builder(
               padding: EdgeInsets.fromLTRB(p, 0, p, 100),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.0,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 520,
+                childAspectRatio: 0.9,
                 crossAxisSpacing: R.gridSpacing(context),
                 mainAxisSpacing: R.gridSpacing(context),
               ),

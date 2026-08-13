@@ -5,6 +5,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
@@ -41,65 +42,75 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
       appBar: AppBar(title: Text(t('change_pins'))),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Text(
-                  t('change_pins_hint'),
-                  style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 24),
-                ...Role.values.map(
-                  (r) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _field(r, _ctl[r]!, t, cs),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
+          padding: EdgeInsets.all(R.padding(context)),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
                     Text(
-                      t('show_passwords'),
+                      t('change_pins_hint'),
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: R.fontSm(context),
                         color: cs.onSurfaceVariant,
                       ),
                     ),
-                    Switch(
-                      value: !_obscure,
-                      onChanged: (v) => setState(() => _obscure = !v),
+                    const SizedBox(height: 24),
+                    ...Role.values.map(
+                      (r) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _field(r, _ctl[r]!, t, cs),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            t('show_passwords'),
+                            style: TextStyle(
+                              fontSize: R.fontSm(context),
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                        Switch(
+                          value: !_obscure,
+                          onChanged: (v) => setState(() => _obscure = !v),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: PressableScale(
+                        onTap: _save,
+                        child: FilledButton(
+                          onPressed: null,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            disabledBackgroundColor: AppColors.primary,
+                            disabledForegroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: Text(
+                            t('save'),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: R.fontMd(context),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: PressableScale(
-                    onTap: _save,
-                    child: FilledButton(
-                      onPressed: null,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        disabledBackgroundColor: AppColors.primary,
-                        disabledForegroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: Text(
-                        t('save'),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

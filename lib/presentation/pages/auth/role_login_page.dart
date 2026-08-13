@@ -41,7 +41,10 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
         surfaceTintColor: Colors.transparent,
         actions: [
           InkWell(
-            onTap: () => showDialog(context: context, builder: (_) => const SettingsDialog()),
+            onTap: () => showDialog(
+              context: context,
+              builder: (_) => const SettingsDialog(),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Icon(Icons.settings, size: 22, color: cs.onSurfaceVariant),
@@ -55,124 +58,140 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(R.padding(context)),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primarySoft,
-                        shape: BoxShape.circle,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: R.avatarSize(context),
+                        height: R.avatarSize(context),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primarySoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.admin_panel_settings_outlined,
+                          size: 36,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.admin_panel_settings_outlined,
-                        size: 36,
-                        color: AppColors.primary,
+                      const SizedBox(height: 16),
+                      Text(
+                        t('role_login_title'),
+                        style: TextStyle(
+                          fontSize: R.fontXl(context),
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      t('role_login_title'),
-                      style: TextStyle(
-                        fontSize: R.fontXl(context),
-                        fontWeight: FontWeight.w800,
-                        color: cs.onSurface,
+                      const SizedBox(height: 6),
+                      Text(
+                        t('role_login_subtitle'),
+                        style: TextStyle(
+                          fontSize: R.fontSm(context),
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      t('role_login_subtitle'),
-                      style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
-                    ),
-                    const SizedBox(height: 28),
-                    Text(
-                      t('choose_role'),
-                      style: TextStyle(
-                        fontSize: R.fontMd(context),
-                        fontWeight: FontWeight.w600,
-                        color: cs.onSurfaceVariant,
+                      const SizedBox(height: 28),
+                      Text(
+                        t('choose_role'),
+                        style: TextStyle(
+                          fontSize: R.fontMd(context),
+                          fontWeight: FontWeight.w600,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: Role.values
-                          .map(
-                            (r) => Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: _roleCard(r, _selected == r, cs, t),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: Role.values
+                            .map(
+                              (r) => Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  child: _roleCard(r, _selected == r, cs, t),
+                                ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                    const SizedBox(height: 28),
-                    TextField(
-                      controller: _pinCtl,
-                      obscureText: true,
-                      maxLength: 6,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 8,
+                            )
+                            .toList(),
                       ),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        hintText: t('pin_hint'),
-                        filled: true,
-                        fillColor: cs.surfaceContainerHighest.withValues(
-                          alpha: 0.3,
+                      const SizedBox(height: 28),
+                      TextField(
+                        controller: _pinCtl,
+                        obscureText: true,
+                        maxLength: 6,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: R.fontXl(context),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: R.fontXl(context) / 3,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    if (_error case final err?)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(err, style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context))),
-                      ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                    child: PressableScale(
-                      onTap: _loading ? null : _login,
-                      child: FilledButton(
-                        onPressed: null,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          disabledBackgroundColor: AppColors.primary,
-                          disabledForegroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
+                        decoration: InputDecoration(
+                          counterText: '',
+                          hintText: t('pin_hint'),
+                          filled: true,
+                          fillColor: cs.surfaceContainerHighest.withValues(
+                            alpha: 0.3,
+                          ),
+                          border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: _loading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: cs.onPrimary,
-                                  ),
-                              )
-                            : Text(
-                                t('enter'),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: R.fontMd(context),
-                                ),
-                              ),
                       ),
-                    ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      if (_error case final err?)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            err,
+                            style: TextStyle(
+                              color: AppColors.error,
+                              fontSize: R.fontSm(context),
+                            ),
+                          ),
+                        ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: PressableScale(
+                          onTap: _loading ? null : _login,
+                          child: FilledButton(
+                            onPressed: null,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              disabledBackgroundColor: AppColors.primary,
+                              disabledForegroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: _loading
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: cs.onPrimary,
+                                    ),
+                                  )
+                                : Text(
+                                    t('enter'),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: R.fontMd(context),
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -180,9 +199,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
           if (_loading)
             Container(
               color: cs.scrim.withValues(alpha: 0.26),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: const Center(child: CircularProgressIndicator()),
             ),
         ],
       ),
@@ -230,6 +247,9 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
             const SizedBox(height: 6),
             Text(
               t(r.name),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -244,7 +264,10 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
 
   Future<void> _login() async {
     if (_pinCtl.text.isEmpty) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     final ok = await context.read<RoleCubit>().loginAsync(
       _selected,
       _pinCtl.text,
@@ -256,7 +279,10 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     } else {
       setState(() {
         _loading = false;
-        _error = Tr.get('pin_invalid', context.read<SettingsCubit>().state.locale);
+        _error = Tr.get(
+          'pin_invalid',
+          context.read<SettingsCubit>().state.locale,
+        );
       });
       _pinCtl.clear();
     }

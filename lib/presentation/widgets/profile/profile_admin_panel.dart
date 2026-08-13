@@ -28,7 +28,7 @@ class ProfileAdminPanel extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: R.gridSpacing(context),
             mainAxisSpacing: R.gridSpacing(context),
-            childAspectRatio: 1.8,
+            childAspectRatio: 1.5,
             children: cards,
           )
         else
@@ -102,7 +102,12 @@ class ProfileAdminPanel extends StatelessWidget {
             ),
             subtitle: Text(
               sub,
-              style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: R.fontSm(context),
+                color: cs.onSurfaceVariant,
+              ),
             ),
             trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
           ),
@@ -152,7 +157,9 @@ class ActionButtonsRowPlaceholder extends StatelessWidget {
             try {
               await orderCubit.addRecipe(r);
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('dish_added'))));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(t('dish_added'))));
               }
             } catch (e) {
               if (context.mounted) {
@@ -176,9 +183,11 @@ class ActionButtonsRowPlaceholder extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 label,
-                style: const TextStyle(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 12,
+                  fontSize: R.fontSm(context),
                 ),
               ),
             ],

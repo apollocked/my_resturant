@@ -13,7 +13,6 @@ class KitchenHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isDesktop = R.isDesktop(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 0),
       child: Row(children: [
@@ -22,15 +21,20 @@ class KitchenHeader extends StatelessWidget {
           const SizedBox(height: 2),
           Text(countLabel, style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         ])),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-          decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(12)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            for (int i = 0; i < tabLabels.length; i++) ...[
-              if (i > 0) const SizedBox(width: 4),
-              _TabPill(label: tabLabels[i], index: i, isSelected: selectedIndex == i, isDesktop: isDesktop, onTap: () => onTabChanged(i)),
-            ],
-          ]),
+        Flexible(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(12)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                for (int i = 0; i < tabLabels.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 4),
+                  _TabPill(label: tabLabels[i], index: i, isSelected: selectedIndex == i, onTap: () => onTabChanged(i)),
+                ],
+              ]),
+            ),
+          ),
         ),
       ]),
     );
@@ -40,9 +44,9 @@ class KitchenHeader extends StatelessWidget {
 class _TabPill extends StatelessWidget {
   final String label;
   final int index;
-  final bool isSelected, isDesktop;
+  final bool isSelected;
   final VoidCallback onTap;
-  const _TabPill({required this.label, required this.index, required this.isSelected, required this.isDesktop, required this.onTap});
+  const _TabPill({required this.label, required this.index, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +54,9 @@ class _TabPill extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 20 : 14, vertical: isDesktop ? 10 : 7),
+        padding: EdgeInsets.symmetric(horizontal: R.padding(context) * 0.6, vertical: R.padding(context) * 0.35),
         decoration: BoxDecoration(color: isSelected ? AppColors.primary : Colors.transparent, borderRadius: BorderRadius.circular(10)),
-        child: Text(label, style: TextStyle(fontSize: isDesktop ? 14 : 12, fontWeight: FontWeight.w700, color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant)),
+        child: Text(label, style: TextStyle(fontSize: R.fontSm(context), fontWeight: FontWeight.w700, color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant)),
       ),
     );
   }

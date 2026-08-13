@@ -28,7 +28,7 @@ class CartBottomBar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), 116),
+      padding: EdgeInsets.fromLTRB(R.padding(context), 16, R.padding(context), R.isPhone(context) ? 116 : 72),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [BoxShadow(color: cs.shadow.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
@@ -54,9 +54,9 @@ class CartBottomBar extends StatelessWidget {
             ),
             const Spacer(),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('${total.toInt()} $currencySuffix',
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26, color: AppColors.primary)),
-              Text(totalLabel, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant)),
+              Text('${total.toInt()} $currencySuffix', maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.fontXl(context), color: AppColors.primary)),
+              Text(totalLabel, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
             ]),
           ])
         : Column(children: [
@@ -87,11 +87,13 @@ class CartBottomBar extends StatelessWidget {
                   ),
                 ),
               ),
-              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Text('${total.toInt()} $currencySuffix',
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.primary)),
-                Text(totalLabel, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
-              ]),
+              Flexible(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  Text('${total.toInt()} $currencySuffix', maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.fontXl(context), color: AppColors.primary)),
+                  Text(totalLabel, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+                ]),
+              ),
             ]),
           ]),
     );

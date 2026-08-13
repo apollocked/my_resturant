@@ -21,21 +21,58 @@ class FeaturePage extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 32),
-                  GlowingIcon(icon: data.icon, color: data.gradient[0], ob: ob),
-                  const SizedBox(height: 36),
-                  Text(t(data.titleKey), style: TextStyle(fontSize: R.fontXl(context) + 4, fontWeight: FontWeight.w900, color: ob.textPrimary, letterSpacing: -0.5, height: 1.15), textAlign: TextAlign.center),
-                  const SizedBox(height: 12),
-                  Text(t(data.descKey), textAlign: TextAlign.center, style: TextStyle(fontSize: R.fontMd(context), color: ob.textSecondary, height: 1.55, fontWeight: FontWeight.w400)),
-                  const SizedBox(height: 28),
-                  ...features.map((f) => Padding(padding: const EdgeInsets.only(bottom: 10), child: GlassFeatureTile(label: f, accent: data.gradient[0], ob: ob))),
-                  const SizedBox(height: 32),
-                ],
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                  maxWidth: R.isPhone(context) ? double.infinity : 720,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 32),
+                    GlowingIcon(
+                      icon: data.icon,
+                      color: data.gradient[0],
+                      ob: ob,
+                    ),
+                    const SizedBox(height: 36),
+                    Text(
+                      t(data.titleKey),
+                      style: TextStyle(
+                        fontSize: R.fontXl(context) + 4,
+                        fontWeight: FontWeight.w900,
+                        color: ob.textPrimary,
+                        letterSpacing: -0.5,
+                        height: 1.15,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      t(data.descKey),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: R.fontMd(context),
+                        color: ob.textSecondary,
+                        height: 1.55,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    ...features.map(
+                      (f) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: GlassFeatureTile(
+                          label: f,
+                          accent: data.gradient[0],
+                          ob: ob,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
           );

@@ -86,7 +86,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final dishes = _filtered;
-    final isDesktop = R.isDesktop(context);
+    final isGrid = !R.isPhone(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('food_mgmt_title'))),
       body: SafeArea(
@@ -99,23 +99,23 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
               const SizedBox(height: 8),
               Expanded(
                 child: context.read<OrderCubit>().state.isLoading && dishes.isEmpty
-                    ? isDesktop
+                    ? isGrid
                         ? GridView(
                             padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, childAspectRatio: 2.2,
+                              crossAxisCount: R.menuGridColumns(context), childAspectRatio: 1.9,
                               crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context),
                             ),
                             children: List.generate(6, (_) => const ShimmerListTile()))
                         : ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
                     : dishes.isEmpty
                     ? EmptyState(icon: Icons.restaurant_menu, title: t('no_food_found'), subtitle: t('no_food_found_subtitle'))
-                    : isDesktop
+                    : isGrid
                         ? GridView.builder(
                             padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              childAspectRatio: 2.2,
+                              crossAxisCount: R.menuGridColumns(context),
+                              childAspectRatio: 1.9,
                               crossAxisSpacing: R.gridSpacing(context),
                               mainAxisSpacing: R.gridSpacing(context),
                             ),
@@ -153,7 +153,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
   Widget _dishCard(Recipe r, ColorScheme cs, String Function(String) t) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(R.cardPadding(context)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Row(children: [
             IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 18), onPressed: () => _editRecipe(r), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
@@ -163,9 +163,9 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
             const SizedBox(width: 10),
           ]),
           const Spacer(),
-          Text(r.name, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: cs.onSurface)),
+          Text(r.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
           const SizedBox(height: 2),
-          Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+          Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         ]),
       ),
     );

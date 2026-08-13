@@ -20,35 +20,107 @@ class OnboardingSettingsPage extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: pad),
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 32),
-            GlowingSettingIcon(ob: ob),
-            const SizedBox(height: 36),
-            Text(t('onboarding_settings_title'), style: TextStyle(fontSize: R.fontXl(context) + 4, fontWeight: FontWeight.w900, color: ob.textPrimary, letterSpacing: -0.5, height: 1.15), textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            Text(t('onboarding_settings_desc'), textAlign: TextAlign.center, style: TextStyle(fontSize: R.fontMd(context), color: ob.textSecondary, height: 1.55)),
-            const SizedBox(height: 36),
-            SectionLabel(label: t('onboarding_select_language'), ob: ob),
-            const SizedBox(height: 12),
-            LanguageOption(label: t('kurdish'), flag: ' Kurdish', locale: const Locale('ku'), isSelected: currentLocale.languageCode == 'ku', onTap: () => context.read<SettingsCubit>().setLocale(const Locale('ku')), ob: ob),
-            const SizedBox(height: 10),
-            LanguageOption(label: t('arabic'), flag: ' Arabic', locale: const Locale('ar'), isSelected: currentLocale.languageCode == 'ar', onTap: () => context.read<SettingsCubit>().setLocale(const Locale('ar')), ob: ob),
-            const SizedBox(height: 10),
-            LanguageOption(label: t('english'), flag: ' English', locale: const Locale('en'), isSelected: currentLocale.languageCode == 'en', onTap: () => context.read<SettingsCubit>().setLocale(const Locale('en')), ob: ob),
-            const SizedBox(height: 32),
-            SectionLabel(label: t('onboarding_select_theme'), ob: ob),
-            const SizedBox(height: 12),
-            Row(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: R.isPhone(context) ? double.infinity : 640,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(child: ThemeOption(label: t('onboarding_light_mode'), icon: Icons.light_mode_rounded, isSelected: currentTheme == ThemeMode.light, onTap: () => context.read<SettingsCubit>().setThemeMode(ThemeMode.light), ob: ob)),
-                const SizedBox(width: 12),
-                Expanded(child: ThemeOption(label: t('onboarding_dark_mode'), icon: Icons.dark_mode_rounded, isSelected: currentTheme == ThemeMode.dark, onTap: () => context.read<SettingsCubit>().setThemeMode(ThemeMode.dark), ob: ob)),
+                const SizedBox(height: 32),
+                GlowingSettingIcon(ob: ob),
+                const SizedBox(height: 36),
+                Text(
+                  t('onboarding_settings_title'),
+                  style: TextStyle(
+                    fontSize: R.fontXl(context) + 4,
+                    fontWeight: FontWeight.w900,
+                    color: ob.textPrimary,
+                    letterSpacing: -0.5,
+                    height: 1.15,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  t('onboarding_settings_desc'),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: R.fontMd(context),
+                    color: ob.textSecondary,
+                    height: 1.55,
+                  ),
+                ),
+                const SizedBox(height: 36),
+                SectionLabel(label: t('onboarding_select_language'), ob: ob),
+                const SizedBox(height: 12),
+                LanguageOption(
+                  label: t('kurdish'),
+                  flag: ' Kurdish',
+                  locale: const Locale('ku'),
+                  isSelected: currentLocale.languageCode == 'ku',
+                  onTap: () => context.read<SettingsCubit>().setLocale(
+                    const Locale('ku'),
+                  ),
+                  ob: ob,
+                ),
+                const SizedBox(height: 10),
+                LanguageOption(
+                  label: t('arabic'),
+                  flag: ' Arabic',
+                  locale: const Locale('ar'),
+                  isSelected: currentLocale.languageCode == 'ar',
+                  onTap: () => context.read<SettingsCubit>().setLocale(
+                    const Locale('ar'),
+                  ),
+                  ob: ob,
+                ),
+                const SizedBox(height: 10),
+                LanguageOption(
+                  label: t('english'),
+                  flag: ' English',
+                  locale: const Locale('en'),
+                  isSelected: currentLocale.languageCode == 'en',
+                  onTap: () => context.read<SettingsCubit>().setLocale(
+                    const Locale('en'),
+                  ),
+                  ob: ob,
+                ),
+                const SizedBox(height: 32),
+                SectionLabel(label: t('onboarding_select_theme'), ob: ob),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ThemeOption(
+                        label: t('onboarding_light_mode'),
+                        icon: Icons.light_mode_rounded,
+                        isSelected: currentTheme == ThemeMode.light,
+                        onTap: () => context.read<SettingsCubit>().setThemeMode(
+                          ThemeMode.light,
+                        ),
+                        ob: ob,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ThemeOption(
+                        label: t('onboarding_dark_mode'),
+                        icon: Icons.dark_mode_rounded,
+                        isSelected: currentTheme == ThemeMode.dark,
+                        onTap: () => context.read<SettingsCubit>().setThemeMode(
+                          ThemeMode.dark,
+                        ),
+                        ob: ob,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
               ],
             ),
-            const SizedBox(height: 40),
-          ],
+          ),
         ),
       ),
     );

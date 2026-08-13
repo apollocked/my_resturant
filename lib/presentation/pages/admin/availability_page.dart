@@ -18,18 +18,18 @@ class AvailabilityPage extends StatelessWidget {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final recipes = cubit.state.recipes;
-    final isDesktop = R.isDesktop(context);
+    final isGrid = !R.isPhone(context);
     return Scaffold(
       appBar: AppBar(title: Text(t('availability_title'))),
       body: SafeArea(child: cubit.state.isLoading && recipes.isEmpty
         ? ShimmerListView(itemCount: 6, itemBuilder: () => const ShimmerListTile())
         : recipes.isEmpty
         ? EmptyState(icon: Icons.restaurant_menu, title: t('no_food_found'), subtitle: t('no_food_found_subtitle'))
-        : Directionality(textDirection: TextDirection.rtl, child: isDesktop
+        : Directionality(textDirection: TextDirection.rtl, child: isGrid
             ? GridView.builder(
                 padding: EdgeInsets.all(R.padding(context)),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  crossAxisCount: R.menuGridColumns(context),
                   childAspectRatio: 2.5,
                   crossAxisSpacing: R.gridSpacing(context),
                   mainAxisSpacing: R.gridSpacing(context),

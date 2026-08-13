@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
 
 class ProfileRoleSwitcher extends StatelessWidget {
@@ -27,7 +28,7 @@ class ProfileRoleSwitcher extends StatelessWidget {
         Text(
           t('switch_role'),
           style: TextStyle(
-            fontSize: 13,
+            fontSize: R.fontSm(context),
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -79,15 +80,15 @@ class _RoleRow extends StatelessWidget {
             t(role.name),
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: R.fontMd(context),
               color: isCurrent ? AppColors.primary : cs.onSurface,
             ),
           ),
           subtitle: isCurrent
               ? Text(
                   t('current_role'),
-                  style: const TextStyle(
-                    fontSize: 11,
+                  style: TextStyle(
+                    fontSize: R.fontSm(context),
                     color: AppColors.primary,
                   ),
                 )
@@ -104,8 +105,8 @@ class _RoleRow extends StatelessWidget {
                   ),
                   child: Text(
                     t('active'),
-                    style: const TextStyle(
-                      fontSize: 11,
+                    style: TextStyle(
+                      fontSize: R.fontSm(context),
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),

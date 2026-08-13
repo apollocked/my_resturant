@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
@@ -48,6 +49,66 @@ class _DishFormFieldsState extends State<DishFormFields> {
   @override
   Widget build(BuildContext context) {
     final catKeys = effectiveCategories(widget.categories);
+    final isDesktop = R.isDesktop(context);
+    final nameField = TextFormField(
+      controller: widget.nameCtrl,
+      maxLength: 80,
+      decoration: InputDecoration(
+        labelText: widget.t('dish_name'),
+        filled: true,
+      ),
+      validator: (v) => v == null || v.trim().isEmpty
+          ? widget.t('dish_name_required')
+          : null,
+    );
+    final priceField = TextFormField(
+      controller: widget.priceCtrl,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      decoration: InputDecoration(
+        labelText: widget.t('price_dinar'),
+        filled: true,
+      ),
+      validator: (v) {
+        if (v == null || v.isEmpty) return widget.t('price_required');
+        final n = int.tryParse(v);
+        return (n == null || n <= 0) ? widget.t('price_invalid') : null;
+      },
+    );
+    final descField = TextFormField(
+      controller: widget.descCtrl,
+      maxLines: 2,
+      maxLength: 1000,
+      decoration: InputDecoration(
+        labelText: widget.t('description'),
+        filled: true,
+      ),
+    );
+    final imageButton = ImagePickerButton(
+      label: widget.t('pick_image'),
+      onPressed: widget.onPickImage,
+    );
+    final categoryField = DropdownButtonFormField<String>(
+      initialValue: _cat,
+      decoration: InputDecoration(
+        labelText: widget.t('section_field'),
+        filled: true,
+      ),
+      items: catKeys
+          .map(
+            (c) => DropdownMenuItem(
+              value: c['key'],
+              child: Text('${c['icon']} ${c['name']}'),
+            ),
+          )
+          .toList(),
+      onChanged: (v) {
+        if (v != null) {
+          setState(() => _cat = v);
+          widget.onCategoryChanged(v);
+        }
+      },
+    );
     return Form(
       key: widget.formKey,
       child: Column(
@@ -62,69 +123,31 @@ class _DishFormFieldsState extends State<DishFormFields> {
                   ),
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            controller: widget.nameCtrl,
-            maxLength: 80,
-            decoration: InputDecoration(
-              labelText: widget.t('dish_name'),
-              filled: true,
-            ),
-            validator: (v) => v == null || v.trim().isEmpty
-                ? widget.t('dish_name_required')
-                : null,
-          ),
+          if (isDesktop)
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Expanded(child: nameField),
+              const SizedBox(width: 12),
+              Expanded(child: priceField),
+            ])
+          else ...[
+            nameField,
+            const SizedBox(height: 12),
+            priceField,
+          ],
           const SizedBox(height: 12),
-          TextFormField(
-            controller: widget.priceCtrl,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(
-              labelText: widget.t('price_dinar'),
-              filled: true,
-            ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return widget.t('price_required');
-              final n = int.tryParse(v);
-              return (n == null || n <= 0) ? widget.t('price_invalid') : null;
-            },
-          ),
+          descField,
           const SizedBox(height: 12),
-          TextFormField(
-            controller: widget.descCtrl,
-            maxLines: 2,
-            maxLength: 1000,
-            decoration: InputDecoration(
-              labelText: widget.t('description'),
-              filled: true,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ImagePickerButton(
-            label: widget.t('pick_image'),
-            onPressed: widget.onPickImage,
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: _cat,
-            decoration: InputDecoration(
-              labelText: widget.t('section_field'),
-              filled: true,
-            ),
-            items: catKeys
-                .map(
-                  (c) => DropdownMenuItem(
-                    value: c['key'],
-                    child: Text('${c['icon']} ${c['name']}'),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) {
-              if (v != null) {
-                setState(() => _cat = v);
-                widget.onCategoryChanged(v);
-              }
-            },
-          ),
+          if (isDesktop)
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Expanded(child: categoryField),
+              const SizedBox(width: 12),
+              Expanded(child: imageButton),
+            ])
+          else ...[
+            imageButton,
+            const SizedBox(height: 12),
+            categoryField,
+          ],
         ],
       ),
     );

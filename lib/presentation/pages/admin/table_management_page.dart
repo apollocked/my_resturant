@@ -49,10 +49,10 @@ class _TableManagementPageState extends State<TableManagementPage> {
           const SizedBox(height: 12),
           ...List.generate(5, (_) => const Padding(padding: EdgeInsets.only(bottom: 8), child: ShimmerListTile())),
         ] else ...[
-        Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
+        Text(t('table_count'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontXl(context), color: cs.onSurface)),
         const SizedBox(height: 10),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 16, vertical: isDesktop ? 16 : 12),
+          padding: EdgeInsets.all(R.padding(context)),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(14),
@@ -63,7 +63,7 @@ class _TableManagementPageState extends State<TableManagementPage> {
             }, isDesktop),
             Container(
               width: isDesktop ? 100 : 80, alignment: Alignment.center,
-              child: Text('${state.tableCount}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? 40 : R.isTablet(context) ? 32 : 28, color: cs.onSurface)),
+              child: Text('${state.tableCount}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.fontXxl(context), color: cs.onSurface)),
             ),
             _countBtn(Icons.add, cs, () {
               if (state.tableCount < 35) context.read<OrderCubit>().setTableCount(state.tableCount + 1);
@@ -71,10 +71,22 @@ class _TableManagementPageState extends State<TableManagementPage> {
           ]),
         ),
         const SizedBox(height: 20),
-        Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
+        Text(t('table_names'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontXl(context), color: cs.onSurface)),
         const SizedBox(height: 12),
         if (state.tableNumbers.isEmpty)
           EmptyState(icon: Icons.table_restaurant, title: t('no_tables'), subtitle: t('no_tables_subtitle'))
+        else if (isDesktop || R.isTablet(context))
+          GridView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: R.tableGridColumns(context),
+              childAspectRatio: 1.2,
+              crossAxisSpacing: R.gridSpacing(context),
+              mainAxisSpacing: R.gridSpacing(context),
+            ),
+            children: state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)).toList(),
+          )
         else
           ...state.tableNumbers.map((n) => TableNameRow(key: ValueKey(n), tableNumber: n)),
         ],

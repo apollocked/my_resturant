@@ -200,7 +200,7 @@ class ReportPage extends StatelessWidget {
                         t('weekly_report'),
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: R.fontLg(context),
                           color: cs.onSurface,
                         ),
                       ),
@@ -273,17 +273,22 @@ class ReportPage extends StatelessWidget {
                           children: [
                             Text(
                               t('week_total'),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 13,
+                                fontSize: R.fontSm(context),
                               ),
                             ),
-                            Text(
-                              '$weekTotalOrders ${t('orders')}  •  ${weekTotalRev.toStringAsFixed(0)} ${t('currency_suffix')}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                                color: AppColors.primary,
+                            Flexible(
+                              child: Text(
+                                '$weekTotalOrders ${t('orders')}  •  ${weekTotalRev.toStringAsFixed(0)} ${t('currency_suffix')}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: R.fontSm(context),
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                           ],
@@ -310,9 +315,9 @@ class ReportPage extends StatelessWidget {
                                 child: Text(
                                   '${e.value}',
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 13,
+                                    fontSize: R.fontSm(context),
                                     color: AppColors.primary,
                                   ),
                                 ),
@@ -330,10 +335,11 @@ class ReportPage extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              SizedBox(
-                                width: 100,
+                              Flexible(
                                 child: Text(
                                   e.key,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.right,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,

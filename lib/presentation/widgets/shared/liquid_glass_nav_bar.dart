@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class LiquidNavItem {
   final IconData icon;
@@ -90,16 +91,15 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
                       children: List.generate(widget.items.length, (i) {
                         final item = widget.items[i];
                         final active = widget.selectedIndex == i;
-                        return GestureDetector(
+                        return Expanded(
+                          child: GestureDetector(
                           onTap: () {
                             debugPrint('[NAV] bar-tap index=$i label=${item.label}');
                             HapticFeedback.lightImpact();
                             widget.onTap(i);
                           },
                           behavior: HitTestBehavior.opaque,
-                          child: SizedBox(
-                            width: 64,
-                            child: Column(
+                          child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Stack(
@@ -123,10 +123,10 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> with SingleTicker
                                   ],
                                 ),
                                 const SizedBox(height: 2),
-                                Text(item.label, style: TextStyle(fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500, color: active ? sel : unsel), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                Text(item.label, style: TextStyle(fontSize: R.fontSm(context), fontWeight: active ? FontWeight.w700 : FontWeight.w500, color: active ? sel : unsel), maxLines: 1, overflow: TextOverflow.ellipsis),
                               ],
-                            ),
                           ),
+                        ),
                         );
                       }),
                     ),

@@ -48,11 +48,13 @@ class _CartPageState extends State<CartPage> {
         child: Row(children: [
           const Spacer(),
           if (cart.isNotEmpty) ...[
-            TextButton.icon(
-              onPressed: () => context.read<OrderCubit>().clearCart(),
-              icon: const Icon(Icons.delete_sweep, size: 18),
-              label: Text(t('clear'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context))),
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            Flexible(
+              child: TextButton.icon(
+                onPressed: () => context.read<OrderCubit>().clearCart(),
+                icon: const Icon(Icons.delete_sweep, size: 18),
+                label: Text(t('clear'), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontSm(context))),
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              ),
             ),
             SizedBox(width: isDesktop ? 16 : 8),
             TableSelector(selectedTable: state.selectedTable,
@@ -65,12 +67,22 @@ class _CartPageState extends State<CartPage> {
         Expanded(child: EmptyState(icon: Icons.shopping_bag_outlined, title: t('cart_empty_title'), subtitle: t('cart_empty_subtitle')))
       else ...[
         const SizedBox(height: 8),
-        Expanded(child: isDesktop
+        Expanded(
+          child: R.isPhone(context)
+          ? ListView.builder(
+              padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
+              itemCount: cart.length,
+              itemBuilder: (context, index) => CartItemCard(
+                item: cart[index], index: index,
+                notesCtl: _notesCtl, notesHint: t('notes_hint'),
+              ),
+            )
+          : R.isTablet(context)
           ? GridView.builder(
               padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.15,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 380,
+                childAspectRatio: 1.35,
                 crossAxisSpacing: R.gridSpacing(context),
                 mainAxisSpacing: R.gridSpacing(context),
               ),
@@ -80,8 +92,14 @@ class _CartPageState extends State<CartPage> {
                 notesCtl: _notesCtl, notesHint: t('notes_hint'),
               ),
             )
-          : ListView.builder(
+          : GridView.builder(
               padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: R.menuGridColumns(context),
+                childAspectRatio: R.menuGridAspectRatio(context),
+                crossAxisSpacing: R.gridSpacing(context),
+                mainAxisSpacing: R.gridSpacing(context),
+              ),
               itemCount: cart.length,
               itemBuilder: (context, index) => CartItemCard(
                 item: cart[index], index: index,

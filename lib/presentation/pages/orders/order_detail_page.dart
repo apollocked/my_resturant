@@ -44,12 +44,17 @@ class OrderDetailPage extends StatelessWidget {
         label: Text(t('add_items'), style: const TextStyle(fontWeight: FontWeight.w700)),
       ),
       body: SafeArea(child: SingleChildScrollView(
-        padding: EdgeInsets.all(R.padding(context)),
+        padding: EdgeInsets.only(
+          bottom: R.isPhone(context) ? 100 : 40,
+          left: R.padding(context),
+          right: R.padding(context),
+          top: R.padding(context),
+        ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(padding: EdgeInsets.symmetric(horizontal: isDesktop ? 18 : 14, vertical: isDesktop ? 9 : 7),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
-              child: Text(labels[order.status]!, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: isDesktop ? 15 : 13))),
+              child: Text(labels[order.status]!, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: R.fontMd(context)))),
             Text('${order.totalPrice.toInt()} ${t('currency_suffix')}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? R.fontXxl(context) : R.fontXl(context), color: AppColors.primary)),
           ]),
           SizedBox(height: isDesktop ? 28 : 20),
@@ -57,16 +62,16 @@ class OrderDetailPage extends StatelessWidget {
           SizedBox(height: isDesktop ? 32 : 24),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
-                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+                style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
             Text(t('foods'), style: TextStyle(fontSize: isDesktop ? R.fontXl(context) : R.fontLg(context), fontWeight: FontWeight.w700, color: cs.onSurface)),
           ]),
           const SizedBox(height: 12),
-          ...order.items.map((item) => _itemCard(item, t, cs, isDesktop)),
+          ...order.items.map((item) => _itemCard(context, item, t, cs, isDesktop)),
           if (order.notes.isNotEmpty)
             Container(width: double.infinity, padding: const EdgeInsets.all(12), margin: const EdgeInsets.only(top: 8),
               decoration: BoxDecoration(color: cs.surfaceContainerHighest, borderRadius: BorderRadius.circular(10)),
               child: Text(order.notes, textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant, fontStyle: FontStyle.italic))),
+                  style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant, fontStyle: FontStyle.italic))),
           if (canEdit) ...[
             SizedBox(height: isDesktop ? 40 : 32),
             if (hasNext)
@@ -129,7 +134,7 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  Widget _itemCard(CartItem item, String Function(String) t, ColorScheme cs, bool isDesktop) {
+  Widget _itemCard(BuildContext context, CartItem item, String Function(String) t, ColorScheme cs, bool isDesktop) {
     return Card(margin: const EdgeInsets.only(bottom: 8),
       child: Padding(padding: EdgeInsets.all(isDesktop ? 16 : 12), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(item.recipe.imageUrl, width: isDesktop ? 64 : 52, height: isDesktop ? 64 : 52)),
@@ -138,21 +143,27 @@ class OrderDetailPage extends StatelessWidget {
           Row(children: [
             Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-              child: Text('\u00d7${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary))),
+              child: Text('\u00d7${item.quantity}', style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontSm(context), color: AppColors.primary))),
             const Spacer(),
-            Text(item.recipe.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: isDesktop ? 16 : 14, color: cs.onSurface)),
+            Flexible(
+              child: Text(item.recipe.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface)),
+            ),
           ]),
           const SizedBox(height: 4),
           Row(children: [
-            Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? 16 : 14, color: cs.onSurface)),
+            Flexible(
+              child: Text('${item.totalPrice.toInt()} ${t('currency_suffix')}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: R.fontMd(context), color: cs.onSurface)),
+            ),
             const Spacer(),
-            Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant)),
+            Text('${item.recipe.price.toInt()} ${t('currency_suffix')}', style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
           ]),
           if (item.notes.isNotEmpty) ...[
             const SizedBox(height: 4),
             Row(children: [
               Expanded(child: Text(item.notes, textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
+                  style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant.withValues(alpha: 0.7), fontStyle: FontStyle.italic))),
             ]),
           ],
         ])),
@@ -169,9 +180,12 @@ class OrderDetailPage extends StatelessWidget {
         _dot(OrderStatus.pending, current, cs, isDesktop),
       ]),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t('timeline_served'), style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.served ? AppColors.success : cs.onSurfaceVariant)),
-        Text(t('timeline_preparing'), style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : cs.onSurfaceVariant)),
-        Text(t('timeline_pending'), style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : cs.onSurfaceVariant)),
+        Flexible(child: Text(t('timeline_served'), maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.served ? AppColors.success : cs.onSurfaceVariant))),
+        Flexible(child: Text(t('timeline_preparing'), maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.preparing || current == OrderStatus.served ? _colors[OrderStatus.preparing] : cs.onSurfaceVariant))),
+        Flexible(child: Text(t('timeline_pending'), maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: isDesktop ? 12 : 9, color: current == OrderStatus.pending ? _colors[OrderStatus.pending] : cs.onSurfaceVariant))),
       ]),
     ]);
   }

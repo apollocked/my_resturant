@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({super.key});
@@ -20,8 +21,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
       child: AlertDialog(
         title: Text(t('settings'), textAlign: isRtl ? TextAlign.right : TextAlign.left),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(t('theme'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
+        content: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(t('theme'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 8),
           Row(children: [
             Expanded(child: _themeBtn(context, t('light'), ThemeMode.light, settings.themeMode)),
@@ -29,14 +31,15 @@ class _SettingsDialogState extends State<SettingsDialog> {
             Expanded(child: _themeBtn(context, t('dark'), ThemeMode.dark, settings.themeMode)),
           ]),
           const SizedBox(height: 20),
-          Text(t('language'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
+          Text(t('language'), style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 8),
           _langBtn(context, t('kurdish'), const Locale('ku'), settings.locale),
           const SizedBox(height: 6),
           _langBtn(context, t('arabic'), const Locale('ar'), settings.locale),
           const SizedBox(height: 6),
           _langBtn(context, t('english'), const Locale('en'), settings.locale),
-        ]),
+          ]),
+        ),
         actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(t('cancel')))],
       ),
     );
@@ -53,7 +56,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
         side: BorderSide(color: sel ? AppColors.primary : cs.outlineVariant),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+      child: Text(label, style: TextStyle(fontSize: R.fontSm(context), fontWeight: FontWeight.w600)),
     ));
   }
 
@@ -68,7 +71,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
         side: BorderSide(color: sel ? AppColors.primary : cs.outlineVariant),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+      child: Text(label, style: TextStyle(fontSize: R.fontSm(context), fontWeight: FontWeight.w600)),
     ));
   }
 }
