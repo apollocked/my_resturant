@@ -320,6 +320,7 @@ class MainShell extends StatelessWidget {
     return [
       const _Nav(Icons.shopping_bag_outlined, Icons.shopping_bag, 'cart', 0),
       const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
+      const _Nav(Icons.receipt_long_outlined, Icons.receipt_long, 'orders', 2),
       const _Nav(Icons.person_outline, Icons.person, 'profile', 4),
     ];
   }

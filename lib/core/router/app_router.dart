@@ -42,7 +42,11 @@ bool _roleAllowed(Role role, String loc) {
           loc == '/profile' ||
           loc.startsWith('/order-detail');
     case Role.waiter:
-      return loc == '/menu' || loc == '/cart' || loc == '/profile';
+      return loc == '/menu' ||
+          loc == '/cart' ||
+          loc == '/kitchen' ||
+          loc == '/profile' ||
+          loc.startsWith('/order-detail');
   }
 }
 
