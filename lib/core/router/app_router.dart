@@ -33,6 +33,30 @@ final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 
 final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/promo-codes', '/change-passcodes'];
 
+bool _roleAllowed(Role role, String loc) {
+  switch (role) {
+    case Role.admin:
+      return true;
+    case Role.kitchen:
+      return loc == '/kitchen' ||
+          loc == '/profile' ||
+          loc.startsWith('/order-detail');
+    case Role.waiter:
+      return loc == '/menu' || loc == '/cart' || loc == '/profile';
+  }
+}
+
+String _homeFor(Role role) {
+  switch (role) {
+    case Role.admin:
+      return '/menu';
+    case Role.kitchen:
+      return '/kitchen';
+    case Role.waiter:
+      return '/menu';
+  }
+}
+
 final appRouter = GoRouter(
   navigatorKey: _rootNavigator,
   initialLocation: '/menu',
@@ -56,6 +80,8 @@ final appRouter = GoRouter(
     } else if (loc == '/role-login') {
       result = '/menu';
     } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
+      result = '/menu';
+    } else if (!_roleAllowed(rs.role, loc)) {
       result = '/menu';
     } else if (loc == '/order-detail' && state.extra is! Order) {
       result = '/menu';
