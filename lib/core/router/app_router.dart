@@ -78,11 +78,11 @@ final appRouter = GoRouter(
     } else if (!rs.isLoggedIn) {
       result = loc != '/role-login' ? '/role-login' : null;
     } else if (loc == '/role-login') {
-      result = '/menu';
+      result = _homeFor(rs.role);
     } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
-      result = '/menu';
+      result = _homeFor(rs.role);
     } else if (!_roleAllowed(rs.role, loc)) {
-      result = '/menu';
+      result = _homeFor(rs.role);
     } else if (loc == '/order-detail' && state.extra is! Order) {
       result = '/menu';
     }

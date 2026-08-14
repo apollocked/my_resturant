@@ -30,19 +30,23 @@ class OrderDetailPage extends StatelessWidget {
     final color = _colors[order.status]!;
     final hasNext = _nextStatus.containsKey(order.status);
     final cubit = context.read<OrderCubit>();
-    final canEdit = context.watch<RoleCubit>().state.role != Role.waiter;
+    final role = context.watch<RoleCubit>().state.role;
+    final canEdit = role != Role.waiter;
+    final canPlaceItems = role != Role.kitchen;
     final isDesktop = R.isDesktop(context);
     final labels = {OrderStatus.pending: t('status_pending'), OrderStatus.preparing: t('status_preparing'), OrderStatus.served: t('status_served')};
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
       appBar: AppBar(title: Text('${order.displayTable} — ${order.displayTrackingCode}')),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _addItems(context),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_shopping_cart, size: 20),
-        label: Text(t('add_items'), style: const TextStyle(fontWeight: FontWeight.w700)),
-      ),
+      floatingActionButton: canPlaceItems
+          ? FloatingActionButton.extended(
+              onPressed: () => _addItems(context),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.add_shopping_cart, size: 20),
+              label: Text(t('add_items'), style: const TextStyle(fontWeight: FontWeight.w700)),
+            )
+          : null,
       body: SafeArea(child: SingleChildScrollView(
         padding: EdgeInsets.only(
           bottom: R.isPhone(context) ? 100 : 40,

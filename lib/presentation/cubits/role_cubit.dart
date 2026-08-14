@@ -71,7 +71,7 @@ class RoleCubit extends Cubit<RoleState> {
     try {
       final ok = await _repo.verifyPasscode(role, pin);
       if (ok) {
-        await _repo.saveLoggedInRole(role);
+        await _repo.saveLoggedInRole(role, pin: pin);
         await _saveLocal(role);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
@@ -91,7 +91,7 @@ class RoleCubit extends Cubit<RoleState> {
     if (pin != null) {
       final ok = await _repo.verifyPasscode(role, pin);
       if (ok) {
-        await _setRole(role);
+        await _setRole(role, pin: pin);
         return true;
       }
       emit(RoleState(isConfigured: state.isConfigured, isLoggedIn: state.isLoggedIn, role: state.role, errorMessage: 'pin_invalid'));
@@ -99,8 +99,8 @@ class RoleCubit extends Cubit<RoleState> {
     return false;
   }
 
-  Future<void> _setRole(Role role) async {
-    await _repo.saveLoggedInRole(role);
+  Future<void> _setRole(Role role, {String? pin}) async {
+    await _repo.saveLoggedInRole(role, pin: pin);
     await _saveLocal(role);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }

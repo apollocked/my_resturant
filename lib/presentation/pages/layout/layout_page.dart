@@ -294,7 +294,6 @@ class MainShell extends StatelessWidget {
   List<_Nav> _buildNavItems(Role role) {
     if (role == Role.kitchen) {
       return [
-        const _Nav(Icons.menu_book_outlined, Icons.menu_book, 'menu', 1),
         const _Nav(
           Icons.receipt_long_outlined,
           Icons.receipt_long,

@@ -114,8 +114,8 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> saveLoggedInRole(Role? role) async {
-    await _client.rpc('set_role', params: {'p_role': role?.name});
+  Future<void> saveLoggedInRole(Role? role, {String? pin}) async {
+    await _client.rpc('set_role', params: {'p_role': role?.name, 'p_pin': pin});
   }
 
   @override

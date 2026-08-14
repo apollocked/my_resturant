@@ -16,6 +16,6 @@ abstract class AuthRepository {
   Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin);
   Future<bool> verifyPasscode(Role role, String pin);
   Future<void> changePasscode(Role role, String newPin);
-  Future<void> saveLoggedInRole(Role? role);
+  Future<void> saveLoggedInRole(Role? role, {String? pin});
   Future<Role?> getLoggedInRole();
 }
