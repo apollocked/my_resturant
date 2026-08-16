@@ -10,10 +10,7 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
     if (!isAuthed) return [];
     final uid = userId;
     if (uid == null) return [];
-    final data = await client
-        .from('recipes')
-        .select()
-        .eq('restaurant_id', uid);
+    final data = await client.from('recipes').select().eq('restaurant_id', uid);
     return data.map(mapRecipe).toList();
   }
 
@@ -26,7 +23,9 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
         .eq('restaurant_id', uid)
         .count();
     if (count.count >= AppConstants.maxRecipesPerRestaurant) {
-      throw Exception('Maximum ${AppConstants.maxRecipesPerRestaurant} recipes reached');
+      throw Exception(
+        'Maximum ${AppConstants.maxRecipesPerRestaurant} recipes reached',
+      );
     }
     String imageUrl = r.imageUrl;
     if (!imageUrl.startsWith('http')) {
@@ -72,11 +71,7 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
   Future<void> removeRecipe(String id) async {
     final uid = userId;
     if (!isAuthed || uid == null) return;
-    await client
-        .from('recipes')
-        .delete()
-        .eq('id', id)
-        .eq('restaurant_id', uid);
+    await client.from('recipes').delete().eq('id', id).eq('restaurant_id', uid);
   }
 
   Future<void> toggleRecipe(String id) async {

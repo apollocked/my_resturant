@@ -16,7 +16,9 @@ mixin CategoryDataRepoMixin on SupabaseDataRepoBase {
     }
     final count = await client.from('categories').select('key').count();
     if (count.count >= AppConstants.maxCategoriesPerRestaurant) {
-      throw Exception('Maximum ${AppConstants.maxCategoriesPerRestaurant} categories reached');
+      throw Exception(
+        'Maximum ${AppConstants.maxCategoriesPerRestaurant} categories reached',
+      );
     }
     await client.from('categories').upsert({
       'key': key,

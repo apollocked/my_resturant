@@ -6,5 +6,9 @@ import 'package:my_resturant/data/repositories/supabase_repo_base.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 
 class SupabaseDataRepository extends SupabaseDataRepoBase
-    with RecipeDataRepoMixin, OrderDataRepoMixin, SettingDataRepoMixin, CategoryDataRepoMixin
+    with
+        RecipeDataRepoMixin,
+        OrderDataRepoMixin,
+        SettingDataRepoMixin,
+        CategoryDataRepoMixin
     implements DataRepository {}

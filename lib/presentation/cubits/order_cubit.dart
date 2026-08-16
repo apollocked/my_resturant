@@ -1,325 +1,45 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uuid/uuid.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
-import 'package:my_resturant/presentation/cubits/order_state.dart';
-import 'package:my_resturant/domain/repositories/data_repository.dart';
-import 'package:my_resturant/data/repositories/data_repository.dart';
-import 'package:my_resturant/core/notifications/order_notification_service.dart';
+import 'package:my_resturant/presentation/cubits/order_cart_mixin.dart';
+import 'package:my_resturant/presentation/cubits/order_crud_mixin.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
+import 'package:my_resturant/presentation/cubits/order_stream_mixin.dart';
+import 'package:my_resturant/presentation/cubits/order_table_mixin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
+import 'package:uuid/uuid.dart';
 
-class OrderCubit extends Cubit<OrderState> {
-  final DataRepository _repo;
-  final List<StreamSubscription> _subs = [];
-  Timer? _pollTimer;
+class OrderCubit extends OrderCubitBase
+    with OrderStreamMixin, OrderCartMixin, OrderTableMixin, OrderCrudMixin {
   StreamSubscription? _authSub;
   bool _wasAuthed = false;
-  int _gen = 0;
-  final OrderNotificationService _notifService = OrderNotificationService();
-  Role? _currentRole;
-  Locale _currentLocale = const Locale('ku');
-  List<Order> _previousOrders = [];
 
-  OrderCubit({DataRepository? repo})
-    : _repo = repo ?? AppRepository(),
-      super(const OrderState()) {
+  OrderCubit({super.repo}) {
     _wasAuthed = Supabase.instance.client.auth.currentSession != null;
-    _notifService.init();
-    _notifService.requestPermission();
-    _load();
+    notifier.init();
+    loadAndSubscribe();
     _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((state) {
       final authed = state.session != null;
       if (authed && !_wasAuthed) {
-        _load();
+        loadAndSubscribe();
       } else if (!authed && _wasAuthed) {
-        _disposeSubs();
+        disposeSubs();
       }
       _wasAuthed = authed;
     });
   }
 
-  void setCurrentRole(Role? role) => _currentRole = role;
+  void setCurrentRole(Role? role) => notifier.setRole(role);
 
-  void setCurrentLocale(Locale locale) => _currentLocale = locale;
-
-  Future<void> _load() async {
-    final gen = ++_gen;
-    _disposeSubs();
-    try {
-      final recipes = await _repo.loadRecipes();
-      final orders = await _repo.loadOrders();
-      final settings = await _repo.loadSettings();
-      final cats = await _repo.loadCategories();
-      _applySettings(settings);
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            recipes: recipes,
-            orders: orders,
-            categories: cats,
-            isLoading: false,
-          ),
-        );
-      }
-    } catch (e) {
-      if (!isClosed) {
-        debugPrint('OrderCubit._load error: $e');
-        emit(state.copyWith(isLoading: false));
-      }
-    }
-
-    if (isClosed || gen != _gen) return;
-
-    _subscribe(_repo.watchOrders, (o) {
-      if (_currentRole != null) {
-        _notifService.checkOrderChanges(
-          _previousOrders,
-          o,
-          _currentRole!,
-          _currentLocale,
-        );
-      }
-      _previousOrders = List.from(o);
-      if (!isClosed) emit(state.copyWith(orders: o));
-    });
-    _subscribe(_repo.watchRecipes, (r) {
-      if (!isClosed) emit(state.copyWith(recipes: r));
-    });
-    _subscribe(_repo.watchSettings, (s) {
-      if (!isClosed) _applySettings(s);
-    });
-    _subscribe(_repo.watchCategories, (c) {
-      if (!isClosed) emit(state.copyWith(categories: c));
-    });
-
-    _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => _poll());
-  }
-
-  static const int _maxReconnectAttempts = 10;
-
-  void _subscribe<T>(Stream<T> Function() streamFactory, void Function(T) onData) {
-    final sub = streamFactory().listen(
-      onData,
-      onError: (_, _) => _reconnect(streamFactory, onData),
-    );
-    _subs.add(sub);
-  }
-
-  void _reconnect<T>(
-    Stream<T> Function() streamFactory,
-    void Function(T) onData, [
-    int attempt = 0,
-  ]) {
-    if (isClosed || attempt >= _maxReconnectAttempts) return;
-    final delay = Duration(seconds: min(1 << attempt, 30));
-    Future.delayed(delay, () {
-      if (isClosed) return;
-      final sub = streamFactory().listen(
-        onData,
-        onError: (_, _) => _reconnect(streamFactory, onData, attempt + 1),
-      );
-      _subs.add(sub);
-    });
-  }
-
-  Future<void> _poll() async {
-    if (isClosed) return;
-    try {
-      final recipes = await _repo.loadRecipes();
-      final orders = await _repo.loadOrders();
-      if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders));
-    } catch (_) {}
-  }
-
-  void _applySettings(Map<String, String> settings) {
-    if (isClosed) return;
-    final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
-    final names = <int, String>{};
-    final cleared = <int>{};
-    for (final e in settings.entries) {
-      if (e.key.startsWith('tableName_')) {
-        final n = int.tryParse(e.key.split('_').last);
-        if (n != null) names[n] = e.value;
-      }
-      if (e.key.startsWith('cleared_') && e.value == 'true') {
-        final n = int.tryParse(e.key.split('_').last);
-        if (n != null) cleared.add(n);
-      }
-    }
-    emit(
-      state.copyWith(
-        tableCount: tableCount,
-        tableNames: names,
-        clearedTables: cleared,
-      ),
-    );
-  }
-
-  void addToCart(Recipe recipe) {
-    final cart = List<CartItem>.from(state.cart);
-    final idx = cart.indexWhere((c) => c.recipe.id == recipe.id);
-    if (idx >= 0) {
-      final pending = state.pendingNotes[recipe.id];
-      final newNotes = pending != null && pending.isNotEmpty
-          ? pending
-          : cart[idx].notes;
-      cart[idx] = CartItem(
-        recipe: cart[idx].recipe,
-        quantity: cart[idx].quantity + 1,
-        notes: newNotes,
-      );
-      final updatedPending = pending != null
-          ? (Map<String, String>.from(state.pendingNotes)..remove(recipe.id))
-          : null;
-      emit(
-        state.copyWith(
-          cart: cart,
-          pendingNotes: updatedPending ?? state.pendingNotes,
-        ),
-      );
-    } else {
-      final notes = state.pendingNotes[recipe.id] ?? '';
-      final pending = Map<String, String>.from(state.pendingNotes)
-        ..remove(recipe.id);
-      cart.add(CartItem(recipe: recipe, notes: notes));
-      emit(state.copyWith(cart: cart, pendingNotes: pending));
-      return;
-    }
-    emit(state.copyWith(cart: cart));
-  }
-
-  void decrementOrRemove(String recipeId) {
-    final cart = List<CartItem>.from(state.cart);
-    final idx = cart.indexWhere((c) => c.recipe.id == recipeId);
-    if (idx < 0) return;
-    if (cart[idx].quantity > 1) {
-      cart[idx] = CartItem(
-        recipe: cart[idx].recipe,
-        quantity: cart[idx].quantity - 1,
-        notes: cart[idx].notes,
-      );
-    } else {
-      cart.removeAt(idx);
-    }
-    emit(state.copyWith(cart: cart));
-  }
-
-  void updateQuantity(int index, int delta) {
-    if (index < 0 || index >= state.cart.length) return;
-    final cart = List<CartItem>.from(state.cart);
-    final newQty = cart[index].quantity + delta;
-    if (newQty <= 0) {
-      cart.removeAt(index);
-    } else {
-      cart[index] = CartItem(
-        recipe: cart[index].recipe,
-        quantity: newQty.clamp(1, 99),
-        notes: cart[index].notes,
-      );
-    }
-    emit(state.copyWith(cart: cart));
-  }
-
-  void removeFromCart(int index) {
-    if (index < 0 || index >= state.cart.length) return;
-    final cart = List<CartItem>.from(state.cart)..removeAt(index);
-    emit(state.copyWith(cart: cart));
-  }
-
-  void removeFromCartById(String recipeId) {
-    final cart = List<CartItem>.from(state.cart);
-    cart.removeWhere((c) => c.recipe.id == recipeId);
-    emit(state.copyWith(cart: cart));
-  }
-
-  void updateNotesByRecipe(String recipeId, String notes) {
-    final cart = List<CartItem>.from(state.cart);
-    final idx = cart.indexWhere((c) => c.recipe.id == recipeId);
-    if (idx >= 0) {
-      cart[idx] = CartItem(
-        recipe: cart[idx].recipe,
-        quantity: cart[idx].quantity,
-        notes: notes,
-      );
-      emit(state.copyWith(cart: cart));
-    } else {
-      final pending = Map<String, String>.from(state.pendingNotes)
-        ..[recipeId] = notes;
-      emit(state.copyWith(pendingNotes: pending));
-    }
-  }
-
-  void updateNotes(int index, String notes) {
-    if (index < 0 || index >= state.cart.length) return;
-    final cart = List<CartItem>.from(state.cart);
-    cart[index] = CartItem(
-      recipe: cart[index].recipe,
-      quantity: cart[index].quantity,
-      notes: notes,
-    );
-    emit(state.copyWith(cart: cart));
-  }
-
-  void clearCart() => emit(state.copyWith(cart: [], pendingNotes: const {}));
-
-  void setSelectedTable(int t) => emit(state.copyWith(selectedTable: t));
-
-  void setTableCount(int v) {
-    final names = Map<int, String>.from(state.tableNames);
-    names.removeWhere((k, _) => k > v);
-    emit(state.copyWith(tableCount: v.clamp(1, 35), tableNames: names));
-    _repo.saveSetting('tableCount', v.clamp(1, 35).toString());
-  }
-
-  void setTableName(int n, String name) {
-    final names = Map<int, String>.from(state.tableNames);
-    if (name.trim().isEmpty) {
-      names.remove(n);
-    } else {
-      names[n] = name.trim();
-    }
-    emit(state.copyWith(tableNames: names));
-    _repo.saveSetting('tableName_$n', name.trim());
-  }
-
-  Future<void> addRecipe(Recipe recipe) async => _repo.addRecipe(recipe);
-
-  Future<void> deleteRecipe(String id) async => _repo.removeRecipe(id);
-
-  Future<void> updateRecipe(
-    String id, {
-    String? name,
-    double? price,
-    String? category,
-    String? description,
-    String? imageUrl,
-  }) async => _repo.editRecipe(
-    id,
-    name: name,
-    price: price,
-    category: category,
-    description: description,
-    imageUrl: imageUrl,
-  );
-
-  Future<void> toggleAvailability(String id) async => _repo.toggleRecipe(id);
-
-  Future<void> addCategory(String key, String name, String icon) async {
-    await _repo.addCategory(key, name, icon);
-  }
-
-  Future<void> removeCategory(String key) async {
-    await _repo.removeCategory(key);
-  }
+  void setCurrentLocale(Locale locale) => notifier.setLocale(locale);
 
   Future<void> submitOrder(String notes) async {
-    if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) return;
+    if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) {
+      return;
+    }
     if (!isClosed) emit(state.copyWith(isSubmitting: true));
     try {
       final order = Order(
@@ -329,10 +49,10 @@ class OrderCubit extends Cubit<OrderState> {
         items: List.from(state.cart),
         notes: notes,
       );
-      await _repo.saveOrder(order);
+      await repo.saveOrder(order);
       final cleared = Set<int>.from(state.clearedTables)
         ..remove(state.selectedTable);
-      await _repo.saveSetting('cleared_${state.selectedTable}', 'false');
+      await repo.saveSetting('cleared_${state.selectedTable}', 'false');
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -350,38 +70,26 @@ class OrderCubit extends Cubit<OrderState> {
     }
   }
 
-  void clearTable(int tableNumber) {
-    final cleared = Set<int>.from(state.clearedTables)..add(tableNumber);
-    _repo.saveSetting('cleared_$tableNumber', 'true');
-    emit(state.copyWith(clearedTables: cleared));
-  }
-
-  void unclearTable(int tableNumber) {
-    final cleared = Set<int>.from(state.clearedTables)..remove(tableNumber);
-    _repo.saveSetting('cleared_$tableNumber', 'false');
-    emit(state.copyWith(clearedTables: cleared));
-  }
-
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
-    await _repo.changeOrderStatus(orderId, status);
+    await repo.changeOrderStatus(orderId, status);
     await refresh();
   }
 
   Future<void> addItemsToOrder(String orderId, List<CartItem> items) async {
     if (items.isEmpty) return;
-    await _repo.appendItemsToOrder(orderId, items);
+    await repo.appendItemsToOrder(orderId, items);
     await refresh();
   }
 
   Future<void> deleteAllOrders() async {
-    await _repo.deleteAllOrders();
+    await repo.deleteAllOrders();
     if (!isClosed) emit(state.copyWith(orders: []));
   }
 
   Future<void> refresh() async {
-    final orders = await _repo.loadOrders();
-    final recipes = await _repo.loadRecipes();
-    final cats = await _repo.loadCategories();
+    final orders = await repo.loadOrders();
+    final recipes = await repo.loadRecipes();
+    final cats = await repo.loadCategories();
     if (!isClosed) {
       emit(
         state.copyWith(
@@ -396,17 +104,8 @@ class OrderCubit extends Cubit<OrderState> {
 
   @override
   Future<void> close() {
-    _disposeSubs();
+    disposeSubs();
     _authSub?.cancel();
     return super.close();
-  }
-
-  void _disposeSubs() {
-    _pollTimer?.cancel();
-    _pollTimer = null;
-    for (final s in _subs) {
-      s.cancel();
-    }
-    _subs.clear();
   }
 }

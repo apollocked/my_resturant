@@ -29,7 +29,9 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
         .eq('restaurant_id', uid)
         .count();
     if (count.count >= AppConstants.maxOrdersPerRestaurant) {
-      throw Exception('Maximum ${AppConstants.maxOrdersPerRestaurant} orders reached. Please archive old orders.');
+      throw Exception(
+        'Maximum ${AppConstants.maxOrdersPerRestaurant} orders reached. Please archive old orders.',
+      );
     }
     final itemsJson = jsonEncode(
       order.items
@@ -45,7 +47,8 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
           )
           .toList(),
     );
-    final trackingCode = 'ORD-${DateTime.now().millisecondsSinceEpoch}-${Random.secure().nextInt(10000)}';
+    final trackingCode =
+        'ORD-${DateTime.now().millisecondsSinceEpoch}-${Random.secure().nextInt(10000)}';
     await client.from('orders').insert({
       'id': order.id,
       'table_number': order.tableNumber,
@@ -72,19 +75,22 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
   Future<void> appendItemsToOrder(String orderId, List<CartItem> items) async {
     final uid = userId;
     if (!isAuthed || uid == null || items.isEmpty) return;
-    await client.rpc('append_order_items', params: {
-      'p_order_id': orderId,
-      'p_items': items.map((item) {
-        return {
-          'recipe_id': item.recipe.id,
-          'recipe_name': item.recipe.name,
-          'recipe_price': item.recipe.price,
-          'recipe_image_url': item.recipe.imageUrl,
-          'quantity': item.quantity,
-          'notes': item.notes,
-        };
-      }).toList(),
-    });
+    await client.rpc(
+      'append_order_items',
+      params: {
+        'p_order_id': orderId,
+        'p_items': items.map((item) {
+          return {
+            'recipe_id': item.recipe.id,
+            'recipe_name': item.recipe.name,
+            'recipe_price': item.recipe.price,
+            'recipe_image_url': item.recipe.imageUrl,
+            'quantity': item.quantity,
+            'notes': item.notes,
+          };
+        }).toList(),
+      },
+    );
   }
 
   Future<void> deleteAllOrders() async {

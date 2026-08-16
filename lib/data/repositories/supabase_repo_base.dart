@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -16,14 +15,14 @@ class SupabaseDataRepoBase {
   String? get userId => client.auth.currentUser?.id;
 
   Recipe mapRecipe(Map<String, dynamic> row) => Recipe(
-        id: row['id'] as String? ?? '',
-        name: row['name'] as String? ?? '',
-        imageUrl: (row['image_url'] as String?) ?? '',
-        price: (row['price'] as num?)?.toDouble() ?? 0,
-        description: (row['description'] as String?) ?? '',
-        category: (row['category'] as String?) ?? '',
-        available: (row['available'] as bool?) ?? true,
-      );
+    id: row['id'] as String? ?? '',
+    name: row['name'] as String? ?? '',
+    imageUrl: (row['image_url'] as String?) ?? '',
+    price: (row['price'] as num?)?.toDouble() ?? 0,
+    description: (row['description'] as String?) ?? '',
+    category: (row['category'] as String?) ?? '',
+    available: (row['available'] as bool?) ?? true,
+  );
 
   Order mapOrder(Map<String, dynamic> row) {
     List<CartItem> items = [];
@@ -53,7 +52,9 @@ class SupabaseDataRepoBase {
         );
       }).toList();
     } catch (e) {
-      debugPrint('SupabaseDataRepo.mapOrder: corrupt items_json, falling back to empty: $e');
+      debugPrint(
+        'SupabaseDataRepo.mapOrder: corrupt items_json, falling back to empty: $e',
+      );
     }
 
     return Order(
@@ -83,19 +84,23 @@ class SupabaseDataRepoBase {
   }
 
   Map<String, String> mapCategory(Map<String, dynamic> row) => {
-        'key': (row['key'] as String?) ?? '',
-        'name': (row['name'] as String?) ?? '',
-        'icon': (row['icon'] as String?) ?? '',
-      };
+    'key': (row['key'] as String?) ?? '',
+    'name': (row['name'] as String?) ?? '',
+    'icon': (row['icon'] as String?) ?? '',
+  };
 
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
     final uid = userId;
     if (uid == null) throw Exception('Not logged in');
     if (bytes.length > AppConstants.maxImageSizeBytes) {
-      throw Exception('Image too large. Maximum size is ${AppConstants.maxImageSizeBytes ~/ (1024 * 1024)}MB');
+      throw Exception(
+        'Image too large. Maximum size is ${AppConstants.maxImageSizeBytes ~/ (1024 * 1024)}MB',
+      );
     }
     final path = '$uid/$recipeId.jpg';
-    await client.storage.from('recipe_images').uploadBinary(
+    await client.storage
+        .from('recipe_images')
+        .uploadBinary(
           path,
           bytes,
           fileOptions: const FileOptions(upsert: true),
@@ -103,7 +108,11 @@ class SupabaseDataRepoBase {
     return client.storage.from('recipe_images').getPublicUrl(path);
   }
 
-  Future<String> compressAndUpload(String uid, String recipeId, String localPath) async {
+  Future<String> compressAndUpload(
+    String uid,
+    String recipeId,
+    String localPath,
+  ) async {
     final file = File(localPath);
     if (!await file.exists()) return localPath;
     final bytes = await FlutterImageCompress.compressWithFile(

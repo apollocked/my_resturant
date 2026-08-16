@@ -37,15 +37,25 @@ class OrderState {
   Set<int> get reservedTables {
     final now = DateTime.now();
     return orders
-      .where((o) => o.createdAt.year == now.year && o.createdAt.month == now.month && o.createdAt.day == now.day && o.status != OrderStatus.served)
-      .map((o) => o.tableNumber)
-      .toSet()
-      .difference(clearedTables);
+        .where(
+          (o) =>
+              o.createdAt.year == now.year &&
+              o.createdAt.month == now.month &&
+              o.createdAt.day == now.day &&
+              o.status != OrderStatus.served,
+        )
+        .map((o) => o.tableNumber)
+        .toSet()
+        .difference(clearedTables);
   }
 
   String getTableName(int n) => tableNames[n] ?? 'Table $n';
-  int getQuantity(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;
-  String getNotes(String id) => cart.where((c) => c.recipe.id == id).firstOrNull?.notes ?? pendingNotes[id] ?? '';
+  int getQuantity(String id) =>
+      cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;
+  String getNotes(String id) =>
+      cart.where((c) => c.recipe.id == id).firstOrNull?.notes ??
+      pendingNotes[id] ??
+      '';
 
   Map<String, int> get dishOrderCounts {
     final c = <String, int>{};
@@ -54,20 +64,47 @@ class OrderState {
         c[i.recipe.name] = (c[i.recipe.name] ?? 0) + i.quantity;
       }
     }
-    final entries = c.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final entries = c.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
     return {for (final e in entries) e.key: e.value};
   }
 
   String? get mostOrderedDish => dishOrderCounts.entries.firstOrNull?.key;
-  int get mostOrderedDishCount => dishOrderCounts.entries.firstOrNull?.value ?? 0;
+  int get mostOrderedDishCount =>
+      dishOrderCounts.entries.firstOrNull?.value ?? 0;
 
-  List<Order> ordersByDate(DateTime d) => orders.where((o) =>
-    o.createdAt.year == d.year && o.createdAt.month == d.month && o.createdAt.day == d.day).toList();
+  List<Order> ordersByDate(DateTime d) => orders
+      .where(
+        (o) =>
+            o.createdAt.year == d.year &&
+            o.createdAt.month == d.month &&
+            o.createdAt.day == d.day,
+      )
+      .toList();
 
-  OrderState copyWith({List<Recipe>? recipes, List<CartItem>? cart, List<Order>? orders, List<Map<String, String>>? categories, int? selectedTable, int? tableCount, Map<int, String>? tableNames, Map<String, String>? pendingNotes, bool? isLoading, Set<int>? clearedTables, bool? isSubmitting}) =>
-    OrderState(recipes: recipes ?? this.recipes, cart: cart ?? this.cart, orders: orders ?? this.orders,
-      categories: categories ?? this.categories, selectedTable: selectedTable ?? this.selectedTable,
-      tableCount: tableCount ?? this.tableCount, tableNames: tableNames ?? this.tableNames,
-      pendingNotes: pendingNotes ?? this.pendingNotes, isLoading: isLoading ?? this.isLoading,
-      clearedTables: clearedTables ?? this.clearedTables, isSubmitting: isSubmitting ?? this.isSubmitting);
+  OrderState copyWith({
+    List<Recipe>? recipes,
+    List<CartItem>? cart,
+    List<Order>? orders,
+    List<Map<String, String>>? categories,
+    int? selectedTable,
+    int? tableCount,
+    Map<int, String>? tableNames,
+    Map<String, String>? pendingNotes,
+    bool? isLoading,
+    Set<int>? clearedTables,
+    bool? isSubmitting,
+  }) => OrderState(
+    recipes: recipes ?? this.recipes,
+    cart: cart ?? this.cart,
+    orders: orders ?? this.orders,
+    categories: categories ?? this.categories,
+    selectedTable: selectedTable ?? this.selectedTable,
+    tableCount: tableCount ?? this.tableCount,
+    tableNames: tableNames ?? this.tableNames,
+    pendingNotes: pendingNotes ?? this.pendingNotes,
+    isLoading: isLoading ?? this.isLoading,
+    clearedTables: clearedTables ?? this.clearedTables,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+  );
 }

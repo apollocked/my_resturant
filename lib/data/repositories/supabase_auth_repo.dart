@@ -28,7 +28,10 @@ class SupabaseAuthRepository implements AuthRepository {
         password: password,
       );
       if (login.user == null) {
-        throw const AuthException('Email confirmation required. Check your inbox.', code: 'email_not_confirmed');
+        throw const AuthException(
+          'Email confirmation required. Check your inbox.',
+          code: 'email_not_confirmed',
+        );
       }
     }
   }
@@ -49,11 +52,16 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> updateEmail(String newEmail) async {
-    await _client.auth.updateUser(UserAttributes(email: newEmail.trim().toLowerCase()));
+    await _client.auth.updateUser(
+      UserAttributes(email: newEmail.trim().toLowerCase()),
+    );
   }
 
   @override
-  Future<void> updatePassword(String currentPassword, String newPassword) async {
+  Future<void> updatePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     final user = _client.auth.currentUser;
     if (user == null) throw Exception('Not logged in');
     final email = user.email;
@@ -84,21 +92,29 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> savePasscodes(String waiterPin, String kitchenPin, String adminPin) async {
-    await _client.rpc('save_passcodes', params: {
-      'p_waiter': waiterPin,
-      'p_kitchen': kitchenPin,
-      'p_admin': adminPin,
-    });
+  Future<void> savePasscodes(
+    String waiterPin,
+    String kitchenPin,
+    String adminPin,
+  ) async {
+    await _client.rpc(
+      'save_passcodes',
+      params: {
+        'p_waiter': waiterPin,
+        'p_kitchen': kitchenPin,
+        'p_admin': adminPin,
+      },
+    );
   }
 
   @override
   Future<bool> verifyPasscode(Role role, String pin) async {
     try {
-      return await _client.rpc('verify_pin', params: {
-        'p_role': role.name,
-        'p_pin': pin,
-      }) == true;
+      return await _client.rpc(
+            'verify_pin',
+            params: {'p_role': role.name, 'p_pin': pin},
+          ) ==
+          true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.verifyPasscode error: $e\n$st');
       return false;
@@ -107,10 +123,10 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> changePasscode(Role role, String newPin) async {
-    await _client.rpc('change_passcode', params: {
-      'p_role': role.name,
-      'p_pin': newPin,
-    });
+    await _client.rpc(
+      'change_passcode',
+      params: {'p_role': role.name, 'p_pin': newPin},
+    );
   }
 
   @override
@@ -123,7 +139,11 @@ class SupabaseAuthRepository implements AuthRepository {
     final user = _client.auth.currentUser;
     if (user == null) return null;
     try {
-      final data = await _client.from('profiles').select('role').eq('id', user.id).maybeSingle();
+      final data = await _client
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
       final name = data?['role'] as String?;
       if (name == null) return null;
       for (final r in Role.values) {
@@ -140,7 +160,11 @@ class SupabaseAuthRepository implements AuthRepository {
     try {
       final user = _client.auth.currentUser;
       if (user == null) return false;
-      final data = await _client.from('profiles').select('activated').eq('id', user.id).maybeSingle();
+      final data = await _client
+          .from('profiles')
+          .select('activated')
+          .eq('id', user.id)
+          .maybeSingle();
       return data?['activated'] == true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.isActivated error: $e\n$st');
@@ -151,7 +175,10 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<bool> claimPromoCode(String code) async {
     try {
-      final result = await _client.rpc('claim_promo_code', params: {'promo_code': code.trim().toUpperCase()});
+      final result = await _client.rpc(
+        'claim_promo_code',
+        params: {'promo_code': code.trim().toUpperCase()},
+      );
       return result == true;
     } catch (e, st) {
       debugPrint('SupabaseAuthRepo.claimPromoCode error: $e\n$st');
@@ -164,12 +191,21 @@ class SupabaseAuthRepository implements AuthRepository {
     final webClientId = dotenv.env['WEB_CLIENT_ID'] ?? '';
 
     final googleSignIn = GoogleSignIn.instance;
-    await googleSignIn.initialize(serverClientId: webClientId.isNotEmpty ? webClientId : null);
+    await googleSignIn.initialize(
+      serverClientId: webClientId.isNotEmpty ? webClientId : null,
+    );
 
     final googleUser = await googleSignIn.authenticate();
 
-    final authorization = await googleUser.authorizationClient.authorizationForScopes(['email', 'profile'])
-        ?? await googleUser.authorizationClient.authorizeScopes(['email', 'profile']);
+    final authorization =
+        await googleUser.authorizationClient.authorizationForScopes([
+          'email',
+          'profile',
+        ]) ??
+        await googleUser.authorizationClient.authorizeScopes([
+          'email',
+          'profile',
+        ]);
 
     final idToken = googleUser.authentication.idToken;
     if (idToken == null) throw const AuthException('No ID token from Google');

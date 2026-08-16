@@ -9,7 +9,12 @@ class RoleState {
   final bool isConfigured;
   final bool isLoggedIn;
   final String? errorMessage;
-  const RoleState({this.role = Role.admin, this.isConfigured = false, this.isLoggedIn = false, this.errorMessage});
+  const RoleState({
+    this.role = Role.admin,
+    this.isConfigured = false,
+    this.isLoggedIn = false,
+    this.errorMessage,
+  });
 }
 
 class RoleCubit extends Cubit<RoleState> {
@@ -35,24 +40,32 @@ class RoleCubit extends Cubit<RoleState> {
       } else {
         await _saveLocal(role);
       }
-      emit(RoleState(
-        isConfigured: true,
-        isLoggedIn: role != null,
-        role: role ?? Role.admin,
-      ));
+      emit(
+        RoleState(
+          isConfigured: true,
+          isLoggedIn: role != null,
+          role: role ?? Role.admin,
+        ),
+      );
     } catch (e, st) {
       debugPrint('RoleCubit.load error: $e\n$st');
       emit(const RoleState());
     }
   }
 
-  void clearError() => emit(RoleState(
-    isConfigured: state.isConfigured,
-    isLoggedIn: state.isLoggedIn,
-    role: state.role,
-  ));
+  void clearError() => emit(
+    RoleState(
+      isConfigured: state.isConfigured,
+      isLoggedIn: state.isLoggedIn,
+      role: state.role,
+    ),
+  );
 
-  Future<void> configure(String waiterPin, String kitchenPin, String adminPin) async {
+  Future<void> configure(
+    String waiterPin,
+    String kitchenPin,
+    String adminPin,
+  ) async {
     try {
       await _repo.savePasscodes(waiterPin, kitchenPin, adminPin);
       emit(const RoleState(isConfigured: true));
@@ -94,7 +107,14 @@ class RoleCubit extends Cubit<RoleState> {
         await _setRole(role, pin: pin);
         return true;
       }
-      emit(RoleState(isConfigured: state.isConfigured, isLoggedIn: state.isLoggedIn, role: state.role, errorMessage: 'pin_invalid'));
+      emit(
+        RoleState(
+          isConfigured: state.isConfigured,
+          isLoggedIn: state.isLoggedIn,
+          role: state.role,
+          errorMessage: 'pin_invalid',
+        ),
+      );
     }
     return false;
   }
