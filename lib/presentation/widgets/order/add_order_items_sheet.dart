@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -50,7 +50,8 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
     return sum;
   }
 
-  void _inc(Recipe r) => setState(() => _selection[r.id] = (_selection[r.id] ?? 0) + 1);
+  void _inc(Recipe r) =>
+      setState(() => _selection[r.id] = (_selection[r.id] ?? 0) + 1);
   void _dec(Recipe r) {
     setState(() {
       final q = _selection[r.id] ?? 0;
@@ -70,13 +71,19 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
     final screen = R.screenSize(context);
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
-    final radius = isDesktop ? 28.0 : isTablet ? 24.0 : 20.0;
+    final radius = isDesktop
+        ? 28.0
+        : isTablet
+        ? 24.0
+        : 20.0;
     final meals = _available;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
         decoration: BoxDecoration(
           color: cs.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
@@ -84,20 +91,55 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(color: cs.onSurfaceVariant.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(
+                color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             Padding(
-              padding: EdgeInsets.fromLTRB(isDesktop ? 24 : 16, 14, isDesktop ? 24 : 16, 8),
-              child: Row(children: [
-                Expanded(child: Text(t('add_items'), style: TextStyle(fontSize: isDesktop ? 18 : 16, fontWeight: FontWeight.w800, color: cs.onSurface))),
-                if (_totalCount > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(color: AppColors.primarySoft, borderRadius: BorderRadius.circular(20)),
-                    child: Text(t('items').replaceAll('{count}', '$_totalCount'),
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary)),
+              padding: EdgeInsets.fromLTRB(
+                isDesktop ? 24 : 16,
+                14,
+                isDesktop ? 24 : 16,
+                8,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      t('add_items'),
+                      style: TextStyle(
+                        fontSize: isDesktop ? 18 : 16,
+                        fontWeight: FontWeight.w800,
+                        color: cs.onSurface,
+                      ),
+                    ),
                   ),
-              ]),
+                  if (_totalCount > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primarySoft,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        t('items').replaceAll('{count}', '$_totalCount'),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 16),
@@ -107,11 +149,16 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
                 style: TextStyle(fontSize: 14, color: cs.onSurface),
                 decoration: InputDecoration(
                   hintText: t('search_hint'),
-                  hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.6)),
+                  hintStyle: TextStyle(
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+                  ),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   filled: true,
                   fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
@@ -120,10 +167,20 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
             const SizedBox(height: 8),
             Flexible(
               child: meals.isEmpty
-                  ? Center(child: Text(t('add_items_empty'), style: TextStyle(color: cs.onSurfaceVariant)))
+                  ? Center(
+                      child: Text(
+                        t('add_items_empty'),
+                        style: TextStyle(color: cs.onSurfaceVariant),
+                      ),
+                    )
                   : ListView.builder(
                       shrinkWrap: true,
-                      padding: EdgeInsets.fromLTRB(isDesktop ? 24 : 16, 4, isDesktop ? 24 : 16, 8),
+                      padding: EdgeInsets.fromLTRB(
+                        isDesktop ? 24 : 16,
+                        4,
+                        isDesktop ? 24 : 16,
+                        8,
+                      ),
                       itemCount: meals.length,
                       itemBuilder: (ctx, i) {
                         final r = meals[i];
@@ -132,48 +189,135 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
                           margin: const EdgeInsets.only(bottom: 8),
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
+                            color: cs.surfaceContainerHighest.withValues(
+                              alpha: 0.4,
+                            ),
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Row(children: [
-                            ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(r.imageUrl, width: 46, height: 46, fit: BoxFit.cover)),
-                            const SizedBox(width: 12),
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(r.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurface), maxLines: 1, overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: 2),
-                              Text('${r.price.toInt()} ${t('currency_suffix')}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary)),
-                            ])),
-                            const SizedBox(width: 8),
-                            if (qty == 0)
-                              PressableScale(
-                                onTap: () => _inc(r),
-                                child: Container(
-                                  width: 34, height: 34,
-                                  decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
-                                  child: const Icon(Icons.add, size: 20, color: Colors.white),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: AppImage(
+                                  r.imageUrl,
+                                  width: 46,
+                                  height: 46,
+                                  fit: BoxFit.cover,
                                 ),
-                              )
-                            else
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                height: 34,
-                                decoration: BoxDecoration(color: cs.surface, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.primary, width: 1.5)),
-                                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                  InkWell(onTap: () => _dec(r), borderRadius: BorderRadius.circular(8),
-                                    child: const SizedBox(width: 28, height: 30, child: Icon(Icons.remove, size: 18, color: AppColors.primary))),
-                                  Text('$qty', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.primary)),
-                                  InkWell(onTap: () => _inc(r), borderRadius: BorderRadius.circular(8),
-                                    child: const SizedBox(width: 28, height: 30, child: Icon(Icons.add, size: 18, color: AppColors.primary))),
-                                ]),
                               ),
-                          ]),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      r.name,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: cs.onSurface,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${r.price.toInt()} ${t('currency_suffix')}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              if (qty == 0)
+                                PressableScale(
+                                  onTap: () => _inc(r),
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      size: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  height: 34,
+                                  decoration: BoxDecoration(
+                                    color: cs.surface,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: AppColors.primary,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      InkWell(
+                                        onTap: () => _dec(r),
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: const SizedBox(
+                                          width: 28,
+                                          height: 30,
+                                          child: Icon(
+                                            Icons.remove,
+                                            size: 18,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '$qty',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () => _inc(r),
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: const SizedBox(
+                                          width: 28,
+                                          height: 30,
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 18,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
                         );
                       },
                     ),
             ),
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(isDesktop ? 24 : 16, 8, isDesktop ? 24 : 16, isDesktop ? 16 : 12),
+                padding: EdgeInsets.fromLTRB(
+                  isDesktop ? 24 : 16,
+                  8,
+                  isDesktop ? 24 : 16,
+                  isDesktop ? 16 : 12,
+                ),
                 child: SizedBox(
                   width: double.infinity,
                   height: isDesktop ? 52 : 46,
@@ -184,23 +328,31 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
                             final items = <CartItem>[];
                             for (final r in widget.recipes) {
                               final q = _selection[r.id] ?? 0;
-                              if (q > 0) items.add(CartItem(recipe: r, quantity: q));
+                              if (q > 0)
+                                items.add(CartItem(recipe: r, quantity: q));
                             }
                             Navigator.pop(context, items);
                           },
                     child: FilledButton(
                       onPressed: null,
                       style: FilledButton.styleFrom(
-                        backgroundColor: _totalCount == 0 ? cs.surfaceContainerHighest : AppColors.primary,
+                        backgroundColor: _totalCount == 0
+                            ? cs.surfaceContainerHighest
+                            : AppColors.primary,
                         disabledBackgroundColor: cs.surfaceContainerHighest,
                         disabledForegroundColor: cs.onSurfaceVariant,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                       child: Text(
                         _totalCount == 0
                             ? t('add_to_order')
                             : '${t('add_to_order')}  (${_totalPrice.toInt()} ${t('currency_suffix')})',
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),

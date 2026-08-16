@@ -93,7 +93,6 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
     return Scaffold(
       appBar: AppBar(

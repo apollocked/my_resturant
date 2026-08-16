@@ -1,16 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/calendar_grid.dart';
-import 'package:my_resturant/presentation/widgets/order/stat_chip.dart';
+import 'package:my_resturant/presentation/widgets/order/clear_all_orders_dialog.dart';
+import 'package:my_resturant/presentation/widgets/order/history_month_nav.dart';
 import 'package:my_resturant/presentation/widgets/order/history_order_list.dart';
-import 'package:my_resturant/shared/shimmer_skeletons.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/presentation/widgets/order/history_shimmer.dart';
+import 'package:my_resturant/presentation/widgets/order/history_stats_bar.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});
@@ -37,11 +38,32 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     );
     if (d != null) {
       if (!mounted) return;
-      setState(() {
-        _selectedDate = d;
-        _viewMonth = DateTime(d.year, d.month);
-      });
+      _goToDate(d);
     }
+  }
+
+  void _goToDate(DateTime d) {
+    setState(() {
+      _selectedDate = d;
+      _viewMonth = DateTime(d.year, d.month);
+    });
+  }
+
+  void _onDayTap(int day) {
+    if (day <= DateTime.now().day ||
+        _viewMonth.month < DateTime.now().month ||
+        _viewMonth.year < DateTime.now().year) {
+      setState(
+        () => _selectedDate = DateTime(_viewMonth.year, _viewMonth.month, day),
+      );
+    }
+  }
+
+  void _clearAll(String Function(String) t) {
+    context.read<OrderCubit>().deleteAllOrders();
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(t('clear_all_orders'))));
   }
 
   @override
@@ -54,13 +76,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final p = R.padding(context);
-    final daysWithOrders = <int>{};
-    for (final o in allOrders) {
-      if (o.createdAt.year == _viewMonth.year &&
-          o.createdAt.month == _viewMonth.month) {
-        daysWithOrders.add(o.createdAt.day);
-      }
-    }
+    final daysWithOrders = allOrders
+        .where(
+          (o) =>
+              o.createdAt.year == _viewMonth.year &&
+              o.createdAt.month == _viewMonth.month,
+        )
+        .map((o) => o.createdAt.day)
+        .toSet();
     final dayTotal = dayOrders.fold(0.0, (s, o) => s + o.totalPrice);
     final dayItems = dayOrders.fold(
       0,
@@ -73,7 +96,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         actions: [
           if (role == Role.admin && allOrders.isNotEmpty)
             IconButton(
-              onPressed: () => _confirmClearAll(t, cs),
+              onPressed: () =>
+                  showClearAllOrdersDialog(context, t, () => _clearAll(t)),
               icon: Icon(Icons.delete_sweep, color: cs.error),
               tooltip: t('clear_all_orders'),
             ),
@@ -82,10 +106,27 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       body: Directionality(
         textDirection: TextDirection.rtl,
         child: cubit.state.isLoading && allOrders.isEmpty
-            ? _buildShimmer(p)
+            ? HistoryShimmer(padding: p)
             : Column(
                 children: [
-                  _monthNav(t, p),
+                  HistoryMonthNav(
+                    t: t,
+                    year: _viewMonth.year,
+                    month: _viewMonth.month,
+                    onPrev: () => setState(
+                      () => _viewMonth = DateTime(
+                        _viewMonth.year,
+                        _viewMonth.month - 1,
+                      ),
+                    ),
+                    onNext: () => setState(
+                      () => _viewMonth = DateTime(
+                        _viewMonth.year,
+                        _viewMonth.month + 1,
+                      ),
+                    ),
+                    onPick: _pick,
+                  ),
                   Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 480),
@@ -94,47 +135,16 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         month: _viewMonth.month,
                         selectedDay: _selectedDate.day,
                         daysWithOrders: daysWithOrders,
-                        onDayTap: (day) {
-                          if (day <= DateTime.now().day ||
-                              _viewMonth.month < DateTime.now().month ||
-                              _viewMonth.year < DateTime.now().year) {
-                            setState(
-                              () => _selectedDate = DateTime(
-                                _viewMonth.year,
-                                _viewMonth.month,
-                                day,
-                              ),
-                            );
-                          }
-                        },
+                        onDayTap: _onDayTap,
                       ),
                     ),
                   ),
                   const Divider(height: 1),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: p, vertical: 8),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        StatChip(
-                          icon: Icons.receipt_long,
-                          label: '${dayOrders.length} ${t('orders')}',
-                          color: AppColors.primary,
-                        ),
-                        StatChip(
-                          icon: Icons.shopping_bag,
-                          label: '$dayItems ${t('total_items')}',
-                          color: cs.tertiary,
-                        ),
-                        StatChip(
-                          icon: Icons.attach_money,
-                          label:
-                              '${dayTotal.toStringAsFixed(0)} ${t('currency_suffix')}',
-                          color: Colors.green,
-                        ),
-                      ],
-                    ),
+                  HistoryStatsBar(
+                    orderCount: dayOrders.length,
+                    itemCount: dayItems,
+                    total: dayTotal,
+                    t: t,
                   ),
                   const Divider(height: 1),
                   Expanded(
@@ -146,89 +156,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   ),
                 ],
               ),
-      ),
-    );
-  }
-
-  Widget _monthNav(String Function(String) t, double p) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            onPressed: () => setState(
-              () =>
-                  _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1),
-            ),
-            icon: const Icon(Icons.chevron_left),
-          ),
-          TextButton.icon(
-            onPressed: _pick,
-            icon: const Icon(Icons.calendar_month, size: 18),
-            label: Text(
-              '${_viewMonth.year} / ${_viewMonth.month.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                fontSize: R.fontLg(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () => setState(
-              () =>
-                  _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1),
-            ),
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShimmer(double p) => Column(
-    children: [
-      const SizedBox(height: 8),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: p, vertical: 4),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ShimmerBox(width: 36, height: 36, radius: 8),
-            ShimmerBox(width: 140, height: 36, radius: 8),
-            ShimmerBox(width: 36, height: 36, radius: 8),
-          ],
-        ),
-      ),
-      const SizedBox(height: 8),
-      ShimmerGrid(itemCount: 6, itemBuilder: () => const ShimmerOrderCard()),
-    ],
-  );
-
-  void _confirmClearAll(String Function(String) t, ColorScheme cs) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        icon: Icon(Icons.warning_amber_rounded, color: cs.error, size: 48),
-        title: Text(t('clear_all_orders')),
-        content: Text(t('clear_all_orders_confirm')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(t('cancel')),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: cs.error),
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<OrderCubit>().deleteAllOrders();
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(t('clear_all_orders'))));
-            },
-            child: Text(t('clear'), style: TextStyle(color: cs.onError)),
-          ),
-        ],
       ),
     );
   }

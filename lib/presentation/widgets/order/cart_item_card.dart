@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -16,66 +16,183 @@ class CartItemCard extends StatelessWidget {
   final TextEditingController Function(String, String) notesCtl;
   final String notesHint;
 
-  const CartItemCard({super.key, required this.item, required this.index, required this.notesCtl, required this.notesHint});
+  const CartItemCard({
+    super.key,
+    required this.item,
+    required this.index,
+    required this.notesCtl,
+    required this.notesHint,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final cubit = context.read<OrderCubit>();
-    final suff = Tr.get('currency_suffix', context.watch<SettingsCubit>().state.locale);
+    final suff = Tr.get(
+      'currency_suffix',
+      context.watch<SettingsCubit>().state.locale,
+    );
     final screen = R.screenSize(context);
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
-    final imageSize = isDesktop ? 80.0 : isTablet ? 72.0 : 64.0;
-    final nameSize = isDesktop ? 16.0 : isTablet ? 15.0 : 14.0;
-    final priceSize = isDesktop ? 14.0 : isTablet ? 13.0 : 12.0;
-    final totalSize = isDesktop ? 20.0 : isTablet ? 18.0 : 16.0;
+    final imageSize = isDesktop
+        ? 80.0
+        : isTablet
+        ? 72.0
+        : 64.0;
+    final nameSize = isDesktop
+        ? 16.0
+        : isTablet
+        ? 15.0
+        : 14.0;
+    final priceSize = isDesktop
+        ? 14.0
+        : isTablet
+        ? 13.0
+        : 12.0;
+    final totalSize = isDesktop
+        ? 20.0
+        : isTablet
+        ? 18.0
+        : 16.0;
     return Card(
       margin: EdgeInsets.only(bottom: isDesktop ? 14 : 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isDesktop ? 18 : 14)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(isDesktop ? 18 : 14),
+      ),
       child: Padding(
         padding: EdgeInsets.all(R.cardPadding(context)),
-        child: Column(children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            ClipRRect(borderRadius: BorderRadius.circular(12), child: AppImage(item.recipe.imageUrl, width: imageSize, height: imageSize)),
-            SizedBox(width: isDesktop ? 18 : 14),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Row(children: [
-                InkWell(onTap: () { HapticFeedback.mediumImpact(); cubit.removeFromCart(index); }, borderRadius: BorderRadius.circular(8),
-                  child: Container(width: 32, height: 32, alignment: Alignment.center,
-                    decoration: BoxDecoration(color: AppColors.error.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-                    child: const Icon(Icons.close, size: 16, color: AppColors.error))),
-                Flexible(
-                  child: Text(item.recipe.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700, fontSize: nameSize, color: cs.onSurface)),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: AppImage(
+                    item.recipe.imageUrl,
+                    width: imageSize,
+                    height: imageSize,
+                  ),
                 ),
-              ]),
-              const SizedBox(height: 4),
-Text('${item.recipe.price.toInt()} $suff',
-    style: TextStyle(color: AppColors.primary, fontSize: priceSize, fontWeight: FontWeight.w600)),
-              SizedBox(height: isDesktop ? 12 : 10),
-              TextField(controller: notesCtl(item.recipe.id, item.notes), textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-                maxLength: 120,
-                decoration: InputDecoration(hintText: notesHint,
-                  hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.4), fontSize: isDesktop ? 13 : 12),
-                  counterText: '',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: cs.outlineVariant)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: cs.outlineVariant)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: isDesktop ? 12 : 10), isDense: true,
-                  filled: true, fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3)),
-                style: TextStyle(fontSize: isDesktop ? 13 : 12, color: cs.onSurface),
-                onChanged: (v) => cubit.updateNotes(index, v)),
-            ])),
-          ]),
-          const SizedBox(height: 12),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Flexible(
-              child: Text('${item.totalPrice.toInt()} $suff', maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: totalSize, color: AppColors.primary)),
+                SizedBox(width: isDesktop ? 18 : 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              cubit.removeFromCart(index);
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.error.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: AppColors.error,
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: Text(
+                              item.recipe.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: nameSize,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.recipe.price.toInt()} $suff',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: priceSize,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: isDesktop ? 12 : 10),
+                      TextField(
+                        controller: notesCtl(item.recipe.id, item.notes),
+                        textAlign: TextAlign.right,
+                        textDirection: TextDirection.rtl,
+                        maxLength: 120,
+                        decoration: InputDecoration(
+                          hintText: notesHint,
+                          hintStyle: TextStyle(
+                            color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                            fontSize: isDesktop ? 13 : 12,
+                          ),
+                          counterText: '',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: cs.outlineVariant),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: cs.outlineVariant),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: isDesktop ? 12 : 10,
+                          ),
+                          isDense: true,
+                          filled: true,
+                          fillColor: cs.surfaceContainerHighest.withValues(
+                            alpha: 0.3,
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontSize: isDesktop ? 13 : 12,
+                          color: cs.onSurface,
+                        ),
+                        onChanged: (v) => cubit.updateNotes(index, v),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            QuantitySelector(quantity: item.quantity, onChanged: (d) => cubit.updateQuantity(index, d)),
-          ]),
-        ]),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    '${item.totalPrice.toInt()} $suff',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: totalSize,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                QuantitySelector(
+                  quantity: item.quantity,
+                  onChanged: (d) => cubit.updateQuantity(index, d),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

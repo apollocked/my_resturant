@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -16,7 +16,14 @@ class KitchenOrderList extends StatelessWidget {
   final String Function(String) t;
   final bool canEdit;
   final String tabKey;
-  const KitchenOrderList({super.key, required this.orders, required this.cubit, required this.t, required this.canEdit, required this.tabKey});
+  const KitchenOrderList({
+    super.key,
+    required this.orders,
+    required this.cubit,
+    required this.t,
+    required this.canEdit,
+    required this.tabKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +31,20 @@ class KitchenOrderList extends StatelessWidget {
     if (orders.isEmpty) {
       if (context.read<OrderCubit>().state.isLoading) {
         return isGrid
-            ? GridView(padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 520, childAspectRatio: 0.9, crossAxisSpacing: R.gridSpacing(context), mainAxisSpacing: R.gridSpacing(context)),
-                children: List.generate(4, (_) => const ShimmerOrderCard()))
-            : ShimmerListView(itemCount: 4, itemBuilder: () => const ShimmerOrderCard());
+            ? GridView(
+                padding: EdgeInsets.symmetric(horizontal: R.padding(context)),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 520,
+                  childAspectRatio: 0.9,
+                  crossAxisSpacing: R.gridSpacing(context),
+                  mainAxisSpacing: R.gridSpacing(context),
+                ),
+                children: List.generate(4, (_) => const ShimmerOrderCard()),
+              )
+            : ShimmerListView(
+                itemCount: 4,
+                itemBuilder: () => const ShimmerOrderCard(),
+              );
       }
       return EmptyState(
         icon: Icons.receipt_long_outlined,
@@ -39,18 +56,29 @@ class KitchenOrderList extends StatelessWidget {
       final hasNext = OrderCard.nextStatus.containsKey(o.status);
       return PressableScale(
         onTap: () => context.push('/order-detail', extra: o),
-        child: OrderCard(order: o, showTimeline: true,
-          onNextStatus: canEdit && hasNext ? () => cubit.updateOrderStatus(o.id, OrderCard.nextStatus[o.status]!) : null,
-          onReset: canEdit && !hasNext ? () async {
-            final confirmed = await showConfirmDialog(
-              context,
-              title: t('again'),
-              message: t('again_confirm_served'),
-              confirmLabel: t('again'),
-              cancelLabel: t('cancel'),
-            );
-            if (confirmed) cubit.updateOrderStatus(o.id, OrderStatus.pending);
-          } : null),
+        child: OrderCard(
+          order: o,
+          showTimeline: true,
+          onNextStatus: canEdit && hasNext
+              ? () => cubit.updateOrderStatus(
+                  o.id,
+                  OrderCard.nextStatus[o.status]!,
+                )
+              : null,
+          onReset: canEdit && !hasNext
+              ? () async {
+                  final confirmed = await showConfirmDialog(
+                    context,
+                    title: t('again'),
+                    message: t('again_confirm_served'),
+                    confirmLabel: t('again'),
+                    cancelLabel: t('cancel'),
+                  );
+                  if (confirmed)
+                    cubit.updateOrderStatus(o.id, OrderStatus.pending);
+                }
+              : null,
+        ),
       );
     }).toList();
     return RefreshIndicator(
@@ -59,7 +87,12 @@ class KitchenOrderList extends StatelessWidget {
           ? SingleChildScrollView(
               key: ValueKey('grid_$tabKey'),
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100),
+              padding: EdgeInsets.fromLTRB(
+                R.padding(context),
+                0,
+                R.padding(context),
+                100,
+              ),
               child: Wrap(
                 spacing: R.gridSpacing(context),
                 runSpacing: R.gridSpacing(context),
@@ -69,7 +102,16 @@ class KitchenOrderList extends StatelessWidget {
                 ],
               ),
             )
-          : ListView(key: ValueKey('list_$tabKey'), padding: EdgeInsets.fromLTRB(R.padding(context), 0, R.padding(context), 100), children: widgets),
+          : ListView(
+              key: ValueKey('list_$tabKey'),
+              padding: EdgeInsets.fromLTRB(
+                R.padding(context),
+                0,
+                R.padding(context),
+                100,
+              ),
+              children: widgets,
+            ),
     );
   }
 }

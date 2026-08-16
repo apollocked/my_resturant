@@ -10,9 +10,9 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_loading_overlay.dart';
 import 'package:my_resturant/presentation/widgets/auth/pin_field.dart';
 import 'package:my_resturant/presentation/widgets/auth/role_card.dart';
-import 'package:my_resturant/presentation/widgets/auth/role_login_button.dart';
 import 'package:my_resturant/presentation/widgets/auth/role_login_header.dart';
 import 'package:my_resturant/presentation/widgets/profile/settings_dialog.dart';
+import 'package:my_resturant/shared/loading_action_button.dart';
 
 class RoleLoginPage extends StatefulWidget {
   const RoleLoginPage({super.key});
@@ -110,7 +110,12 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                             ),
                           ),
                         ),
-                      RoleLoginButton(loading: _loading, t: t, onTap: _login),
+                      LoadingActionButton(
+                        loading: _loading,
+                        t: t,
+                        labelKey: 'enter',
+                        onTap: _login,
+                      ),
                     ],
                   ),
                 ),

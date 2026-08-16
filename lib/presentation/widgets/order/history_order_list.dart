@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
@@ -40,7 +40,10 @@ class HistoryOrderList extends StatelessWidget {
                 runSpacing: R.gridSpacing(context),
                 children: [
                   for (final o in orders)
-                    SizedBox(width: R.orderCardWidth(context), child: _buildCard(context, o)),
+                    SizedBox(
+                      width: R.orderCardWidth(context),
+                      child: _buildCard(context, o),
+                    ),
                 ],
               ),
             )

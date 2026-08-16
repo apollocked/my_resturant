@@ -3,16 +3,18 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
-class RoleLoginButton extends StatelessWidget {
-  const RoleLoginButton({
+class LoadingActionButton extends StatelessWidget {
+  const LoadingActionButton({
     super.key,
     required this.loading,
     required this.t,
+    required this.labelKey,
     required this.onTap,
   });
 
   final bool loading;
   final String Function(String) t;
+  final String labelKey;
   final VoidCallback onTap;
 
   @override
@@ -43,7 +45,7 @@ class RoleLoginButton extends StatelessWidget {
                   ),
                 )
               : Text(
-                  t('enter'),
+                  t(labelKey),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: R.fontMd(context),
