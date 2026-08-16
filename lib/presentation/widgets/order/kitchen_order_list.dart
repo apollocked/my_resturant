@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
+import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
 import 'package:my_resturant/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/shared/empty_state.dart';
@@ -53,7 +54,7 @@ class KitchenOrderList extends StatelessWidget {
       );
     }
     final widgets = orders.map((o) {
-      final hasNext = OrderCard.nextStatus.containsKey(o.status);
+      final hasNext = o.status != OrderStatus.served;
       return PressableScale(
         onTap: () => context.push('/order-detail', extra: o),
         child: OrderCard(
@@ -62,7 +63,7 @@ class KitchenOrderList extends StatelessWidget {
           onNextStatus: canEdit && hasNext
               ? () => cubit.updateOrderStatus(
                   o.id,
-                  OrderCard.nextStatus[o.status]!,
+                  OrderStatusStyle.next(o.status),
                 )
               : null,
           onReset: canEdit && !hasNext

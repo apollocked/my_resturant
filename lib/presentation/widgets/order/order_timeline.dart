@@ -34,9 +34,9 @@ class OrderTimeline extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _label('timeline_served', OrderStatus.served, cs),
-              _label('timeline_preparing', OrderStatus.preparing, cs),
-              _label('timeline_pending', OrderStatus.pending, cs),
+              _label(context, 'timeline_served', OrderStatus.served, cs),
+              _label(context, 'timeline_preparing', OrderStatus.preparing, cs),
+              _label(context, 'timeline_pending', OrderStatus.pending, cs),
             ],
           ),
         ],
@@ -52,7 +52,12 @@ class OrderTimeline extends StatelessWidget {
     );
   }
 
-  Widget _label(String key, OrderStatus s, ColorScheme cs) {
+  Widget _label(
+    BuildContext context,
+    String key,
+    OrderStatus s,
+    ColorScheme cs,
+  ) {
     final bool active = s == OrderStatus.served
         ? status == OrderStatus.served
         : s == OrderStatus.preparing

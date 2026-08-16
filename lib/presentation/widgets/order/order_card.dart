@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_action_bar.dart';
 import 'package:my_resturant/presentation/widgets/order/order_items_list.dart';
 import 'package:my_resturant/presentation/widgets/order/order_status_badge.dart';
-import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
 import 'package:my_resturant/presentation/widgets/order/order_table_row.dart';
 import 'package:my_resturant/presentation/widgets/order/order_timeline.dart';
 

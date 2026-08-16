@@ -17,9 +17,10 @@ class ElapsedTimeChip extends StatelessWidget {
     final min = DateTime.now().difference(createdAt).inMinutes;
     if (min < 1) return Tr.get('time_under_1m', locale);
     if (min < 60) return Tr.get('time_m', locale).replaceAll('{m}', '$min');
-    return Tr.get('time_hm', locale)
-        .replaceAll('{h}', '${min ~/ 60}')
-        .replaceAll('{m}', '${min % 60}');
+    return Tr.get(
+      'time_hm',
+      locale,
+    ).replaceAll('{h}', '${min ~/ 60}').replaceAll('{m}', '${min % 60}');
   }
 
   Color _urgencyColor(int minutes) {
