@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 class QuantitySelector extends StatelessWidget {
   final int quantity;

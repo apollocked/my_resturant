@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 class CategoryFilterBar extends StatelessWidget {
   final int selectedIndex;
@@ -28,7 +28,7 @@ class CategoryFilterBar extends StatelessWidget {
     final textSize = isDesktop ? 15.0 : isTablet ? 14.0 : 13.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     final cats = [
-      {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
+      {'key': 'all', 'name': 'Ù‡Û•Ù…ÙˆÙˆ', 'icon': 'ðŸ½'},
       ...effectiveCategories(categories),
     ];
     return SizedBox(height: height,

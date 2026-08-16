@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -7,8 +7,8 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/cart_item_card.dart';
 import 'package:my_resturant/presentation/widgets/order/cart_bottom_bar.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
-import 'package:my_resturant/presentation/widgets/shared/table_selector.dart';
+import 'package:my_resturant/shared/empty_state.dart';
+import 'package:my_resturant/shared/table_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class CartPage extends StatefulWidget {

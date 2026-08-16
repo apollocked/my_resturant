@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class MenuShimmerLoader extends StatelessWidget {

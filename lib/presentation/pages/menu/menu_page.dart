@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
@@ -11,7 +11,7 @@ import 'package:my_resturant/presentation/widgets/menu/table_picker.dart';
 import 'package:my_resturant/presentation/widgets/menu/menu_shimmer_loader.dart';
 import 'package:my_resturant/presentation/widgets/menu/menu_desktop_layout.dart';
 import 'package:my_resturant/presentation/widgets/menu/menu_mobile_layout.dart';
-import 'package:my_resturant/presentation/widgets/shared/table_selector.dart';
+import 'package:my_resturant/shared/table_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   String _searchQuery = '';
 
   List<Map<String, String>> _allCats(List<Map<String, String>> dbCats) => [
-    {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
+    {'key': 'all', 'name': 'Ù‡Û•Ù…ÙˆÙˆ', 'icon': 'ðŸ½'},
     ...effectiveCategories(dbCats),
   ];
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -14,7 +14,7 @@ import 'package:my_resturant/presentation/widgets/profile/profile_admin_panel.da
 import 'package:my_resturant/presentation/widgets/profile/profile_role_switcher.dart';
 import 'package:my_resturant/presentation/widgets/profile/profile_dialogs.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

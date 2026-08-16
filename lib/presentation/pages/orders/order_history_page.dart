@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -9,7 +9,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/calendar_grid.dart';
 import 'package:my_resturant/presentation/widgets/order/stat_chip.dart';
 import 'package:my_resturant/presentation/widgets/order/history_order_list.dart';
-import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class OrderHistoryPage extends StatefulWidget {

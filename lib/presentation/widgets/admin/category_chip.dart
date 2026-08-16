@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 class CategoryChip extends StatelessWidget {
   final String icon, name;

@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 class ProfileAdminPanel extends StatelessWidget {
   final String Function(String) t;

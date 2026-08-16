@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenCleanList extends StatelessWidget {
@@ -38,7 +38,7 @@ class KitchenCleanList extends StatelessWidget {
                 decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                 child: const Icon(Icons.cleaning_services, color: Colors.green, size: 22),
               ),
-              title: Text('${t('table')} $n${tableName != '${t('table')} $n' ? ' — $tableName' : ''}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              title: Text('${t('table')} $n${tableName != '${t('table')} $n' ? ' â€” $tableName' : ''}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
               subtitle: Text(t('clear_table'), style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
               trailing: PressableScale(
                 onTap: () => cubit.clearTable(n),

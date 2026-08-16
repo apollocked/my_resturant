@@ -1,10 +1,10 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 
 class PromoCodesPage extends StatefulWidget {
   const PromoCodesPage({super.key});
@@ -271,7 +271,7 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
               child: Icon(_statusIcon(c), color: color, size: 20),
             ),
             title: Text(c['code'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontFamily: 'monospace', fontSize: 16)),
-            subtitle: Text('$status • expires ${_formatDate(c['expires_at'])}', style: TextStyle(color: color, fontSize: 12)),
+            subtitle: Text('$status â€¢ expires ${_formatDate(c['expires_at'])}', style: TextStyle(color: color, fontSize: 12)),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: [
               IconButton(
                 icon: Icon(Icons.copy_rounded, size: 18, color: cs.primary),

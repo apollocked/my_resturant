@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -9,10 +9,10 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
+import 'package:my_resturant/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
-import 'package:my_resturant/presentation/widgets/shared/confirm_dialog.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/order/add_order_items_sheet.dart';
 
 class OrderDetailPage extends StatelessWidget {
@@ -37,7 +37,7 @@ class OrderDetailPage extends StatelessWidget {
     final labels = {OrderStatus.pending: t('status_pending'), OrderStatus.preparing: t('status_preparing'), OrderStatus.served: t('status_served')};
     final nextLabel = {OrderStatus.pending: t('next_prepare'), OrderStatus.preparing: t('next_serve')};
     return Scaffold(
-      appBar: AppBar(title: Text('${order.displayTable} — ${order.displayTrackingCode}')),
+      appBar: AppBar(title: Text('${order.displayTable} â€” ${order.displayTrackingCode}')),
       floatingActionButton: canPlaceItems
           ? FloatingActionButton.extended(
               onPressed: () => _addItems(context),

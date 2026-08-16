@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
-import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
+import 'package:my_resturant/shared/app_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
 
 class DishFormFields extends StatefulWidget {

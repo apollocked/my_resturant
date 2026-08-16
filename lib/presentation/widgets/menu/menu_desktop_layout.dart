@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/presentation/widgets/shared/search_bar_widget.dart';
+import 'package:my_resturant/shared/search_bar_widget.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
-import 'package:my_resturant/presentation/widgets/shared/menu_cart_bar.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/menu_cart_bar.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class MenuDesktopLayout extends StatelessWidget {

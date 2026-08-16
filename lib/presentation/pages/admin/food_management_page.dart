@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -6,12 +6,12 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/presentation/widgets/shared/app_image.dart';
+import 'package:my_resturant/shared/app_image.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_filter_bar.dart';
-import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class FoodManagementPage extends StatefulWidget {
@@ -141,7 +141,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
       child: ListTile(
         leading: ClipRRect(borderRadius: BorderRadius.circular(8), child: AppImage(r.imageUrl, width: 48, height: 48)),
         title: Text(r.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: R.fontMd(context), color: cs.onSurface)),
-        subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+        subtitle: Text('${r.price.toInt()} ${t('currency_suffix')} â€¢ ${r.category}', style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20), onPressed: () => _editRecipe(r)),
           IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20), onPressed: () => _confirmDelete(r)),
@@ -165,7 +165,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
           const Spacer(),
           Text(r.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700, fontSize: R.fontMd(context), color: cs.onSurface)),
           const SizedBox(height: 2),
-          Text('${r.price.toInt()} ${t('currency_suffix')} • ${r.category}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
+          Text('${r.price.toInt()} ${t('currency_suffix')} â€¢ ${r.category}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant)),
         ]),
       ),
     );

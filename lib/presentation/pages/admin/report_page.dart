@@ -1,4 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
+﻿import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -6,8 +6,8 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/profile/stat_card.dart';
-import 'package:my_resturant/presentation/widgets/shared/shimmer_skeletons.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class ReportPage extends StatelessWidget {
@@ -280,7 +280,7 @@ class ReportPage extends StatelessWidget {
                             ),
                             Flexible(
                               child: Text(
-                                '$weekTotalOrders ${t('orders')}  •  ${weekTotalRev.toStringAsFixed(0)} ${t('currency_suffix')}',
+                                '$weekTotalOrders ${t('orders')}  â€¢  ${weekTotalRev.toStringAsFixed(0)} ${t('currency_suffix')}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.end,

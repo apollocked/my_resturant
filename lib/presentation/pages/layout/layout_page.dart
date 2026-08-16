@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,9 +9,9 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
-import 'package:my_resturant/presentation/widgets/shared/connectivity_banner.dart';
-import 'package:my_resturant/presentation/widgets/shared/liquid_glass_nav_bar.dart';
-import 'package:my_resturant/presentation/widgets/shared/tab_entrance.dart';
+import 'package:my_resturant/shared/connectivity_banner.dart';
+import 'package:my_resturant/shared/liquid_glass_nav_bar.dart';
+import 'package:my_resturant/shared/tab_entrance.dart';
 
 class _Nav {
   final IconData outline, filled;

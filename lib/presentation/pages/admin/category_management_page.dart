@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -7,7 +7,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/admin/delete_confirm_dialog.dart';
-import 'package:my_resturant/presentation/widgets/shared/empty_state.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 
 class CategoryManagementPage extends StatelessWidget {
   const CategoryManagementPage({super.key});
@@ -69,7 +69,7 @@ class CategoryManagementPage extends StatelessWidget {
     String Function(String) t, {
     required bool compact,
   }) {
-    final emoji = c['icon'] ?? '🍽';
+    final emoji = c['icon'] ?? 'ðŸ½';
     final name = c['name'] ?? '';
     final key = c['key'] ?? '';
     final deleteBtn = IconButton(

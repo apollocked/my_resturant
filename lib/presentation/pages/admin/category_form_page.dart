@@ -1,45 +1,45 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 
 const List<String> _icons = [
-  '🍽',
-  '🍔',
-  '🍕',
-  '🌯',
-  '🍗',
-  '🥗',
-  '🥪',
-  '🌮',
-  '🥟',
-  '🍜',
-  '🍝',
-  '🍛',
-  '🥘',
-  '🫕',
-  '🥙',
-  '🧆',
-  '🥩',
-  '🍖',
-  '🥦',
-  '🥕',
-  '🧅',
-  '🫑',
-  '🥐',
-  '🥯',
-  '🍞',
-  '🥨',
-  '🧀',
-  '🥚',
-  '🍳',
-  '🥮',
-  '🍦',
-  '🍰',
+  'ðŸ½',
+  'ðŸ”',
+  'ðŸ•',
+  'ðŸŒ¯',
+  'ðŸ—',
+  'ðŸ¥—',
+  'ðŸ¥ª',
+  'ðŸŒ®',
+  'ðŸ¥Ÿ',
+  'ðŸœ',
+  'ðŸ',
+  'ðŸ›',
+  'ðŸ¥˜',
+  'ðŸ«•',
+  'ðŸ¥™',
+  'ðŸ§†',
+  'ðŸ¥©',
+  'ðŸ–',
+  'ðŸ¥¦',
+  'ðŸ¥•',
+  'ðŸ§…',
+  'ðŸ«‘',
+  'ðŸ¥',
+  'ðŸ¥¯',
+  'ðŸž',
+  'ðŸ¥¨',
+  'ðŸ§€',
+  'ðŸ¥š',
+  'ðŸ³',
+  'ðŸ¥®',
+  'ðŸ¦',
+  'ðŸ°',
 ];
 
 class CategoryFormPage extends StatefulWidget {
@@ -50,7 +50,7 @@ class CategoryFormPage extends StatefulWidget {
 
 class _CategoryFormPageState extends State<CategoryFormPage> {
   final _nameCtrl = TextEditingController();
-  String _selectedIcon = '🍽';
+  String _selectedIcon = 'ðŸ½';
   bool _saving = false;
 
   String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
