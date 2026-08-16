@@ -216,14 +216,13 @@ CREATE POLICY "Authenticated users can delete recipes"
 CREATE INDEX IF NOT EXISTS idx_recipes_restaurant_id ON recipes(restaurant_id);
 
 -- ============================================================
--- Categories table
+-- Categories table (global: one shared set of menu categories)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS categories (
   key TEXT NOT NULL,
   name TEXT NOT NULL,
   icon TEXT NOT NULL,
-  restaurant_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  PRIMARY KEY (key, restaurant_id)
+  PRIMARY KEY (key)
 );
 
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
@@ -231,25 +230,23 @@ ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can read categories"
   ON categories FOR SELECT
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id);
+  USING (true);
 
-CREATE POLICY "Authenticated users can insert categories"
+CREATE POLICY "Admins can insert categories"
   ON categories FOR INSERT
   TO authenticated
-  WITH CHECK ((select auth.uid()) = restaurant_id);
+  WITH CHECK (public.current_role() = 'admin');
 
-CREATE POLICY "Authenticated users can update categories"
+CREATE POLICY "Admins can update categories"
   ON categories FOR UPDATE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id)
-  WITH CHECK ((select auth.uid()) = restaurant_id);
+  USING (public.current_role() = 'admin')
+  WITH CHECK (public.current_role() = 'admin');
 
-CREATE POLICY "Authenticated users can delete categories"
+CREATE POLICY "Admins can delete categories"
   ON categories FOR DELETE
   TO authenticated
-  USING ((select auth.uid()) = restaurant_id);
-
-CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);
+  USING (public.current_role() = 'admin');
 
 -- ============================================================
 -- Orders table
@@ -420,11 +417,11 @@ CREATE TRIGGER check_recipe_limit
   FOR EACH ROW
   EXECUTE FUNCTION public.check_recipe_limit();
 
--- Max 15 categories per restaurant
+-- Max 15 categories (global, shared across all accounts)
 CREATE OR REPLACE FUNCTION public.check_category_limit()
 RETURNS TRIGGER AS $$
 BEGIN
-  IF (SELECT count(*) FROM public.categories WHERE restaurant_id = NEW.restaurant_id) >= 15 THEN
+  IF (SELECT count(*) FROM public.categories) >= 15 THEN
     RAISE EXCEPTION 'Maximum number of categories (15) reached.';
   END IF;
   RETURN NEW;

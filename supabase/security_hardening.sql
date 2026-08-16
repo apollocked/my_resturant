@@ -328,7 +328,7 @@ CREATE OR REPLACE FUNCTION public.check_category_limit()
 RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
 AS $function$
 BEGIN
-  IF (SELECT count(*) FROM public.categories WHERE restaurant_id = NEW.restaurant_id) >= 15 THEN
+  IF (SELECT count(*) FROM public.categories) >= 15 THEN
     RAISE EXCEPTION 'Maximum number of categories (15) reached for this restaurant.';
   END IF;
   RETURN NEW;

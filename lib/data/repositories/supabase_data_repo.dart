@@ -377,27 +377,16 @@ class SupabaseDataRepository implements DataRepository {
   @override
   Future<List<Map<String, String>>> loadCategories() async {
     if (!_isAuthed) return [];
-    final uid = _userId;
-    if (uid == null) return [];
-    final data = await _client
-        .from('categories')
-        .select()
-        .eq('restaurant_id', uid);
+    final data = await _client.from('categories').select();
     return data.map(_mapCategory).toList();
   }
 
   @override
   Future<void> addCategory(String key, String name, String icon) async {
-    final uid = _userId;
-    if (uid == null) return;
     if (key.isEmpty || key.length > 32) {
       throw Exception('Invalid category key');
     }
-    final count = await _client
-        .from('categories')
-        .select('key')
-        .eq('restaurant_id', uid)
-        .count();
+    final count = await _client.from('categories').select('key').count();
     if (count.count >= AppConstants.maxCategoriesPerRestaurant) {
       throw Exception('Maximum ${AppConstants.maxCategoriesPerRestaurant} categories reached');
     }
@@ -405,28 +394,20 @@ class SupabaseDataRepository implements DataRepository {
       'key': key,
       'name': name,
       'icon': icon,
-      'restaurant_id': uid,
-    }, onConflict: 'key, restaurant_id');
+    }, onConflict: 'key');
   }
 
   @override
   Future<void> removeCategory(String key) async {
-    final uid = _userId;
-    if (uid == null) return;
-    await _client.from('categories').delete()
-        .eq('key', key)
-        .eq('restaurant_id', uid);
+    await _client.from('categories').delete().eq('key', key);
   }
 
   @override
   Stream<List<Map<String, String>>> watchCategories() {
     if (!_isAuthed) return const Stream.empty();
-    final uid = _userId;
-    if (uid == null) return const Stream.empty();
     return _client
         .from('categories')
-        .stream(primaryKey: ['key', 'restaurant_id'])
-        .eq('restaurant_id', uid)
+        .stream(primaryKey: ['key'])
         .map((data) => data.map(_mapCategory).toList());
   }
 }
