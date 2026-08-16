@@ -16,7 +16,11 @@ class ProfileAvatar extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.primary, width: 2),
         ),
-        child: Icon(Icons.person, size: avatarSize * 0.5, color: AppColors.primary),
+        child: Icon(
+          Icons.person,
+          size: avatarSize * 0.5,
+          color: AppColors.primary,
+        ),
       ),
     );
   }

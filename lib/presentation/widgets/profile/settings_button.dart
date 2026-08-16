@@ -6,7 +6,13 @@ class SettingsButton extends StatelessWidget {
   const SettingsButton({super.key, this.color});
   @override
   Widget build(BuildContext context) {
-    return InkWell(onTap: () => showDialog(context: context, builder: (_) => const SettingsDialog()),
-      child: Padding(padding: const EdgeInsets.all(6), child: Icon(Icons.settings, size: 20, color: color)));
+    return InkWell(
+      onTap: () =>
+          showDialog(context: context, builder: (_) => const SettingsDialog()),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Icon(Icons.settings, size: 20, color: color),
+      ),
+    );
   }
 }
