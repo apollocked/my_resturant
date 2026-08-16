@@ -328,8 +328,9 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
                             final items = <CartItem>[];
                             for (final r in widget.recipes) {
                               final q = _selection[r.id] ?? 0;
-                              if (q > 0)
+                              if (q > 0) {
                                 items.add(CartItem(recipe: r, quantity: q));
+                              }
                             }
                             Navigator.pop(context, items);
                           },

@@ -49,6 +49,12 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     });
   }
 
+  void _shiftMonth(int delta) {
+    setState(
+      () => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + delta),
+    );
+  }
+
   void _onDayTap(int day) {
     if (day <= DateTime.now().day ||
         _viewMonth.month < DateTime.now().month ||
@@ -113,18 +119,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     t: t,
                     year: _viewMonth.year,
                     month: _viewMonth.month,
-                    onPrev: () => setState(
-                      () => _viewMonth = DateTime(
-                        _viewMonth.year,
-                        _viewMonth.month - 1,
-                      ),
-                    ),
-                    onNext: () => setState(
-                      () => _viewMonth = DateTime(
-                        _viewMonth.year,
-                        _viewMonth.month + 1,
-                      ),
-                    ),
+                    onPrev: () => _shiftMonth(-1),
+                    onNext: () => _shiftMonth(1),
                     onPick: _pick,
                   ),
                   Center(

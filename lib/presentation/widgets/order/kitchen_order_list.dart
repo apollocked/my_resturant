@@ -74,8 +74,9 @@ class KitchenOrderList extends StatelessWidget {
                     confirmLabel: t('again'),
                     cancelLabel: t('cancel'),
                   );
-                  if (confirmed)
+                  if (confirmed) {
                     cubit.updateOrderStatus(o.id, OrderStatus.pending);
+                  }
                 }
               : null,
         ),
