@@ -1,16 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/auth/account_auth_form.dart';
 
 class AccountAuthPage extends StatefulWidget {
   const AccountAuthPage({super.key});
+
   @override
   State<AccountAuthPage> createState() => _AccountAuthPageState();
 }
@@ -37,272 +37,23 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
     final settings = context.watch<SettingsCubit>().state;
     final cs = Theme.of(context).colorScheme;
     String t(String key) => Tr.get(key, settings.locale);
+    final isSignUp = _isSignUp;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(R.padding(context)),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 460),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: R.avatarSize(context),
-                          height: R.avatarSize(context),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primarySoft,
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/icons/my Restaurant.png',
-                              width: R.avatarSize(context),
-                              height: R.avatarSize(context),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        Text(
-                          _isSignUp
-                              ? t('create_account_title')
-                              : t('restaurant_name'),
-                          style: TextStyle(
-                            fontSize: R.fontXl(context),
-                            fontWeight: FontWeight.w800,
-                            color: cs.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          _isSignUp
-                              ? t('create_account_subtitle')
-                              : t('account_login_subtitle'),
-                          style: TextStyle(
-                            fontSize: R.fontSm(context),
-                            color: cs.onSurfaceVariant,
-                          ),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        TextFormField(
-                          controller: _emailCtl,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(
-                              Icons.email_outlined,
-                              size: 20,
-                            ),
-                            labelText: t('email'),
-                            filled: true,
-                            fillColor: cs.surfaceContainerHighest.withValues(
-                              alpha: 0.3,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          validator: (v) => v == null || !v.contains('@')
-                              ? t('email_invalid')
-                              : null,
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        TextFormField(
-                          controller: _passCtl,
-                          obscureText: _obscure,
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(
-                              Icons.lock_outlined,
-                              size: 20,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscure
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                size: 20,
-                              ),
-                              onPressed: () =>
-                                  setState(() => _obscure = !_obscure),
-                            ),
-                            labelText: t('password'),
-                            filled: true,
-                            fillColor: cs.surfaceContainerHighest.withValues(
-                              alpha: 0.3,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          validator: (v) => v == null || v.length < 6
-                              ? t('password_too_short')
-                              : null,
-                        ),
-                        if (_isSignUp) ...[
-                          SizedBox(height: R.gridSpacing(context)),
-                          TextFormField(
-                            controller: _confirmCtl,
-                            obscureText: _obscure,
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(
-                                Icons.lock_outlined,
-                                size: 20,
-                              ),
-                              labelText: t('confirm_password'),
-                              filled: true,
-                              fillColor: cs.surfaceContainerHighest.withValues(
-                                alpha: 0.3,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            validator: (v) => v != _passCtl.text
-                                ? t('passwords_mismatch')
-                                : null,
-                          ),
-                        ],
-                        SizedBox(height: R.gridSpacing(context)),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: PressableScale(
-                            onTap: _loading ? null : _submit,
-                            child: FilledButton(
-                              onPressed: null,
-                              style: FilledButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                disabledBackgroundColor: AppColors.primary,
-                                disabledForegroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: _loading
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: cs.onPrimary,
-                                      ),
-                                    )
-                                  : Text(
-                                      _isSignUp
-                                          ? t('create_account_btn')
-                                          : t('login'),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: R.fontMd(context),
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        Row(
-                          children: [
-                            const Expanded(child: Divider()),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Text(
-                                t('or'),
-                                style: TextStyle(
-                                  color: cs.onSurfaceVariant,
-                                  fontSize: R.fontSm(context),
-                                ),
-                              ),
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: PressableScale(
-                            onTap: _loading ? null : _googleSignIn,
-                            child: OutlinedButton.icon(
-                              onPressed: null,
-                              icon: const Text(
-                                'G',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                              label: Text(
-                                t('google_sign_in'),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: R.fontMd(context),
-                                  color: cs.onSurface,
-                                ),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: cs.onSurface,
-                                disabledForegroundColor: cs.onSurface,
-                                side: BorderSide(color: cs.outline),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        if (context.watch<AccountCubit>().state.errorMessage
-                            case final err?)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
-                            child: Text(
-                              t(err),
-                              style: TextStyle(
-                                color: AppColors.error,
-                                fontSize: R.fontSm(context),
-                              ),
-                            ),
-                          ),
-                        TextButton(
-                          onPressed: () {
-                            context.read<AccountCubit>().clearError();
-                            setState(() {
-                              _isSignUp = !_isSignUp;
-                              _formKey.currentState?.reset();
-                            });
-                          },
-                          child: Text(
-                            _isSignUp
-                                ? t('already_have_account')
-                                : t('dont_have_account'),
-                            style: TextStyle(
-                              color: cs.primary,
-                              fontSize: R.fontSm(context),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (_loading)
-            Container(
-              color: cs.scrim.withValues(alpha: 0.26),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-        ],
-      ),
+    return AccountAuthForm(
+      formKey: _formKey,
+      emailCtl: _emailCtl,
+      passCtl: _passCtl,
+      confirmCtl: _confirmCtl,
+      isSignUp: isSignUp,
+      obscure: _obscure,
+      loading: _loading,
+      onToggleObscure: () => setState(() => _obscure = !_obscure),
+      onSubmit: _submit,
+      onGoogleSignIn: _googleSignIn,
+      onToggleMode: _toggleMode,
+      error: context.watch<AccountCubit>().state.errorMessage,
+      scrim: cs.scrim,
+      t: t,
     );
   }
 
@@ -320,32 +71,14 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
           if (mounted) {
             setState(() => _loading = false);
             final err = context.read<AccountCubit>().state.errorMessage;
-            if (err != null) {
-              final loc = context.read<SettingsCubit>().state.locale;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(Tr.get(err, loc)),
-                  backgroundColor: AppColors.error,
-                ),
-              );
-            }
+            if (err != null) _showSnackError(err);
           }
           return;
         }
       }
-      if (mounted) {
-        await context.read<RoleCubit>().load();
-      }
+      if (mounted) await context.read<RoleCubit>().load();
     } catch (_) {}
-    if (mounted) {
-      final acct = context.read<AccountCubit>().state;
-      if (acct.isLoggedIn) {
-        setState(() => _loading = false);
-        context.go('/role-login');
-      } else {
-        setState(() => _loading = false);
-      }
-    }
+    if (mounted) _finish();
   }
 
   Future<void> _googleSignIn() async {
@@ -355,10 +88,31 @@ class _AccountAuthPageState extends State<AccountAuthPage> {
       await context.read<AccountCubit>().signInWithGoogle();
       if (mounted) await context.read<RoleCubit>().load();
     } catch (_) {}
-    if (mounted) {
-      setState(() => _loading = false);
-      final acct = context.read<AccountCubit>().state;
-      if (acct.isLoggedIn) context.go('/role-login');
+    if (mounted) _finish();
+  }
+
+  void _toggleMode() {
+    context.read<AccountCubit>().clearError();
+    setState(() {
+      _isSignUp = !_isSignUp;
+      _formKey.currentState?.reset();
+    });
+  }
+
+  void _finish() {
+    setState(() => _loading = false);
+    if (context.read<AccountCubit>().state.isLoggedIn) {
+      context.go('/role-login');
     }
+  }
+
+  void _showSnackError(String err) {
+    final loc = context.read<SettingsCubit>().state.locale;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(Tr.get(err, loc)),
+        backgroundColor: AppColors.error,
+      ),
+    );
   }
 }

@@ -1,23 +1,17 @@
-﻿// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/core/constants/app_constants.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/admin/dish_form_fields.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_form_fields.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_image_picker.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_image_uploader.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_save_button.dart';
+import 'package:uuid/uuid.dart';
 
 class DishFormPage extends StatefulWidget {
   final Recipe? recipe;
@@ -28,10 +22,10 @@ class DishFormPage extends StatefulWidget {
 
 class _DishFormPageState extends State<DishFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _picker = ImagePicker();
   late final TextEditingController _nameCtrl, _priceCtrl, _descCtrl;
   final _imageUrl = ValueNotifier<String>('');
   late String _category;
+  late final DishImagePicker _picker;
   bool get _isEditing => widget.recipe != null;
 
   @override
@@ -43,6 +37,7 @@ class _DishFormPageState extends State<DishFormPage> {
     _descCtrl = TextEditingController(text: r?.description ?? '');
     _imageUrl.value = r?.imageUrl ?? '';
     _category = r?.category ?? 'burger';
+    _picker = DishImagePicker(t: _t, onPicked: (v) => _imageUrl.value = v);
   }
 
   @override
@@ -57,128 +52,6 @@ class _DishFormPageState extends State<DishFormPage> {
   String _t(String key) =>
       Tr.get(key, context.read<SettingsCubit>().state.locale);
 
-  void _showImageSourceSheet() {
-    final cs = Theme.of(context).colorScheme;
-    final settings = context.read<SettingsCubit>().state;
-    String t(String key) => Tr.get(key, settings.locale);
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: cs.onSurfaceVariant.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  t('pick_image_source'),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: Text(t('gallery')),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickFromGallery();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: Text(t('camera')),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickFromCamera();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.folder_open),
-                  title: Text(t('files')),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickFromFile();
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickFromGallery() async {
-    try {
-      final xFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (xFile == null) return;
-      await _cropAndSet(xFile.path);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
-      }
-    }
-  }
-
-  Future<void> _pickFromCamera() async {
-    try {
-      final xFile = await _picker.pickImage(source: ImageSource.camera);
-      if (xFile == null) return;
-      await _cropAndSet(xFile.path);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
-      }
-    }
-  }
-
-  Future<void> _pickFromFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.image);
-      if (result == null || result.files.isEmpty) return;
-      final path = result.files.first.path;
-      if (path == null) return;
-      await _cropAndSet(path);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_t('error_occurred'))));
-      }
-    }
-  }
-
-  Future<void> _cropAndSet(String path) async {
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: path,
-      aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: _t('crop_image'),
-          toolbarColor: AppColors.primary,
-        ),
-        IOSUiSettings(title: _t('crop_image')),
-      ],
-    );
-    if (cropped != null && mounted) _imageUrl.value = cropped.path;
-  }
-
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final id = _isEditing ? widget.recipe!.id : const Uuid().v4();
@@ -191,7 +64,7 @@ class _DishFormPageState extends State<DishFormPage> {
         builder: (_) => const Center(child: CircularProgressIndicator()),
       );
       try {
-        imageUrl = await _uploadImage(id, imageUrl);
+        imageUrl = await uploadDishImage(id, imageUrl);
       } catch (e) {
         if (mounted) Navigator.pop(context);
         if (mounted) {
@@ -217,34 +90,6 @@ class _DishFormPageState extends State<DishFormPage> {
     if (mounted) Navigator.pop(context, r);
   }
 
-  Future<String> _uploadImage(String recipeId, String localPath) async {
-    final file = File(localPath);
-    final bytes = await FlutterImageCompress.compressWithFile(
-      file.path,
-      quality: 75,
-      minWidth: 1024,
-      minHeight: 1024,
-      format: CompressFormat.jpeg,
-    );
-    if (bytes == null || bytes.isEmpty) throw Exception('Compression failed');
-    if (bytes.length > AppConstants.maxImageSizeBytes) {
-      throw Exception('Image too large. Maximum size is ${AppConstants.maxImageSizeBytes ~/ (1024 * 1024)}MB');
-    }
-    final uid = Supabase.instance.client.auth.currentUser?.id;
-    if (uid == null) throw Exception('Not logged in');
-    final path = '$uid/$recipeId.jpg';
-    await Supabase.instance.client.storage
-        .from('recipe_images')
-        .uploadBinary(
-          path,
-          bytes,
-          fileOptions: const FileOptions(upsert: true),
-        );
-    return Supabase.instance.client.storage
-        .from('recipe_images')
-        .getPublicUrl(path);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -267,34 +112,12 @@ class _DishFormPageState extends State<DishFormPage> {
                   initialCategory: _category,
                   t: _t,
                   isEditing: _isEditing,
-                  onPickImage: _showImageSourceSheet,
+                  onPickImage: () => _picker.showSourceSheet(context),
                   onCategoryChanged: (v) => _category = v,
                   categories: context.read<OrderCubit>().state.categories,
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: R.isDesktop(context) ? 56 : 48,
-                  child: PressableScale(
-                    onTap: _save,
-                    child: ElevatedButton(
-                      onPressed: null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        disabledBackgroundColor: Theme.of(context).colorScheme.primary,
-                        disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      child: Text(
-                        _isEditing ? _t('update_btn') : _t('add_btn'),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: R.fontMd(context),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                DishSaveButton(isEditing: _isEditing, t: _t, onTap: _save),
               ],
             ),
           ),

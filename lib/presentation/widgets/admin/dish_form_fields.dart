@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
@@ -43,7 +43,9 @@ class _DishFormFieldsState extends State<DishFormFields> {
     super.initState();
     final cats = effectiveCategories(widget.categories);
     final match = cats.any((c) => c['key'] == widget.initialCategory);
-    _cat = match ? widget.initialCategory : (cats.isNotEmpty ? cats.first['key']! : 'burger');
+    _cat = match
+        ? widget.initialCategory
+        : (cats.isNotEmpty ? cats.first['key']! : 'burger');
   }
 
   @override
@@ -57,9 +59,8 @@ class _DishFormFieldsState extends State<DishFormFields> {
         labelText: widget.t('dish_name'),
         filled: true,
       ),
-      validator: (v) => v == null || v.trim().isEmpty
-          ? widget.t('dish_name_required')
-          : null,
+      validator: (v) =>
+          v == null || v.trim().isEmpty ? widget.t('dish_name_required') : null,
     );
     final priceField = TextFormField(
       controller: widget.priceCtrl,
@@ -124,11 +125,14 @@ class _DishFormFieldsState extends State<DishFormFields> {
           ),
           const SizedBox(height: 16),
           if (isDesktop)
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(child: nameField),
-              const SizedBox(width: 12),
-              Expanded(child: priceField),
-            ])
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: nameField),
+                const SizedBox(width: 12),
+                Expanded(child: priceField),
+              ],
+            )
           else ...[
             nameField,
             const SizedBox(height: 12),
@@ -138,11 +142,14 @@ class _DishFormFieldsState extends State<DishFormFields> {
           descField,
           const SizedBox(height: 12),
           if (isDesktop)
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child: categoryField),
-              const SizedBox(width: 12),
-              Expanded(child: imageButton),
-            ])
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: categoryField),
+                const SizedBox(width: 12),
+                Expanded(child: imageButton),
+              ],
+            )
           else ...[
             imageButton,
             const SizedBox(height: 12),
