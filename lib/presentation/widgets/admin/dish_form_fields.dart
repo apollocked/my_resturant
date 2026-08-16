@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
-import 'package:my_resturant/shared/app_image.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_field.dart';
+import 'package:my_resturant/presentation/widgets/admin/dish_preview_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
 
 class DishFormFields extends StatefulWidget {
@@ -52,38 +53,29 @@ class _DishFormFieldsState extends State<DishFormFields> {
   Widget build(BuildContext context) {
     final catKeys = effectiveCategories(widget.categories);
     final isDesktop = R.isDesktop(context);
-    final nameField = TextFormField(
+    final nameField = DishField(
+      label: widget.t('dish_name'),
       controller: widget.nameCtrl,
       maxLength: 80,
-      decoration: InputDecoration(
-        labelText: widget.t('dish_name'),
-        filled: true,
-      ),
       validator: (v) =>
           v == null || v.trim().isEmpty ? widget.t('dish_name_required') : null,
     );
-    final priceField = TextFormField(
+    final priceField = DishField(
+      label: widget.t('price_dinar'),
       controller: widget.priceCtrl,
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        labelText: widget.t('price_dinar'),
-        filled: true,
-      ),
       validator: (v) {
         if (v == null || v.isEmpty) return widget.t('price_required');
         final n = int.tryParse(v);
         return (n == null || n <= 0) ? widget.t('price_invalid') : null;
       },
     );
-    final descField = TextFormField(
+    final descField = DishField(
+      label: widget.t('description'),
       controller: widget.descCtrl,
       maxLines: 2,
       maxLength: 1000,
-      decoration: InputDecoration(
-        labelText: widget.t('description'),
-        filled: true,
-      ),
     );
     final imageButton = ImagePickerButton(
       label: widget.t('pick_image'),
@@ -114,15 +106,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
       key: widget.formKey,
       child: Column(
         children: [
-          ValueListenableBuilder<String>(
-            valueListenable: widget.imageUrl,
-            builder: (_, url, _) => url.isEmpty
-                ? const SizedBox(height: 130)
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: AppImage(url, width: double.infinity, height: 130),
-                  ),
-          ),
+          DishPreviewImage(url: widget.imageUrl),
           const SizedBox(height: 16),
           if (isDesktop)
             Row(

@@ -36,14 +36,8 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
 
   int get _totalCount => _selection.values.fold(0, (sum, q) => sum + q);
 
-  double get _totalPrice {
-    var sum = 0.0;
-    for (final r in widget.recipes) {
-      final q = _selection[r.id] ?? 0;
-      if (q > 0) sum += r.price * q;
-    }
-    return sum;
-  }
+  double get _totalPrice =>
+      widget.recipes.fold(0.0, (s, r) => s + (_selection[r.id] ?? 0) * r.price);
 
   void _inc(Recipe r) =>
       setState(() => _selection[r.id] = (_selection[r.id] ?? 0) + 1);
@@ -81,7 +75,7 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
         : isTablet
         ? 24.0
         : 20.0;
-    final hPad = isDesktop ? 24 : 16;
+    final hPad = isDesktop ? 24.0 : 16.0;
     final meals = _available;
 
     return Directionality(
@@ -121,12 +115,7 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
                     )
                   : ListView.builder(
                       shrinkWrap: true,
-                      padding: EdgeInsets.fromLTRB(
-                        isDesktop ? 24 : 16,
-                        4,
-                        isDesktop ? 24 : 16,
-                        8,
-                      ),
+                      padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 8),
                       itemCount: meals.length,
                       itemBuilder: (ctx, i) {
                         final r = meals[i];
@@ -144,9 +133,9 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
             SafeArea(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                  isDesktop ? 24 : 16,
+                  hPad,
                   8,
-                  isDesktop ? 24 : 16,
+                  hPad,
                   isDesktop ? 16 : 12,
                 ),
                 child: AddItemsFooterButton(

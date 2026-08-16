@@ -34,9 +34,10 @@ class _PressableScaleState extends State<PressableScale>
       lowerBound: 0.0,
       upperBound: 1.0,
     );
-    _anim = Tween<double>(begin: 1.0, end: widget.scaleDown).animate(
-      CurvedAnimation(parent: _ctrl, curve: widget.curve),
-    );
+    _anim = Tween<double>(
+      begin: 1.0,
+      end: widget.scaleDown,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: widget.curve));
   }
 
   @override
@@ -58,10 +59,8 @@ class _PressableScaleState extends State<PressableScale>
       onTap: widget.onTap,
       child: AnimatedBuilder(
         animation: _anim,
-        builder: (context, child) => Transform.scale(
-          scale: _anim.value,
-          child: child,
-        ),
+        builder: (context, child) =>
+            Transform.scale(scale: _anim.value, child: child),
         child: widget.child,
       ),
     );

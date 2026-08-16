@@ -1,11 +1,7 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/profile/admin_action_row.dart';
+import 'package:my_resturant/presentation/widgets/profile/admin_panel_card.dart';
 
 class ProfileAdminPanel extends StatelessWidget {
   final String Function(String) t;
@@ -19,7 +15,7 @@ class ProfileAdminPanel extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 10),
-        ActionButtonsRowPlaceholder(t: t),
+        AdminActionRow(t: t),
         const SizedBox(height: 24),
         if (isDesktop)
           GridView.count(
@@ -39,161 +35,42 @@ class ProfileAdminPanel extends StatelessWidget {
 
   List<Widget> _buildCards(BuildContext context) {
     return [
-      _card(
-        context,
-        Icons.table_restaurant_outlined,
-        t('table_management'),
-        t('table_management_sub'),
-        '/table-management',
+      AdminPanelCard(
+        icon: Icons.table_restaurant_outlined,
+        title: t('table_management'),
+        sub: t('table_management_sub'),
+        route: '/table-management',
       ),
-      _card(
-        context,
-        Icons.restaurant_menu,
-        t('food_management'),
-        t('food_management_sub'),
-        '/food-management',
+      AdminPanelCard(
+        icon: Icons.restaurant_menu,
+        title: t('food_management'),
+        sub: t('food_management_sub'),
+        route: '/food-management',
       ),
-      _card(
-        context,
-        Icons.category_outlined,
-        t('category_management'),
-        t('category_management_sub'),
-        '/category-management',
+      AdminPanelCard(
+        icon: Icons.category_outlined,
+        title: t('category_management'),
+        sub: t('category_management_sub'),
+        route: '/category-management',
       ),
-      _card(
-        context,
-        Icons.toggle_on_outlined,
-        t('available_foods'),
-        t('available_foods_sub'),
-        '/availability',
+      AdminPanelCard(
+        icon: Icons.toggle_on_outlined,
+        title: t('available_foods'),
+        sub: t('available_foods_sub'),
+        route: '/availability',
       ),
-      _card(
-        context,
-        Icons.history,
-        t('order_history'),
-        t('order_history_sub'),
-        '/history',
+      AdminPanelCard(
+        icon: Icons.history,
+        title: t('order_history'),
+        sub: t('order_history_sub'),
+        route: '/history',
       ),
-      _card(context, Icons.bar_chart, t('report'), t('report_sub'), '/report'),
+      AdminPanelCard(
+        icon: Icons.bar_chart,
+        title: t('report'),
+        sub: t('report_sub'),
+        route: '/report',
+      ),
     ];
-  }
-
-  Widget _card(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String sub,
-    String route,
-  ) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: PressableScale(
-        onTap: () => context.push(route),
-        child: Card(
-          child: ListTile(
-            leading: Icon(icon, color: AppColors.primary),
-            title: Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: R.fontMd(context),
-              ),
-            ),
-            subtitle: Text(
-              sub,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: R.fontSm(context),
-                color: cs.onSurfaceVariant,
-              ),
-            ),
-            trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ActionButtonsRowPlaceholder extends StatelessWidget {
-  final String Function(String) t;
-  const ActionButtonsRowPlaceholder({super.key, required this.t});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _btn(
-            context,
-            Icons.table_restaurant_outlined,
-            t('add_table'),
-            '/table-management',
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _btn(
-            context,
-            Icons.restaurant_menu,
-            t('add_food'),
-            '/dish-form',
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _btn(BuildContext context, IconData icon, String label, String route) {
-    return PressableScale(
-      onTap: () async {
-        final router = GoRouter.of(context);
-        final orderCubit = context.read<OrderCubit>();
-        if (route == '/dish-form') {
-          final r = await router.push<Recipe>('/dish-form');
-          if (r != null) {
-            try {
-              await orderCubit.addRecipe(r);
-              if (context.mounted) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(t('dish_added'))));
-              }
-            } catch (e) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${t('error_occurred')}: $e')),
-                );
-              }
-            }
-          }
-        } else {
-          final ok = await router.push<bool>(route);
-          if (ok == true) orderCubit.refresh();
-        }
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            children: [
-              Icon(icon, color: AppColors.primary, size: 28),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: R.fontSm(context),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

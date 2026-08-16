@@ -12,7 +12,8 @@ class ConnectivityBanner extends StatefulWidget {
   State<ConnectivityBanner> createState() => _ConnectivityBannerState();
 }
 
-class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTickerProviderStateMixin {
+class _ConnectivityBannerState extends State<ConnectivityBanner>
+    with SingleTickerProviderStateMixin {
   bool _connected = true;
   StreamSubscription<List<ConnectivityResult>>? _sub;
   late AnimationController _animCtrl;
@@ -20,7 +21,10 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
   @override
   void initState() {
     super.initState();
-    _animCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
     _init();
   }
 
@@ -56,59 +60,66 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> with SingleTick
     final locale = context.watch<SettingsCubit>().state.locale;
     final msg = Tr.get(_connected ? 'back_online' : 'no_connection', locale);
 
-    return SafeArea(bottom: false, child: Column(children: [
-      AnimatedBuilder(
-        animation: _animCtrl,
-        builder: (context, child) {
-          final height = _animCtrl.value * 48;
-          return ClipRect(
-            child: AnimatedOpacity(
-              opacity: _animCtrl.value,
-              duration: const Duration(milliseconds: 200),
-              child: Container(
-                height: height,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: _connected ? Colors.green.shade700 : Colors.orange.shade800,
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.shadow.withValues(alpha: 0.15),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: height > 0
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _connected ? Icons.wifi : Icons.wifi_off,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                msg,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          AnimatedBuilder(
+            animation: _animCtrl,
+            builder: (context, child) {
+              final height = _animCtrl.value * 48;
+              return ClipRect(
+                child: AnimatedOpacity(
+                  opacity: _animCtrl.value,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    height: height,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: _connected
+                          ? Colors.green.shade700
+                          : Colors.orange.shade800,
+                      boxShadow: [
+                        BoxShadow(
+                          color: cs.shadow.withValues(alpha: 0.15),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
-                      )
-                    : null,
-              ),
-            ),
-          );
-        },
+                      ],
+                    ),
+                    child: height > 0
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _connected ? Icons.wifi : Icons.wifi_off,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    msg,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : null,
+                  ),
+                ),
+              );
+            },
+          ),
+          Expanded(child: widget.child),
+        ],
       ),
-      Expanded(child: widget.child),
-    ]));
+    );
   }
 }

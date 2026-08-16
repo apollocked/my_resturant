@@ -1,11 +1,12 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/auth/promo_activate_button.dart';
+import 'package:my_resturant/presentation/widgets/auth/promo_error_text.dart';
+import 'package:my_resturant/presentation/widgets/auth/promo_hero_icon.dart';
+import 'package:my_resturant/presentation/widgets/auth/promo_text_field.dart';
 
 class PromoCodePage extends StatefulWidget {
   const PromoCodePage({super.key});
@@ -52,19 +53,7 @@ class _PromoCodePageState extends State<PromoCodePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: R.avatarSize(context),
-                    height: R.avatarSize(context),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.vpn_key,
-                      size: 40,
-                      color: AppColors.primary,
-                    ),
-                  ),
+                  const PromoHeroIcon(),
                   const SizedBox(height: 24),
                   Text(
                     'Enter Promo Code',
@@ -84,96 +73,24 @@ class _PromoCodePageState extends State<PromoCodePage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  TextField(
+                  PromoTextField(
                     controller: _controller,
                     focusNode: _focusNode,
-                    autofocus: true,
-                    textCapitalization: TextCapitalization.characters,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 6,
-                      color: cs.onSurface,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'XXXX-XXXX',
-                      hintStyle: TextStyle(
-                        letterSpacing: 6,
-                        color: cs.onSurfaceVariant.withValues(alpha: 0.5),
-                      ),
-                      filled: true,
-                      fillColor: cs.surfaceContainerHighest,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
-                          width: 2,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 18,
-                      ),
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[A-Za-z0-9\-]'),
-                      ),
-                      LengthLimitingTextInputFormatter(9),
-                    ],
                     onSubmitted: (_) => _submit(),
                   ),
                   if (acct.errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(
-                      acct.errorMessage == 'err_invalid_promo'
+                    PromoErrorText(
+                      message: acct.errorMessage == 'err_invalid_promo'
                           ? 'Invalid or already used promo code.'
                           : 'Something went wrong.',
-                      style: TextStyle(
-                        color: cs.error,
-                        fontSize: R.fontSm(context),
-                      ),
+                      cs: cs,
                     ),
                   ],
                   const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: PressableScale(
-                      onTap: _loading ? null : _submit,
-                      child: FilledButton(
-                        onPressed: null,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          disabledBackgroundColor: AppColors.primary,
-                          disabledForegroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: _loading
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                'Activate',
-                                style: TextStyle(
-                                  fontSize: R.fontMd(context),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                      ),
-                    ),
+                  PromoActivateButton(
+                    loading: _loading,
+                    onTap: _loading ? null : _submit,
                   ),
                 ],
               ),

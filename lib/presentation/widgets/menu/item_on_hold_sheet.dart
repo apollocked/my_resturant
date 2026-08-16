@@ -1,17 +1,22 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/shared/app_image.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/widgets/menu/item_hold_header_image.dart';
+import 'package:my_resturant/presentation/widgets/menu/item_hold_header_info.dart';
+import 'package:my_resturant/presentation/widgets/menu/item_hold_notes_field.dart';
+import 'package:my_resturant/presentation/widgets/menu/item_hold_save_button.dart';
 
 class ItemOnHoldSheet extends StatefulWidget {
   final Recipe recipe;
   final String initialNotes;
-  const ItemOnHoldSheet({super.key, required this.recipe, required this.initialNotes});
+  const ItemOnHoldSheet({
+    super.key,
+    required this.recipe,
+    required this.initialNotes,
+  });
   @override
   State<ItemOnHoldSheet> createState() => _ItemOnHoldSheetState();
 }
@@ -40,13 +45,33 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
     final screen = R.screenSize(context);
     final isDesktop = screen == ScreenSize.desktop;
     final isTablet = screen == ScreenSize.tablet;
-    final radius = isDesktop ? 28.0 : isTablet ? 24.0 : 20.0;
-    final imgHeight = isDesktop ? 280.0 : isTablet ? 240.0 : 200.0;
+    final radius = isDesktop
+        ? 28.0
+        : isTablet
+        ? 24.0
+        : 20.0;
+    final imgHeight = isDesktop
+        ? 280.0
+        : isTablet
+        ? 240.0
+        : 200.0;
+    final hPad = isDesktop
+        ? 24.0
+        : isTablet
+        ? 20.0
+        : 16.0;
+    final vPad = isDesktop
+        ? 20.0
+        : isTablet
+        ? 16.0
+        : 14.0;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
         decoration: BoxDecoration(
           color: cs.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
@@ -55,7 +80,8 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               margin: const EdgeInsets.only(top: 12),
               decoration: BoxDecoration(
                 color: cs.onSurfaceVariant.withValues(alpha: 0.3),
@@ -68,61 +94,33 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: imgHeight,
-                        child: AppImage(r.imageUrl, width: double.infinity, height: imgHeight, fit: BoxFit.cover),
-                      ),
+                    ItemHoldHeaderImage(
+                      imageUrl: r.imageUrl,
+                      radius: radius,
+                      height: imgHeight,
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(isDesktop ? 24 : isTablet ? 20 : 16, isDesktop ? 20 : isTablet ? 16 : 14, isDesktop ? 24 : isTablet ? 20 : 16, 0),
+                      padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(r.name,
-                                  style: TextStyle(fontSize: isDesktop ? 22 : isTablet ? 20 : 18, fontWeight: FontWeight.w800, color: cs.onSurface)),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: isDesktop ? 14 : isTablet ? 12 : 10, vertical: isDesktop ? 6 : 5),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primarySoft,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text('${r.price.toInt()} ${t('currency_suffix')}',
-                                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: isDesktop ? 16 : isTablet ? 14 : 13, color: AppColors.primary)),
-                              ),
-                            ],
+                          ItemHoldHeaderInfo(
+                            name: r.name,
+                            price: r.price,
+                            priceLabel: t('currency_suffix'),
+                            description: r.description,
+                            cs: cs,
+                            isDesktop: isDesktop,
+                            isTablet: isTablet,
                           ),
-                          const SizedBox(height: 10),
-                          if (r.description.isNotEmpty)
-                            Text(r.description,
-                              style: TextStyle(fontSize: isDesktop ? 15 : isTablet ? 14 : 13, color: cs.onSurfaceVariant, height: 1.5)),
                           const SizedBox(height: 20),
-                          Text(t('notes_title'),
-                            style: TextStyle(fontSize: isDesktop ? 15 : isTablet ? 14 : 13, fontWeight: FontWeight.w700, color: cs.onSurface)),
-                          const SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
-                            ),
-                            child: TextField(
-                              controller: _notesCtrl,
-                              maxLines: 3,
-                              style: TextStyle(fontSize: isDesktop ? 15 : isTablet ? 14 : 13, color: cs.onSurface),
-                              decoration: InputDecoration(
-                                hintText: t('notes_hint_dialog'),
-                                hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.6)),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(isDesktop ? 16 : isTablet ? 14 : 12),
-                              ),
-                            ),
+                          ItemHoldNotesField(
+                            controller: _notesCtrl,
+                            cs: cs,
+                            label: t('notes_title'),
+                            hint: t('notes_hint_dialog'),
+                            isDesktop: isDesktop,
+                            isTablet: isTablet,
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -132,27 +130,11 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
                 ),
               ),
             ),
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(isDesktop ? 24 : isTablet ? 20 : 16, 0, isDesktop ? 24 : isTablet ? 20 : 16, isDesktop ? 16 : 12),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: isDesktop ? 52 : isTablet ? 48 : 46,
-                  child: PressableScale(
-                    onTap: () => Navigator.pop(context, _notesCtrl.text),
-                    child: FilledButton(
-                      onPressed: null,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        disabledBackgroundColor: AppColors.primary,
-                        disabledForegroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      ),
-                      child: Text(t('save'), style: TextStyle(fontSize: isDesktop ? 16 : isTablet ? 15 : 14, fontWeight: FontWeight.w700)),
-                    ),
-                  ),
-                ),
-              ),
+            ItemHoldSaveButton(
+              label: t('save'),
+              onTap: () => Navigator.pop(context, _notesCtrl.text),
+              isDesktop: isDesktop,
+              isTablet: isTablet,
             ),
           ],
         ),

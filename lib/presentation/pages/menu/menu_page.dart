@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
@@ -9,10 +9,10 @@ import 'package:my_resturant/data/models/default_categories.dart';
 import 'package:my_resturant/presentation/widgets/menu/item_on_hold_sheet.dart';
 import 'package:my_resturant/presentation/widgets/menu/table_picker.dart';
 import 'package:my_resturant/presentation/widgets/menu/menu_shimmer_loader.dart';
-import 'package:my_resturant/presentation/widgets/menu/menu_desktop_layout.dart';
-import 'package:my_resturant/presentation/widgets/menu/menu_mobile_layout.dart';
+import 'package:my_resturant/presentation/widgets/menu/menu_layout.dart';
 import 'package:my_resturant/shared/table_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/shared/confirm_dialog.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   const RestaurantMenuScreen({super.key});
@@ -52,25 +52,15 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (!mounted) return;
     final settings = context.read<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(t('delete_from_order')),
-        content: Text(t('delete_confirm').replaceAll('{name}', r.name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(t('cancel')),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(t('delete')),
-          ),
-        ],
-      ),
+    final ok = await showConfirmDialog(
+      context,
+      title: t('delete_from_order'),
+      message: t('delete_confirm').replaceAll('{name}', r.name),
+      confirmLabel: t('delete'),
+      cancelLabel: t('cancel'),
+      confirmColor: AppColors.error,
     );
-    if (ok == true && mounted) {
+    if (ok && mounted) {
       context.read<OrderCubit>().removeFromCartById(r.id);
     }
   }
@@ -115,53 +105,44 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     void onCat(int i) => setState(() => _selectedCategoryIndex = i);
     void onSearch(String v) => setState(() => _searchQuery = v);
 
-    final Widget layout;
-    // ignore: curly_braces_in_flow_control_structures
-    if (R.isDesktop(context)) {
-      layout = MenuDesktopLayout(
-        cs: cs,
-        t: t,
-        state: state,
-        meals: meals,
-        cats: cats,
-        selectedIndex: _selectedCategoryIndex,
-        onCategoryChanged: onCat,
-        onSearchChanged: onSearch,
-        onIncrement: _increment,
-        onDecrement: _decrement,
-        onRemove: _remove,
-        onLongPress: _notes,
-      );
-    } else {
-      layout = MenuMobileLayout(
-        cs: cs,
-        t: t,
-        state: state,
-        meals: meals,
-        cats: cats,
-        selectedIndex: _selectedCategoryIndex,
-        onCategoryChanged: onCat,
-        onSearchChanged: onSearch,
-        onIncrement: _increment,
-        onDecrement: _decrement,
-        onRemove: _remove,
-        onLongPress: _notes,
-      );
-    }
+    final Widget layout = MenuLayout(
+      cs: cs,
+      t: t,
+      state: state,
+      meals: meals,
+      cats: cats,
+      selectedIndex: _selectedCategoryIndex,
+      onCategoryChanged: onCat,
+      onSearchChanged: onSearch,
+      onIncrement: _increment,
+      onDecrement: _decrement,
+      onRemove: _remove,
+      onLongPress: _notes,
+    );
 
-    return Column(children: [
-      Padding(
-        padding: EdgeInsets.fromLTRB(R.padding(context), R.padding(context), R.padding(context), 0),
-        child: Row(children: [
-          const Spacer(),
-          TableSelector(
-            selectedTable: state.selectedTable,
-            onChanged: (t) => context.read<OrderCubit>().setSelectedTable(t),
-            reservedTables: state.reservedTables,
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            R.padding(context),
+            R.padding(context),
+            R.padding(context),
+            0,
           ),
-        ]),
-      ),
-      Expanded(child: layout),
-    ]);
+          child: Row(
+            children: [
+              const Spacer(),
+              TableSelector(
+                selectedTable: state.selectedTable,
+                onChanged: (t) =>
+                    context.read<OrderCubit>().setSelectedTable(t),
+                reservedTables: state.reservedTables,
+              ),
+            ],
+          ),
+        ),
+        Expanded(child: layout),
+      ],
+    );
   }
 }

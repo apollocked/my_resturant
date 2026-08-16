@@ -1,13 +1,12 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/admin/passcode_field.dart';
+import 'package:my_resturant/presentation/widgets/admin/passcode_save_button.dart';
 
 class ChangePasscodesPage extends StatefulWidget {
   const ChangePasscodesPage({super.key});
@@ -61,7 +60,13 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
                     ...Role.values.map(
                       (r) => Padding(
                         padding: const EdgeInsets.only(bottom: 16),
-                        child: _field(r, _ctl[r]!, t, cs),
+                        child: PasscodeField(
+                          controller: _ctl[r]!,
+                          obscure: _obscure,
+                          label: t(r.name),
+                          icon: _roleIcon(r),
+                          t: t,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -83,31 +88,7 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: PressableScale(
-                        onTap: _save,
-                        child: FilledButton(
-                          onPressed: null,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            disabledBackgroundColor: AppColors.primary,
-                            disabledForegroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          child: Text(
-                            t('save'),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: R.fontMd(context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    PasscodeSaveButton(label: t('save'), onTap: _save),
                   ],
                 ),
               ),
@@ -115,34 +96,6 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _field(
-    Role r,
-    TextEditingController ctl,
-    String Function(String) t,
-    ColorScheme cs,
-  ) {
-    return TextFormField(
-      controller: ctl,
-      obscureText: _obscure,
-      maxLength: 6,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        counterText: '',
-        labelText: t(r.name),
-        prefixIcon: Icon(_roleIcon(r), size: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-        filled: true,
-        fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
-      ),
-      validator: (v) => v == null || v.isEmpty
-          ? t('pin_required')
-          : v.length < 4
-          ? t('pin_too_short')
-          : null,
     );
   }
 

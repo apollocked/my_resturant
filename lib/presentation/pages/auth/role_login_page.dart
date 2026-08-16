@@ -9,8 +9,8 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_loading_overlay.dart';
 import 'package:my_resturant/presentation/widgets/auth/pin_field.dart';
-import 'package:my_resturant/presentation/widgets/auth/role_card.dart';
 import 'package:my_resturant/presentation/widgets/auth/role_login_header.dart';
+import 'package:my_resturant/presentation/widgets/auth/role_selector_row.dart';
 import 'package:my_resturant/presentation/widgets/profile/settings_dialog.dart';
 import 'package:my_resturant/shared/loading_action_button.dart';
 
@@ -68,33 +68,11 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                     children: [
                       RoleLoginHeader(t: t),
                       const SizedBox(height: 28),
-                      Text(
-                        t('choose_role'),
-                        style: TextStyle(
-                          fontSize: R.fontMd(context),
-                          fontWeight: FontWeight.w600,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: Role.values
-                            .map(
-                              (r) => Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  child: RoleCard(
-                                    role: r,
-                                    selected: _selected == r,
-                                    t: t,
-                                    onTap: () => setState(() => _selected = r),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                      RoleSelectorRow(
+                        t: t,
+                        cs: cs,
+                        selected: _selected,
+                        onSelected: (r) => setState(() => _selected = r),
                       ),
                       const SizedBox(height: 28),
                       PinField(controller: _pinCtl, t: t),

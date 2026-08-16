@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/order/cart_notes_field.dart';
+import 'package:my_resturant/presentation/widgets/order/cart_send_button.dart';
+import 'package:my_resturant/presentation/widgets/order/cart_total_column.dart';
 
 class CartBottomBar extends StatelessWidget {
   final TextEditingController notesCtrl;
@@ -23,24 +24,6 @@ class CartBottomBar extends StatelessWidget {
     required this.isSubmitting,
     required this.onSubmit,
   });
-
-  Widget _buttonChild(ColorScheme cs, double fontSize) => isSubmitting
-      ? SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2, color: cs.onPrimary),
-        )
-      : Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.send_rounded, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              sendLabel,
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: fontSize),
-            ),
-          ],
-        );
 
   @override
   Widget build(BuildContext context) {
@@ -67,137 +50,46 @@ class CartBottomBar extends StatelessWidget {
       child: isDesktop
           ? Row(
               children: [
-                PressableScale(
-                  onTap: canSubmit && !isSubmitting ? onSubmit : null,
-                  child: SizedBox(
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: cs.onPrimary,
-                        disabledBackgroundColor: AppColors.primary,
-                        disabledForegroundColor: cs.onPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                      ),
-                      child: _buttonChild(cs, 16),
-                    ),
-                  ),
+                CartSendButton(
+                  canSubmit: canSubmit,
+                  isSubmitting: isSubmitting,
+                  onSubmit: onSubmit,
+                  cs: cs,
+                  label: sendLabel,
+                  fontSize: 16,
+                  padH: 32,
                 ),
                 const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${total.toInt()} $currencySuffix',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: R.fontXl(context),
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    Text(
-                      totalLabel,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: R.fontSm(context),
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                CartTotalColumn(
+                  total: total,
+                  currencySuffix: currencySuffix,
+                  totalLabel: totalLabel,
+                  cs: cs,
                 ),
               ],
             )
           : Column(
               children: [
-                TextField(
-                  controller: notesCtrl,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                  maxLength: 200,
-                  decoration: InputDecoration(
-                    hintText: notesHint,
-                    hintStyle: TextStyle(
-                      color: cs.onSurfaceVariant.withValues(alpha: 0.5),
-                      fontSize: 12,
-                    ),
-                    counterText: '',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: cs.outlineVariant),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: cs.outlineVariant),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    filled: true,
-                    fillColor: cs.surfaceContainerHighest.withValues(
-                      alpha: 0.3,
-                    ),
-                  ),
-                ),
+                CartNotesField(controller: notesCtrl, hint: notesHint, cs: cs),
                 const SizedBox(height: 14),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    PressableScale(
-                      onTap: canSubmit && !isSubmitting ? onSubmit : null,
-                      child: SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: cs.onPrimary,
-                            disabledBackgroundColor: AppColors.primary,
-                            disabledForegroundColor: cs.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                          ),
-                          child: _buttonChild(cs, 14),
-                        ),
-                      ),
+                    CartSendButton(
+                      canSubmit: canSubmit,
+                      isSubmitting: isSubmitting,
+                      onSubmit: onSubmit,
+                      cs: cs,
+                      label: sendLabel,
+                      fontSize: 14,
+                      padH: 24,
                     ),
                     Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            '${total.toInt()} $currencySuffix',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: R.fontXl(context),
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          Text(
-                            totalLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: R.fontSm(context),
-                              color: cs.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
+                      child: CartTotalColumn(
+                        total: total,
+                        currencySuffix: currencySuffix,
+                        totalLabel: totalLabel,
+                        cs: cs,
                       ),
                     ),
                   ],

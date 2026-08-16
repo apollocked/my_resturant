@@ -28,37 +28,83 @@ class _KitchenPageState extends State<KitchenPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final orderState = context.watch<OrderCubit>().state;
     final now = DateTime.now();
-    final todayOrders = orderState.orders.where((o) =>
-        o.createdAt.year == now.year && o.createdAt.month == now.month && o.createdAt.day == now.day).toList();
+    final todayOrders = orderState.orders
+        .where(
+          (o) =>
+              o.createdAt.year == now.year &&
+              o.createdAt.month == now.month &&
+              o.createdAt.day == now.day,
+        )
+        .toList();
     final cubit = context.read<OrderCubit>();
-    final activeOrders = todayOrders.where((o) => o.status != OrderStatus.served).toList();
-    final servedOrders = todayOrders.where((o) => o.status == OrderStatus.served).toList();
-    final servedTableNums = <int>{}..addAll(servedOrders.map((o) => o.tableNumber));
-    final clearedToday = servedTableNums.where((n) => orderState.clearedTables.contains(n)).toSet();
-    final needCleaning = servedTableNums.difference(clearedToday).toList()..sort();
+    final activeOrders = todayOrders
+        .where((o) => o.status != OrderStatus.served)
+        .toList();
+    final servedOrders = todayOrders
+        .where((o) => o.status == OrderStatus.served)
+        .toList();
+    final servedTableNums = <int>{}
+      ..addAll(servedOrders.map((o) => o.tableNumber));
+    final clearedToday = servedTableNums
+        .where((n) => orderState.clearedTables.contains(n))
+        .toSet();
+    final needCleaning = servedTableNums.difference(clearedToday).toList()
+      ..sort();
     final cs = Theme.of(context).colorScheme;
     final tabLabels = isWaiter
-        ? ['${t('active')} ${activeOrders.length}', '${t('served')} ${servedOrders.length}']
-        : ['${t('active')} ${activeOrders.length}', '${t('served')} ${servedOrders.length}', '${t('cleared')} ${needCleaning.length}'];
+        ? [
+            '${t('active')} ${activeOrders.length}',
+            '${t('served')} ${servedOrders.length}',
+          ]
+        : [
+            '${t('active')} ${activeOrders.length}',
+            '${t('served')} ${servedOrders.length}',
+            '${t('cleared')} ${needCleaning.length}',
+          ];
     final tab = _tabIndex >= tabLabels.length ? 0 : _tabIndex;
 
-    return Scaffold(body: Column(children: [
-      KitchenHeader(
-        title: isWaiter ? t('orders') : t('kitchen_title'),
-        countLabel: t('orders_count').replaceAll('{count}', '${todayOrders.length}'),
-        selectedIndex: tab,
-        tabLabels: tabLabels,
-        onTabChanged: (i) => setState(() => _tabIndex = i),
+    return Scaffold(
+      body: Column(
+        children: [
+          KitchenHeader(
+            title: isWaiter ? t('orders') : t('kitchen_title'),
+            countLabel: t(
+              'orders_count',
+            ).replaceAll('{count}', '${todayOrders.length}'),
+            selectedIndex: tab,
+            tabLabels: tabLabels,
+            onTabChanged: (i) => setState(() => _tabIndex = i),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: tab == 0
+                  ? KitchenOrderList(
+                      orders: activeOrders,
+                      cubit: cubit,
+                      t: t,
+                      canEdit: canEdit,
+                      tabKey: 'active',
+                    )
+                  : tab == 1
+                  ? KitchenOrderList(
+                      orders: servedOrders,
+                      cubit: cubit,
+                      t: t,
+                      canEdit: canEdit,
+                      tabKey: 'served',
+                    )
+                  : KitchenCleanList(
+                      tableList: needCleaning,
+                      cubit: cubit,
+                      t: t,
+                      cs: cs,
+                    ),
+            ),
+          ),
+        ],
       ),
-      const SizedBox(height: 16),
-      Expanded(child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        child: tab == 0
-            ? KitchenOrderList(orders: activeOrders, cubit: cubit, t: t, canEdit: canEdit, tabKey: 'active')
-            : tab == 1
-                ? KitchenOrderList(orders: servedOrders, cubit: cubit, t: t, canEdit: canEdit, tabKey: 'served')
-                : KitchenCleanList(tableList: needCleaning, cubit: cubit, t: t, cs: cs),
-      )),
-    ]));
+    );
   }
 }

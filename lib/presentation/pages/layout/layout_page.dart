@@ -13,6 +13,7 @@ import 'package:my_resturant/presentation/pages/layout/nav_item.dart';
 import 'package:my_resturant/presentation/pages/layout/side_nav_rail.dart';
 import 'package:my_resturant/shared/connectivity_banner.dart';
 import 'package:my_resturant/shared/liquid_glass_nav_bar.dart';
+import 'package:my_resturant/shared/liquid_nav_item.dart';
 import 'package:my_resturant/shared/tab_entrance.dart';
 
 class MainShell extends StatelessWidget {

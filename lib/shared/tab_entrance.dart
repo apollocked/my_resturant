@@ -14,10 +14,7 @@ class TabEntrance extends StatelessWidget {
       curve: Curves.easeOutCubic,
       builder: (context, value, child) => Opacity(
         opacity: 1 - 0.35 * value,
-        child: Transform.translate(
-          offset: Offset(0, 12 * value),
-          child: child,
-        ),
+        child: Transform.translate(offset: Offset(0, 12 * value), child: child),
       ),
       child: child,
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
+import 'package:my_resturant/presentation/widgets/admin/recipe_category_field.dart';
+import 'package:my_resturant/presentation/widgets/admin/recipe_field.dart';
 
 class EditRecipeDialog extends StatefulWidget {
   final String name, description;
@@ -53,50 +55,24 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
   Widget build(BuildContext context) {
     final cats = effectiveCategories(widget.categories);
     final isWide = R.isDesktop(context) || R.isTablet(context);
-    final nameField = TextField(
+    final nameField = RecipeField(
+      label: widget.t('name'),
       controller: _nameCtl,
-      decoration: InputDecoration(
-        labelText: widget.t('name'),
-        border: const OutlineInputBorder(),
-      ),
-      textDirection: TextDirection.rtl,
     );
-    final priceField = TextField(
+    final priceField = RecipeField(
+      label: widget.t('price'),
       controller: _priceCtl,
-      decoration: InputDecoration(
-        labelText: widget.t('price'),
-        border: const OutlineInputBorder(),
-      ),
       keyboardType: TextInputType.number,
-      textDirection: TextDirection.rtl,
     );
-    final categoryField = StatefulBuilder(
-      builder: (ctx, setLocal) => DropdownButtonFormField<String>(
-        initialValue: _cat,
-        decoration: InputDecoration(
-          labelText: widget.t('category'),
-          border: const OutlineInputBorder(),
-        ),
-        items: cats
-            .map(
-              (c) => DropdownMenuItem(
-                value: c['key'],
-                child: Text('${c['icon']} ${c['name']}'),
-              ),
-            )
-            .toList(),
-        onChanged: (v) {
-          if (v != null) setLocal(() => _cat = v);
-        },
-      ),
+    final categoryField = RecipeCategoryField(
+      label: widget.t('category'),
+      categories: cats,
+      value: _cat,
+      onChanged: (v) => _cat = v,
     );
-    final descField = TextField(
+    final descField = RecipeField(
+      label: widget.t('description'),
       controller: _descCtl,
-      decoration: InputDecoration(
-        labelText: widget.t('description'),
-        border: const OutlineInputBorder(),
-      ),
-      textDirection: TextDirection.rtl,
       maxLines: 2,
     );
     return Directionality(

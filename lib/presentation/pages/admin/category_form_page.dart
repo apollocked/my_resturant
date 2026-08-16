@@ -1,46 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
-
-const List<String> _icons = [
-  'ðŸ½',
-  'ðŸ”',
-  'ðŸ•',
-  'ðŸŒ¯',
-  'ðŸ—',
-  'ðŸ¥—',
-  'ðŸ¥ª',
-  'ðŸŒ®',
-  'ðŸ¥Ÿ',
-  'ðŸœ',
-  'ðŸ',
-  'ðŸ›',
-  'ðŸ¥˜',
-  'ðŸ«•',
-  'ðŸ¥™',
-  'ðŸ§†',
-  'ðŸ¥©',
-  'ðŸ–',
-  'ðŸ¥¦',
-  'ðŸ¥•',
-  'ðŸ§…',
-  'ðŸ«‘',
-  'ðŸ¥',
-  'ðŸ¥¯',
-  'ðŸž',
-  'ðŸ¥¨',
-  'ðŸ§€',
-  'ðŸ¥š',
-  'ðŸ³',
-  'ðŸ¥®',
-  'ðŸ¦',
-  'ðŸ°',
-];
+import 'package:my_resturant/presentation/widgets/admin/category_icon_picker.dart';
+import 'package:my_resturant/presentation/widgets/admin/category_save_button.dart';
 
 class CategoryFormPage extends StatefulWidget {
   const CategoryFormPage({super.key});
@@ -53,7 +19,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   String _selectedIcon = 'ðŸ½';
   bool _saving = false;
 
-  String _t(String key) => Tr.get(key, context.read<SettingsCubit>().state.locale);
+  String _t(String key) =>
+      Tr.get(key, context.read<SettingsCubit>().state.locale);
 
   @override
   void dispose() {
@@ -67,7 +34,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     final key = name.replaceAll(RegExp(r'\s+'), '_').toLowerCase();
     if (!RegExp(r'^[a-z0-9_]{1,32}$').hasMatch(key) || key == 'all') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_t('invalid_category')), backgroundColor: AppColors.error),
+        SnackBar(
+          content: Text(_t('invalid_category')),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
@@ -122,58 +92,16 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 ),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: R.categoryIconColumns(context),
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: _icons.length,
-                    itemBuilder: (context, index) {
-                      final icon = _icons[index];
-                      final sel = icon == _selectedIcon;
-                      return PressableScale(
-                        onTap: () => setState(() => _selectedIcon = icon),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: sel
-                                ? AppColors.primary
-                                : cs.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(10),
-                            border: sel
-                                ? Border.all(color: AppColors.primary, width: 2)
-                                : null,
-                          ),
-                          child: Center(
-                            child: Text(
-                              icon,
-                              style: TextStyle(fontSize: sel ? 30 : 22),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                  child: CategoryIconPicker(
+                    selected: _selectedIcon,
+                    onSelect: (icon) => setState(() => _selectedIcon = icon),
                   ),
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: PressableScale(
-                    onTap: _saving ? null : _save,
-                    child: ElevatedButton(
-                      onPressed: null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        disabledBackgroundColor: Theme.of(context).colorScheme.primary,
-                        disabledForegroundColor: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      child: _saving
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : Text(t('add'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-                    ),
-                  ),
+                CategorySaveButton(
+                  loading: _saving,
+                  label: t('add'),
+                  onTap: _saving ? null : _save,
                 ),
               ],
             ),
