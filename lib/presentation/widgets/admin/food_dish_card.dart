@@ -52,7 +52,7 @@ class FoodDishCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                   child: AppImage(recipe.imageUrl, width: 44, height: 44),
                 ),
                 const SizedBox(width: 10),

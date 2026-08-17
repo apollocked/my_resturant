@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class FoodCardPriceBadge extends StatelessWidget {
   const FoodCardPriceBadge({
@@ -25,7 +26,7 @@ class FoodCardPriceBadge extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
         decoration: BoxDecoration(
           color: cs.surface.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
         child: Text(
           label,

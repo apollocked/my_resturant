@@ -46,12 +46,12 @@ class _PinDialogState extends State<PinDialog> {
       ),
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
         child: Container(
           padding: const EdgeInsets.fromLTRB(24, 26, 24, 20),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
             border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.6)),
           ),
           child: SingleChildScrollView(
@@ -86,15 +86,15 @@ class _PinDialogState extends State<PinDialog> {
                       alpha: 0.4,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                       borderSide: BorderSide.none,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                       borderSide: BorderSide.none,
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                       borderSide: const BorderSide(
                         color: AppColors.primary,
                         width: 1.4,

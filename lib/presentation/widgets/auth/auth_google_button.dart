@@ -46,7 +46,7 @@ class AuthGoogleButton extends StatelessWidget {
             disabledForegroundColor: cs.onSurface,
             side: BorderSide(color: cs.outline),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
           ),
         ),

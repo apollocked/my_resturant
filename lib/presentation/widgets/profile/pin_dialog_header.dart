@@ -29,7 +29,7 @@ class PinDialogHeader extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [AppColors.primary, Color(0xFFFF8A5C)],
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.3),

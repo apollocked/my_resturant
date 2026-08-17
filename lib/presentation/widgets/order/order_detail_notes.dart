@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class OrderDetailNotes extends StatelessWidget {
@@ -15,7 +16,7 @@ class OrderDetailNotes extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Text(
         notes,

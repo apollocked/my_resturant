@@ -37,7 +37,7 @@ class AddItemsFooterButton extends StatelessWidget {
             disabledBackgroundColor: cs.surfaceContainerHighest,
             disabledForegroundColor: cs.onSurfaceVariant,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
           ),
           child: Text(

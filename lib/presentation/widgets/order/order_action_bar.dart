@@ -65,7 +65,7 @@ class OrderActionBar extends StatelessWidget {
                     disabledBackgroundColor: color,
                     disabledForegroundColor: cs.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                 ),
@@ -91,7 +91,7 @@ class OrderActionBar extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     disabledForegroundColor: cs.onSurface,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                 ),
@@ -115,7 +115,7 @@ class OrderActionBar extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.2),

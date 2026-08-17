@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 
 class SetupPasscodeField extends StatelessWidget {
@@ -39,7 +40,7 @@ class SetupPasscodeField extends StatelessWidget {
           onPressed: onToggleObscure,
         ),
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
         filled: true,
         fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
       ),

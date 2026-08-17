@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
@@ -28,7 +29,7 @@ class PinField extends StatelessWidget {
         hintText: t('pin_hint'),
         filled: true,
         fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
       ),
     );
   }

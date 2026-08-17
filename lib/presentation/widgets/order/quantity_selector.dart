@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
@@ -18,7 +19,7 @@ class QuantitySelector extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

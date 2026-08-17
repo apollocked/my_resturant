@@ -36,7 +36,7 @@ class CartSendButton extends StatelessWidget {
             disabledBackgroundColor: AppColors.primary,
             disabledForegroundColor: cs.onPrimary,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
             elevation: 0,
             padding: EdgeInsets.symmetric(horizontal: padH),

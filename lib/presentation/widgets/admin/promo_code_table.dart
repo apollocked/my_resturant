@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/admin/promo_code_helpers.dart';
@@ -23,7 +24,7 @@ class PromoCodeTable extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: Table(

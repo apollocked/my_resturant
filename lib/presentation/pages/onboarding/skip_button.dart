@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -28,7 +29,7 @@ class SkipButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               color: ob.skipBg,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(AppRadius.pill),
               border: Border.all(color: ob.skipBorder),
             ),
             child: Text(label, style: TextStyle(color: ob.skipText, fontWeight: FontWeight.w600, fontSize: 14, letterSpacing: 0.5)),

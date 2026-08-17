@@ -56,7 +56,7 @@ class AddItemsSheetHeader extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.primarySoft,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(AppRadius.xl),
                   ),
                   child: Text(
                     t('items').replaceAll('{count}', '$count'),

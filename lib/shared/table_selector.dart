@@ -34,7 +34,7 @@ class TableSelector extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.primarySoft,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
         ),
         child: Row(

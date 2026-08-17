@@ -101,7 +101,7 @@ class _RoleRow extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.primarySoft,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Text(
                     t('active'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/app_image.dart';
 
 class DishPreviewImage extends StatelessWidget {
@@ -13,7 +14,7 @@ class DishPreviewImage extends StatelessWidget {
       builder: (_, v, _) => v.isEmpty
           ? const SizedBox(height: 130)
           : ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadius.md),
               child: AppImage(v, width: double.infinity, height: 130),
             ),
     );

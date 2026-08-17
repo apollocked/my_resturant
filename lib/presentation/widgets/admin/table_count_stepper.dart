@@ -49,7 +49,7 @@ class TableCountStepper extends StatelessWidget {
       padding: EdgeInsets.all(R.padding(context)),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

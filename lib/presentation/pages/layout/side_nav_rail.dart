@@ -77,7 +77,7 @@ class SideNavRail extends StatelessWidget {
 
   Widget _logo(double size) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: Image.asset(
         'assets/icons/my Restaurant.png',
         width: size,

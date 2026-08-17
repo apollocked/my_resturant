@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class AddItemsSearchField extends StatelessWidget {
   const AddItemsSearchField({
@@ -33,7 +34,7 @@ class AddItemsSearchField extends StatelessWidget {
           filled: true,
           fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             borderSide: BorderSide.none,
           ),
           isDense: true,

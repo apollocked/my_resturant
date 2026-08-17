@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class CartItemNotesField extends StatelessWidget {
   const CartItemNotesField({
@@ -31,11 +32,11 @@ class CartItemNotesField extends StatelessWidget {
         ),
         counterText: '',
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: BorderSide(color: cs.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: BorderSide(color: cs.outlineVariant),
         ),
         contentPadding: EdgeInsets.symmetric(

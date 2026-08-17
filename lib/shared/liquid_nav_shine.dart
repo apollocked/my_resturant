@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class LiquidNavShine extends StatelessWidget {
   const LiquidNavShine({super.key, required this.dark});
@@ -22,7 +23,7 @@ class LiquidNavShine extends StatelessWidget {
                 Colors.transparent,
               ],
             ),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(AppRadius.circle),
           ),
         ),
       ),

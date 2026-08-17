@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
@@ -55,7 +56,7 @@ class LiquidNavTab extends StatelessWidget {
                   height: active ? 32 : 28,
                   decoration: BoxDecoration(
                     color: active ? indColor : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: Icon(
                     active ? item.activeIcon : item.icon,

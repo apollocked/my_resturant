@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onb_colors.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
@@ -76,7 +77,7 @@ class LanguageOption extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected ? ob.selectedBg : ob.glassBg,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? ob.selectedBorder : ob.glassBorder,
             width: isSelected ? 2 : 1,
@@ -128,7 +129,7 @@ class ThemeOption extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: R.cardPadding(context)),
         decoration: BoxDecoration(
           color: isSelected ? ob.selectedBg : ob.glassBg,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? ob.selectedBorder : ob.glassBorder,
             width: isSelected ? 2 : 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onb_colors.dart';
 
@@ -130,7 +131,7 @@ class _DescriptionCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
       decoration: BoxDecoration(
         color: ob.glassBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: ob.glassBorder),
       ),
       child: Text(

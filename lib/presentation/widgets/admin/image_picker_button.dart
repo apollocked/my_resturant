@@ -22,7 +22,7 @@ class ImagePickerButton extends StatelessWidget {
           side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
         ),
         child: Row(

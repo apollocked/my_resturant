@@ -14,14 +14,14 @@ class CartItemRemoveButton extends StatelessWidget {
         HapticFeedback.mediumImpact();
         onRemove();
       },
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: Container(
         width: 32,
         height: 32,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.error.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
         child: const Icon(Icons.close, size: 16, color: AppColors.error),
       ),

@@ -31,7 +31,7 @@ class OrderItemsList extends StatelessWidget {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                         child: Text(
                           '${item.quantity}',

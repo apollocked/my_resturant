@@ -28,7 +28,7 @@ class SettingsOptionButton extends StatelessWidget {
             color: selected ? AppColors.primary : cs.outlineVariant,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
         ),
         child: Text(

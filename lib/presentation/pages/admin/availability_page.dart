@@ -50,7 +50,7 @@ class AvailabilityPage extends StatelessWidget {
                           return Card(
                             child: ListTile(
                               leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                                 child: AppImage(
                                   r.imageUrl,
                                   width: 48,
@@ -93,7 +93,7 @@ class AvailabilityPage extends StatelessWidget {
                             margin: const EdgeInsets.only(bottom: 8),
                             child: ListTile(
                               leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                                 child: AppImage(
                                   r.imageUrl,
                                   width: 48,

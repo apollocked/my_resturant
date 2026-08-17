@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
@@ -44,7 +45,7 @@ class AuthTextField extends StatelessWidget {
         labelText: label,
         filled: true,
         fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
       ),
       validator: validator,
     );

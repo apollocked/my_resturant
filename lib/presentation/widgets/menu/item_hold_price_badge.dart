@@ -28,7 +28,7 @@ class ItemHoldPriceBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: AppColors.primarySoft,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Text(
         '${price.toInt()} $priceLabel',

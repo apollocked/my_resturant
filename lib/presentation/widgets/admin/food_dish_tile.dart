@@ -26,7 +26,7 @@ class FoodDishTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           child: AppImage(recipe.imageUrl, width: 48, height: 48),
         ),
         title: Text(

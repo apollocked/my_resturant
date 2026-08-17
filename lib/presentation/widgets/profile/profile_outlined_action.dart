@@ -33,7 +33,7 @@ class ProfileOutlinedAction extends StatelessWidget {
             disabledForegroundColor: color,
             side: BorderSide(color: color, width: sideWidth),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadius.md),
             ),
           ),
         ),

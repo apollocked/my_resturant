@@ -31,7 +31,7 @@ class ActionButtonsRow extends StatelessWidget {
                       color: AppColors.primary.withValues(alpha: 0.3),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Row(
@@ -70,7 +70,7 @@ class ActionButtonsRow extends StatelessWidget {
                       context,
                     ).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Row(

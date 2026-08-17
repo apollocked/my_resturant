@@ -30,7 +30,7 @@ class OrderDetailHeader extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           child: Text(
             statusLabel,

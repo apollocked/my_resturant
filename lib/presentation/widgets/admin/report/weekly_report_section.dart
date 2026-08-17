@@ -66,7 +66,7 @@ class WeeklyReportSection extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

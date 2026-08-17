@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class ItemHoldNotesField extends StatelessWidget {
   const ItemHoldNotesField({
@@ -39,7 +40,7 @@ class ItemHoldNotesField extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
           ),
           child: TextField(

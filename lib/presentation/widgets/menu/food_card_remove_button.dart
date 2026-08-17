@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
@@ -43,7 +44,7 @@ class FoodCardRemoveButton extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: cs.error,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             boxShadow: [
               BoxShadow(
                 color: cs.error.withValues(alpha: 0.4),

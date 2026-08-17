@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onb_colors.dart';
 
@@ -12,18 +13,18 @@ class GlassFeatureTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(AppRadius.lg),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          decoration: BoxDecoration(color: ob.glassBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: ob.glassBorder)),
+          decoration: BoxDecoration(color: ob.glassBg, borderRadius: BorderRadius.circular(AppRadius.lg), border: Border.all(color: ob.glassBorder)),
           child: Row(
             children: [
               Container(
                 width: 36, height: 36,
-                decoration: BoxDecoration(color: ob.checkBg, borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: ob.checkBg, borderRadius: BorderRadius.circular(AppRadius.md)),
                 child: Icon(Icons.check_rounded, size: 22, color: accent),
               ),
               const SizedBox(width: 14),

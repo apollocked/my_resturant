@@ -70,7 +70,7 @@ class RoleIconStack extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: [accent, accent.withValues(alpha: 0.72)],
               ),
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(AppRadius.circle),
               boxShadow: [
                 BoxShadow(
                   color: accent.withValues(alpha: !working ? 0.15 : 0.25),

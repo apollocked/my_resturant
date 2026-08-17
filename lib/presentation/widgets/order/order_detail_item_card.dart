@@ -28,7 +28,7 @@ class OrderDetailItemCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
               child: AppImage(
                 item.recipe.imageUrl,
                 width: isDesktop ? 64 : 52,
@@ -49,7 +49,7 @@ class OrderDetailItemCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                         child: Text(
                           '\u00d7${item.quantity}',

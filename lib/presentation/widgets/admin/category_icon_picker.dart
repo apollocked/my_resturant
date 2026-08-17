@@ -66,7 +66,7 @@ class CategoryIconPicker extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: sel ? AppColors.primary : cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppRadius.md),
               border: sel
                   ? Border.all(color: AppColors.primary, width: 2)
                   : null,

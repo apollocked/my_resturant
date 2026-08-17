@@ -50,7 +50,7 @@ class OrderTableRow extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
           ),
           child: Icon(
             Icons.table_restaurant_outlined,
