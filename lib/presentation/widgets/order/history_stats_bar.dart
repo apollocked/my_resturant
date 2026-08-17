@@ -42,7 +42,7 @@ class HistoryStatsBar extends StatelessWidget {
           StatChip(
             icon: Icons.attach_money,
             label: '${total.toStringAsFixed(0)} ${t('currency_suffix')}',
-            color: Colors.green,
+            color: AppColors.success,
           ),
         ],
       ),

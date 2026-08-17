@@ -88,17 +88,17 @@ class RoleIconStack extends StatelessWidget {
                 child: FadeTransition(opacity: anim, child: child),
               ),
               child: error
-                  ? const Icon(
+                  ? Icon(
                       Icons.close_rounded,
-                      key: ValueKey('x'),
+                      key: const ValueKey('x'),
                       size: 40,
-                      color: Colors.white,
+                      color: cs.onPrimary,
                     )
                   : Icon(
                       (showFrom ? fromRole : toRole).icon,
                       key: ValueKey(showFrom ? 'from' : 'to'),
                       size: 40,
-                      color: Colors.white,
+                      color: cs.onPrimary,
                     ),
             ),
           ),

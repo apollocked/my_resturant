@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/widgets/admin/report/report_charts.dart';
 
 class RevenueChart extends StatelessWidget {
@@ -16,7 +17,7 @@ class RevenueChart extends StatelessWidget {
       toY: (d) => d.revenue,
       tooltip: (v) =>
           '${v.toStringAsFixed(0)} ${Tr.get('currency_suffix', locale)}',
-      barColor: Colors.green,
+      barColor: AppColors.success,
     );
   }
 }

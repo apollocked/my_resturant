@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
@@ -104,7 +105,7 @@ class _ConnectivityBannerState extends State<ConnectivityBanner>
                                     msg,
                                     style: TextStyle(
                                       color: cs.onPrimary,
-                                      fontSize: 13,
+                                      fontSize: R.fontSm(context),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),

@@ -51,7 +51,7 @@ class AddItemsTile extends StatelessWidget {
                 Text(
                   recipe.name,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: R.fontMd(context),
                     fontWeight: FontWeight.w600,
                     color: cs.onSurface,
                   ),
@@ -61,8 +61,8 @@ class AddItemsTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '${recipe.price.toInt()} ${t('currency_suffix')}',
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: R.fontSm(context),
                     fontWeight: FontWeight.w700,
                     color: AppColors.primary,
                   ),
@@ -79,7 +79,7 @@ class AddItemsTile extends StatelessWidget {
                 height: 34,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Icon(Icons.add, size: 20, color: cs.onPrimary),
               ),
@@ -90,7 +90,7 @@ class AddItemsTile extends StatelessWidget {
               height: 34,
               decoration: BoxDecoration(
                 color: cs.surface,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(AppRadius.md),
                 border: Border.all(color: AppColors.primary, width: 1.5),
               ),
               child: Row(
@@ -99,9 +99,9 @@ class AddItemsTile extends StatelessWidget {
                   _stepBtn(Icons.remove, onDec),
                   Text(
                     '$qty',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
-                      fontSize: 14,
+                      fontSize: R.fontMd(context),
                       color: AppColors.primary,
                     ),
                   ),
@@ -117,7 +117,7 @@ class AddItemsTile extends StatelessWidget {
   Widget _stepBtn(IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: SizedBox(
         width: 28,
         height: 30,

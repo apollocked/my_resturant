@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
 
 class LiquidNavTab extends StatelessWidget {

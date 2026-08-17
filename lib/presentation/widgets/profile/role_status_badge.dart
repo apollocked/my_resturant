@@ -10,6 +10,7 @@ class RoleStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final success = phase == RolePhase.success;
     if (!success && phase != RolePhase.error) return const SizedBox.shrink();
     return Positioned(
@@ -21,12 +22,12 @@ class RoleStatusBadge extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: cs.surface,
             shape: BoxShape.circle,
             boxShadow: success
                 ? [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
+                      color: cs.shadow.withValues(alpha: 0.2),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

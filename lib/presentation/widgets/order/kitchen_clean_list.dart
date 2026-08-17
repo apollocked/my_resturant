@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/shared/empty_state.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
 
 class KitchenCleanList extends StatelessWidget {
   final List<int> tableList;
@@ -27,6 +27,9 @@ class KitchenCleanList extends StatelessWidget {
         title: t('no_cleared_tables'),
         subtitle: t('no_cleared_tables_subtitle'),
         color: AppColors.success,
+      );
+    }
+    return RefreshIndicator(
       onRefresh: () async => cubit.refresh(),
       child: ListView.builder(
         padding: EdgeInsets.fromLTRB(
@@ -46,16 +49,16 @@ class KitchenCleanList extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.cleaning_services,
                   color: AppColors.success,
                   size: 22,
                 ),
               ),
               title: Text(
-                '${t('table')} $n${tableName != '${t('table')} $n' ? ' â€” $tableName' : ''}',
+                '${t('table')} $n${tableName != '${t('table')} $n' ? ' \u2014 $tableName' : ''}',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: R.fontMd(context),

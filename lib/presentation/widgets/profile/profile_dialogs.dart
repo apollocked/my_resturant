@@ -34,13 +34,14 @@ class ProfileDialogs {
     }
     if (!context.mounted) return;
 
+    final cs = Theme.of(context).colorScheme;
     final fromRole = cubit.state.role;
 
     final ok = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
       barrierLabel: '',
-      barrierColor: Colors.black.withValues(alpha: 0.72),
+      barrierColor: cs.scrim.withValues(alpha: 0.72),
       transitionDuration: const Duration(milliseconds: 320),
       pageBuilder: (ctx, _, _) => RoleTransitionOverlay(
         fromRole: fromRole,

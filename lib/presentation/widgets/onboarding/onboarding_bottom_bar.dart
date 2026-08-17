@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onb_colors.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
@@ -14,6 +15,7 @@ class OnboardingBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ob = OnbColors.of(context);
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
@@ -45,9 +47,9 @@ class OnboardingBottomBar extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15, letterSpacing: 0.3)),
+                  Text(label, style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: R.fontMd(context), letterSpacing: 0.3)),
                   const SizedBox(width: 10),
-                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                  Icon(Icons.arrow_forward_rounded, color: cs.onPrimary, size: 20),
                 ],
               ),
             ),

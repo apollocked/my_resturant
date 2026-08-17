@@ -32,7 +32,7 @@ class PromoActivateButton extends StatelessWidget {
             ),
           ),
           child: loading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 22,
                   height: 22,
                   child: CircularProgressIndicator(

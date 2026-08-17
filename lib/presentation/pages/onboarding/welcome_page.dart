@@ -8,6 +8,7 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final pad = R.padding(context);
     final ob = OnbColors.of(context);
 
@@ -27,7 +28,7 @@ class WelcomePage extends StatelessWidget {
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
                       colors: ob.isDark
-                          ? [Colors.white, const Color(0xFFFFD4B0)]
+                          ? [cs.onPrimary, const Color(0xFFFFD4B0)]
                           : [ob.textPrimary, ob.textPrimary],
                     ).createShader(bounds),
                     child: Text(
@@ -72,6 +73,7 @@ class _HeroLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final outer = R.avatarSize(context);
     final inner = outer * 0.78;
     return Container(
@@ -84,7 +86,6 @@ class _HeroLogo extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 40,
             spreadRadius: 10,
           ),
         ],
@@ -98,7 +99,7 @@ class _HeroLogo extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: cs.shadow.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -135,7 +136,7 @@ class _DescriptionCard extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(color: ob.textSecondary, fontSize: 14.5, height: 1.6),
+        style: TextStyle(color: ob.textSecondary, fontSize: R.fontMd(context), height: 1.6),
       ),
     );
   }

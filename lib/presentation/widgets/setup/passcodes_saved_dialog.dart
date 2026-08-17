@@ -12,7 +12,7 @@ Future<void> showPasscodesSavedDialog(
       scrollable: true,
       title: const Row(
         children: [
-          Icon(Icons.check_circle, color: Colors.green, size: 28),
+          Icon(Icons.check_circle, color: AppColors.success, size: 28),
           SizedBox(width: 10),
           Text('Passcodes Saved'),
         ],
@@ -53,7 +53,7 @@ Future<void> showPasscodesSavedDialog(
   );
 }
 
-Widget _passcodeRow(IconData icon, String label, String code) {
+Widget _passcodeRow(IconData icon, String label, String code, {double? fontSize}) {
   return Row(
     children: [
       Icon(icon, size: 18, color: AppColors.primary),
@@ -64,8 +64,8 @@ Widget _passcodeRow(IconData icon, String label, String code) {
           code,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 18,
+          style: TextStyle(
+            fontSize: fontSize ?? 18,
             fontWeight: FontWeight.bold,
             letterSpacing: 3,
           ),

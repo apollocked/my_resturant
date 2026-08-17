@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 
@@ -37,7 +38,7 @@ class PinDialogHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(role.icon, color: Colors.white, size: 24),
+          child: Icon(role.icon, color: cs.onPrimary, size: 24),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -47,7 +48,7 @@ class PinDialogHeader extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: R.fontMd(context),
                   fontWeight: FontWeight.w800,
                   color: cs.onSurface,
                 ),
@@ -55,7 +56,7 @@ class PinDialogHeader extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+                style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 class RoleOverlayCard extends StatelessWidget {
   const RoleOverlayCard({super.key, required this.child});
@@ -8,6 +9,7 @@ class RoleOverlayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 32),
@@ -16,17 +18,17 @@ class RoleOverlayCard extends StatelessWidget {
         vertical: R.isPhone(context) ? 28 : 32,
       ),
       decoration: BoxDecoration(
-        color: dark ? const Color(0xFF121A2A) : Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        color: dark ? const Color(0xFF121A2A) : cs.surface,
+        borderRadius: BorderRadius.circular(AppRadius.circle),
         border: Border.all(
           color: dark
-              ? Colors.white.withValues(alpha: 0.10)
-              : const Color(0xFFE0E0E0),
+              ? cs.onPrimary.withValues(alpha: 0.10)
+              : cs.outlineVariant,
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: dark ? 0.5 : 0.14),
+            color: cs.shadow.withValues(alpha: dark ? 0.5 : 0.14),
             blurRadius: 60,
             offset: const Offset(0, 24),
           ),
