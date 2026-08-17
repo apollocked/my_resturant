@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
@@ -18,11 +16,13 @@ class RoleOverlayCard extends StatelessWidget {
         vertical: R.isPhone(context) ? 28 : 32,
       ),
       decoration: BoxDecoration(
-        color: dark ? const Color(0xB3121A2A) : const Color(0xE6FFFFFF),
+        color: dark ? const Color(0xFF121A2A) : Colors.white,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white.withValues(alpha: dark ? 0.10 : 0.5),
-          width: 0.8,
+          color: dark
+              ? Colors.white.withValues(alpha: 0.10)
+              : const Color(0xFFE0E0E0),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -32,10 +32,7 @@ class RoleOverlayCard extends StatelessWidget {
           ),
         ],
       ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-        child: child,
-      ),
+      child: child,
     );
   }
 }

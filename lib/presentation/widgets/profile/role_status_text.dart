@@ -7,18 +7,23 @@ class RoleStatusTexts extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
+    required this.success,
     required this.done,
     required this.pulse,
   });
 
   final String title;
   final String subtitle;
+  final bool success;
   final bool done;
   final Animation<double> pulse;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final subtitleColor = done
+        ? (success ? AppColors.success : AppColors.error)
+        : cs.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
@@ -32,11 +37,7 @@ class RoleStatusTexts extends StatelessWidget {
             style: TextStyle(
               fontSize: R.fontXl(context),
               fontWeight: FontWeight.w800,
-              color: done
-                  ? (cs.brightness == Brightness.dark
-                        ? Colors.white
-                        : cs.onSurface)
-                  : cs.onSurface,
+              color: cs.onSurface,
               letterSpacing: -0.3,
               height: 1.2,
             ),
@@ -54,7 +55,7 @@ class RoleStatusTexts extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: R.fontMd(context),
-                  color: done ? (AppColors.success) : cs.onSurfaceVariant,
+                  color: subtitleColor,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
                 ),

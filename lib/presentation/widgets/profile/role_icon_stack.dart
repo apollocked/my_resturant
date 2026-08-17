@@ -73,9 +73,9 @@ class RoleIconStack extends StatelessWidget {
               borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
-                  color: accent.withValues(alpha: !working ? 0.25 : 0.4),
-                  blurRadius: 28,
-                  offset: const Offset(0, 10),
+                  color: accent.withValues(alpha: !working ? 0.15 : 0.25),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),

@@ -128,6 +128,7 @@ class _RoleTransitionOverlayState extends State<RoleTransitionOverlay>
             RoleStatusTexts(
               title: title,
               subtitle: subtitle,
+              success: _phase == RolePhase.success,
               done: done,
               pulse: _pulse,
             ),
