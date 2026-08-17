@@ -98,6 +98,7 @@ class _SetupPageState extends State<SetupPage> {
                               style: TextStyle(
                                 color: AppColors.error,
                                 fontSize: R.fontSm(context),
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

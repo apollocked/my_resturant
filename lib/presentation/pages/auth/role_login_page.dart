@@ -85,6 +85,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
                             style: TextStyle(
                               color: AppColors.error,
                               fontSize: R.fontSm(context),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),

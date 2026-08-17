@@ -16,7 +16,11 @@ class AuthErrorBanner extends StatelessWidget {
       padding: const EdgeInsets.only(top: 12),
       child: Text(
         t(err),
-        style: TextStyle(color: AppColors.error, fontSize: R.fontSm(context)),
+        style: TextStyle(
+          color: AppColors.error,
+          fontSize: R.fontSm(context),
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

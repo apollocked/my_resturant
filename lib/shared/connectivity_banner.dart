@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -77,8 +78,8 @@ class _ConnectivityBannerState extends State<ConnectivityBanner>
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: _connected
-                          ? Colors.green.shade700
-                          : Colors.orange.shade800,
+                          ? AppColors.success
+                          : AppColors.error,
                       boxShadow: [
                         BoxShadow(
                           color: cs.shadow.withValues(alpha: 0.15),
@@ -95,14 +96,14 @@ class _ConnectivityBannerState extends State<ConnectivityBanner>
                                 Icon(
                                   _connected ? Icons.wifi : Icons.wifi_off,
                                   size: 18,
-                                  color: Colors.white,
+                                  color: cs.onPrimary,
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     msg,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: cs.onPrimary,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),

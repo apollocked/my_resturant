@@ -26,13 +26,14 @@ class RoleStatusTexts extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: R.fontLg(context),
+              fontSize: R.fontXl(context),
               fontWeight: FontWeight.w800,
               color: cs.onSurface,
+              letterSpacing: -0.3,
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
           child: Opacity(
@@ -46,6 +47,7 @@ class RoleStatusTexts extends StatelessWidget {
                 style: TextStyle(
                   fontSize: R.fontSm(context),
                   color: cs.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
