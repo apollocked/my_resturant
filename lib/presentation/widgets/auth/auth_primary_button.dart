@@ -28,9 +28,9 @@ class AuthPrimaryButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             disabledBackgroundColor: AppColors.primary,
-            disabledForegroundColor: Colors.white,
+            disabledForegroundColor: cs.onPrimary,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
           ),
           child: loading

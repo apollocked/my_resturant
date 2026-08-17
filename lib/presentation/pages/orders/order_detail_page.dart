@@ -36,7 +36,7 @@ class OrderDetailPage extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () => _addItems(context),
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: cs.onPrimary,
               icon: const Icon(Icons.add_shopping_cart, size: 20),
               label: Text(
                 t('add_items'),

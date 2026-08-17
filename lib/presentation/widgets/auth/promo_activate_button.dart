@@ -15,6 +15,7 @@ class PromoActivateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
       height: 52,
@@ -25,9 +26,9 @@ class PromoActivateButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             disabledBackgroundColor: AppColors.primary,
-            disabledForegroundColor: Colors.white,
+            disabledForegroundColor: cs.onPrimary,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
           ),
           child: loading
@@ -36,7 +37,7 @@ class PromoActivateButton extends StatelessWidget {
                   height: 22,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    color: Colors.white,
+                    color: cs.onPrimary,
                   ),
                 )
               : Text(

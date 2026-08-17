@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 
 bool isPromoExpired(Map<String, dynamic> code) {
   final expires = code['expires_at'];
@@ -14,9 +15,9 @@ String promoStatusText(Map<String, dynamic> code) {
 }
 
 Color promoStatusColor(Map<String, dynamic> code) {
-  if (code['used_by'] != null) return Colors.orange;
-  if (isPromoExpired(code)) return Colors.red;
-  return Colors.green;
+  if (code['used_by'] != null) return AppColors.warning;
+  if (isPromoExpired(code)) return AppColors.error;
+  return AppColors.success;
 }
 
 IconData promoStatusIcon(Map<String, dynamic> code) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/shared/app_image.dart';
@@ -29,12 +30,12 @@ class AddItemsTile extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
             child: AppImage(
               recipe.imageUrl,
               width: 46,
@@ -80,7 +81,7 @@ class AddItemsTile extends StatelessWidget {
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add, size: 20, color: Colors.white),
+                child: Icon(Icons.add, size: 20, color: cs.onPrimary),
               ),
             )
           else

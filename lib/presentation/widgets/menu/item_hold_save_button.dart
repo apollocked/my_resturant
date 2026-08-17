@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
@@ -18,6 +19,7 @@ class ItemHoldSaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -48,19 +50,15 @@ class ItemHoldSaveButton extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 disabledBackgroundColor: AppColors.primary,
-                disabledForegroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+            disabledForegroundColor: cs.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
               ),
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: isDesktop
-                      ? 16
-                      : isTablet
-                      ? 15
-                      : 14,
+                  fontSize: R.fontMd(context),
                   fontWeight: FontWeight.w700,
                 ),
               ),

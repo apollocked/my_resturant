@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/shared/empty_state.dart';
@@ -25,10 +26,7 @@ class KitchenCleanList extends StatelessWidget {
         icon: Icons.cleaning_services,
         title: t('no_cleared_tables'),
         subtitle: t('no_cleared_tables_subtitle'),
-        color: Colors.green,
-      );
-    }
-    return RefreshIndicator(
+        color: AppColors.success,
       onRefresh: () async => cubit.refresh(),
       child: ListView.builder(
         padding: EdgeInsets.fromLTRB(
@@ -47,25 +45,25 @@ class KitchenCleanList extends StatelessWidget {
               leading: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.cleaning_services,
-                  color: Colors.green,
+                  color: AppColors.success,
                   size: 22,
                 ),
               ),
               title: Text(
                 '${t('table')} $n${tableName != '${t('table')} $n' ? ' â€” $tableName' : ''}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 16,
+                  fontSize: R.fontMd(context),
                 ),
               ),
               subtitle: Text(
                 t('clear_table'),
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontSm(context)),
               ),
               trailing: PressableScale(
                 onTap: () => cubit.clearTable(n),
@@ -76,10 +74,10 @@ class KitchenCleanList extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    disabledBackgroundColor: Colors.green,
-                    disabledForegroundColor: Colors.white,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.success,
+                    disabledBackgroundColor: AppColors.success,
+                    disabledForegroundColor: cs.onPrimary,
+                    foregroundColor: cs.onPrimary,
                   ),
                   onPressed: null,
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
 
 class LiquidNavTab extends StatelessWidget {
@@ -33,6 +34,7 @@ class LiquidNavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -74,14 +76,14 @@ class LiquidNavTab extends StatelessWidget {
                         color: accentColor,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: dark ? const Color(0xCC1A1A2E) : Colors.white,
+                          color: dark ? const Color(0xCC1A1A2E) : cs.surface,
                           width: 2,
                         ),
                       ),
                       child: Text(
                         '${badgeCount ?? 0}',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: cs.onPrimary,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           height: 1,

@@ -40,7 +40,7 @@ class CalendarGrid extends StatelessWidget {
             margin: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               color: sel ? AppColors.primary : null,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +51,7 @@ class CalendarGrid extends StatelessWidget {
                     fontSize: R.fontSm(context),
                     fontWeight: sel ? FontWeight.w700 : FontWeight.w500,
                     color: sel
-                        ? Colors.white
+                        ? cs.onPrimary
                         : (isFuture
                               ? cs.onSurface.withValues(alpha: 0.3)
                               : cs.onSurface),
@@ -62,7 +62,7 @@ class CalendarGrid extends StatelessWidget {
                     width: 4,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: sel ? Colors.white : AppColors.primary,
+                      color: sel ? cs.onPrimary : AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                   ),

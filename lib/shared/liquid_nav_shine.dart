@@ -7,6 +7,7 @@ class LiquidNavShine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Positioned(
       top: -40,
       left: -40,
@@ -17,7 +18,7 @@ class LiquidNavShine extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Colors.white.withValues(alpha: dark ? 0.08 : 0.12),
+                cs.onPrimary.withValues(alpha: dark ? 0.08 : 0.12),
                 Colors.transparent,
               ],
             ),

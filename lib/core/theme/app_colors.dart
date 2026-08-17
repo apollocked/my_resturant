@@ -15,3 +15,12 @@ class AppColors {
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
 }
+
+abstract class AppRadius {
+  static const double sm = 6;
+  static const double md = 10;
+  static const double lg = 14;
+  static const double xl = 20;
+  static const double pill = 24;
+  static const double circle = 28;
+}

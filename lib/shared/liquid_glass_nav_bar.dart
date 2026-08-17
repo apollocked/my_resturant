@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
 import 'package:my_resturant/shared/liquid_nav_shine.dart';
 import 'package:my_resturant/shared/liquid_nav_tab.dart';
@@ -19,7 +20,7 @@ class LiquidGlassNavBar extends StatefulWidget {
     required this.onTap,
     this.badgeCount,
     this.badgeIndex,
-    this.accentColor = const Color(0xFFE8611A),
+    this.accentColor = AppColors.primary,
     this.isDark = true,
   });
   @override
@@ -59,9 +60,10 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
+    final cs = Theme.of(context).colorScheme;
     final dark = widget.isDark;
-    final sel = dark ? Colors.white : widget.accentColor;
-    final unsel = dark ? Colors.white54 : Colors.black45;
+    final sel = dark ? cs.onPrimary : widget.accentColor;
+    final unsel = dark ? cs.onPrimary.withValues(alpha: 0.54) : cs.onSurface.withValues(alpha: 0.45);
     final bgColor = dark ? const Color(0x881A1A2E) : const Color(0x99F8F8F8);
     final borderColor = dark
         ? const Color(0x22FFFFFF)
@@ -69,7 +71,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final indColor = dark
         ? const Color(0x1AFFFFFF)
         : widget.accentColor.withValues(alpha: 0.12);
-    final shadowColor = (dark ? Colors.black : Colors.black26).withValues(
+    final shadowColor = cs.shadow.withValues(
       alpha: dark ? 0.5 : 0.15,
     );
     final glowColor = widget.accentColor.withValues(alpha: dark ? 0.2 : 0.1);
