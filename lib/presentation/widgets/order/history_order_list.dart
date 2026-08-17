@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 import 'package:my_resturant/shared/empty_state.dart';
+import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/confirm_dialog.dart';
 
@@ -56,7 +58,9 @@ class HistoryOrderList extends StatelessWidget {
   }
 
   Widget _buildCard(BuildContext context, dynamic order) {
-    return OrderCard(
+    return PressableScale(
+      onTap: () => context.push('/order-detail', extra: order),
+      child: OrderCard(
       order: order,
       showTime: true,
       onReset: role == Role.admin
@@ -81,6 +85,7 @@ class HistoryOrderList extends StatelessWidget {
               if (context.mounted) context.read<OrderCubit>().refresh();
             }
           : null,
+    ),
     );
   }
 }
