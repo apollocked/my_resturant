@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/data/repositories/supabase_repo_base.dart';
 
 mixin SettingDataRepoMixin on SupabaseDataRepoBase {
-  Future<Map<String, String>> loadSettings() async {
+  Future<Map<String, String>> loadSettings() => safeCall(() async {
     if (!isAuthed) return {};
     final uid = userId;
     if (uid == null) return {};
@@ -15,9 +16,9 @@ mixin SettingDataRepoMixin on SupabaseDataRepoBase {
       for (final row in data)
         (row['key'] as String? ?? ''): (row['value'] as String? ?? ''),
     };
-  }
+  });
 
-  Future<void> saveSetting(String key, String value) async {
+  Future<void> saveSetting(String key, String value) => safeCall(() async {
     final uid = userId;
     if (uid == null) return;
     await client.from('app_settings').upsert({
@@ -25,7 +26,7 @@ mixin SettingDataRepoMixin on SupabaseDataRepoBase {
       'value': value,
       'restaurant_id': uid,
     }, onConflict: 'key, restaurant_id');
-  }
+  });
 
   Stream<Map<String, String>> watchSettings() {
     if (!isAuthed) return const Stream.empty();

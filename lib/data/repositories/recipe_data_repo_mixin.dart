@@ -2,19 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:my_resturant/core/constants/app_constants.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/data/repositories/supabase_repo_base.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 
 mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
-  Future<List<Recipe>> loadRecipes() async {
+  Future<List<Recipe>> loadRecipes() => safeCall(() async {
     if (!isAuthed) return [];
     final uid = userId;
     if (uid == null) return [];
     final data = await client.from('recipes').select().eq('restaurant_id', uid);
     return data.map(mapRecipe).toList();
-  }
+  });
 
-  Future<void> addRecipe(Recipe r) async {
+  Future<void> addRecipe(Recipe r) => safeCall(() async {
     final uid = userId;
     if (uid == null) return;
     final count = await client
@@ -41,7 +42,7 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
       'available': r.available,
       'restaurant_id': uid,
     });
-  }
+  });
 
   Future<void> editRecipe(
     String id, {
@@ -50,7 +51,7 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
     String? category,
     String? description,
     String? imageUrl,
-  }) async {
+  }) => safeCall(() async {
     final uid = userId;
     if (!isAuthed || uid == null) return;
     final updates = <String, dynamic>{};
@@ -66,34 +67,30 @@ mixin RecipeDataRepoMixin on SupabaseDataRepoBase {
           .eq('id', id)
           .eq('restaurant_id', uid);
     }
-  }
+  });
 
-  Future<void> removeRecipe(String id) async {
+  Future<void> removeRecipe(String id) => safeCall(() async {
     final uid = userId;
     if (!isAuthed || uid == null) return;
     await client.from('recipes').delete().eq('id', id).eq('restaurant_id', uid);
-  }
+  });
 
-  Future<void> toggleRecipe(String id) async {
+  Future<void> toggleRecipe(String id) => safeCall(() async {
     final uid = userId;
     if (!isAuthed || uid == null) return;
-    try {
-      final data = await client
-          .from('recipes')
-          .select('available')
-          .eq('id', id)
-          .eq('restaurant_id', uid)
-          .maybeSingle();
-      if (data == null) return;
-      await client
-          .from('recipes')
-          .update({'available': !(data['available'] as bool? ?? false)})
-          .eq('id', id)
-          .eq('restaurant_id', uid);
-    } catch (e) {
-      debugPrint('SupabaseDataRepo.toggleRecipe error: $e');
-    }
-  }
+    final data = await client
+        .from('recipes')
+        .select('available')
+        .eq('id', id)
+        .eq('restaurant_id', uid)
+        .maybeSingle();
+    if (data == null) return;
+    await client
+        .from('recipes')
+        .update({'available': !(data['available'] as bool? ?? false)})
+        .eq('id', id)
+        .eq('restaurant_id', uid);
+  });
 
   Stream<List<Recipe>> watchRecipes() {
     if (!isAuthed) return const Stream.empty();
