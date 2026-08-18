@@ -13,7 +13,7 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
   }
 
   @override
-  Future<void> createAccount(String email, String password) async {
+  Future<void> createAccount(String email, String password) => safeCall(() async {
     final response = await client.auth.signUp(
       email: email.trim().toLowerCase(),
       password: password,
@@ -33,34 +33,30 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
         );
       }
     }
-  }
+  });
 
   @override
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, String password) => safeCall(() async {
     final response = await client.auth.signInWithPassword(
       email: email.trim().toLowerCase(),
       password: password,
     );
     return response.user != null;
-  }
+  });
 
   @override
-  Future<void> logout() async {
-    await client.auth.signOut();
-  }
+  Future<void> logout() => safeCall(() => client.auth.signOut());
 
   @override
-  Future<void> updateEmail(String newEmail) async {
-    await client.auth.updateUser(
-      UserAttributes(email: newEmail.trim().toLowerCase()),
-    );
-  }
+  Future<void> updateEmail(String newEmail) => safeCall(() => client.auth.updateUser(
+        UserAttributes(email: newEmail.trim().toLowerCase()),
+      ));
 
   @override
   Future<void> updatePassword(
     String currentPassword,
     String newPassword,
-  ) async {
+  ) => safeCall(() async {
     final user = client.auth.currentUser;
     if (user == null) throw Exception('Not logged in');
     final email = user.email;
@@ -73,7 +69,7 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
       throw Exception('Current password is incorrect');
     }
     await client.auth.updateUser(UserAttributes(password: newPassword));
-  }
+  });
 
   @override
   Future<String?> getAccountEmail() async {
@@ -119,7 +115,7 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
   }
 
   @override
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle() => safeCall(() async {
     final webClientId = dotenv.env['WEB_CLIENT_ID'] ?? '';
 
     final googleSignIn = GoogleSignIn.instance;
@@ -147,5 +143,5 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
       idToken: idToken,
       accessToken: authorization.accessToken,
     );
-  }
+  });
 }

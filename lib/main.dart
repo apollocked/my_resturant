@@ -120,6 +120,26 @@ class _AppViewState extends State<AppView> {
       darkTheme: AppTheme.dark,
       themeMode: settings.themeMode,
       routerConfig: appRouter,
+      builder: (context, child) {
+        return BlocListener<OrderCubit, OrderState>(
+          listenWhen: (prev, curr) =>
+              prev.errorMessage != curr.errorMessage &&
+              curr.errorMessage != null,
+          listener: (context, state) {
+            final msg = Tr.get(state.errorMessage!, settings.locale);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            context.read<OrderCubit>().clearError();
+          },
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

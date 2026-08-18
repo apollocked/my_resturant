@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:my_resturant/core/constants/app_constants.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
@@ -89,7 +90,7 @@ class SupabaseDataRepoBase {
     'icon': (row['icon'] as String?) ?? '',
   };
 
-  Future<String> uploadImage(String recipeId, Uint8List bytes) async {
+  Future<String> uploadImage(String recipeId, Uint8List bytes) => safeCall(() async {
     final uid = userId;
     if (uid == null) throw Exception('Not logged in');
     if (bytes.length > AppConstants.maxImageSizeBytes) {
@@ -106,13 +107,13 @@ class SupabaseDataRepoBase {
           fileOptions: const FileOptions(upsert: true),
         );
     return client.storage.from('recipe_images').getPublicUrl(path);
-  }
+  });
 
   Future<String> compressAndUpload(
     String uid,
     String recipeId,
     String localPath,
-  ) async {
+  ) => safeCall(() async {
     final file = File(localPath);
     if (!await file.exists()) return localPath;
     final bytes = await FlutterImageCompress.compressWithFile(
@@ -124,5 +125,5 @@ class SupabaseDataRepoBase {
     );
     if (bytes == null || bytes.isEmpty) return localPath;
     return uploadImage(recipeId, bytes);
-  }
+  });
 }

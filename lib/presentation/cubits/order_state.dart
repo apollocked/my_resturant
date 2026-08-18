@@ -14,6 +14,7 @@ class OrderState {
   final bool isLoading;
   final Set<int> clearedTables;
   final bool isSubmitting;
+  final String? errorMessage;
 
   const OrderState({
     this.recipes = const [],
@@ -27,6 +28,7 @@ class OrderState {
     this.isLoading = true,
     this.clearedTables = const {},
     this.isSubmitting = false,
+    this.errorMessage,
   });
 
   int get cartCount => cart.fold(0, (s, i) => s + i.quantity);
@@ -94,6 +96,7 @@ class OrderState {
     bool? isLoading,
     Set<int>? clearedTables,
     bool? isSubmitting,
+    String? errorMessage,
   }) => OrderState(
     recipes: recipes ?? this.recipes,
     cart: cart ?? this.cart,
@@ -106,5 +109,6 @@ class OrderState {
     isLoading: isLoading ?? this.isLoading,
     clearedTables: clearedTables ?? this.clearedTables,
     isSubmitting: isSubmitting ?? this.isSubmitting,
+    errorMessage: errorMessage ?? this.errorMessage,
   );
 }

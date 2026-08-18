@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:my_resturant/domain/entities/cart_item.dart';
@@ -11,6 +12,15 @@ import 'package:my_resturant/presentation/cubits/order_stream_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_table_mixin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:uuid/uuid.dart';
+
+String errorKey(Object e) {
+  if (e is TimeoutException) return 'err_network';
+  if (e is SocketException) return 'err_network';
+  if (e is Exception && e.toString().contains('SocketException')) {
+    return 'err_network';
+  }
+  return 'error_occurred';
+}
 
 class OrderCubit extends OrderCubitBase
     with OrderStreamMixin, OrderCartMixin, OrderTableMixin, OrderCrudMixin {
@@ -36,11 +46,15 @@ class OrderCubit extends OrderCubitBase
 
   void setCurrentLocale(Locale locale) => notifier.setLocale(locale);
 
+  void clearError() {
+    if (!isClosed) emit(state.copyWith(errorMessage: null));
+  }
+
   Future<void> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) {
       return;
     }
-    if (!isClosed) emit(state.copyWith(isSubmitting: true));
+    if (!isClosed) emit(state.copyWith(isSubmitting: true, errorMessage: null));
     try {
       final order = Order(
         id: const Uuid().v4(),
@@ -65,40 +79,60 @@ class OrderCubit extends OrderCubitBase
         );
       }
     } catch (e) {
-      if (!isClosed) emit(state.copyWith(isSubmitting: false));
-      rethrow;
+      if (!isClosed) {
+        emit(state.copyWith(isSubmitting: false, errorMessage: errorKey(e)));
+      }
     }
   }
 
   Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
-    await repo.changeOrderStatus(orderId, status);
-    await refresh();
+    try {
+      await repo.changeOrderStatus(orderId, status);
+      await refresh();
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
   }
 
   Future<void> addItemsToOrder(String orderId, List<CartItem> items) async {
     if (items.isEmpty) return;
-    await repo.appendItemsToOrder(orderId, items);
-    await refresh();
+    try {
+      await repo.appendItemsToOrder(orderId, items);
+      await refresh();
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
   }
 
   Future<void> deleteAllOrders() async {
-    await repo.deleteAllOrders();
-    if (!isClosed) emit(state.copyWith(orders: []));
+    try {
+      await repo.deleteAllOrders();
+      if (!isClosed) emit(state.copyWith(orders: [], errorMessage: null));
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
   }
 
   Future<void> refresh() async {
-    final orders = await repo.loadOrders();
-    final recipes = await repo.loadRecipes();
-    final cats = await repo.loadCategories();
-    if (!isClosed) {
-      emit(
-        state.copyWith(
-          orders: orders,
-          recipes: recipes,
-          categories: cats,
-          isLoading: false,
-        ),
-      );
+    try {
+      final orders = await repo.loadOrders();
+      final recipes = await repo.loadRecipes();
+      final cats = await repo.loadCategories();
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            orders: orders,
+            recipes: recipes,
+            categories: cats,
+            isLoading: false,
+            errorMessage: null,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!isClosed) {
+        emit(state.copyWith(isLoading: false, errorMessage: errorKey(e)));
+      }
     }
   }
 

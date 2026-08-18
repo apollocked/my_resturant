@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
 
 mixin OrderStreamMixin on OrderCubitBase {
@@ -33,7 +34,7 @@ mixin OrderStreamMixin on OrderCubitBase {
     } catch (e) {
       if (!isClosed) {
         debugPrint('OrderCubit._load error: $e');
-        emit(state.copyWith(isLoading: false));
+        emit(state.copyWith(isLoading: false, errorMessage: errorKey(e)));
       }
     }
 
@@ -90,7 +91,9 @@ mixin OrderStreamMixin on OrderCubitBase {
       final recipes = await repo.loadRecipes();
       final orders = await repo.loadOrders();
       if (!isClosed) emit(state.copyWith(recipes: recipes, orders: orders));
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('OrderCubit.poll error: $e');
+    }
   }
 
   void applySettings(Map<String, String> settings) {

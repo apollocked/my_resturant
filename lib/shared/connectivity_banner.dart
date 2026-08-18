@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -16,37 +17,27 @@ class ConnectivityBanner extends StatefulWidget {
 
 class _ConnectivityBannerState extends State<ConnectivityBanner>
     with SingleTickerProviderStateMixin {
-  bool _connected = true;
-  StreamSubscription<List<ConnectivityResult>>? _sub;
+  late bool _connected;
+  StreamSubscription<bool>? _sub;
   late AnimationController _animCtrl;
 
   @override
   void initState() {
     super.initState();
+    _connected = NetworkService.instance.connected;
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _init();
-  }
-
-  Future<void> _init() async {
-    final results = await Connectivity().checkConnectivity();
-    if (!mounted) return;
-    _updateState(results.any((r) => r != ConnectivityResult.none));
-    _sub = Connectivity().onConnectivityChanged.listen((results) {
-      _updateState(results.any((r) => r != ConnectivityResult.none));
+    _sub = NetworkService.instance.onConnectivityChanged.listen((connected) {
+      if (!mounted) return;
+      setState(() => _connected = connected);
+      if (connected) {
+        _animCtrl.reverse();
+      } else {
+        _animCtrl.forward();
+      }
     });
-  }
-
-  void _updateState(bool connected) {
-    if (!mounted) return;
-    setState(() => _connected = connected);
-    if (connected) {
-      _animCtrl.reverse();
-    } else {
-      _animCtrl.forward();
-    }
   }
 
   @override

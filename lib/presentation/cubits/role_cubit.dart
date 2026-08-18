@@ -97,26 +97,39 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<bool> switchRole(Role role, {String? pin}) async {
-    if (state.role == Role.admin) {
-      await _setRole(role);
-      return true;
-    }
-    if (pin != null) {
-      final ok = await _repo.verifyPasscode(role, pin);
-      if (ok) {
-        await _setRole(role, pin: pin);
+    try {
+      if (state.role == Role.admin) {
+        await _setRole(role);
         return true;
       }
+      if (pin != null) {
+        final ok = await _repo.verifyPasscode(role, pin);
+        if (ok) {
+          await _setRole(role, pin: pin);
+          return true;
+        }
+        emit(
+          RoleState(
+            isConfigured: state.isConfigured,
+            isLoggedIn: state.isLoggedIn,
+            role: state.role,
+            errorMessage: 'pin_invalid',
+          ),
+        );
+      }
+      return false;
+    } catch (e, st) {
+      debugPrint('RoleCubit.switchRole error: $e\n$st');
       emit(
         RoleState(
           isConfigured: state.isConfigured,
           isLoggedIn: state.isLoggedIn,
           role: state.role,
-          errorMessage: 'pin_invalid',
+          errorMessage: 'error_occurred',
         ),
       );
+      return false;
     }
-    return false;
   }
 
   Future<void> _setRole(Role role, {String? pin}) async {
@@ -136,7 +149,20 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<void> changePin(Role role, String newPin) async {
-    await _repo.changePasscode(role, newPin);
+    try {
+      await _repo.changePasscode(role, newPin);
+    } catch (e, st) {
+      debugPrint('RoleCubit.changePin error: $e\n$st');
+      emit(
+        RoleState(
+          isConfigured: state.isConfigured,
+          isLoggedIn: state.isLoggedIn,
+          role: state.role,
+          errorMessage: 'error_occurred',
+        ),
+      );
+      rethrow;
+    }
   }
 
   bool canSwitchFreely(Role target) => state.role == Role.admin;
