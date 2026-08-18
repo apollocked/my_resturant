@@ -76,7 +76,7 @@ class LiquidNavTab extends StatelessWidget {
                         color: accentColor,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: dark ? const Color(0xCC1A1A2E) : cs.surface,
+                          color: dark ? const Color(0xE0252535) : cs.surface,
                           width: 2,
                         ),
                       ),

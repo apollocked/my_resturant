@@ -64,12 +64,12 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final dark = widget.isDark;
     final sel = dark ? cs.onPrimary : widget.accentColor;
     final unsel = dark ? cs.onPrimary.withValues(alpha: 0.54) : cs.onSurface.withValues(alpha: 0.45);
-    final bgColor = dark ? const Color(0x881A1A2E) : const Color(0x99F8F8F8);
+    final bgColor = dark ? const Color(0xE0252535) : const Color(0x99F8F8F8);
     final borderColor = dark
-        ? const Color(0x22FFFFFF)
+        ? widget.accentColor.withValues(alpha: 0.45)
         : const Color(0x18000000);
     final indColor = dark
-        ? const Color(0x1AFFFFFF)
+        ? widget.accentColor.withValues(alpha: 0.18)
         : widget.accentColor.withValues(alpha: 0.12);
     final shadowColor = cs.shadow.withValues(
       alpha: dark ? 0.5 : 0.15,

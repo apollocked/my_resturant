@@ -19,7 +19,7 @@ class LiquidNavShine extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                cs.onPrimary.withValues(alpha: dark ? 0.08 : 0.12),
+                cs.onPrimary.withValues(alpha: dark ? 0.15 : 0.12),
                 Colors.transparent,
               ],
             ),
