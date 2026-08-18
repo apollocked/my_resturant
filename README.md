@@ -1,78 +1,162 @@
 <div align="center">
 
-# My Restaurant
+# 🍽️ My Restaurant
 
-**A modern, multi-tenant SaaS restaurant management system**
+**A production-grade, multi-tenant SaaS restaurant management system**
 
-Built with **Flutter** & **Supabase** — real-time orders, role-based access, and full offline support.
+Real-time orders · Role-based access · Offline-first · Fully responsive
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart)](https://dart.dev)
-[![Supabase](https://img.shields.io/badge/Supabase--green?logo=supabase)](https://supabase.com)
+[![Flutter](https://img.shields.io/badge/Flutter-3.29-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Supabase](https://img.shields.io/badge/Supabase-2.x-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
+<br/>
+
+<img src="assets/icons/my%20Restaurant.png" width="96" alt="App Logo"/>
 
 </div>
 
 ---
 
-## Features
+## ✨ Highlights
 
-| Feature                 | Description                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| **Multi-Tenant SaaS**   | Fully isolated data per restaurant with row-level security and per-restaurant limits |
-| **Role-Based Access**   | Waiter, Kitchen, Admin — each with its own PIN login and PIN change screens  |
-| **Google Sign-In**      | Restaurant account authentication via Google OAuth                           |
-| **Promo Code Activation**| Onboarding activation system with redeemable codes and admin management     |
-| **Real-Time Orders**    | Live order updates via Supabase Realtime with auto-reconnect and polling     |
-| **Menu Management**     | Dishes with image upload, pricing, descriptions, categories with icons, search |
-| **Availability**        | Toggle dish availability on/off from a dedicated management screen           |
-| **Order Workflow**      | Pending → Preparing → Served with tracking codes, urgency timers, and "order again" |
-| **Add Items to Order**  | Append items to an existing order straight from the order detail screen      |
-| **Kitchen Board**       | Active / Served / To-clean tabs with status timelines and table cleanup states |
-| **Order History**       | Calendar view with daily stats, restore past orders to cart, clear all       |
-| **Table Management**    | Configurable table count and names, selection, reservation and cleaning states |
-| **Daily Reports**       | Revenue, order/item counts, weekly charts, and most-ordered dishes           |
-| **Push Notifications**  | Local alerts + Firebase Cloud Messaging (via the `notify-manager` edge function) |
-| **Offline Fallback**    | Local SQLite via Drift when the network is unavailable, with connectivity banner |
-| **Multi-Language**      | Kurdish (Sorani), Arabic, English — full RTL support                         |
-| **Responsive**          | Phone (liquid glass nav), tablet, and desktop (navigation rail) layouts      |
-| **Onboarding Flow**     | Welcome → onboarding → language/theme settings → account → restaurant setup  |
+- **Multi-Tenant SaaS** — Fully isolated data per restaurant with row-level security
+- **Real-Time** — Live order updates via Supabase Realtime with auto-reconnect and polling fallback
+- **Offline-First** — Local SQLite (Drift) when the network is unavailable, with connectivity banner
+- **Role-Based Access** — Waiter, Kitchen, Admin — each with its own PIN login and PIN change screens
+- **Responsive** — Phone (liquid glass nav), tablet, and desktop (navigation rail) layouts
+- **Multi-Language** — Kurdish (Sorani), Arabic, English — full RTL support
 
-## Architecture
+---
+
+## 🚀 Features
+
+<details>
+<summary><strong>Order Management</strong></summary>
+
+- Real-time order flow: Pending → Preparing → Served
+- Tracking codes with urgency timers
+- Add items to existing orders from the detail screen
+- "Order again" to restore past orders to cart
+- Order timeline with status history
+
+</details>
+
+<details>
+<summary><strong>Kitchen & Table Operations</strong></summary>
+
+- Kitchen board with Active / Served / To-clean tabs
+- Table management with configurable count, names, and reservation states
+- Table cleanup workflow with status tracking
+
+</details>
+
+<details>
+<summary><strong>Menu & Inventory</strong></summary>
+
+- Dish management with image upload, pricing, and descriptions
+- Categories with custom icons
+- Toggle dish availability from a dedicated screen
+- Search across the menu
+
+</details>
+
+<details>
+<summary><strong>Reports & Analytics</strong></summary>
+
+- Daily revenue, order/item counts
+- Weekly bar charts (fl_chart)
+- Most-ordered dishes ranking
+- Order history with calendar view and daily stats
+
+</details>
+
+<details>
+<summary><strong>Authentication & Onboarding</strong></summary>
+
+- Google Sign-In for restaurant account creation
+- Promo code activation system with admin management
+- Role-based PIN login (Waiter / Kitchen / Admin)
+- Guided onboarding: Welcome → language/theme → account → restaurant setup
+
+</details>
+
+<details>
+<summary><strong>Infrastructure</strong></summary>
+
+- Push notifications via Firebase Cloud Messaging (edge function)
+- Local notifications for order alerts
+- Offline fallback with Drift (SQLite)
+- Connectivity detection with visual banner
+
+</details>
+
+---
+
+## 🏗️ Architecture
 
 ```
 lib/
-├── core/           # Config, theme, router, notifications, i18n
-├── data/           # Supabase repositories, local DB, services
-├── domain/         # Entities, repository interfaces
-└── presentation/   # Pages, widgets, cubits (BLoC)
+├── core/               # Config, theme, router, notifications, i18n
+│   ├── config/
+│   ├── constants/
+│   ├── helpers/        # Responsive helpers (R.fontSm, R.padding, etc.)
+│   ├── l10n/           # Custom Tr.get() — 3 locales
+│   ├── notifications/
+│   ├── router/         # go_router — stateful shell + role redirects
+│   └── theme/          # AppColors, AppRadius, AppTheme (light/dark)
+├── data/               # Supabase repos, local DB, services
+│   ├── datasources/
+│   ├── models/
+│   └── repositories/
+├── domain/             # Entities, repository interfaces
+│   ├── entities/
+│   └── repositories/
+├── presentation/       # Pages, widgets, cubits (BLoC)
+│   ├── cubits/
+│   ├── pages/
+│   └── widgets/
+├── shared/             # Reusable UI components (nav bar, dialogs, etc.)
+├── firebase_options.dart
+└── main.dart
 ```
 
-## Tech Stack
+**Pattern:** Clean Architecture — `domain` defines interfaces, `data` implements them with Supabase/Drift, `presentation` consumes via BLoC cubits.
 
-| Layer            | Technology                                        |
-| ---------------- | ------------------------------------------------- |
-| UI Framework     | Flutter 3.12+                                     |
-| State Management | flutter_bloc                                      |
-| Routing          | go_router (stateful shell + role redirects)       |
-| Backend          | Supabase (Auth, Postgres, Storage, Realtime, Edge Functions) |
-| Local Database   | Drift (SQLite)                                    |
-| Local Storage    | shared_preferences                                |
-| Notifications    | flutter_local_notifications + Firebase Messaging  |
-| Charts           | fl_chart                                          |
-| Images           | image_picker, image_cropper, file_picker, flutter_image_compress |
-| Auth             | google_sign_in + Supabase Auth                    |
-| i18n             | Custom `Tr.get()` with 3 locales                  |
+---
 
-## Getting Started
+## 🛠️ Tech Stack
+
+| Layer                | Technology                                                       | Version                 |
+| -------------------- | ---------------------------------------------------------------- | ----------------------- |
+| **Framework**        | Flutter                                                          | 3.29                    |
+| **Language**         | Dart                                                             | 3.12                    |
+| **State Management** | flutter_bloc                                                     | 9.1                     |
+| **Routing**          | go_router                                                        | 17.3                    |
+| **Backend**          | Supabase (Auth, Postgres, Storage, Realtime, Edge Functions)     | 2.16                    |
+| **Local Database**   | Drift (SQLite)                                                   | 2.24                    |
+| **Local Storage**    | shared_preferences                                               | 2.5                     |
+| **Notifications**    | flutter_local_notifications + Firebase Messaging                 | 18.0 / 15.2             |
+| **Charts**           | fl_chart                                                         | 1.2                     |
+| **Images**           | image_picker, image_cropper, file_picker, flutter_image_compress | —                       |
+| **Auth**             | google_sign_in + Supabase Auth                                   | 7.1                     |
+| **Connectivity**     | connectivity_plus                                                | 7.3                     |
+| **Caching**          | cached_network_image                                             | 3.4                     |
+| **i18n**             | Custom `Tr.get()`                                                | 3 locales (ckb, ar, en) |
+
+---
+
+## ⚡ Quick Start
 
 ### Prerequisites
 
-- Flutter 3.12+
+- [Flutter 3.29+](https://docs.flutter.dev/get-started/install)
 - A [Supabase](https://supabase.com) project
 - (Optional) A [Firebase](https://firebase.google.com) project for push notifications
 
-### Setup
+### Clone & Run
 
 ```bash
 git clone https://github.com/apollocked/my_resturant.git
@@ -94,30 +178,35 @@ flutter pub get
 flutter run
 ```
 
-### Database
+### Database Setup
 
-Apply the SQL files under `supabase/` to your Supabase project in order:
+Apply migrations to your Supabase project:
 
 ```bash
 supabase db push
 ```
 
-Or paste the contents of `supabase/migration.sql` (and the companion scripts) into the Supabase SQL Editor.
+Or paste the contents of `supabase/migration.sql` into the [Supabase SQL Editor](https://supabase.com/dashboard/project/_/sql/new).
 
 ### Push Notifications
 
-1. Add your `google-services.json` (Android) / `GoogleService-Info.plist` (iOS) for Firebase.
-2. Deploy the `notify-manager` edge function:
+1. Add `google-services.json` (Android) / `GoogleService-Info.plist` (iOS) for Firebase
+2. Deploy the edge function:
 
 ```bash
 supabase functions deploy notify-manager
 ```
 
-## Building
+---
+
+## 🔨 Building
 
 ```bash
-# Android
+# Android (APK)
 flutter build apk --release
+
+# Android (App Bundle)
+flutter build appbundle --release
 
 # iOS
 flutter build ios --release
@@ -129,32 +218,55 @@ flutter build web --release
 flutter build windows --release
 ```
 
-## Environment Variables
+---
 
-| Key                 | Required           | Description                               |
-| ------------------- | ------------------ | ----------------------------------------- |
-| `SUPABASE_URL`      | Yes                | Your Supabase project URL                 |
-| `SUPABASE_ANON_KEY` | Yes                | Your Supabase publishable API key         |
-| `WEB_CLIENT_ID`     | For Google Sign-In | OAuth 2.0 Web Client ID from Google Cloud |
+## 🔐 Environment Variables
 
-## Contributing
+| Key                 | Required | Description                                  |
+| ------------------- | -------- | -------------------------------------------- |
+| `SUPABASE_URL`      | ✅       | Your Supabase project URL                    |
+| `SUPABASE_ANON_KEY` | ✅       | Your Supabase publishable API key            |
+| `WEB_CLIENT_ID`     | 🔑       | OAuth 2.0 Web Client ID (for Google Sign-In) |
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## 📂 Key Directories
 
-## License
+| Path             | Purpose                               |
+| ---------------- | ------------------------------------- |
+| `supabase/`      | SQL migrations and edge functions     |
+| `assets/icons/`  | App icons and category icons          |
+| `assets/images/` | Onboarding and placeholder images     |
+| `assets/fonts/`  | NRT font family                       |
+| `.env`           | Environment variables (not committed) |
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how:
+
+1. **Fork** the repository
+2. **Create** a feature branch — `git checkout -b feature/amazing-feature`
+3. **Commit** your changes — `git commit -m 'feat: add amazing feature'`
+4. **Push** to the branch — `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
+
+Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
 
 **Built with care for restaurant owners everywhere**
+
+[![Flutter](https://img.shields.io/badge/Flutter-3.29-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Supabase](https://img.shields.io/badge/Supabase-2.x-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
 
 </div>
