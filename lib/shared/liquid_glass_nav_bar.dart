@@ -62,8 +62,8 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final cs = Theme.of(context).colorScheme;
     final dark = widget.isDark;
-    final sel = dark ? cs.onPrimary : widget.accentColor;
-    final unsel = dark ? cs.onPrimary.withValues(alpha: 0.54) : cs.onSurface.withValues(alpha: 0.45);
+    final sel = dark ? Colors.white : widget.accentColor;
+    final unsel = dark ? Colors.white.withValues(alpha: 0.6) : cs.onSurface.withValues(alpha: 0.45);
     final bgColor = dark ? const Color(0xE0252535) : const Color(0x99F8F8F8);
     final borderColor = dark
         ? widget.accentColor.withValues(alpha: 0.45)

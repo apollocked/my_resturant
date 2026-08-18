@@ -83,7 +83,7 @@ class LiquidNavTab extends StatelessWidget {
                       child: Text(
                         '${badgeCount ?? 0}',
                         style: TextStyle(
-                          color: cs.onPrimary,
+                          color: dark ? Colors.white : cs.onPrimary,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           height: 1,
