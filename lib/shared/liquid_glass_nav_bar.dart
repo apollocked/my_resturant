@@ -63,14 +63,14 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final cs = Theme.of(context).colorScheme;
     final dark = widget.isDark;
     final sel = dark ? Colors.white : widget.accentColor;
-    final unsel = dark ? Colors.white.withValues(alpha: 0.6) : cs.onSurface.withValues(alpha: 0.45);
+    final unsel = dark
+        ? Colors.white.withValues(alpha: 0.6)
+        : cs.onSurface.withValues(alpha: 0.45);
     final bgColor = dark ? const Color(0xE0252535) : const Color(0x99F8F8F8);
     final borderColor = dark
         ? widget.accentColor.withValues(alpha: 0.45)
         : const Color(0x18000000);
-    final indColor = dark
-        ? widget.accentColor.withValues(alpha: 0.18)
-        : widget.accentColor.withValues(alpha: 0.12);
+    final indColor = widget.accentColor.withValues(alpha: dark ? 0.18 : 0.12);
     final shadowColor = cs.shadow.withValues(
       alpha: dark ? 0.5 : 0.15,
     );
@@ -85,18 +85,8 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
-              BoxShadow(
-                color: shadowColor,
-                blurRadius: 40,
-                offset: const Offset(0, 12),
-                spreadRadius: -4,
-              ),
-              BoxShadow(
-                color: glowColor,
-                blurRadius: 24,
-                offset: const Offset(0, 4),
-                spreadRadius: -2,
-              ),
+              BoxShadow(color: shadowColor, blurRadius: 40, offset: const Offset(0, 12), spreadRadius: -4),
+              BoxShadow(color: glowColor, blurRadius: 24, offset: const Offset(0, 4), spreadRadius: -2),
             ],
           ),
           child: ClipRRect(

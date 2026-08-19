@@ -4,13 +4,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/order_state.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
@@ -33,7 +33,6 @@ void main() async {
   await Supabase.initialize(
     url: SupabaseCredentials.url,
     publishableKey: SupabaseCredentials.publishableKey,
-    httpClient: _TimeoutClient(http.Client()),
   );
   await NetworkService.instance.init();
   final authRepo = SupabaseAuthRepository();
@@ -142,18 +141,4 @@ class _AppViewState extends State<AppView> {
       },
     );
   }
-}
-
-class _TimeoutClient extends http.Client {
-  _TimeoutClient(this._inner, {Duration timeout = const Duration(seconds: 20)})
-      : _timeout = timeout;
-  final http.Client _inner;
-  final Duration _timeout;
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) =>
-      _inner.send(request).timeout(_timeout);
-
-  @override
-  void close() => _inner.close();
 }
