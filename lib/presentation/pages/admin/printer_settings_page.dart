@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/widgets/admin/printer_actions.dart';
 import 'package:my_resturant/presentation/widgets/admin/printer_connection_section.dart';
 
 class PrinterSettingsPage extends StatefulWidget {
@@ -81,19 +81,17 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                     onTypeChanged: (v) => setState(() => _type = v),
                   ),
                   const SizedBox(height: 20),
-                  _label(t('restaurant_name_label'), cs),
+                  label(t('restaurant_name_label'), cs),
                   const SizedBox(height: 8),
-                  _field(_nameCtl, Icons.store, t('restaurant_name_label')),
+                  field(_nameCtl, Icons.store, t('restaurant_name_label')),
                   const SizedBox(height: 16),
-                  _label(t('paper_size'), cs),
+                  label(t('paper_size'), cs),
                   const SizedBox(height: 8),
                   _paperSelector(cs),
                   const SizedBox(height: 16),
                   _autoKitchenRow(cs),
                   const SizedBox(height: 24),
-                  _connectBtn(printer, cs),
-                  const SizedBox(height: 12),
-                  _testBtn(printer),
+                  PrinterActions(config: _buildConfig(), t: t),
                 ],
               ),
             ),
@@ -136,77 +134,13 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
     );
   }
 
-  Widget _connectBtn(PrinterCubit cubit, ColorScheme cs) {
-    final connected = cubit.state.isConnected;
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: () async {
-          await _save(cubit);
-          connected ? cubit.disconnect() : cubit.connect();
-        },
-        icon: Icon(connected ? Icons.link_off : Icons.link, size: 20),
-        label: Text(connected ? 'Disconnect' : 'Connect'),
-        style: FilledButton.styleFrom(
-          backgroundColor: connected ? cs.error : cs.primary,
-        ),
-      ),
-    );
-  }
-
-  Widget _testBtn(PrinterCubit cubit) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: cubit.state.isConnected
-            ? () async {
-                await _save(cubit);
-                final ok = await cubit.printReceipt(_dummyOrder());
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(ok ? 'Test printed' : 'Print failed')),
-                  );
-                }
-              }
-            : null,
-        icon: const Icon(Icons.print, size: 20),
-        label: Text(Tr.get('print_test', context.read<SettingsCubit>().state.locale)),
-      ),
-    );
-  }
-
-  Future<void> _save(PrinterCubit cubit) async {
-    await cubit.updateConfig(PrinterConfig(
-      connectionType: _type,
-      host: _hostCtl.text.trim(),
-      port: int.tryParse(_portCtl.text.trim()) ?? 9100,
-      macAddress: _macCtl.text.trim().isEmpty ? null : _macCtl.text.trim(),
-      paperWidth: _paperWidth,
-      restaurantName: _nameCtl.text.trim(),
-      autoPrintKitchen: _autoKitchen,
-    ));
-  }
-
-  Order _dummyOrder() => Order(
-    id: 'test', tableNumber: 1, tableName: 'Table 1',
-    items: [], trackingCode: 'TEST',
+  PrinterConfig _buildConfig() => PrinterConfig(
+    connectionType: _type,
+    host: _hostCtl.text.trim(),
+    port: int.tryParse(_portCtl.text.trim()) ?? 9100,
+    macAddress: _macCtl.text.trim().isEmpty ? null : _macCtl.text.trim(),
+    paperWidth: _paperWidth,
+    restaurantName: _nameCtl.text.trim(),
+    autoPrintKitchen: _autoKitchen,
   );
-
-  Widget _label(String text, ColorScheme cs) => Text(
-    text,
-    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant),
-  );
-
-  Widget _field(TextEditingController ctl, IconData icon, String hint) {
-    return TextField(
-      controller: ctl,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, size: 20),
-        hintText: hint,
-        border: const OutlineInputBorder(),
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      ),
-    );
-  }
 }

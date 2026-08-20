@@ -17,7 +17,7 @@ import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/presentation/widgets/order/auto_print_listener.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
 import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
@@ -131,51 +131,23 @@ class _AppViewState extends State<AppView> {
       themeMode: settings.themeMode,
       routerConfig: appRouter,
       builder: (context, child) {
-        return MultiBlocListener(
-          listeners: [
-            BlocListener<OrderCubit, OrderState>(
-              listenWhen: (prev, curr) =>
-                  prev.errorMessage != curr.errorMessage &&
-                  curr.errorMessage != null,
-              listener: (context, state) {
-                final msg = Tr.get(state.errorMessage!, settings.locale);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(msg),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    behavior: SnackBarBehavior.floating,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-                context.read<OrderCubit>().clearError();
-              },
-            ),
-            BlocListener<OrderCubit, OrderState>(
-              listenWhen: (prev, curr) {
-                if (prev.orders.length != curr.orders.length) return false;
-                for (int i = 0; i < curr.orders.length; i++) {
-                  final p = prev.orders.where((o) => o.id == curr.orders[i].id).firstOrNull;
-                  if (p != null && p.status != curr.orders[i].status) return true;
-                }
-                return false;
-              },
-              listener: (context, state) {
-                final printer = context.read<PrinterCubit>();
-                if (!printer.state.config.autoPrintKitchen) return;
-                Order? justPreparing;
-                for (final o in state.orders) {
-                  if (o.status == OrderStatus.preparing) {
-                    justPreparing = o;
-                    break;
-                  }
-                }
-                if (justPreparing != null) {
-                  printer.printKitchen(justPreparing);
-                }
-              },
-            ),
-          ],
-          child: child ?? const SizedBox.shrink(),
+        return BlocListener<OrderCubit, OrderState>(
+          listenWhen: (prev, curr) =>
+              prev.errorMessage != curr.errorMessage &&
+              curr.errorMessage != null,
+          listener: (context, state) {
+            final msg = Tr.get(state.errorMessage!, settings.locale);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            context.read<OrderCubit>().clearError();
+          },
+          child: AutoPrintListener(child: child ?? const SizedBox.shrink()),
         );
       },
     );
