@@ -24,12 +24,25 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> load() async {
     try {
-      final configured = await _repo.arePasscodesConfigured();
+      bool configured = false;
+      try {
+        configured = await _repo.arePasscodesConfigured();
+      } catch (_) {
+        final local = await loadLocalRole();
+        if (local != null) {
+          emit(RoleState(isConfigured: true, isLoggedIn: true, role: local));
+          return;
+        }
+        return;
+      }
       if (!configured) {
         emit(const RoleState());
         return;
       }
-      var role = await _repo.getLoggedInRole();
+      Role? role;
+      try {
+        role = await _repo.getLoggedInRole();
+      } catch (_) {}
       if (role == null) {
         role = await loadLocalRole();
       } else {

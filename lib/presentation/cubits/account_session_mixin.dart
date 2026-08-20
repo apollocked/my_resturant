@@ -9,28 +9,34 @@ mixin AccountSessionMixin on AccountCubitBase {
       final savedEmail = await AccountStorage.readEmail();
       final savedLoggedIn = await AccountStorage.readLoggedIn();
       if (savedLoggedIn && savedEmail != null) {
-        final activated = await repo.isActivated();
-        emit(
-          AccountState(
+        bool activated = false;
+        try {
+          activated = await repo.isActivated();
+        } catch (_) {}
+        if (!isClosed) {
+          emit(AccountState(
             isLoggedIn: true,
             isActivated: activated,
             email: savedEmail,
-          ),
-        );
+          ));
+        }
         return;
       }
       final session = await repo.isAccountCreated();
       final email = await repo.getAccountEmail();
       if (session && email != null) {
         await AccountStorage.saveSession(email);
-        final activated = await repo.isActivated();
-        emit(
-          AccountState(
+        bool activated = false;
+        try {
+          activated = await repo.isActivated();
+        } catch (_) {}
+        if (!isClosed) {
+          emit(AccountState(
             isLoggedIn: true,
             isActivated: activated,
             email: email,
-          ),
-        );
+          ));
+        }
       }
     } catch (e, st) {
       debugPrint('AccountCubit.load error: $e\n$st');
