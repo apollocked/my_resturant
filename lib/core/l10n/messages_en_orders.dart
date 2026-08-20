@@ -71,4 +71,5 @@ const Map<String, String> enorders = {
   'add_items': 'Add items',
   'confirm_delete_item': 'Remove this item from the order?',
   'item_removed': 'Item removed',
+  'kitchen_ticket': 'Kitchen Ticket',
 };

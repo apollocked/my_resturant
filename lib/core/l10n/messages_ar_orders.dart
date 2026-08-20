@@ -69,4 +69,5 @@ const Map<String, String> arorders = {
   'add_items': 'إضافة أصناف',
   'confirm_delete_item': 'إزالة هذا الصنف من الطلب؟',
   'item_removed': 'تمت إزالة الصنف',
+  'kitchen_ticket': 'تيكت المطبخ',
 };

@@ -9,12 +9,15 @@ import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/services/printer_service.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_state.dart';
+import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
+import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
 import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
@@ -42,21 +45,28 @@ void main() async {
   final role = RoleCubit(repo: authRepo);
   await role.load();
   final settings = await SettingsCubit.create();
-  runApp(MyApp(repo: dataRepo, acct: acct, role: role, settings: settings));
+  final printerService = PrinterService();
+  final printer = PrinterCubit(printerService);
+  await printer.init();
+  runApp(MyApp(
+    repo: dataRepo, acct: acct, role: role,
+    settings: settings, printer: printer,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final DataRepository repo;
   final AccountCubit acct;
-
   final RoleCubit role;
   final SettingsCubit settings;
+  final PrinterCubit printer;
   const MyApp({
     super.key,
     required this.repo,
     required this.acct,
     required this.role,
     required this.settings,
+    required this.printer,
   });
   @override
   Widget build(BuildContext context) {
@@ -66,6 +76,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => settings),
         BlocProvider(create: (_) => acct),
         BlocProvider(create: (_) => role),
+        BlocProvider.value(value: printer),
       ],
       child: const AppView(),
     );
@@ -120,22 +131,51 @@ class _AppViewState extends State<AppView> {
       themeMode: settings.themeMode,
       routerConfig: appRouter,
       builder: (context, child) {
-        return BlocListener<OrderCubit, OrderState>(
-          listenWhen: (prev, curr) =>
-              prev.errorMessage != curr.errorMessage &&
-              curr.errorMessage != null,
-          listener: (context, state) {
-            final msg = Tr.get(state.errorMessage!, settings.locale);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: Theme.of(context).colorScheme.error,
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 3),
-              ),
-            );
-            context.read<OrderCubit>().clearError();
-          },
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<OrderCubit, OrderState>(
+              listenWhen: (prev, curr) =>
+                  prev.errorMessage != curr.errorMessage &&
+                  curr.errorMessage != null,
+              listener: (context, state) {
+                final msg = Tr.get(state.errorMessage!, settings.locale);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(msg),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+                context.read<OrderCubit>().clearError();
+              },
+            ),
+            BlocListener<OrderCubit, OrderState>(
+              listenWhen: (prev, curr) {
+                if (prev.orders.length != curr.orders.length) return false;
+                for (int i = 0; i < curr.orders.length; i++) {
+                  final p = prev.orders.where((o) => o.id == curr.orders[i].id).firstOrNull;
+                  if (p != null && p.status != curr.orders[i].status) return true;
+                }
+                return false;
+              },
+              listener: (context, state) {
+                final printer = context.read<PrinterCubit>();
+                if (!printer.state.config.autoPrintKitchen) return;
+                Order? justPreparing;
+                for (final o in state.orders) {
+                  if (o.status == OrderStatus.preparing) {
+                    final prev = state.orders;
+                    justPreparing = o;
+                    break;
+                  }
+                }
+                if (justPreparing != null) {
+                  printer.printKitchen(justPreparing);
+                }
+              },
+            ),
+          ],
           child: child ?? const SizedBox.shrink(),
         );
       },

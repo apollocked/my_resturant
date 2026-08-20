@@ -7,6 +7,7 @@ import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/add_order_items_sheet.dart';
@@ -31,6 +32,13 @@ class OrderDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('${order.displayTable} — ${order.displayTrackingCode}'),
+        actions: [
+          IconButton(
+            onPressed: () => _showPrintDialog(context, t),
+            icon: const Icon(Icons.print, size: 22),
+            tooltip: t('print_receipt'),
+          ),
+        ],
       ),
       floatingActionButton: canPlaceItems
           ? FloatingActionButton.extended(
@@ -62,6 +70,47 @@ class OrderDetailPage extends StatelessWidget {
             canEdit: canEdit,
             isDesktop: isDesktop,
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showPrintDialog(BuildContext context, String Function(String) t) {
+    final printer = context.read<PrinterCubit>();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('print_receipt')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.receipt_long),
+              title: Text(t('print_receipt')),
+              subtitle: const Text('Full receipt with prices'),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final ok = await printer.printReceipt(order);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(ok ? 'Printed' : 'Print failed')),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.restaurant_menu),
+              title: Text(t('kitchen_ticket') ?? 'Kitchen Ticket'),
+              subtitle: const Text('Items only, no prices'),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final ok = await printer.printKitchen(order);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(ok ? 'Printed' : 'Print failed')),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

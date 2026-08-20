@@ -71,4 +71,5 @@ const Map<String, String> kuorders = {
   'add_items': 'زیادکردنی خواردن',
   'confirm_delete_item': 'لابردنی ئەم خواردنە لە داواکارییەکە؟',
   'item_removed': 'خواردنەکە لابرا',
+  'kitchen_ticket': 'تيکتی چێشتخانە',
 };
