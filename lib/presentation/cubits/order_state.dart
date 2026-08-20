@@ -43,8 +43,7 @@ class OrderState {
           (o) =>
               o.createdAt.year == now.year &&
               o.createdAt.month == now.month &&
-              o.createdAt.day == now.day &&
-              o.status != OrderStatus.served,
+              o.createdAt.day == now.day,
         )
         .map((o) => o.tableNumber)
         .toSet()
