@@ -1,3 +1,4 @@
+import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
@@ -60,6 +61,49 @@ mixin OrderCrudMixin on OrderCubitBase {
   Future<void> removeCategory(String key) async {
     try {
       await repo.removeCategory(key);
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
+  }
+
+  Future<void> removeItemFromOrder(String orderId, int itemIndex) async {
+    try {
+      final order = state.orders.firstWhere((o) => o.id == orderId);
+      final updated = List<CartItem>.from(order.items);
+      updated.removeAt(itemIndex);
+      await repo.updateOrderItems(orderId, updated);
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
+  }
+
+  Future<void> updateItemQuantity(
+    String orderId,
+    int itemIndex,
+    int quantity,
+  ) async {
+    try {
+      final order = state.orders.firstWhere((o) => o.id == orderId);
+      final updated = List<CartItem>.from(order.items);
+      if (quantity <= 0) {
+        updated.removeAt(itemIndex);
+      } else {
+        final old = updated[itemIndex];
+        updated[itemIndex] = CartItem(
+          recipe: old.recipe,
+          quantity: quantity,
+          notes: old.notes,
+        );
+      }
+      await repo.updateOrderItems(orderId, updated);
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+    }
+  }
+
+  Future<void> updateOrderNotes(String orderId, String notes) async {
+    try {
+      await repo.updateOrderNotes(orderId, notes);
     } catch (e) {
       if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
     }

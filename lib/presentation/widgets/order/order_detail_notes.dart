@@ -2,29 +2,117 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
-class OrderDetailNotes extends StatelessWidget {
-  const OrderDetailNotes({super.key, required this.notes, required this.cs});
+class OrderDetailNotes extends StatefulWidget {
+  const OrderDetailNotes({
+    super.key,
+    required this.notes,
+    required this.cs,
+    this.canEdit = false,
+    this.onEdit,
+  });
 
   final String notes;
   final ColorScheme cs;
+  final bool canEdit;
+  final ValueChanged<String>? onEdit;
+
+  @override
+  State<OrderDetailNotes> createState() => _OrderDetailNotesState();
+}
+
+class _OrderDetailNotesState extends State<OrderDetailNotes> {
+  late final TextEditingController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController(text: widget.notes);
+  }
+
+  @override
+  void didUpdateWidget(covariant OrderDetailNotes old) {
+    super.didUpdateWidget(old);
+    if (old.notes != widget.notes) _ctrl.text = widget.notes;
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _edit() {
+    final ctrl = TextEditingController(text: widget.notes);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Notes'),
+        content: TextField(
+          controller: ctrl,
+          maxLines: 3,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: 'Order notes...'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              widget.onEdit?.call(ctrl.text);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      margin: const EdgeInsets.only(top: 8),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-      ),
-      child: Text(
-        notes,
-        textAlign: TextAlign.right,
-        style: TextStyle(
-          fontSize: R.fontSm(context),
-          color: cs.onSurfaceVariant,
-          fontStyle: FontStyle.italic,
+    return GestureDetector(
+      onTap: widget.canEdit ? _edit : null,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(top: 8),
+        decoration: BoxDecoration(
+          color: widget.cs.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: widget.canEdit
+              ? Border.all(color: AppColors.primary.withValues(alpha: 0.2))
+              : null,
+        ),
+        child: Row(
+          children: [
+            if (widget.canEdit)
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Icon(
+                  Icons.edit,
+                  size: 14,
+                  color: AppColors.primary.withValues(alpha: 0.5),
+                ),
+              ),
+            if (widget.canEdit) const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                widget.notes.isEmpty
+                    ? (widget.canEdit ? 'Tap to add notes...' : '')
+                    : widget.notes,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: R.fontSm(context),
+                  color: widget.notes.isEmpty
+                      ? widget.cs.onSurfaceVariant.withValues(alpha: 0.4)
+                      : widget.cs.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

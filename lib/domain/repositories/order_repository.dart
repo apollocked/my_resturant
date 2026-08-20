@@ -7,6 +7,8 @@ abstract class OrderRepository {
   Future<void> saveOrder(Order order);
   Future<void> changeOrderStatus(String id, OrderStatus status);
   Future<void> appendItemsToOrder(String orderId, List<CartItem> items);
+  Future<void> updateOrderItems(String orderId, List<CartItem> items);
+  Future<void> updateOrderNotes(String orderId, String notes);
   Future<void> deleteAllOrders();
   Stream<List<Order>> watchOrders();
 }

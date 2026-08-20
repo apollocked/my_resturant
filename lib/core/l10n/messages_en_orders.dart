@@ -69,4 +69,6 @@ const Map<String, String> enorders = {
   'again_confirm_served': 'Return this order to pending?',
   'again_confirm_cart': 'Re-add these items to the cart?',
   'add_items': 'Add items',
+  'confirm_delete_item': 'Remove this item from the order?',
+  'item_removed': 'Item removed',
 };

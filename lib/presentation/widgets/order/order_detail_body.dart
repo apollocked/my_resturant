@@ -66,16 +66,26 @@ class OrderDetailBody extends StatelessWidget {
           isDesktop: isDesktop,
         ),
         const SizedBox(height: 12),
-        ...order.items.map(
-          (item) => OrderDetailItemCard(
-            item: item,
+        ...order.items.asMap().entries.map(
+          (entry) => OrderDetailItemCard(
+            item: entry.value,
             t: t,
             cs: cs,
             isDesktop: isDesktop,
+            canEdit: canEdit,
+            onRemove: canEdit ? () => _removeItem(context, entry.key) : null,
+            onQuantityChanged: canEdit
+                ? (qty) => _changeQty(context, entry.key, qty)
+                : null,
           ),
         ),
-        if (order.notes.isNotEmpty)
-          OrderDetailNotes(notes: order.notes, cs: cs),
+        if (order.notes.isNotEmpty || canEdit)
+          OrderDetailNotes(
+            notes: order.notes,
+            cs: cs,
+            canEdit: canEdit,
+            onEdit: canEdit ? (n) => _editNotes(context, n) : null,
+          ),
         if (canEdit) ...[
           SizedBox(height: isDesktop ? 40 : 32),
           OrderDetailActionButton(
@@ -90,6 +100,28 @@ class OrderDetailBody extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  Future<void> _removeItem(BuildContext context, int index) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: t('delete'),
+      message: t('confirm_delete_item'),
+      confirmLabel: t('delete'),
+      cancelLabel: t('cancel'),
+    );
+    if (!confirmed || !context.mounted) return;
+    await cubit.removeItemFromOrder(order.id, index);
+    if (!context.mounted) return;
+    context.pop();
+  }
+
+  void _changeQty(BuildContext context, int index, int qty) {
+    cubit.updateItemQuantity(order.id, index, qty);
+  }
+
+  void _editNotes(BuildContext context, String notes) {
+    cubit.updateOrderNotes(order.id, notes);
   }
 
   Future<void> _next(BuildContext context) async {

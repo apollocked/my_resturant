@@ -69,4 +69,6 @@ const Map<String, String> kuorders = {
   'again_confirm_served': 'ئەم داواکارییە بگەڕێنەوە بۆ چاوەڕوانی؟',
   'again_confirm_cart': 'ئەم خواردنانە بگەڕێنەوە بۆ سەبەتە؟',
   'add_items': 'زیادکردنی خواردن',
+  'confirm_delete_item': 'لابردنی ئەم خواردنە لە داواکارییەکە؟',
+  'item_removed': 'خواردنەکە لابرا',
 };

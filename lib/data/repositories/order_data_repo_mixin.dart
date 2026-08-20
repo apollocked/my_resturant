@@ -96,6 +96,42 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
         );
       });
 
+  Future<void> updateOrderItems(String orderId, List<CartItem> items) =>
+      safeCall(() async {
+        final uid = userId;
+        if (!isAuthed || uid == null) return;
+        final itemsJson = jsonEncode(
+          items
+              .map(
+                (item) => {
+                  'recipe_id': item.recipe.id,
+                  'recipe_name': item.recipe.name,
+                  'recipe_price': item.recipe.price,
+                  'recipe_image_url': item.recipe.imageUrl,
+                  'quantity': item.quantity,
+                  'notes': item.notes,
+                },
+              )
+              .toList(),
+        );
+        await client
+            .from('orders')
+            .update({'items_json': itemsJson})
+            .eq('id', orderId)
+            .eq('restaurant_id', uid);
+      });
+
+  Future<void> updateOrderNotes(String orderId, String notes) =>
+      safeCall(() async {
+        final uid = userId;
+        if (!isAuthed || uid == null) return;
+        await client
+            .from('orders')
+            .update({'notes': notes})
+            .eq('id', orderId)
+            .eq('restaurant_id', uid);
+      });
+
   Future<void> deleteAllOrders() => safeCall(() async {
     final uid = userId;
     if (uid == null) return;

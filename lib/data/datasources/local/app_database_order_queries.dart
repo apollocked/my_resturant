@@ -105,6 +105,26 @@ extension AppDatabaseOrderQueries on AppDatabase {
     }
   }
 
+  Future<void> replaceOrderItems(String orderId, List<CartItem> items) async {
+    await (delete(orderItems)..where((t) => t.orderId.equals(orderId))).go();
+    for (final item in items) {
+      await into(orderItems).insert(
+        OrderItemsCompanion.insert(
+          orderId: orderId,
+          recipeId: item.recipe.id,
+          quantity: item.quantity,
+          notes: item.notes,
+        ),
+      );
+    }
+  }
+
+  Future<void> updateOrderNotes(String orderId, String notes) async {
+    await (update(orders)..where((t) => t.id.equals(orderId))).write(
+      OrdersCompanion(notes: Value(notes)),
+    );
+  }
+
   Future<void> deleteAllOrders() async {
     await delete(orderItems).go();
     await delete(orders).go();

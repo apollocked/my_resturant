@@ -121,6 +121,18 @@ class AppRepository implements DataRepository {
   }
 
   @override
+  Future<void> updateOrderItems(String orderId, List<CartItem> items) async {
+    await db.replaceOrderItems(orderId, items);
+    _emitOrders();
+  }
+
+  @override
+  Future<void> updateOrderNotes(String orderId, String notes) async {
+    await db.updateOrderNotes(orderId, notes);
+    _emitOrders();
+  }
+
+  @override
   Future<void> deleteAllOrders() async {
     await db.deleteAllOrders();
     _emitOrders();
