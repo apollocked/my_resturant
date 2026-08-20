@@ -73,7 +73,7 @@ const Map<String, String> argeneral = {
   'host_ip': 'عنوان IP',
   'port': 'المنفذ',
   'mac_address': 'عنوان MAC',
-  'restaurant_name': 'اسم المطعم',
+  'restaurant_name_label': 'اسم المطعم',
   'paper_size': 'حجم الورق',
   'auto_print_kitchen': 'طباعة تلقائية لتيكت المطبخ',
   'print_test': 'طباعة تجريبية',

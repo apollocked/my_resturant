@@ -73,7 +73,7 @@ const Map<String, String> kugeneral = {
   'host_ip': 'ناونیشانی IP',
   'port': 'پۆرت',
   'mac_address': 'ناونیشانی MAC',
-  'restaurant_name': 'ناوی ڕێستۆرانت',
+  'restaurant_name_label': 'ناوی ڕێستۆرانت',
   'paper_size': 'قەبارەی کاغەز',
   'auto_print_kitchen': 'چاپکردنی خۆکارانەی تایبەتی چێشتخانە',
   'print_test': 'چاپی تاقیکردنەوە',

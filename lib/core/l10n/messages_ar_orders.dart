@@ -67,7 +67,5 @@ const Map<String, String> arorders = {
   'again_confirm_served': 'إعادة هذا الطلب إلى قيد الانتظار؟',
   'again_confirm_cart': 'إعادة إضافة هذه الأصناف إلى السلة؟',
   'add_items': 'إضافة أصناف',
-  'confirm_delete_item': 'إزالة هذا الصنف من الطلب؟',
-  'item_removed': 'تمت إزالة الصنف',
   'kitchen_ticket': 'تيكت المطبخ',
 };

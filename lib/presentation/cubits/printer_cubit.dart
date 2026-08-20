@@ -61,9 +61,10 @@ class PrinterCubit extends Cubit<PrinterState> {
     }
   }
 
-  Future<void> connect() async {
+  Future<bool> connect() async {
     final ok = await _service.connect();
     if (!isClosed) emit(state.copyWith(isConnected: ok));
+    return ok;
   }
 
   Future<void> disconnect() async {

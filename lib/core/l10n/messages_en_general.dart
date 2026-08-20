@@ -73,7 +73,7 @@ const Map<String, String> engeneral = {
   'host_ip': 'IP Address',
   'port': 'Port',
   'mac_address': 'MAC Address',
-  'restaurant_name': 'Restaurant Name',
+  'restaurant_name_label': 'Restaurant Name',
   'paper_size': 'Paper Size',
   'auto_print_kitchen': 'Auto-print kitchen tickets',
   'print_test': 'Print Test',

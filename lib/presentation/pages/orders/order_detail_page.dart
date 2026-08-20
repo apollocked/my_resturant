@@ -99,7 +99,7 @@ class OrderDetailPage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.restaurant_menu),
-              title: Text(t('kitchen_ticket') ?? 'Kitchen Ticket'),
+              title: Text(t('kitchen_ticket')),
               subtitle: const Text('Items only, no prices'),
               onTap: () async {
                 Navigator.pop(ctx);

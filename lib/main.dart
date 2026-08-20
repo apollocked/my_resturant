@@ -165,7 +165,6 @@ class _AppViewState extends State<AppView> {
                 Order? justPreparing;
                 for (final o in state.orders) {
                   if (o.status == OrderStatus.preparing) {
-                    final prev = state.orders;
                     justPreparing = o;
                     break;
                   }
