@@ -48,10 +48,15 @@ void main() async {
   final printerService = PrinterService();
   final printer = PrinterCubit(printerService);
   await printer.init();
-  runApp(MyApp(
-    repo: dataRepo, acct: acct, role: role,
-    settings: settings, printer: printer,
-  ));
+  runApp(
+    MyApp(
+      repo: dataRepo,
+      acct: acct,
+      role: role,
+      settings: settings,
+      printer: printer,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

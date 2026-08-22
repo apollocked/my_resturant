@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
@@ -18,11 +17,10 @@ class PrinterService {
   final _statusController = StreamController<bool>.broadcast();
   Stream<bool> get statusStream => _statusController.stream;
 
-  static const _sppUuid = '00001101-0000-1000-8000-00805f9b34fb';
-
   Future<void> init() async {
     _config = await PrinterPrefs.load();
-    if (_config.isConnected && _config.connectionType != PrinterConnectionType.none) {
+    if (_config.isConnected &&
+        _config.connectionType != PrinterConnectionType.none) {
       await connect();
     }
   }
@@ -76,8 +74,11 @@ class PrinterService {
     if (_config.macAddress == null || _config.macAddress!.isEmpty) return false;
     try {
       final mac = _config.macAddress!.trim();
-      final device = BluetoothDevice.fromId(mac);
-      await device.connect(timeout: const Duration(seconds: 10));
+      final device = BluetoothDevice(remoteId: DeviceIdentifier(mac));
+      await device.connect(
+        license: License.nonprofit,
+        timeout: const Duration(seconds: 10),
+      );
       final services = await device.discoverServices();
       for (final s in services) {
         for (final c in s.characteristics) {
