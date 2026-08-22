@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   file_selector_windows
   firebase_core
+  flutter_blue_plus_winrt
   sqlite3_flutter_libs
   url_launcher_windows
 )

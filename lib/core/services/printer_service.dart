@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/core/services/receipt_formatter.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -11,12 +13,16 @@ class PrinterService {
   bool _connected = false;
   bool get isConnected => _connected;
   Socket? _socket;
+  BluetoothDevice? _btDevice;
+  BluetoothCharacteristic? _btChar;
   final _statusController = StreamController<bool>.broadcast();
   Stream<bool> get statusStream => _statusController.stream;
 
+  static const _sppUuid = '00001101-0000-1000-8000-00805f9b34fb';
+
   Future<void> init() async {
     _config = await PrinterPrefs.load();
-    if (_config.isConnected) {
+    if (_config.isConnected && _config.connectionType != PrinterConnectionType.none) {
       await connect();
     }
   }
@@ -25,11 +31,11 @@ class PrinterService {
     _config = config;
     await PrinterPrefs.save(config);
     await disconnect();
-    if (config.isConnected) await connect();
+    if (config.connectionType != PrinterConnectionType.none) await connect();
   }
 
   Future<bool> connect() async {
-    if (!_config.isConnected) return false;
+    if (_config.connectionType == PrinterConnectionType.none) return false;
     try {
       switch (_config.connectionType) {
         case PrinterConnectionType.network:
@@ -67,9 +73,34 @@ class PrinterService {
   }
 
   Future<bool> _connectBluetooth() async {
-    _connected = true;
-    _statusController.add(true);
-    return true;
+    if (_config.macAddress == null || _config.macAddress!.isEmpty) return false;
+    try {
+      final mac = _config.macAddress!.trim();
+      final device = BluetoothDevice.fromId(mac);
+      await device.connect(timeout: const Duration(seconds: 10));
+      final services = await device.discoverServices();
+      for (final s in services) {
+        for (final c in s.characteristics) {
+          if (c.properties.write || c.properties.writeWithoutResponse) {
+            _btChar = c;
+            break;
+          }
+        }
+        if (_btChar != null) break;
+      }
+      if (_btChar == null) {
+        await device.disconnect();
+        return false;
+      }
+      _btDevice = device;
+      _connected = true;
+      _statusController.add(true);
+      return true;
+    } catch (_) {
+      _connected = false;
+      _statusController.add(false);
+      return false;
+    }
   }
 
   Future<bool> _connectSunmi() async {
@@ -81,6 +112,11 @@ class PrinterService {
   Future<void> disconnect() async {
     await _socket?.close();
     _socket = null;
+    try {
+      await _btDevice?.disconnect();
+    } catch (_) {}
+    _btDevice = null;
+    _btChar = null;
     _connected = false;
     _statusController.add(false);
   }
@@ -130,7 +166,14 @@ class PrinterService {
   }
 
   Future<bool> _sendBluetooth(List<int> bytes) async {
-    if (kDebugMode) debugPrint('BT print: ${bytes.length} bytes');
+    if (_btChar == null) return false;
+    final data = Uint8List.fromList(bytes);
+    const chunkSize = 200;
+    for (var i = 0; i < data.length; i += chunkSize) {
+      final end = (i + chunkSize < data.length) ? i + chunkSize : data.length;
+      final chunk = data.sublist(i, end);
+      await _btChar!.write(chunk, withoutResponse: true);
+    }
     return true;
   }
 
