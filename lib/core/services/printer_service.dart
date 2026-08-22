@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:my_resturant/core/services/bt_printer_helper.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/core/services/receipt_formatter.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -12,24 +11,20 @@ class PrinterService {
   bool _connected = false;
   bool get isConnected => _connected;
   Socket? _socket;
-  BluetoothDevice? _btDevice;
-  BluetoothCharacteristic? _btChar;
+  final _bt = BtPrinterHelper();
   final _statusController = StreamController<bool>.broadcast();
   Stream<bool> get statusStream => _statusController.stream;
 
   Future<void> init() async {
     _config = await PrinterPrefs.load();
-    if (_config.isConnected &&
-        _config.connectionType != PrinterConnectionType.none) {
-      await connect();
-    }
+    if (_config.isConnected) await connect();
   }
 
   Future<void> updateConfig(PrinterConfig config) async {
     _config = config;
     await PrinterPrefs.save(config);
     await disconnect();
-    if (config.connectionType != PrinterConnectionType.none) await connect();
+    if (config.isConnected) await connect();
   }
 
   Future<bool> connect() async {
@@ -41,7 +36,9 @@ class PrinterService {
         case PrinterConnectionType.bluetooth:
           return await _connectBluetooth();
         case PrinterConnectionType.sunmi:
-          return await _connectSunmi();
+          _connected = true;
+          _statusController.add(true);
+          return true;
         case PrinterConnectionType.none:
           return false;
       }
@@ -56,8 +53,7 @@ class PrinterService {
     if (_config.host.isEmpty) return false;
     try {
       _socket = await Socket.connect(
-        _config.host,
-        _config.port,
+        _config.host, _config.port,
         timeout: const Duration(seconds: 5),
       );
       _connected = true;
@@ -71,84 +67,44 @@ class PrinterService {
   }
 
   Future<bool> _connectBluetooth() async {
-    if (_config.macAddress == null || _config.macAddress!.isEmpty) return false;
-    try {
-      final mac = _config.macAddress!.trim();
-      final device = BluetoothDevice(remoteId: DeviceIdentifier(mac));
-      await device.connect(
-        license: License.nonprofit,
-        timeout: const Duration(seconds: 10),
-      );
-      final services = await device.discoverServices();
-      for (final s in services) {
-        for (final c in s.characteristics) {
-          if (c.properties.write || c.properties.writeWithoutResponse) {
-            _btChar = c;
-            break;
-          }
-        }
-        if (_btChar != null) break;
-      }
-      if (_btChar == null) {
-        await device.disconnect();
-        return false;
-      }
-      _btDevice = device;
-      _connected = true;
-      _statusController.add(true);
-      return true;
-    } catch (_) {
-      _connected = false;
-      _statusController.add(false);
-      return false;
-    }
-  }
-
-  Future<bool> _connectSunmi() async {
-    _connected = true;
-    _statusController.add(true);
-    return true;
+    final mac = _config.macAddress?.trim() ?? '';
+    if (mac.isEmpty) return false;
+    final ok = await _bt.connect(mac);
+    _connected = ok;
+    _statusController.add(ok);
+    return ok;
   }
 
   Future<void> disconnect() async {
     await _socket?.close();
     _socket = null;
-    try {
-      await _btDevice?.disconnect();
-    } catch (_) {}
-    _btDevice = null;
-    _btChar = null;
+    await _bt.disconnect();
     _connected = false;
     _statusController.add(false);
   }
 
   Future<bool> printKitchenTicket(Order order) async {
-    if (!_connected) {
-      final ok = await connect();
-      if (!ok) return false;
-    }
-    final bytes = ReceiptFormatter.kitchenTicket(order, _config);
-    return await _sendBytes(bytes);
+    if (!_connected && !await connect()) return false;
+    return await _sendBytes(ReceiptFormatter.kitchenTicket(order, _config));
   }
 
   Future<bool> printFullReceipt(Order order) async {
-    if (!_connected) {
-      final ok = await connect();
-      if (!ok) return false;
-    }
-    final bytes = ReceiptFormatter.fullReceipt(order, _config);
-    return await _sendBytes(bytes);
+    if (!_connected && !await connect()) return false;
+    return await _sendBytes(ReceiptFormatter.fullReceipt(order, _config));
   }
 
   Future<bool> _sendBytes(List<int> bytes) async {
     try {
       switch (_config.connectionType) {
         case PrinterConnectionType.network:
-          return await _sendNetwork(bytes);
+          if (_socket == null) return false;
+          _socket!.add(bytes);
+          await _socket!.flush();
+          return true;
         case PrinterConnectionType.bluetooth:
-          return await _sendBluetooth(bytes);
+          return await _bt.send(bytes);
         case PrinterConnectionType.sunmi:
-          return await _sendSunmi(bytes);
+          return true;
         case PrinterConnectionType.none:
           return false;
       }
@@ -157,30 +113,6 @@ class PrinterService {
       _statusController.add(false);
       return false;
     }
-  }
-
-  Future<bool> _sendNetwork(List<int> bytes) async {
-    if (_socket == null) return false;
-    _socket!.add(bytes);
-    await _socket!.flush();
-    return true;
-  }
-
-  Future<bool> _sendBluetooth(List<int> bytes) async {
-    if (_btChar == null) return false;
-    final data = Uint8List.fromList(bytes);
-    const chunkSize = 200;
-    for (var i = 0; i < data.length; i += chunkSize) {
-      final end = (i + chunkSize < data.length) ? i + chunkSize : data.length;
-      final chunk = data.sublist(i, end);
-      await _btChar!.write(chunk, withoutResponse: true);
-    }
-    return true;
-  }
-
-  Future<bool> _sendSunmi(List<int> bytes) async {
-    if (kDebugMode) debugPrint('Sunmi print: ${bytes.length} bytes');
-    return true;
   }
 
   void dispose() {

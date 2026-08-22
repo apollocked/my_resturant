@@ -41,11 +41,10 @@ class BtPrinterHelper {
 
   Future<bool> send(List<int> bytes) async {
     if (char == null) return false;
-    final data = bytes is List<int> ? bytes : bytes;
     const chunkSize = 200;
-    for (var i = 0; i < data.length; i += chunkSize) {
-      final end = (i + chunkSize < data.length) ? i + chunkSize : data.length;
-      await char!.write(data.sublist(i, end), withoutResponse: true);
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      final end = (i + chunkSize < bytes.length) ? i + chunkSize : bytes.length;
+      await char!.write(bytes.sublist(i, end), withoutResponse: true);
     }
     return true;
   }
