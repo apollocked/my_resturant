@@ -37,7 +37,9 @@ class FoodCardAddButton extends StatelessWidget {
           onPressed: null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
+            disabledBackgroundColor: AppColors.primary,
             foregroundColor: cs.onPrimary,
+            disabledForegroundColor: cs.onPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius),
             ),
