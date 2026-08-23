@@ -114,9 +114,8 @@ class _AppViewState extends State<AppView> {
       ],
       localeResolutionCallback: (locale, supported) {
         if (locale == null) return const Locale('en');
-        if (supported.contains(locale) &&
-            GlobalMaterialLocalizations.delegate.isSupported(locale)) {
-          return locale;
+        for (final s in supported) {
+          if (s.languageCode == locale.languageCode) return s;
         }
         return const Locale('en');
       },
