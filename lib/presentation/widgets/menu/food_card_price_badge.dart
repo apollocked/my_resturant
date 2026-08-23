@@ -19,9 +19,9 @@ class FoodCardPriceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return PositionedDirectional(
       top: 10,
-      right: 10,
+      end: 10,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
         decoration: BoxDecoration(

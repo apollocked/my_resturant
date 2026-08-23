@@ -44,7 +44,7 @@ class AdminPanelCard extends StatelessWidget {
                 color: cs.onSurfaceVariant,
               ),
             ),
-            trailing: Icon(Icons.chevron_left, color: cs.onSurfaceVariant),
+            trailing: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left : Icons.chevron_right, color: cs.onSurfaceVariant),
           ),
         ),
       ),

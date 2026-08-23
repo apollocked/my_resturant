@@ -55,9 +55,9 @@ class CategoryChip extends StatelessWidget {
         ? 8.0
         : 6.0;
     return Padding(
-      padding: EdgeInsets.only(
-        left: index == 0 ? (isDesktop ? 24.0 : 20.0) : 0,
-        right: index > 0 ? (isDesktop ? 14.0 : 8.0) : 0,
+      padding: EdgeInsetsDirectional.only(
+        start: index == 0 ? (isDesktop ? 24.0 : 20.0) : 0,
+        end: index > 0 ? (isDesktop ? 14.0 : 8.0) : 0,
       ),
       child: PressableScale(
         onTap: onTap,

@@ -57,7 +57,7 @@ class OrderItemsList extends StatelessWidget {
                   ),
                   if (item.notes.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 3, right: 34),
+                      padding: const EdgeInsetsDirectional.only(top: 3, start: 34),
                       child: Text(
                         item.notes,
                         style: TextStyle(

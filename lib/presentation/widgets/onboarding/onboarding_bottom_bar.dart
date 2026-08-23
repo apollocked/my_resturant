@@ -25,7 +25,7 @@ class OnboardingBottomBar extends StatelessWidget {
             final active = page == i;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 400), curve: Curves.easeInOutCubic,
-              margin: const EdgeInsets.only(right: 6),
+              margin: const EdgeInsetsDirectional.only(end: 6),
               width: active ? 32 : 10, height: 10,
               decoration: BoxDecoration(
                 gradient: active ? LinearGradient(colors: [accent, accent.withValues(alpha: 0.6)]) : null,
@@ -49,7 +49,7 @@ class OnboardingBottomBar extends StatelessWidget {
                 children: [
                   Text(label, style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: R.fontMd(context), letterSpacing: 0.3)),
                   const SizedBox(width: 10),
-                  Icon(Icons.arrow_forward_rounded, color: cs.onPrimary, size: 20),
+                  Icon(Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, color: cs.onPrimary, size: 20),
                 ],
               ),
             ),

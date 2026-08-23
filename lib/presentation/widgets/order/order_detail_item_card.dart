@@ -70,7 +70,7 @@ class OrderDetailItemCard extends StatelessWidget {
                       ),
                       if (canEdit && onRemove != null)
                         Padding(
-                          padding: const EdgeInsets.only(right: 6),
+                          padding: const EdgeInsetsDirectional.only(end: 6),
                           child: GestureDetector(
                             onTap: onRemove,
                             child: Icon(

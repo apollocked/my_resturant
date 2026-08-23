@@ -13,8 +13,8 @@ class RoleStatusBadge extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final success = phase == RolePhase.success;
     if (!success && phase != RolePhase.error) return const SizedBox.shrink();
-    return Positioned(
-      right: 4,
+    return PositionedDirectional(
+      end: 4,
       bottom: 4,
       child: ScaleTransition(
         scale: status,

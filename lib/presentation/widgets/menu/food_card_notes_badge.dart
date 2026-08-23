@@ -9,9 +9,9 @@ class FoodCardNotesBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return PositionedDirectional(
       bottom: 10,
-      right: 10,
+      end: 10,
       child: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(

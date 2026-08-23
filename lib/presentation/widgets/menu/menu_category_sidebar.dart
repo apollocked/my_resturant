@@ -22,7 +22,7 @@ class MenuCategorySidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 180,
-      padding: EdgeInsets.fromLTRB(R.padding(context), 24, 0, 16),
+      padding: EdgeInsetsDirectional.fromSTEB(R.padding(context), 24, 0, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

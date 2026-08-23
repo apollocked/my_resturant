@@ -50,7 +50,7 @@ class OrderActionBar extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: null,
                   icon: Icon(
-                    Icons.arrow_forward,
+                    Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back : Icons.arrow_forward,
                     size: isDesktop ? 16.0 : 14.0,
                   ),
                   label: Text(

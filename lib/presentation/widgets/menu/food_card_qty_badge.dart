@@ -17,9 +17,9 @@ class FoodCardQtyBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return PositionedDirectional(
       top: 10,
-      left: 10,
+      start: 10,
       child: Container(
         width: size,
         height: size,

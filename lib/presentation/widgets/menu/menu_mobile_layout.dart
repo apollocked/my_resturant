@@ -61,7 +61,7 @@ class MenuMobileLayout extends StatelessWidget {
                     ),
                     SizedBox(height: R.isTablet(context) ? 32 : 28),
                     Padding(
-                      padding: EdgeInsets.only(right: R.padding(context)),
+                      padding: EdgeInsetsDirectional.only(end: R.padding(context)),
                       child: Text(
                         t('categories'),
                         style: TextStyle(
@@ -76,7 +76,6 @@ class MenuMobileLayout extends StatelessWidget {
                       height: R.isTablet(context) ? 48 : 40,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        reverse: true,
                         itemCount: cats.length,
                         padding: EdgeInsets.zero,
                         itemBuilder: (ctx, i) => CategoryChip(

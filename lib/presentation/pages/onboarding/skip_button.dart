@@ -20,9 +20,9 @@ class SkipButton extends StatelessWidget {
     final ob = OnbColors.of(context);
 
     return Align(
-      alignment: Alignment.topRight,
+      alignment: AlignmentDirectional.topEnd,
       child: Padding(
-        padding: const EdgeInsets.only(top: 8, right: 8),
+        padding: const EdgeInsetsDirectional.only(top: 8, end: 8),
         child: PressableScale(
           onTap: onFinish,
           child: Container(

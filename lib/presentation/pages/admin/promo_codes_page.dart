@@ -99,7 +99,7 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
         title: const Text('Promo Codes'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsetsDirectional.only(end: 12),
             child: FilledButton.icon(
               onPressed: _createCode,
               icon: const Icon(Icons.add, size: 18),

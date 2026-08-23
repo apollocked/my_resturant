@@ -51,7 +51,7 @@ class ProfileAccountActions extends StatelessWidget {
               fontSize: R.fontMd(context),
             ),
           ),
-          trailing: const Icon(Icons.chevron_left, size: 18),
+          trailing: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left : Icons.chevron_right, size: 18),
         ),
       ),
     );

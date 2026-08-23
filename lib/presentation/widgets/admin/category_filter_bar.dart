@@ -67,7 +67,7 @@ class CategoryFilterBar extends StatelessWidget {
           final catKey = cats[i]['key']!;
           final label = t('cat_$catKey');
           return Padding(
-            padding: EdgeInsets.only(left: isDesktop ? 12 : 8),
+            padding: EdgeInsetsDirectional.only(start: isDesktop ? 12 : 8),
             child: PressableScale(
               onTap: () => onChanged(i),
               child: AnimatedContainer(

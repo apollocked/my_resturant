@@ -59,7 +59,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
         actions: [
           if (printer.state.isConnected)
             const Padding(
-              padding: EdgeInsets.only(right: 12),
+              padding: EdgeInsetsDirectional.only(end: 12),
               child: Icon(Icons.link, color: Colors.green, size: 20),
             ),
         ],
@@ -122,7 +122,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
     return Row(
       children: [58, 80].map((w) {
         return Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsetsDirectional.only(end: 8),
           child: ChoiceChip(
             label: Text('${w}mm'),
             selected: _paperWidth == w,

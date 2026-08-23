@@ -89,7 +89,7 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
           children: [
             if (widget.canEdit)
               Padding(
-                padding: const EdgeInsets.only(left: 4),
+                padding: const EdgeInsetsDirectional.only(end: 4),
                 child: Icon(
                   Icons.edit,
                   size: 14,

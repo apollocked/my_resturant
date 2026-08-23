@@ -21,9 +21,9 @@ class FoodCardRemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return PositionedDirectional(
       bottom: 10,
-      left: 10,
+      start: 10,
       child: PressableScale(
         onTap: () {
           HapticFeedback.mediumImpact();

@@ -29,7 +29,10 @@ class HistoryMonthNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(onPressed: onPrev, icon: const Icon(Icons.chevron_left)),
+          IconButton(
+            onPressed: onPrev,
+            icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right : Icons.chevron_left),
+          ),
           TextButton.icon(
             onPressed: onPick,
             icon: const Icon(Icons.calendar_month, size: 18),
@@ -41,7 +44,10 @@ class HistoryMonthNav extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(onPressed: onNext, icon: const Icon(Icons.chevron_right)),
+          IconButton(
+            onPressed: onNext,
+            icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left : Icons.chevron_right),
+          ),
         ],
       ),
     );

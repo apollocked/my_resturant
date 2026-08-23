@@ -65,9 +65,9 @@ class LiquidNavTab extends StatelessWidget {
                   ),
                 ),
                 if (showBadge)
-                  Positioned(
+                  PositionedDirectional(
                     top: -4,
-                    right: -2,
+                    end: -2,
                     child: Container(
                       width: 18,
                       height: 18,
