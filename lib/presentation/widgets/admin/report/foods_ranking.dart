@@ -59,7 +59,6 @@ class FoodsRanking extends StatelessWidget {
                     e.key,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.right,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: isDesktop ? 14 : 12,

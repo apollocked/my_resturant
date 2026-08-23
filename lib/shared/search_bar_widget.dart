@@ -30,8 +30,6 @@ class SearchBarWidget extends StatelessWidget {
       child: TextField(
         onChanged: onChanged,
         textAlignVertical: TextAlignVertical.center,
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.rtl,
         decoration: InputDecoration(
           hintText: t('search_hint'),
           hintStyle: TextStyle(

@@ -24,7 +24,6 @@ class RecipeField extends StatelessWidget {
       ),
       keyboardType: keyboardType,
       maxLines: maxLines,
-      textDirection: TextDirection.rtl,
     );
   }
 }

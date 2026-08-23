@@ -111,7 +111,6 @@ class OrderDetailItemCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       item.notes,
-                      textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: R.fontSm(context),
                         color: cs.onSurfaceVariant.withValues(alpha: 0.7),

@@ -46,7 +46,6 @@ class OrderItemsList extends StatelessWidget {
                       Expanded(
                         child: Text(
                           item.recipe.name,
-                          textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: itemFont,
                             fontWeight: FontWeight.w500,
@@ -61,7 +60,6 @@ class OrderItemsList extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 3, right: 34),
                       child: Text(
                         item.notes,
-                        textAlign: TextAlign.right,
                         style: TextStyle(
                           fontSize: 10,
                           color: cs.onSurfaceVariant.withValues(alpha: 0.6),

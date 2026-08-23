@@ -66,78 +66,75 @@ class _ItemOnHoldSheetState extends State<ItemOnHoldSheet> {
         ? 16.0
         : 14.0;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
-        ),
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                color: cs.onSurfaceVariant.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(top: 12),
+            decoration: BoxDecoration(
+              color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ItemHoldHeaderImage(
+                    imageUrl: r.imageUrl,
+                    radius: radius,
+                    height: imgHeight,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ItemHoldHeaderInfo(
+                          name: r.name,
+                          price: r.price,
+                          priceLabel: t('currency_suffix'),
+                          description: r.description,
+                          cs: cs,
+                          isDesktop: isDesktop,
+                          isTablet: isTablet,
+                        ),
+                        const SizedBox(height: 20),
+                        ItemHoldNotesField(
+                          controller: _notesCtrl,
+                          cs: cs,
+                          label: t('notes_title'),
+                          hint: t('notes_hint_dialog'),
+                          isDesktop: isDesktop,
+                          isTablet: isTablet,
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ItemHoldHeaderImage(
-                      imageUrl: r.imageUrl,
-                      radius: radius,
-                      height: imgHeight,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ItemHoldHeaderInfo(
-                            name: r.name,
-                            price: r.price,
-                            priceLabel: t('currency_suffix'),
-                            description: r.description,
-                            cs: cs,
-                            isDesktop: isDesktop,
-                            isTablet: isTablet,
-                          ),
-                          const SizedBox(height: 20),
-                          ItemHoldNotesField(
-                            controller: _notesCtrl,
-                            cs: cs,
-                            label: t('notes_title'),
-                            hint: t('notes_hint_dialog'),
-                            isDesktop: isDesktop,
-                            isTablet: isTablet,
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            ItemHoldSaveButton(
-              label: t('save'),
-              onTap: () => Navigator.pop(context, _notesCtrl.text),
-              isDesktop: isDesktop,
-              isTablet: isTablet,
-            ),
-          ],
-        ),
+          ),
+          ItemHoldSaveButton(
+            label: t('save'),
+            onTap: () => Navigator.pop(context, _notesCtrl.text),
+            isDesktop: isDesktop,
+            isTablet: isTablet,
+          ),
+        ],
       ),
     );
   }

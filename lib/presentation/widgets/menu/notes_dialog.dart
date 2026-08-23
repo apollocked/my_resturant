@@ -29,27 +29,24 @@ class _NotesDialogState extends State<NotesDialog> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsCubit>();
     String t(String key) => Tr.get(key, settings.state.locale);
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        title: Text(t('notes_title')),
-        content: TextField(
-          controller: _c,
-          maxLines: 3,
-          decoration: InputDecoration(hintText: t('notes_hint_dialog')),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(t('cancel')),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, _c.text),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-            child: Text(t('save')),
-          ),
-        ],
+    return AlertDialog(
+      title: Text(t('notes_title')),
+      content: TextField(
+        controller: _c,
+        maxLines: 3,
+        decoration: InputDecoration(hintText: t('notes_hint_dialog')),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(t('cancel')),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _c.text),
+          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+          child: Text(t('save')),
+        ),
+      ],
     );
   }
 }

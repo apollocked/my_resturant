@@ -89,7 +89,6 @@ class OrderCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         order.notes,
-                        textAlign: TextAlign.right,
                         style: TextStyle(
                           fontSize: notesFont,
                           color: cs.onSurfaceVariant.withValues(alpha: 0.7),

@@ -102,7 +102,6 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
                 widget.notes.isEmpty
                     ? (widget.canEdit ? 'Tap to add notes...' : '')
                     : widget.notes,
-                textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: R.fontSm(context),
                   color: widget.notes.isEmpty

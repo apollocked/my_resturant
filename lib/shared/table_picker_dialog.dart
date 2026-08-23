@@ -20,109 +20,101 @@ Future<void> showTablePickerDialog(
 }) {
   final settings = context.read<SettingsCubit>();
   final cs = Theme.of(context).colorScheme;
-  final isRtl = settings.state.locale.languageCode != 'en';
   String t(String key) => Tr.get(key, settings.state.locale);
   return showDialog(
     context: context,
-    builder: (ctx) => Directionality(
-      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-      child: AlertDialog(
-        title: Text(
-          t('select_table_title'),
-          textAlign: isRtl ? TextAlign.right : TextAlign.left,
-        ),
-        content: SingleChildScrollView(
-          child: Builder(
-            builder: (ctx2) {
-              final orderState = context.read<OrderCubit>().state;
-              return Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: List.generate(orderState.tableCount, (i) {
-                  final n = i + 1;
-                  final sel = n == selectedTable;
-                  final locked =
-                      reservedTables.contains(n) && n != selectedTable;
-                  final customName = orderState.tableNames[n]?.trim();
-                  final hasCustom = customName != null && customName.isNotEmpty;
-                  final labelColor = sel ? cs.onPrimary : cs.onSurface;
-                  return SizedBox(
-                    width: 56,
-                    height: 44,
-                    child: OutlinedButton(
-                      onPressed: locked
-                          ? null
-                          : () {
-                              onChanged(n);
-                              Navigator.pop(ctx);
-                            },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: locked
-                            ? cs.surfaceContainerHighest
-                            : (sel ? AppColors.primary : cs.surface),
-                        foregroundColor: locked
-                            ? cs.onSurfaceVariant
-                            : labelColor,
-                        side: BorderSide(
-                          color: locked
-                              ? cs.outlineVariant
-                              : (sel ? AppColors.primary : cs.outlineVariant),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
+    builder: (ctx) => AlertDialog(
+      title: Text(t('select_table_title')),
+      content: SingleChildScrollView(
+        child: Builder(
+          builder: (ctx2) {
+            final orderState = context.read<OrderCubit>().state;
+            return Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: List.generate(orderState.tableCount, (i) {
+                final n = i + 1;
+                final sel = n == selectedTable;
+                final locked = reservedTables.contains(n) && n != selectedTable;
+                final customName = orderState.tableNames[n]?.trim();
+                final hasCustom = customName != null && customName.isNotEmpty;
+                final labelColor = sel ? cs.onPrimary : cs.onSurface;
+                return SizedBox(
+                  width: 56,
+                  height: 44,
+                  child: OutlinedButton(
+                    onPressed: locked
+                        ? null
+                        : () {
+                            onChanged(n);
+                            Navigator.pop(ctx);
+                          },
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: locked
+                          ? cs.surfaceContainerHighest
+                          : (sel ? AppColors.primary : cs.surface),
+                      foregroundColor: locked
+                          ? cs.onSurfaceVariant
+                          : labelColor,
+                      side: BorderSide(
+                        color: locked
+                            ? cs.outlineVariant
+                            : (sel ? AppColors.primary : cs.outlineVariant),
                       ),
-                      child: locked
-                          ? Icon(
-                              Icons.lock,
-                              size: 14,
-                              color: cs.onSurfaceVariant,
-                            )
-                          : hasCustom
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  _firstLetters(customName),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    color: labelColor,
-                                  ),
-                                ),
-                                Text(
-                                  '$n',
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w500,
-                                    color: sel
-                                        ? cs.onPrimary.withValues(alpha: 0.85)
-                                        : cs.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Text(
-                              '$n',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: R.fontSm(context),
-                              ),
-                            ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
                     ),
-                  );
-                }),
-              );
-            },
-          ),
+                    child: locked
+                        ? Icon(
+                            Icons.lock,
+                            size: 14,
+                            color: cs.onSurfaceVariant,
+                          )
+                        : hasCustom
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _firstLetters(customName),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: labelColor,
+                                ),
+                              ),
+                              Text(
+                                '$n',
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w500,
+                                  color: sel
+                                      ? cs.onPrimary.withValues(alpha: 0.85)
+                                      : cs.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            '$n',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: R.fontSm(context),
+                            ),
+                          ),
+                  ),
+                );
+              }),
+            );
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(t('cancel')),
-          ),
-        ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(t('cancel')),
+        ),
+      ],
     ),
   );
 }

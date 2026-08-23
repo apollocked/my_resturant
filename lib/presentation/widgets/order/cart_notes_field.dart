@@ -17,8 +17,6 @@ class CartNotesField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
       maxLength: 200,
       decoration: InputDecoration(
         hintText: hint,

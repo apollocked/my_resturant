@@ -75,66 +75,63 @@ class _EditRecipeDialogState extends State<EditRecipeDialog> {
       controller: _descCtl,
       maxLines: 2,
     );
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        title: Text(widget.t('edit_food')),
-        constraints: isWide ? const BoxConstraints(maxWidth: 560) : null,
-        content: SingleChildScrollView(
-          child: isWide
-              ? LayoutBuilder(
-                  builder: (ctx, c) {
-                    final half = (c.maxWidth - 12) / 2;
-                    return Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        SizedBox(width: half, child: nameField),
-                        SizedBox(width: half, child: priceField),
-                        SizedBox(width: c.maxWidth, child: categoryField),
-                        SizedBox(width: c.maxWidth, child: descField),
-                      ],
-                    );
-                  },
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    nameField,
-                    const SizedBox(height: 12),
-                    priceField,
-                    const SizedBox(height: 12),
-                    categoryField,
-                    const SizedBox(height: 12),
-                    descField,
-                  ],
-                ),
-        ),
-        actions: [
-          OverflowBar(
-            spacing: 8,
-            alignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(widget.t('cancel')),
+    return AlertDialog(
+      title: Text(widget.t('edit_food')),
+      constraints: isWide ? const BoxConstraints(maxWidth: 560) : null,
+      content: SingleChildScrollView(
+        child: isWide
+            ? LayoutBuilder(
+                builder: (ctx, c) {
+                  final half = (c.maxWidth - 12) / 2;
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      SizedBox(width: half, child: nameField),
+                      SizedBox(width: half, child: priceField),
+                      SizedBox(width: c.maxWidth, child: categoryField),
+                      SizedBox(width: c.maxWidth, child: descField),
+                    ],
+                  );
+                },
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  nameField,
+                  const SizedBox(height: 12),
+                  priceField,
+                  const SizedBox(height: 12),
+                  categoryField,
+                  const SizedBox(height: 12),
+                  descField,
+                ],
               ),
-              FilledButton(
-                onPressed: () => Navigator.pop(context, {
-                  'name': _nameCtl.text,
-                  'price': double.tryParse(_priceCtl.text) ?? widget.price,
-                  'description': _descCtl.text,
-                  'category': _cat,
-                }),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                ),
-                child: Text(widget.t('update')),
-              ),
-            ],
-          ),
-        ],
       ),
+      actions: [
+        OverflowBar(
+          spacing: 8,
+          alignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(widget.t('cancel')),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, {
+                'name': _nameCtl.text,
+                'price': double.tryParse(_priceCtl.text) ?? widget.price,
+                'description': _descCtl.text,
+                'category': _cat,
+              }),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+              ),
+              child: Text(widget.t('update')),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
