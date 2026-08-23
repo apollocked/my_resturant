@@ -9,6 +9,7 @@ import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/l10n/ku_localizations.dart';
 import 'package:my_resturant/core/services/printer_service.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_state.dart';
@@ -108,9 +109,9 @@ class _AppViewState extends State<AppView> {
       locale: settings.locale,
       supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
       localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        KuMaterialLocalizationsDelegate(),
+        KuCupertinoLocalizationsDelegate(),
+        ...GlobalMaterialLocalizations.delegates,
       ],
       localeResolutionCallback: (locale, supported) {
         if (locale == null) return const Locale('en');
