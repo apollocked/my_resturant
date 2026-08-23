@@ -86,30 +86,27 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     return Scaffold(
       appBar: AppBar(title: Text(t('food_mgmt_title'))),
       body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              CategoryFilterBar(
-                selectedIndex: _selectedCat,
-                onChanged: (i) => setState(() => _selectedCat = i),
-                categories: context.read<OrderCubit>().state.categories,
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            CategoryFilterBar(
+              selectedIndex: _selectedCat,
+              onChanged: (i) => setState(() => _selectedCat = i),
+              categories: context.read<OrderCubit>().state.categories,
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: FoodListView(
+                isLoading: context.read<OrderCubit>().state.isLoading,
+                dishes: _filtered,
+                isGrid: !R.isPhone(context),
+                t: t,
+                cs: cs,
+                onEdit: _editRecipe,
+                onDelete: _confirmDelete,
               ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: FoodListView(
-                  isLoading: context.read<OrderCubit>().state.isLoading,
-                  dishes: _filtered,
-                  isGrid: !R.isPhone(context),
-                  t: t,
-                  cs: cs,
-                  onEdit: _editRecipe,
-                  onDelete: _confirmDelete,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -93,34 +93,31 @@ class _DishFormPageState extends State<DishFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(_isEditing ? _t('edit_dish') : _t('add_dish')),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(R.padding(context)),
-            child: Column(
-              children: [
-                DishFormFields(
-                  formKey: _formKey,
-                  nameCtrl: _nameCtrl,
-                  priceCtrl: _priceCtrl,
-                  descCtrl: _descCtrl,
-                  imageUrl: _imageUrl,
-                  initialCategory: _category,
-                  t: _t,
-                  isEditing: _isEditing,
-                  onPickImage: () => _picker.showSourceSheet(context),
-                  onCategoryChanged: (v) => _category = v,
-                  categories: context.read<OrderCubit>().state.categories,
-                ),
-                const SizedBox(height: 24),
-                DishSaveButton(isEditing: _isEditing, t: _t, onTap: _save),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_isEditing ? _t('edit_dish') : _t('add_dish')),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(R.padding(context)),
+          child: Column(
+            children: [
+              DishFormFields(
+                formKey: _formKey,
+                nameCtrl: _nameCtrl,
+                priceCtrl: _priceCtrl,
+                descCtrl: _descCtrl,
+                imageUrl: _imageUrl,
+                initialCategory: _category,
+                t: _t,
+                isEditing: _isEditing,
+                onPickImage: () => _picker.showSourceSheet(context),
+                onCategoryChanged: (v) => _category = v,
+                categories: context.read<OrderCubit>().state.categories,
+              ),
+              const SizedBox(height: 24),
+              DishSaveButton(isEditing: _isEditing, t: _t, onTap: _save),
+            ],
           ),
         ),
       ),

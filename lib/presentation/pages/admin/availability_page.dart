@@ -33,100 +33,95 @@ class AvailabilityPage extends StatelessWidget {
                 title: t('no_food_found'),
                 subtitle: t('no_food_found_subtitle'),
               )
-            : Directionality(
-                textDirection: TextDirection.rtl,
-                child: isGrid
-                    ? GridView.builder(
-                        padding: EdgeInsets.all(R.padding(context)),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: R.menuGridColumns(context),
-                          childAspectRatio: 2.5,
-                          crossAxisSpacing: R.gridSpacing(context),
-                          mainAxisSpacing: R.gridSpacing(context),
+            : isGrid
+            ? GridView.builder(
+                padding: EdgeInsets.all(R.padding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: R.menuGridColumns(context),
+                  childAspectRatio: 2.5,
+                  crossAxisSpacing: R.gridSpacing(context),
+                  mainAxisSpacing: R.gridSpacing(context),
+                ),
+                itemCount: recipes.length,
+                itemBuilder: (context, index) {
+                  final r = recipes[index];
+                  return Card(
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: AppImage(
+                          r.imageUrl,
+                          width: 48,
+                          height: 48,
                         ),
-                        itemCount: recipes.length,
-                        itemBuilder: (context, index) {
-                          final r = recipes[index];
-                          return Card(
-                            child: ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(AppRadius.sm),
-                                child: AppImage(
-                                  r.imageUrl,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                              ),
-                              title: Text(
-                                r.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: R.fontMd(context),
-                                  color: cs.onSurface,
-                                ),
-                              ),
-                              subtitle: Text(
-                                '${r.price.toInt()} ${t('currency_suffix')}',
-                                style: TextStyle(
-                                  fontSize: R.fontSm(context),
-                                  color: cs.onSurfaceVariant,
-                                ),
-                              ),
-                              trailing: Switch(
-                                value: r.available,
-                                onChanged: (_) =>
-                                    cubit.toggleAvailability(r.id),
-                                activeTrackColor: AppColors.primary,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    : ListView.builder(
-                        padding: EdgeInsets.all(R.padding(context)),
-                        itemCount: recipes.length,
-                        itemBuilder: (context, index) {
-                          final r = recipes[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(AppRadius.sm),
-                                child: AppImage(
-                                  r.imageUrl,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                              ),
-                              title: Text(
-                                r.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: R.fontMd(context),
-                                  color: cs.onSurface,
-                                ),
-                              ),
-                              subtitle: Text(
-                                '${r.price.toInt()} ${t('currency_suffix')}',
-                                style: TextStyle(
-                                  fontSize: R.fontSm(context),
-                                  color: cs.onSurfaceVariant,
-                                ),
-                              ),
-                              trailing: Switch(
-                                value: r.available,
-                                onChanged: (_) =>
-                                    cubit.toggleAvailability(r.id),
-                                activeTrackColor: AppColors.primary,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                          );
-                        },
                       ),
+                      title: Text(
+                        r.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: R.fontMd(context),
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${r.price.toInt()} ${t('currency_suffix')}',
+                        style: TextStyle(
+                          fontSize: R.fontSm(context),
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: Switch(
+                        value: r.available,
+                        onChanged: (_) => cubit.toggleAvailability(r.id),
+                        activeTrackColor: AppColors.primary,
+                        materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  );
+                },
+              )
+            : ListView.builder(
+                padding: EdgeInsets.all(R.padding(context)),
+                itemCount: recipes.length,
+                itemBuilder: (context, index) {
+                  final r = recipes[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: AppImage(
+                          r.imageUrl,
+                          width: 48,
+                          height: 48,
+                        ),
+                      ),
+                      title: Text(
+                        r.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: R.fontMd(context),
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${r.price.toInt()} ${t('currency_suffix')}',
+                        style: TextStyle(
+                          fontSize: R.fontSm(context),
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: Switch(
+                        value: r.available,
+                        onChanged: (_) => cubit.toggleAvailability(r.id),
+                        activeTrackColor: AppColors.primary,
+                        materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  );
+                },
               ),
       ),
     );

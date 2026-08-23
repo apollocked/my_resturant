@@ -37,43 +37,40 @@ class ReportPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t('report'))),
       body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: state.isLoading && state.orders.isEmpty
-              ? const ReportShimmer()
-              : state.orders.isEmpty
-              ? EmptyState(
-                  icon: Icons.analytics_outlined,
-                  title: t('report_empty'),
-                  subtitle: t('report_empty_subtitle'),
-                )
-              : ListView(
-                  padding: EdgeInsets.all(p),
-                  children: [
-                    ReportStats(
+        child: state.isLoading && state.orders.isEmpty
+            ? const ReportShimmer()
+            : state.orders.isEmpty
+            ? EmptyState(
+                icon: Icons.analytics_outlined,
+                title: t('report_empty'),
+                subtitle: t('report_empty_subtitle'),
+              )
+            : ListView(
+                padding: EdgeInsets.all(p),
+                children: [
+                  ReportStats(
+                    isDesktop: isDesktop,
+                    totalOrders: state.totalOrders,
+                    totalRevenue: state.totalRevenue,
+                    mostOrderedDish: state.mostOrderedDish,
+                    mostOrderedCount: state.mostOrderedDishCount,
+                    t: t,
+                  ),
+                  const SizedBox(height: 24),
+                  if (weekTotalOrders > 0) ...[
+                    WeeklyReportSection(
+                      weekData: weekData,
+                      weekTotalOrders: weekTotalOrders,
+                      weekTotalRev: weekTotalRev,
                       isDesktop: isDesktop,
-                      totalOrders: state.totalOrders,
-                      totalRevenue: state.totalRevenue,
-                      mostOrderedDish: state.mostOrderedDish,
-                      mostOrderedCount: state.mostOrderedDishCount,
                       t: t,
                     ),
                     const SizedBox(height: 24),
-                    if (weekTotalOrders > 0) ...[
-                      WeeklyReportSection(
-                        weekData: weekData,
-                        weekTotalOrders: weekTotalOrders,
-                        weekTotalRev: weekTotalRev,
-                        isDesktop: isDesktop,
-                        t: t,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    if (state.dishOrderCounts.isNotEmpty)
-                      FoodsRanking(counts: state.dishOrderCounts, t: t),
                   ],
-                ),
-        ),
+                  if (state.dishOrderCounts.isNotEmpty)
+                    FoodsRanking(counts: state.dishOrderCounts, t: t),
+                ],
+              ),
       ),
     );
   }

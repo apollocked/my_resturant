@@ -78,78 +78,70 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
     final hPad = isDesktop ? 24.0 : 16.0;
     final meals = _available;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-        ),
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AddItemsSheetHeader(
-              t: t,
-              count: _totalCount,
-              cs: cs,
-              isDesktop: isDesktop,
-            ),
-            AddItemsSearchField(
-              controller: _searchCtrl,
-              onChanged: (v) => setState(() => _query = v),
-              t: t,
-              cs: cs,
-              isDesktop: isDesktop,
-            ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: meals.isEmpty
-                  ? Center(
-                      child: Text(
-                        t('add_items_empty'),
-                        style: TextStyle(color: cs.onSurfaceVariant),
-                      ),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 8),
-                      itemCount: meals.length,
-                      itemBuilder: (ctx, i) {
-                        final r = meals[i];
-                        return AddItemsTile(
-                          recipe: r,
-                          qty: _selection[r.id] ?? 0,
-                          t: t,
-                          cs: cs,
-                          onInc: () => _inc(r),
-                          onDec: () => _dec(r),
-                        );
-                      },
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AddItemsSheetHeader(
+            t: t,
+            count: _totalCount,
+            cs: cs,
+            isDesktop: isDesktop,
+          ),
+          AddItemsSearchField(
+            controller: _searchCtrl,
+            onChanged: (v) => setState(() => _query = v),
+            t: t,
+            cs: cs,
+            isDesktop: isDesktop,
+          ),
+          const SizedBox(height: 8),
+          Flexible(
+            child: meals.isEmpty
+                ? Center(
+                    child: Text(
+                      t('add_items_empty'),
+                      style: TextStyle(color: cs.onSurfaceVariant),
                     ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  hPad,
-                  8,
-                  hPad,
-                  isDesktop ? 16 : 12,
-                ),
-                child: AddItemsFooterButton(
-                  count: _totalCount,
-                  totalPrice: _totalPrice,
-                  t: t,
-                  cs: cs,
-                  isDesktop: isDesktop,
-                  onTap: _totalCount == 0 ? null : _submit,
-                ),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 8),
+                    itemCount: meals.length,
+                    itemBuilder: (ctx, i) {
+                      final r = meals[i];
+                      return AddItemsTile(
+                        recipe: r,
+                        qty: _selection[r.id] ?? 0,
+                        t: t,
+                        cs: cs,
+                        onInc: () => _inc(r),
+                        onDec: () => _dec(r),
+                      );
+                    },
+                  ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(hPad, 8, hPad, isDesktop ? 16 : 12),
+              child: AddItemsFooterButton(
+                count: _totalCount,
+                totalPrice: _totalPrice,
+                t: t,
+                cs: cs,
+                isDesktop: isDesktop,
+                onTap: _totalCount == 0 ? null : _submit,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

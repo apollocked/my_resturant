@@ -109,50 +109,47 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             ),
         ],
       ),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: cubit.state.isLoading && allOrders.isEmpty
-            ? HistoryShimmer(padding: p)
-            : Column(
-                children: [
-                  HistoryMonthNav(
-                    t: t,
-                    year: _viewMonth.year,
-                    month: _viewMonth.month,
-                    onPrev: () => _shiftMonth(-1),
-                    onNext: () => _shiftMonth(1),
-                    onPick: _pick,
-                  ),
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 480),
-                      child: CalendarGrid(
-                        year: _viewMonth.year,
-                        month: _viewMonth.month,
-                        selectedDay: _selectedDate.day,
-                        daysWithOrders: daysWithOrders,
-                        onDayTap: _onDayTap,
-                      ),
+      body: cubit.state.isLoading && allOrders.isEmpty
+          ? HistoryShimmer(padding: p)
+          : Column(
+              children: [
+                HistoryMonthNav(
+                  t: t,
+                  year: _viewMonth.year,
+                  month: _viewMonth.month,
+                  onPrev: () => _shiftMonth(-1),
+                  onNext: () => _shiftMonth(1),
+                  onPick: _pick,
+                ),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: CalendarGrid(
+                      year: _viewMonth.year,
+                      month: _viewMonth.month,
+                      selectedDay: _selectedDate.day,
+                      daysWithOrders: daysWithOrders,
+                      onDayTap: _onDayTap,
                     ),
                   ),
-                  const Divider(height: 1),
-                  HistoryStatsBar(
-                    orderCount: dayOrders.length,
-                    itemCount: dayItems,
-                    total: dayTotal,
+                ),
+                const Divider(height: 1),
+                HistoryStatsBar(
+                  orderCount: dayOrders.length,
+                  itemCount: dayItems,
+                  total: dayTotal,
+                  t: t,
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: HistoryOrderList(
+                    orders: dayOrders,
+                    role: role,
                     t: t,
                   ),
-                  const Divider(height: 1),
-                  Expanded(
-                    child: HistoryOrderList(
-                      orders: dayOrders,
-                      role: role,
-                      t: t,
-                    ),
-                  ),
-                ],
-              ),
-      ),
+                ),
+              ],
+            ),
     );
   }
 }

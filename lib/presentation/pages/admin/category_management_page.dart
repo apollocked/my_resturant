@@ -17,25 +17,22 @@ class CategoryManagementPage extends StatelessWidget {
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(t('category_management')),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: t('add_category'),
-              onPressed: () => context.push('/category-form'),
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: CategoryManageList(
-            categories: context.read<OrderCubit>().state.categories,
-            t: t,
-            onDelete: (c) => _confirmDelete(context, c, t),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t('category_management')),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: t('add_category'),
+            onPressed: () => context.push('/category-form'),
           ),
+        ],
+      ),
+      body: SafeArea(
+        child: CategoryManageList(
+          categories: context.read<OrderCubit>().state.categories,
+          t: t,
+          onDelete: (c) => _confirmDelete(context, c, t),
         ),
       ),
     );

@@ -63,48 +63,45 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(title: Text(t('add_category'))),
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(R.padding(context)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                TextField(
-                  controller: _nameCtrl,
-                  maxLength: 32,
-                  decoration: InputDecoration(
-                    labelText: t('category_name'),
-                    filled: true,
-                  ),
+    return Scaffold(
+      appBar: AppBar(title: Text(t('add_category'))),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(R.padding(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                controller: _nameCtrl,
+                maxLength: 32,
+                decoration: InputDecoration(
+                  labelText: t('category_name'),
+                  filled: true,
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  t('choose_icon'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: R.fontMd(context),
-                    color: cs.onSurface,
-                  ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                t('choose_icon'),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: R.fontMd(context),
+                  color: cs.onSurface,
                 ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: CategoryIconPicker(
-                    selected: _selectedIcon,
-                    onSelect: (icon) => setState(() => _selectedIcon = icon),
-                  ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: CategoryIconPicker(
+                  selected: _selectedIcon,
+                  onSelect: (icon) => setState(() => _selectedIcon = icon),
                 ),
-                const SizedBox(height: 16),
-                CategorySaveButton(
-                  loading: _saving,
-                  label: t('add'),
-                  onTap: _saving ? null : _save,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              CategorySaveButton(
+                loading: _saving,
+                label: t('add'),
+                onTap: _saving ? null : _save,
+              ),
+            ],
           ),
         ),
       ),
