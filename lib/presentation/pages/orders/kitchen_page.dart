@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/widgets/order/kitchen_header.dart';
 import 'package:my_resturant/presentation/widgets/order/kitchen_order_list.dart';
 import 'package:my_resturant/presentation/widgets/order/kitchen_clean_list.dart';
+import 'package:my_resturant/presentation/widgets/order/kitchen_board.dart';
 
 class KitchenPage extends StatefulWidget {
   const KitchenPage({super.key});
@@ -62,6 +64,20 @@ class _KitchenPageState extends State<KitchenPage> {
             '${t('cleared')} ${needCleaning.length}',
           ];
     final tab = _tabIndex >= tabLabels.length ? 0 : _tabIndex;
+
+    if (R.isTablet(context)) {
+      return KitchenBoard(
+        cs: cs,
+        t: t,
+        activeOrders: activeOrders,
+        servedOrders: servedOrders,
+        needCleaning: needCleaning,
+        canEdit: canEdit,
+        isWaiter: isWaiter,
+        cubit: cubit,
+        boardTitle: isWaiter ? t('orders') : t('kitchen_title'),
+      );
+    }
 
     return Scaffold(
       body: Column(

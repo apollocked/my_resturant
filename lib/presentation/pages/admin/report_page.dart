@@ -19,7 +19,7 @@ class ReportPage extends StatelessWidget {
     final state = context.watch<OrderCubit>().state;
     final settings = context.watch<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
-    final isDesktop = R.isDesktop(context);
+    final isWide = !R.isPhone(context);
     final p = R.padding(context);
 
     final today = DateTime.now();
@@ -33,6 +33,17 @@ class ReportPage extends StatelessWidget {
         .toList();
     final weekTotalOrders = weekData.fold(0, (s, d) => s + d.count);
     final weekTotalRev = weekData.fold(0.0, (s, d) => s + d.revenue);
+
+    final weekly = WeeklyReportSection(
+      weekData: weekData,
+      weekTotalOrders: weekTotalOrders,
+      weekTotalRev: weekTotalRev,
+      isDesktop: isWide,
+      t: t,
+    );
+    final ranking = state.dishOrderCounts.isNotEmpty
+        ? FoodsRanking(counts: state.dishOrderCounts, t: t)
+        : null;
 
     return Scaffold(
       appBar: AppBar(title: Text(t('report'))),
@@ -49,7 +60,7 @@ class ReportPage extends StatelessWidget {
                 padding: EdgeInsets.all(p),
                 children: [
                   ReportStats(
-                    isDesktop: isDesktop,
+                    isDesktop: isWide,
                     totalOrders: state.totalOrders,
                     totalRevenue: state.totalRevenue,
                     mostOrderedDish: state.mostOrderedDish,
@@ -57,18 +68,24 @@ class ReportPage extends StatelessWidget {
                     t: t,
                   ),
                   const SizedBox(height: 24),
-                  if (weekTotalOrders > 0) ...[
-                    WeeklyReportSection(
-                      weekData: weekData,
-                      weekTotalOrders: weekTotalOrders,
-                      weekTotalRev: weekTotalRev,
-                      isDesktop: isDesktop,
-                      t: t,
-                    ),
-                    const SizedBox(height: 24),
+                  if (weekTotalOrders > 0 &&
+                      isWide &&
+                      ranking != null)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 2, child: weekly),
+                        const SizedBox(width: 24),
+                        Expanded(child: ranking),
+                      ],
+                    )
+                  else ...[
+                    if (weekTotalOrders > 0) ...[
+                      weekly,
+                      const SizedBox(height: 24),
+                    ],
+                    if (ranking != null) ranking,
                   ],
-                  if (state.dishOrderCounts.isNotEmpty)
-                    FoodsRanking(counts: state.dishOrderCounts, t: t),
                 ],
               ),
       ),
