@@ -108,7 +108,7 @@ class _HeroLogo extends StatelessWidget {
           ),
           child: ClipOval(
             child: Image.asset(
-              'assets/icons/my Restaurant.png',
+              'assets/images/appicon.png',
               width: inner,
               height: inner,
               fit: BoxFit.cover,

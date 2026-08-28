@@ -79,7 +79,7 @@ class SideNavRail extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.sm),
       child: Image.asset(
-        'assets/icons/my Restaurant.png',
+        'assets/images/appicon.png',
         width: size,
         height: size,
         fit: BoxFit.cover,

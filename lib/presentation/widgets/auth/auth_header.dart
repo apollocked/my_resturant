@@ -22,7 +22,7 @@ class AuthHeader extends StatelessWidget {
           ),
           child: ClipOval(
             child: Image.asset(
-              'assets/icons/my Restaurant.png',
+              'assets/images/appicon.png',
               width: R.avatarSize(context),
               height: R.avatarSize(context),
               fit: BoxFit.cover,
