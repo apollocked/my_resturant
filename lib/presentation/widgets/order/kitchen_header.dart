@@ -27,54 +27,47 @@ class KitchenHeader extends StatelessWidget {
         R.padding(context),
         0,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: R.fontXl(context),
-                    fontWeight: FontWeight.w800,
-                    color: cs.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  countLabel,
-                  style: TextStyle(
-                    fontSize: R.fontSm(context),
-                    color: cs.onSurfaceVariant,
-                  ),
-                ),
-              ],
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: R.fontXl(context),
+              fontWeight: FontWeight.w800,
+              color: cs.onSurface,
             ),
           ),
-          Flexible(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (int i = 0; i < tabLabels.length; i++) ...[
-                      if (i > 0) const SizedBox(width: 4),
-                      _TabPill(
-                        label: tabLabels[i],
-                        index: i,
-                        isSelected: selectedIndex == i,
-                        onTap: () => onTabChanged(i),
-                      ),
-                    ],
+          const SizedBox(height: 2),
+          Text(
+            countLabel,
+            style: TextStyle(
+              fontSize: R.fontSm(context),
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (int i = 0; i < tabLabels.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 6),
+                    _TabPill(
+                      label: tabLabels[i],
+                      index: i,
+                      isSelected: selectedIndex == i,
+                      onTap: () => onTabChanged(i),
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
           ),
@@ -103,12 +96,12 @@ class _TabPill extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
-          horizontal: R.padding(context) * 0.6,
-          vertical: R.padding(context) * 0.35,
+          horizontal: R.padding(context) * 1.6,
+          vertical: R.padding(context) * 0.5,
         ),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Text(
           label,
