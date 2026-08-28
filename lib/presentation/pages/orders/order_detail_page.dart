@@ -28,7 +28,7 @@ class OrderDetailPage extends StatelessWidget {
     final role = context.watch<RoleCubit>().state.role;
     final canEdit = role != Role.waiter;
     final canPlaceItems = role != Role.kitchen;
-    final isDesktop = R.isDesktop(context);
+    final isDesktop = !R.isPhone(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('${order.displayTable} — ${order.displayTrackingCode}'),

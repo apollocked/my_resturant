@@ -35,77 +35,84 @@ class ProfilePage extends StatelessWidget {
         R.padding(context),
         R.padding(context) + 100,
       ),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (child, anim) => FadeTransition(
-          opacity: anim,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.06),
-              end: Offset.zero,
-            ).animate(anim),
-            child: child,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: R.isTablet(context) ? 720 : double.infinity,
           ),
-        ),
-        child: Column(
-          key: ValueKey(role),
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Row(children: [SettingsButton(), Spacer()]),
-            ProfileHeader(
-              roleName: t(role.name),
-              email: acctState.email,
-              t: t,
-              cs: cs,
-            ),
-            const SizedBox(height: 16),
-            ProfileAccountActions(
-              onUpdateEmail: () =>
-                  ProfileDialogs.showUpdateEmail(context, accountCubit, t),
-              onUpdatePassword: () =>
-                  ProfileDialogs.showUpdatePassword(context, accountCubit, t),
-            ),
-            if (role == Role.admin) ...[
-              ProfileAdminPanel(t: t),
-              const SizedBox(height: 12),
-              ProfileOutlinedAction(
-                icon: Icons.lock_outline,
-                label: t('change_pins'),
-                sideWidth: 1.5,
-                onTap: () => context.push('/change-passcodes'),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, anim) => FadeTransition(
+              opacity: anim,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.06),
+                  end: Offset.zero,
+                ).animate(anim),
+                child: child,
               ),
-              const SizedBox(height: 8),
-              if (acctState.email == 'hamabarznji1990@gmail.com')
-                ProfileOutlinedAction(
-                  icon: Icons.vpn_key_outlined,
-                  label: 'Promo Codes',
-                  sideWidth: 1.5,
-                  onTap: () => context.push('/promo-codes'),
+            ),
+            child: Column(
+              key: ValueKey(role),
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Row(children: [SettingsButton(), Spacer()]),
+                ProfileHeader(
+                  roleName: t(role.name),
+                  email: acctState.email,
+                  t: t,
+                  cs: cs,
                 ),
-            ],
-            const SizedBox(height: 16),
-            ProfileRoleSwitcher(
-              currentRole: role,
-              roleCubit: roleCubit,
-              t: t,
-              onSwitch: ProfileDialogs.switchRole,
+                const SizedBox(height: 16),
+                ProfileAccountActions(
+                  onUpdateEmail: () =>
+                      ProfileDialogs.showUpdateEmail(context, accountCubit, t),
+                  onUpdatePassword: () =>
+                      ProfileDialogs.showUpdatePassword(context, accountCubit, t),
+                ),
+                if (role == Role.admin) ...[
+                  ProfileAdminPanel(t: t),
+                  const SizedBox(height: 12),
+                  ProfileOutlinedAction(
+                    icon: Icons.lock_outline,
+                    label: t('change_pins'),
+                    sideWidth: 1.5,
+                    onTap: () => context.push('/change-passcodes'),
+                  ),
+                  const SizedBox(height: 8),
+                  if (acctState.email == 'hamabarznji1990@gmail.com')
+                    ProfileOutlinedAction(
+                      icon: Icons.vpn_key_outlined,
+                      label: 'Promo Codes',
+                      sideWidth: 1.5,
+                      onTap: () => context.push('/promo-codes'),
+                    ),
+                ],
+                const SizedBox(height: 16),
+                ProfileRoleSwitcher(
+                  currentRole: role,
+                  roleCubit: roleCubit,
+                  t: t,
+                  onSwitch: ProfileDialogs.switchRole,
+                ),
+                const SizedBox(height: 16),
+                ProfileOutlinedAction(
+                  icon: Icons.logout,
+                  label: t('logout'),
+                  color: AppColors.error,
+                  onTap: () => ProfileDialogs.confirmLogout(
+                    context,
+                    accountCubit,
+                    roleCubit,
+                    t,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 16),
-            ProfileOutlinedAction(
-              icon: Icons.logout,
-              label: t('logout'),
-              color: AppColors.error,
-              onTap: () => ProfileDialogs.confirmLogout(
-                context,
-                accountCubit,
-                roleCubit,
-                t,
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
+          ),
         ),
       ),
     );

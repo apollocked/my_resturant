@@ -20,8 +20,9 @@ class MenuCategorySidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = R.isTablet(context);
     return Container(
-      width: 180,
+      width: isTablet ? 150 : 180,
       padding: EdgeInsetsDirectional.fromSTEB(R.padding(context), 24, 0, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,

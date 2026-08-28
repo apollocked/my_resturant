@@ -8,9 +8,8 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/calendar_grid.dart';
 import 'package:my_resturant/presentation/widgets/order/clear_all_orders_dialog.dart';
+import 'package:my_resturant/presentation/widgets/order/history_layout.dart';
 import 'package:my_resturant/presentation/widgets/order/history_month_nav.dart';
-import 'package:my_resturant/presentation/widgets/order/history_order_list.dart';
-import 'package:my_resturant/presentation/widgets/order/history_shimmer.dart';
 import 'package:my_resturant/presentation/widgets/order/history_stats_bar.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -96,6 +95,36 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       (s, o) => s + o.items.fold(0, (si, i) => si + i.quantity),
     );
 
+    final calendar = Column(
+      children: [
+        HistoryMonthNav(
+          t: t,
+          year: _viewMonth.year,
+          month: _viewMonth.month,
+          onPrev: () => _shiftMonth(-1),
+          onNext: () => _shiftMonth(1),
+          onPick: _pick,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: p),
+          child: CalendarGrid(
+            year: _viewMonth.year,
+            month: _viewMonth.month,
+            selectedDay: _selectedDate.day,
+            daysWithOrders: daysWithOrders,
+            onDayTap: _onDayTap,
+          ),
+        ),
+        const Divider(height: 1),
+        HistoryStatsBar(
+          orderCount: dayOrders.length,
+          itemCount: dayItems,
+          total: dayTotal,
+          t: t,
+        ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(t('history_title')),
@@ -109,47 +138,16 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             ),
         ],
       ),
-      body: cubit.state.isLoading && allOrders.isEmpty
-          ? HistoryShimmer(padding: p)
-          : Column(
-              children: [
-                HistoryMonthNav(
-                  t: t,
-                  year: _viewMonth.year,
-                  month: _viewMonth.month,
-                  onPrev: () => _shiftMonth(-1),
-                  onNext: () => _shiftMonth(1),
-                  onPick: _pick,
-                ),
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: CalendarGrid(
-                      year: _viewMonth.year,
-                      month: _viewMonth.month,
-                      selectedDay: _selectedDate.day,
-                      daysWithOrders: daysWithOrders,
-                      onDayTap: _onDayTap,
-                    ),
-                  ),
-                ),
-                const Divider(height: 1),
-                HistoryStatsBar(
-                  orderCount: dayOrders.length,
-                  itemCount: dayItems,
-                  total: dayTotal,
-                  t: t,
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: HistoryOrderList(
-                    orders: dayOrders,
-                    role: role,
-                    t: t,
-                  ),
-                ),
-              ],
-            ),
+      body: HistoryLayout(
+        calendar: calendar,
+        loading: cubit.state.isLoading,
+        isEmpty: allOrders.isEmpty,
+        dayOrders: dayOrders,
+        role: role,
+        t: t,
+        padding: p,
+        outlineVariant: cs.outlineVariant,
+      ),
     );
   }
 }

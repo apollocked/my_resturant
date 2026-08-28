@@ -84,7 +84,7 @@ class ReportPage extends StatelessWidget {
                       weekly,
                       const SizedBox(height: 24),
                     ],
-                    if (ranking != null) ranking,
+                    ?ranking,
                   ],
                 ],
               ),

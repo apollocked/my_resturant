@@ -48,7 +48,7 @@ class MenuFoodGrid extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: meals.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: R.menuGridColumns(context),
               childAspectRatio: R.menuGridAspectRatio(context),
               crossAxisSpacing: R.gridSpacing(context),
               mainAxisSpacing: R.gridSpacing(context),

@@ -36,7 +36,7 @@ class MenuLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (R.isDesktop(context)) {
+    if (!R.isPhone(context)) {
       return MenuDesktopLayout(
         cs: cs,
         t: t,
