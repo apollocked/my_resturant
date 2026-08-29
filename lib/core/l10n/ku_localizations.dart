@@ -34,3 +34,19 @@ class KuCupertinoLocalizationsDelegate
   @override
   bool shouldReload(covariant LocalizationsDelegate old) => false;
 }
+
+class KuWidgetsLocalizationsDelegate
+    extends LocalizationsDelegate<WidgetsLocalizations> {
+  const KuWidgetsLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'ku';
+
+  @override
+  Future<WidgetsLocalizations> load(Locale locale) async {
+    return GlobalWidgetsLocalizations.delegate.load(const Locale('ar'));
+  }
+
+  @override
+  bool shouldReload(covariant LocalizationsDelegate old) => false;
+}

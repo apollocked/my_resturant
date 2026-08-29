@@ -111,6 +111,7 @@ class _AppViewState extends State<AppView> {
       localizationsDelegates: const [
         KuMaterialLocalizationsDelegate(),
         KuCupertinoLocalizationsDelegate(),
+        KuWidgetsLocalizationsDelegate(),
         ...GlobalMaterialLocalizations.delegates,
       ],
       localeResolutionCallback: (locale, supported) {
