@@ -5,17 +5,15 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
 class HistoryOrderList extends StatelessWidget {
   final List<Order> orders;
   final String Function(String) t;
-  const HistoryOrderList({
-    super.key,
-    required this.orders,
-    required this.t,
-  });
+  const HistoryOrderList({super.key, required this.orders, required this.t});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +31,7 @@ class HistoryOrderList extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(p, 0, p, 100),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 1.0,
+          childAspectRatio: 1.5,
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
         ),
@@ -45,7 +43,11 @@ class HistoryOrderList extends StatelessWidget {
 
   Widget _tile(BuildContext context, Order order) {
     final cs = Theme.of(context).colorScheme;
+    final locale = context.watch<SettingsCubit>().state.locale;
     final isDesktop = R.screenSize(context) == ScreenSize.desktop;
+    final statusColor = OrderStatusStyle.color(order.status);
+    final time =
+        '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
     return PressableScale(
       onTap: () => context.push('/order-detail', extra: order),
       child: Container(
@@ -65,46 +67,130 @@ class HistoryOrderList extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                vertical: isDesktop ? 6 : 4,
-                horizontal: 8,
-              ),
-              color: AppColors.primary.withValues(alpha: 0.08),
-              child: Text(
-                _shortCode(order),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: R.fontSm(context) - 1,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      '${order.totalPrice.toInt()} ${t('currency_suffix')}',
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: R.fontLg(context),
-                        color: cs.onSurface,
-                      ),
+            _header(context, order, statusColor, time, isDesktop),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: isDesktop ? 8 : 6),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _tableRow(context, order, isDesktop),
+                  const SizedBox(height: 5),
+                  _statusChip(context, order, statusColor, locale, isDesktop),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${order.totalPrice.toInt()} ${t('currency_suffix')}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: isDesktop
+                          ? R.fontXl(context)
+                          : R.fontLg(context),
+                      color: AppColors.primary,
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _header(
+    BuildContext context,
+    Order order,
+    Color statusColor,
+    String time,
+    bool isDesktop,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        vertical: isDesktop ? 6 : 4,
+        horizontal: 10,
+      ),
+      color: statusColor.withValues(alpha: 0.1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(
+              _shortCode(order),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: R.fontSm(context) - 1,
+                fontWeight: FontWeight.w700,
+                color: statusColor,
+              ),
+            ),
+          ),
+          Text(
+            time,
+            style: TextStyle(
+              fontSize: R.fontSm(context) - 2,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tableRow(BuildContext context, Order order, bool isDesktop) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.table_restaurant_outlined,
+          size: isDesktop ? 16 : 14,
+          color: AppColors.primary,
+        ),
+        const SizedBox(width: 5),
+        Flexible(
+          child: Text(
+            order.displayTable,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: R.fontSm(context) - 1,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _statusChip(
+    BuildContext context,
+    Order order,
+    Color statusColor,
+    Locale locale,
+    bool isDesktop,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 10 : 8,
+        vertical: isDesktop ? 5 : 3,
+      ),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(
+        OrderStatusStyle.label(order.status, locale),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: R.fontSm(context) - 2,
+          fontWeight: FontWeight.w700,
+          color: statusColor,
         ),
       ),
     );
