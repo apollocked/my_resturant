@@ -148,7 +148,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         loading: cubit.state.isLoading,
         isEmpty: allOrders.isEmpty,
         dayOrders: dayOrders,
-        role: role,
         t: t,
         padding: p,
         outlineVariant: cs.outlineVariant,

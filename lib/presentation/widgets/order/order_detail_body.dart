@@ -35,15 +35,12 @@ class OrderDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasNext = order.status != OrderStatus.served &&
-        order.status != OrderStatus.cancelled;
-    final canCancel = order.status != OrderStatus.served &&
+    final isActive = order.status != OrderStatus.served &&
         order.status != OrderStatus.cancelled;
     final nextLabel = order.status == OrderStatus.pending
         ? t('next_prepare')
         : t('next_serve');
-    final time =
-        '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
+    final time = '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -92,14 +89,14 @@ class OrderDetailBody extends StatelessWidget {
         if (canEdit) ...[
           SizedBox(height: isDesktop ? 40 : 32),
           OrderDetailActionButton(
-            hasNext: hasNext,
+            hasNext: isActive,
             color: color,
             nextLabel: nextLabel,
             t: t,
             isDesktop: isDesktop,
             onNext: () => _next(context),
             onReset: () => _reset(context),
-            onCancel: canCancel ? () => _cancel(context) : null,
+            onCancel: isActive ? () => _cancel(context) : null,
           ),
         ],
       ],
@@ -129,10 +126,7 @@ class OrderDetailBody extends StatelessWidget {
   }
 
   Future<void> _next(BuildContext context) async {
-    await cubit.updateOrderStatus(
-      order.id,
-      OrderStatusStyle.next(order.status),
-    );
+    await cubit.updateOrderStatus(order.id, OrderStatusStyle.next(order.status));
     if (context.mounted) context.pop();
   }
 

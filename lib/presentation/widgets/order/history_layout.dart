@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/widgets/order/history_order_list.dart';
 import 'package:my_resturant/presentation/widgets/order/history_shimmer.dart';
 
@@ -10,7 +9,6 @@ class HistoryLayout extends StatelessWidget {
   final bool loading;
   final bool isEmpty;
   final List<Order> dayOrders;
-  final Role role;
   final String Function(String) t;
   final double padding;
   final Color outlineVariant;
@@ -20,7 +18,6 @@ class HistoryLayout extends StatelessWidget {
     required this.loading,
     required this.isEmpty,
     required this.dayOrders,
-    required this.role,
     required this.t,
     required this.padding,
     required this.outlineVariant,
@@ -32,7 +29,7 @@ class HistoryLayout extends StatelessWidget {
       return HistoryShimmer(padding: padding);
     }
     final orderList = Expanded(
-      child: HistoryOrderList(orders: dayOrders, role: role, t: t),
+      child: HistoryOrderList(orders: dayOrders, t: t),
     );
     if (!R.isPhone(context)) {
       return Row(
@@ -53,7 +50,9 @@ class HistoryLayout extends StatelessWidget {
     return Column(
       children: [
         calendar,
+        const SizedBox(height: 12),
         const Divider(height: 1),
+        const SizedBox(height: 8),
         orderList,
       ],
     );
