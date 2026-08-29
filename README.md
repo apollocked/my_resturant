@@ -36,18 +36,20 @@ Real-time orders · Role-based access · Offline-first · Fully responsive
 <details>
 <summary><strong>Order Management</strong></summary>
 
-- Real-time order flow: Pending → Preparing → Served
+- Real-time order flow: Pending → Preparing → Served → Cancelled
+- Cancel orders (with confirmation) when a customer leaves
 - Tracking codes with urgency timers
 - Add items to existing orders from the detail screen
 - "Order again" to restore past orders to cart
 - Order timeline with status history
+- Order history: scrollable 2-column grid with order number, table, status, and total
 
 </details>
 
 <details>
 <summary><strong>Kitchen & Table Operations</strong></summary>
 
-- Kitchen board with Active / Served / To-clean tabs
+- Kitchen board with Active / Served / To-clean tabs (cancelled excluded from revenue & stats)
 - Table management with configurable count, names, and reservation states
 - Table cleanup workflow with status tracking
 
@@ -58,7 +60,7 @@ Real-time orders · Role-based access · Offline-first · Fully responsive
 
 - Dish management with image upload, pricing, and descriptions
 - Categories with custom icons
-- Toggle dish availability from a dedicated screen
+- Toggle dish availability with an on/off switch — from the dedicated screen **and** the Food Management list
 - Search across the menu
 
 </details>
