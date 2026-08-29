@@ -48,33 +48,10 @@ class OrderActionBar extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (onCancel != null)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 8),
-                    child: PressableScale(
-                      onTap: onCancel,
-                      child: SizedBox(
-                        height: isDesktop ? 38.0 : 32.0,
-                        child: OutlinedButton.icon(
-                          onPressed: null,
-                          icon: const Icon(Icons.close, size: 14),
-                          label: Text(
-                            Tr.get('cancel', locale),
-                            style: TextStyle(
-                              fontSize: R.fontSm(context),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            disabledForegroundColor: cs.error,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppRadius.md),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                if (onCancel != null) ...[
+                  const SizedBox(width: 8),
+                  _cancelButton(context, cs),
+                ],
                 if (onNextStatus != null)
                   PressableScale(
                     onTap: onNextStatus,
