@@ -104,6 +104,8 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
                 cs: cs,
                 onEdit: _editRecipe,
                 onDelete: _confirmDelete,
+                onToggle: (r) =>
+                    context.read<OrderCubit>().toggleAvailability(r.id),
               ),
             ),
           ],
