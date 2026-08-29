@@ -40,7 +40,9 @@ class _KitchenPageState extends State<KitchenPage> {
         .toList();
     final cubit = context.read<OrderCubit>();
     final activeOrders = todayOrders
-        .where((o) => o.status != OrderStatus.served)
+        .where((o) =>
+            o.status != OrderStatus.served &&
+            o.status != OrderStatus.cancelled)
         .toList();
     final servedOrders = todayOrders
         .where((o) => o.status == OrderStatus.served)

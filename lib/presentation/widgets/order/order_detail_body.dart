@@ -35,7 +35,10 @@ class OrderDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasNext = order.status != OrderStatus.served;
+    final hasNext = order.status != OrderStatus.served &&
+        order.status != OrderStatus.cancelled;
+    final canCancel = order.status != OrderStatus.served &&
+        order.status != OrderStatus.cancelled;
     final nextLabel = order.status == OrderStatus.pending
         ? t('next_prepare')
         : t('next_serve');
@@ -96,6 +99,7 @@ class OrderDetailBody extends StatelessWidget {
             isDesktop: isDesktop,
             onNext: () => _next(context),
             onReset: () => _reset(context),
+            onCancel: canCancel ? () => _cancel(context) : null,
           ),
         ],
       ],
@@ -142,6 +146,19 @@ class OrderDetailBody extends StatelessWidget {
     );
     if (!confirmed || !context.mounted) return;
     await cubit.updateOrderStatus(order.id, OrderStatus.pending);
+    if (context.mounted) context.pop();
+  }
+
+  Future<void> _cancel(BuildContext context) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: t('cancel_order'),
+      message: t('cancel_order_confirm'),
+      confirmLabel: t('cancel_order'),
+      cancelLabel: t('cancel'),
+    );
+    if (!confirmed || !context.mounted) return;
+    await cubit.updateOrderStatus(order.id, OrderStatus.cancelled);
     if (context.mounted) context.pop();
   }
 }

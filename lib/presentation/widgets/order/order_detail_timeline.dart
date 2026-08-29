@@ -42,7 +42,7 @@ class OrderDetailTimeline extends StatelessWidget {
   }
 
   Widget _line(OrderStatus s) {
-    final reached = s.index <= current.index;
+    final reached = current != OrderStatus.cancelled && s.index <= current.index;
     return Container(
       height: isDesktop ? 3 : 2,
       color: reached ? OrderStatusStyle.color(s) : cs.outlineVariant,
@@ -50,11 +50,13 @@ class OrderDetailTimeline extends StatelessWidget {
   }
 
   Widget _label(String key, OrderStatus s) {
-    final bool active = s == OrderStatus.served
-        ? current == OrderStatus.served
-        : s == OrderStatus.preparing
-        ? current.index >= OrderStatus.preparing.index
-        : current == OrderStatus.pending;
+    final bool active =
+        current != OrderStatus.cancelled &&
+        (s == OrderStatus.served
+            ? current == OrderStatus.served
+            : s == OrderStatus.preparing
+            ? current.index >= OrderStatus.preparing.index
+            : current == OrderStatus.pending);
     return Flexible(
       child: Text(
         t(key),
@@ -69,7 +71,8 @@ class OrderDetailTimeline extends StatelessWidget {
   }
 
   Widget _dot(OrderStatus s) {
-    final isReached = s.index <= current.index;
+    final isReached =
+        current != OrderStatus.cancelled && s.index <= current.index;
     final c = OrderStatusStyle.color(s);
     final size = isDesktop ? 18.0 : 14.0;
     final iconS = isDesktop ? 10.0 : 8.0;

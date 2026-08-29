@@ -25,6 +25,7 @@ class OrderTableRow extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final showElapsed =
         status != OrderStatus.served &&
+        status != OrderStatus.cancelled &&
         DateTime.now().difference(createdAt).inMinutes > 0;
     return Row(
       mainAxisSize: MainAxisSize.min,

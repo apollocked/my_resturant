@@ -1,6 +1,6 @@
 import 'package:my_resturant/domain/entities/cart_item.dart';
 
-enum OrderStatus { pending, preparing, served }
+enum OrderStatus { pending, preparing, served, cancelled }
 
 class Order {
   final String id;

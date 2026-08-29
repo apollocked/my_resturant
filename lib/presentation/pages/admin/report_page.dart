@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/admin/report/foods_ranking.dart';
@@ -26,7 +27,10 @@ class ReportPage extends StatelessWidget {
     final weekData = List.generate(7, (i) => today.subtract(Duration(days: i)))
         .reversed
         .map((d) {
-          final orders = state.ordersByDate(d);
+          final orders = state
+              .ordersByDate(d)
+              .where((o) => o.status != OrderStatus.cancelled)
+              .toList();
           final rev = orders.fold(0.0, (s, o) => s + o.totalPrice);
           return ReportDay(date: d, count: orders.length, revenue: rev);
         })

@@ -33,14 +33,20 @@ class OrderState {
 
   int get cartCount => cart.fold(0, (s, i) => s + i.quantity);
   double get cartTotal => cart.fold(0.0, (s, i) => s + i.totalPrice);
+
+  List<Order> get completedOrders =>
+      orders.where((o) => o.status != OrderStatus.cancelled).toList();
+
   int get totalOrders => orders.length;
-  double get totalRevenue => orders.fold(0.0, (s, o) => s + o.totalPrice);
+  double get totalRevenue =>
+      completedOrders.fold(0.0, (s, o) => s + o.totalPrice);
   List<int> get tableNumbers => List.generate(tableCount, (i) => i + 1);
   Set<int> get reservedTables {
     final now = DateTime.now();
     return orders
         .where(
           (o) =>
+              o.status != OrderStatus.cancelled &&
               o.createdAt.year == now.year &&
               o.createdAt.month == now.month &&
               o.createdAt.day == now.day,
@@ -60,7 +66,7 @@ class OrderState {
 
   Map<String, int> get dishOrderCounts {
     final c = <String, int>{};
-    for (final o in orders) {
+    for (final o in completedOrders) {
       for (final i in o.items) {
         c[i.recipe.name] = (c[i.recipe.name] ?? 0) + i.quantity;
       }

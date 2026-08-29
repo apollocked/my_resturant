@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
@@ -89,11 +90,15 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         )
         .map((o) => o.createdAt.day)
         .toSet();
-    final dayTotal = dayOrders.fold(0.0, (s, o) => s + o.totalPrice);
-    final dayItems = dayOrders.fold(
-      0,
-      (s, o) => s + o.items.fold(0, (si, i) => si + i.quantity),
-    );
+    final dayTotal = dayOrders
+        .where((o) => o.status != OrderStatus.cancelled)
+        .fold(0.0, (s, o) => s + o.totalPrice);
+    final dayItems = dayOrders
+        .where((o) => o.status != OrderStatus.cancelled)
+        .fold(
+          0,
+          (s, o) => s + o.items.fold(0, (si, i) => si + i.quantity),
+        );
 
     final calendar = Column(
       children: [

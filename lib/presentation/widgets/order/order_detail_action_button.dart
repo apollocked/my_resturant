@@ -11,6 +11,7 @@ class OrderDetailActionButton extends StatelessWidget {
     required this.t,
     required this.onNext,
     required this.onReset,
+    this.onCancel,
     this.isDesktop = false,
   });
 
@@ -20,6 +21,7 @@ class OrderDetailActionButton extends StatelessWidget {
   final String Function(String) t;
   final VoidCallback onNext;
   final VoidCallback onReset;
+  final VoidCallback? onCancel;
   final bool isDesktop;
 
   @override
@@ -30,33 +32,55 @@ class OrderDetailActionButton extends StatelessWidget {
       fontWeight: FontWeight.w700,
       fontSize: isDesktop ? R.fontLg(context) : R.fontMd(context),
     );
-    return SizedBox(
-      width: double.infinity,
-      child: hasNext
-          ? PressableScale(
-              onTap: onNext,
-              child: FilledButton(
-                onPressed: null,
-                style: FilledButton.styleFrom(
-                  backgroundColor: color,
-                  disabledBackgroundColor: color,
-                  disabledForegroundColor: cs.onPrimary,
-                  padding: pad,
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: hasNext
+              ? PressableScale(
+                  onTap: onNext,
+                  child: FilledButton(
+                    onPressed: null,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: color,
+                      disabledBackgroundColor: color,
+                      disabledForegroundColor: cs.onPrimary,
+                      padding: pad,
+                    ),
+                    child: Text(nextLabel, style: style),
+                  ),
+                )
+              : PressableScale(
+                  onTap: onReset,
+                  child: OutlinedButton(
+                    onPressed: null,
+                    style: OutlinedButton.styleFrom(
+                      disabledForegroundColor: cs.onSurface,
+                      padding: pad,
+                    ),
+                    child: Text(t('again'), style: style),
+                  ),
                 ),
-                child: Text(nextLabel, style: style),
-              ),
-            )
-          : PressableScale(
-              onTap: onReset,
-              child: OutlinedButton(
+        ),
+        if (onCancel != null) ...[
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: PressableScale(
+              onTap: onCancel,
+              child: OutlinedButton.icon(
                 onPressed: null,
+                icon: const Icon(Icons.close, size: 18),
                 style: OutlinedButton.styleFrom(
-                  disabledForegroundColor: cs.onSurface,
+                  disabledForegroundColor: cs.error,
                   padding: pad,
                 ),
-                child: Text(t('again'), style: style),
+                label: Text(t('cancel_order'), style: style),
               ),
             ),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -46,7 +46,7 @@ class OrderTimeline extends StatelessWidget {
   }
 
   Widget _line(OrderStatus s, ColorScheme cs) {
-    final reached = s.index <= status.index;
+    final reached = status != OrderStatus.cancelled && s.index <= status.index;
     return Container(
       height: 2,
       color: reached ? OrderStatusStyle.color(s) : cs.outlineVariant,
@@ -59,11 +59,12 @@ class OrderTimeline extends StatelessWidget {
     OrderStatus s,
     ColorScheme cs,
   ) {
-    final bool active = s == OrderStatus.served
-        ? status == OrderStatus.served
-        : s == OrderStatus.preparing
-        ? status.index >= OrderStatus.preparing.index
-        : status == OrderStatus.pending;
+    final bool active = status != OrderStatus.cancelled &&
+        (s == OrderStatus.served
+            ? status == OrderStatus.served
+            : s == OrderStatus.preparing
+            ? status.index >= OrderStatus.preparing.index
+            : status == OrderStatus.pending);
     return Text(
       Tr.get(key, locale),
       style: TextStyle(
@@ -74,7 +75,8 @@ class OrderTimeline extends StatelessWidget {
   }
 
   Widget _dot(OrderStatus s, ColorScheme cs) {
-    final isReached = s.index <= status.index;
+    final isReached =
+        status != OrderStatus.cancelled && s.index <= status.index;
     final c = OrderStatusStyle.color(s);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),

@@ -8,6 +8,7 @@ class OrderStatusStyle {
     OrderStatus.pending: AppColors.warning,
     OrderStatus.preparing: AppColors.info,
     OrderStatus.served: AppColors.success,
+    OrderStatus.cancelled: AppColors.error,
   };
 
   static Color color(OrderStatus s) => colors[s]!;
@@ -17,7 +18,9 @@ class OrderStatusStyle {
         ? 'status_pending'
         : s == OrderStatus.preparing
         ? 'status_preparing'
-        : 'status_served',
+        : s == OrderStatus.served
+        ? 'status_served'
+        : 'status_cancelled',
     locale,
   );
 

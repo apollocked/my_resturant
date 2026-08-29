@@ -54,7 +54,8 @@ class KitchenOrderList extends StatelessWidget {
       );
     }
     final widgets = orders.map((o) {
-      final hasNext = o.status != OrderStatus.served;
+      final hasNext =
+          o.status != OrderStatus.served && o.status != OrderStatus.cancelled;
       return PressableScale(
         onTap: () => context.push('/order-detail', extra: o),
         child: OrderCard(
@@ -65,6 +66,20 @@ class KitchenOrderList extends StatelessWidget {
                   o.id,
                   OrderStatusStyle.next(o.status),
                 )
+              : null,
+          onCancel: canEdit && hasNext
+              ? () async {
+                  final confirmed = await showConfirmDialog(
+                    context,
+                    title: t('cancel_order'),
+                    message: t('cancel_order_confirm'),
+                    confirmLabel: t('cancel_order'),
+                    cancelLabel: t('cancel'),
+                  );
+                  if (confirmed) {
+                    cubit.updateOrderStatus(o.id, OrderStatus.cancelled);
+                  }
+                }
               : null,
           onReset: canEdit && !hasNext
               ? () async {

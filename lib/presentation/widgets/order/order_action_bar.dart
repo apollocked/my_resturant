@@ -15,6 +15,7 @@ class OrderActionBar extends StatelessWidget {
     this.clockTime,
     this.onNextStatus,
     this.onReset,
+    this.onCancel,
     this.isDesktop = false,
   });
 
@@ -24,6 +25,7 @@ class OrderActionBar extends StatelessWidget {
   final String? clockTime;
   final VoidCallback? onNextStatus;
   final VoidCallback? onReset;
+  final VoidCallback? onCancel;
   final bool isDesktop;
 
   @override
@@ -41,35 +43,70 @@ class OrderActionBar extends StatelessWidget {
               color: cs.onSurfaceVariant,
             ),
           )
-        else if (onNextStatus != null)
+        else if (onNextStatus != null || onCancel != null)
           Flexible(
-            child: PressableScale(
-              onTap: onNextStatus,
-              child: SizedBox(
-                height: isDesktop ? 38.0 : 32.0,
-                child: FilledButton.icon(
-                  onPressed: null,
-                  icon: Icon(
-                    Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back : Icons.arrow_forward,
-                    size: isDesktop ? 16.0 : 14.0,
-                  ),
-                  label: Text(
-                    OrderStatusStyle.nextLabel(status, locale),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: R.fontSm(context),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (onCancel != null)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: PressableScale(
+                      onTap: onCancel,
+                      child: SizedBox(
+                        height: isDesktop ? 38.0 : 32.0,
+                        child: OutlinedButton.icon(
+                          onPressed: null,
+                          icon: const Icon(Icons.close, size: 14),
+                          label: Text(
+                            Tr.get('cancel', locale),
+                            style: TextStyle(
+                              fontSize: R.fontSm(context),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            disabledForegroundColor: cs.error,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: color,
-                    disabledBackgroundColor: color,
-                    disabledForegroundColor: cs.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.md),
+                if (onNextStatus != null)
+                  PressableScale(
+                    onTap: onNextStatus,
+                    child: SizedBox(
+                      height: isDesktop ? 38.0 : 32.0,
+                      child: FilledButton.icon(
+                        onPressed: null,
+                        icon: Icon(
+                          Directionality.of(context) == TextDirection.rtl
+                              ? Icons.arrow_back
+                              : Icons.arrow_forward,
+                          size: isDesktop ? 16.0 : 14.0,
+                        ),
+                        label: Text(
+                          OrderStatusStyle.nextLabel(status, locale),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: R.fontSm(context),
+                          ),
+                        ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: color,
+                          disabledBackgroundColor: color,
+                          disabledForegroundColor: cs.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+              ],
             ),
           )
         else if (onReset != null)

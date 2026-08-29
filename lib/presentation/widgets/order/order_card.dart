@@ -15,6 +15,7 @@ class OrderCard extends StatelessWidget {
   final bool showTimeline;
   final VoidCallback? onNextStatus;
   final VoidCallback? onReset;
+  final VoidCallback? onCancel;
   const OrderCard({
     super.key,
     required this.order,
@@ -22,6 +23,7 @@ class OrderCard extends StatelessWidget {
     this.showTimeline = false,
     this.onNextStatus,
     this.onReset,
+    this.onCancel,
   });
 
   @override
@@ -109,6 +111,7 @@ class OrderCard extends StatelessWidget {
                   : null,
               onNextStatus: onNextStatus,
               onReset: onReset,
+              onCancel: onCancel,
               isDesktop: isDesktop,
             ),
           ],
