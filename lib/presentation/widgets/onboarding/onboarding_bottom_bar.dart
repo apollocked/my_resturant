@@ -49,7 +49,16 @@ class OnboardingBottomBar extends StatelessWidget {
                 children: [
                   Text(label, style: TextStyle(color: cs.onPrimary, fontWeight: FontWeight.w700, fontSize: R.fontMd(context), letterSpacing: 0.3)),
                   const SizedBox(width: 10),
-                  Icon(Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, color: cs.onPrimary, size: 20),
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Icon(
+                      _isRtl(context)
+                          ? Icons.arrow_back
+                          : Icons.arrow_forward,
+                      color: cs.onPrimary,
+                      size: 20,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -57,5 +66,10 @@ class OnboardingBottomBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool _isRtl(BuildContext context) {
+    final lc = Localizations.localeOf(context).languageCode;
+    return lc == 'ar' || lc == 'ku';
   }
 }
