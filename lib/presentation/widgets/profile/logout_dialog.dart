@@ -30,8 +30,8 @@ class LogoutDialog extends StatelessWidget {
           style: FilledButton.styleFrom(backgroundColor: AppColors.error),
           onPressed: () async {
             Navigator.pop(context);
-            await roleCubit.logout();
             await accountCubit.logout();
+            await roleCubit.logout();
             if (!context.mounted) return;
             context.go('/account-auth');
           },
