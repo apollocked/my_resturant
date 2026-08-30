@@ -85,7 +85,7 @@ class AuthScaffold extends StatelessWidget {
                     ),
                   ),
                   if (trailing != null)
-                    Positioned(top: 8, end: 8, child: trailing!),
+                    Positioned(top: 8, left: 8, child: trailing!),
                 ],
               ),
             ),
@@ -101,9 +101,7 @@ class AuthScaffold extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [color, color.withValues(alpha: 0)],
-        ),
+        gradient: RadialGradient(colors: [color, color.withValues(alpha: 0)]),
       ),
     );
   }

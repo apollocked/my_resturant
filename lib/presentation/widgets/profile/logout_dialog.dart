@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/presentation/cubits/account_cubit.dart';
-import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 
 class LogoutDialog extends StatelessWidget {
-  const LogoutDialog({
-    super.key,
-    required this.accountCubit,
-    required this.roleCubit,
-    required this.t,
-  });
+  const LogoutDialog({super.key, required this.t});
 
-  final AccountCubit accountCubit;
-  final RoleCubit roleCubit;
   final String Function(String) t;
 
   @override
@@ -28,13 +18,7 @@ class LogoutDialog extends StatelessWidget {
         ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-          onPressed: () async {
-            Navigator.pop(context);
-            await accountCubit.logout();
-            await roleCubit.logout();
-            if (!context.mounted) return;
-            context.go('/account-auth');
-          },
+          onPressed: () => Navigator.pop(context, true),
           child: Text(
             t('logout'),
             style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),

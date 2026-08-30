@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
@@ -63,26 +65,37 @@ class ProfileDialogs {
     );
 
     if (!context.mounted) return;
-    if (ok != true && cubit.state.role != r) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t('pin_invalid')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+    if (ok == true || cubit.state.role == r) {
+      final home = homeForRole(cubit.state.role);
+      if (home != '/profile' && context.mounted) {
+        context.go(home);
+      }
+      return;
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(t('pin_invalid')),
+        backgroundColor: AppColors.error,
+      ),
+    );
   }
 
-  static void confirmLogout(
+  static Future<void> confirmLogout(
     BuildContext context,
     AccountCubit acct,
     RoleCubit role,
     String Function(String) t,
-  ) {
-    showDialog(
+  ) async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => LogoutDialog(accountCubit: acct, roleCubit: role, t: t),
+      builder: (_) => LogoutDialog(t: t),
     );
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+    await acct.logout();
+    await role.logout();
+    if (!context.mounted) return;
+    context.go('/account-auth');
   }
 
   static void showUpdateEmail(

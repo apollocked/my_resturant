@@ -134,11 +134,6 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<void> logout() async {
-    try {
-      await _repo.saveLoggedInRole(null);
-    } catch (e, st) {
-      debugPrint('RoleCubit.logout error (best-effort): $e\n$st');
-    }
     await clearLocalRole();
     emit(const RoleState(isConfigured: true));
   }

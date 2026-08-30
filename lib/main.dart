@@ -46,6 +46,9 @@ void main() async {
   final role = RoleCubit(repo: authRepo);
   await role.load();
   final settings = await SettingsCubit.create();
+  acct.stream.listen((_) => routeRefresh.value++);
+  role.stream.listen((_) => routeRefresh.value++);
+  settings.stream.listen((_) => routeRefresh.value++);
   final printer = PrinterCubit(PrinterService());
   await printer.init();
   runApp(MyApp(

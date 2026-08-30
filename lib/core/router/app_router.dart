@@ -32,6 +32,11 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 
+/// Bumped whenever Account/Role/Settings state changes so the router
+/// re-evaluates its [redirect] callback (go_router has no other way to
+/// react to non-navigation state changes).
+final ValueNotifier<int> routeRefresh = ValueNotifier<int>(0);
+
 final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/promo-codes', '/change-passcodes', '/printer-settings'];
 
 bool _roleAllowed(Role role, String loc) {
@@ -51,7 +56,7 @@ bool _roleAllowed(Role role, String loc) {
   }
 }
 
-String _homeFor(Role role) {
+String homeForRole(Role role) {
   switch (role) {
     case Role.admin:
       return '/menu';
@@ -65,6 +70,7 @@ String _homeFor(Role role) {
 final appRouter = GoRouter(
   navigatorKey: _rootNavigator,
   initialLocation: '/menu',
+  refreshListenable: routeRefresh,
   redirect: (context, state) {
     final acct = context.read<AccountCubit>().state;
     final rs = context.read<RoleCubit>().state;
@@ -83,11 +89,11 @@ final appRouter = GoRouter(
     } else if (!rs.isLoggedIn) {
       result = loc != '/role-login' ? '/role-login' : null;
     } else if (loc == '/role-login') {
-      result = _homeFor(rs.role);
+      result = homeForRole(rs.role);
     } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
-      result = _homeFor(rs.role);
+      result = homeForRole(rs.role);
     } else if (!_roleAllowed(rs.role, loc)) {
-      result = _homeFor(rs.role);
+      result = homeForRole(rs.role);
     } else if (loc == '/order-detail' && state.extra is! Order) {
       result = '/menu';
     }
