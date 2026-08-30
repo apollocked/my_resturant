@@ -26,7 +26,7 @@ class AuthFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final email = AuthTextField(
       controller: emailCtl,
-      icon: Icons.email_outlined,
+      icon: Icons.alternate_email_rounded,
       label: t('email'),
       keyboardType: TextInputType.emailAddress,
       validator: (v) =>
@@ -34,7 +34,7 @@ class AuthFields extends StatelessWidget {
     );
     final password = AuthTextField(
       controller: passCtl,
-      icon: Icons.lock_outlined,
+      icon: Icons.lock_outline_rounded,
       label: t('password'),
       obscure: true,
       obscureText: obscure,
@@ -44,7 +44,7 @@ class AuthFields extends StatelessWidget {
     );
     final confirm = AuthTextField(
       controller: confirmCtl,
-      icon: Icons.lock_outlined,
+      icon: Icons.lock_outline_rounded,
       label: t('confirm_password'),
       obscure: true,
       obscureText: obscure,

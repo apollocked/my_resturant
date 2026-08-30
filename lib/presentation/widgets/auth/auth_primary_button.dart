@@ -20,7 +20,7 @@ class AuthPrimaryButton extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 52,
       child: PressableScale(
         onTap: loading ? null : onTap,
         child: FilledButton(
@@ -35,19 +35,26 @@ class AuthPrimaryButton extends StatelessWidget {
           ),
           child: loading
               ? SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: 22,
+                  height: 22,
                   child: CircularProgressIndicator(
-                    strokeWidth: 2,
+                    strokeWidth: 2.5,
                     color: cs.onPrimary,
                   ),
                 )
-              : Text(
-                  label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: R.fontMd(context),
-                  ),
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.login_rounded, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: R.fontMd(context),
+                      ),
+                    ),
+                  ],
                 ),
         ),
       ),

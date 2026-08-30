@@ -36,7 +36,9 @@ class AuthTextField extends StatelessWidget {
         suffixIcon: obscure
             ? IconButton(
                 icon: Icon(
-                  isObscured ? Icons.visibility_off : Icons.visibility,
+                  isObscured
+                      ? Icons.visibility_off_rounded
+                      : Icons.visibility_rounded,
                   size: 20,
                 ),
                 onPressed: onToggleObscure,

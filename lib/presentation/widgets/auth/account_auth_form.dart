@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_error_banner.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_fields.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_google_button.dart';
@@ -7,6 +6,7 @@ import 'package:my_resturant/presentation/widgets/auth/auth_header.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_loading_overlay.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_or_divider.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_primary_button.dart';
+import 'package:my_resturant/presentation/widgets/auth/auth_scaffold.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_toggle_link.dart';
 
 class AccountAuthForm extends StatelessWidget {
@@ -45,64 +45,60 @@ class AccountAuthForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(R.padding(context)),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 460),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AuthHeader(isSignUp: isSignUp, t: t),
-                        SizedBox(height: R.gridSpacing(context)),
-                        AuthFields(
-                          emailCtl: emailCtl,
-                          passCtl: passCtl,
-                          confirmCtl: confirmCtl,
-                          isSignUp: isSignUp,
-                          obscure: obscure,
-                          onToggleObscure: onToggleObscure,
-                          t: t,
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        AuthPrimaryButton(
-                          loading: loading,
-                          onTap: onSubmit,
-                          label: isSignUp
-                              ? t('create_account_btn')
-                              : t('login'),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        AuthOrDivider(label: t('or')),
-                        SizedBox(height: R.gridSpacing(context)),
-                        AuthGoogleButton(
-                          loading: loading,
-                          onTap: onGoogleSignIn,
-                          label: t('google_sign_in'),
-                        ),
-                        SizedBox(height: R.gridSpacing(context)),
-                        AuthErrorBanner(error: error, t: t),
-                        AuthToggleLink(
-                          isSignUp: isSignUp,
-                          t: t,
-                          onToggle: onToggleMode,
-                        ),
-                      ],
-                    ),
-                  ),
+    return Stack(
+      children: [
+        AuthScaffold(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AuthHeader(isSignUp: isSignUp, t: t),
+                const SizedBox(height: 26),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Colors.black.withValues(alpha: 0.06),
                 ),
-              ),
+                const SizedBox(height: 22),
+                AuthFields(
+                  emailCtl: emailCtl,
+                  passCtl: passCtl,
+                  confirmCtl: confirmCtl,
+                  isSignUp: isSignUp,
+                  obscure: obscure,
+                  onToggleObscure: onToggleObscure,
+                  t: t,
+                ),
+                const SizedBox(height: 20),
+                AuthPrimaryButton(
+                  loading: loading,
+                  onTap: onSubmit,
+                  label: isSignUp
+                      ? t('create_account_btn')
+                      : t('login'),
+                ),
+                const SizedBox(height: 18),
+                AuthOrDivider(label: t('or')),
+                const SizedBox(height: 18),
+                AuthGoogleButton(
+                  loading: loading,
+                  onTap: onGoogleSignIn,
+                  label: t('google_sign_in'),
+                ),
+                const SizedBox(height: 8),
+                AuthErrorBanner(error: error, t: t),
+                AuthToggleLink(
+                  isSignUp: isSignUp,
+                  t: t,
+                  onToggle: onToggleMode,
+                ),
+              ],
             ),
           ),
-          if (loading) AuthLoadingOverlay(scrim: scrim),
-        ],
-      ),
+        ),
+        if (loading) AuthLoadingOverlay(scrim: scrim),
+      ],
     );
   }
 }
