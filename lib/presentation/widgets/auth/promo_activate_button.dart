@@ -8,10 +8,12 @@ class PromoActivateButton extends StatelessWidget {
     super.key,
     required this.loading,
     required this.onTap,
+    required this.t,
   });
 
   final bool loading;
   final VoidCallback? onTap;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class PromoActivateButton extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Activate',
+                  t('activate'),
                   style: TextStyle(
                     fontSize: R.fontMd(context),
                     fontWeight: FontWeight.w700,

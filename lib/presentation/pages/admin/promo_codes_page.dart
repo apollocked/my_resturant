@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/admin/promo_code_dialogs.dart';
 import 'package:my_resturant/presentation/widgets/admin/promo_code_list.dart';
 import 'package:my_resturant/presentation/widgets/admin/promo_code_table.dart';
@@ -45,7 +48,9 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   }
 
   Future<void> _createCode() async {
-    final result = await showCreatePromoCodeDialog(context);
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final result = await showCreatePromoCodeDialog(context, t);
     if (result == null) return;
     final code = result['code'] as String;
     final months = result['months'] as int;
@@ -58,7 +63,11 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Code "$code" created (expires in $months months)'),
+          content: Text(
+            t('promo_created')
+                .replaceAll('{code}', code)
+                .replaceAll('{months}', '$months'),
+          ),
           backgroundColor: AppColors.primary,
         ),
       );
@@ -70,7 +79,9 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   }
 
   Future<void> _deleteCode(String code) async {
-    final confirm = await showDeletePromoCodeDialog(context, code);
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final confirm = await showDeletePromoCodeDialog(context, code, t);
     if (confirm != true) return;
     try {
       await _db.from('promo_codes').delete().eq('code', code);
@@ -83,9 +94,11 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   }
 
   void _showError(Object e) {
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Error: $e'),
+        content: Text(t('error_prefix').replaceAll('{error}', '$e')),
         backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
@@ -94,16 +107,18 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = R.isDesktop(context);
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Promo Codes'),
+        title: Text(t('promo_codes_title')),
         actions: [
           Padding(
             padding: const EdgeInsetsDirectional.only(end: 12),
             child: FilledButton.icon(
               onPressed: _createCode,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('New Code'),
+              label: Text(t('promo_new_code')),
             ),
           ),
         ],
@@ -111,18 +126,16 @@ class _PromoCodesPageState extends State<PromoCodesPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _codes.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               icon: Icons.vpn_key_off_outlined,
-              title: 'No promo codes yet',
-              subtitle:
-                  'Create a code to let restaurants activate '
-                  'their account.',
+              title: t('promo_empty_title'),
+              subtitle: t('promo_empty_subtitle'),
             )
           : RefreshIndicator(
               onRefresh: _load,
               child: isDesktop
-                  ? PromoCodeTable(codes: _codes, onDelete: _deleteCode)
-                  : PromoCodeList(codes: _codes, onDelete: _deleteCode),
+                  ? PromoCodeTable(codes: _codes, onDelete: _deleteCode, t: t)
+                  : PromoCodeList(codes: _codes, onDelete: _deleteCode, t: t),
             ),
     );
   }

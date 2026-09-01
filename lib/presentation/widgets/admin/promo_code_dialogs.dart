@@ -9,6 +9,7 @@ String _generateCode() {
 
 Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
   BuildContext context,
+  String Function(String) t,
 ) async {
   final controller = TextEditingController();
   int selectedMonths = 12;
@@ -17,7 +18,7 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setDialogState) => AlertDialog(
         scrollable: true,
-        title: const Text('New Promo Code'),
+        title: Text(t('promo_new_title')),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -27,10 +28,10 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
                 autofocus: true,
                 textCapitalization: TextCapitalization.characters,
                 decoration: InputDecoration(
-                  hintText: 'Enter code or tap generate',
+                  hintText: t('promo_hint'),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.casino_outlined, size: 20),
-                    tooltip: 'Generate random',
+                    tooltip: t('promo_generate'),
                     onPressed: () {
                       controller.text = _generateCode();
                       controller.selection = TextSelection.collapsed(
@@ -43,14 +44,14 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
               const SizedBox(height: 16),
               DropdownButtonFormField<int>(
                 initialValue: selectedMonths,
-                decoration: const InputDecoration(
-                  labelText: 'Expires in',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: t('promo_expires_in'),
+                  border: const OutlineInputBorder(),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 3, child: Text('3 Months')),
-                  DropdownMenuItem(value: 6, child: Text('6 Months')),
-                  DropdownMenuItem(value: 12, child: Text('1 Year')),
+                items: [
+                  DropdownMenuItem(value: 3, child: Text(t('months_3'))),
+                  DropdownMenuItem(value: 6, child: Text(t('months_6'))),
+                  DropdownMenuItem(value: 12, child: Text(t('months_12'))),
                 ],
                 onChanged: (v) {
                   if (v != null) setDialogState(() => selectedMonths = v);
@@ -62,7 +63,7 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(t('cancel')),
           ),
           FilledButton(
             onPressed: () {
@@ -72,7 +73,7 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
                 'months': selectedMonths,
               });
             },
-            child: const Text('Create'),
+            child: Text(t('create')),
           ),
         ],
       ),
@@ -80,23 +81,27 @@ Future<Map<String, dynamic>?> showCreatePromoCodeDialog(
   );
 }
 
-Future<bool?> showDeletePromoCodeDialog(BuildContext context, String code) {
+Future<bool?> showDeletePromoCodeDialog(
+  BuildContext context,
+  String code,
+  String Function(String) t,
+) {
   return showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Delete Code?'),
-      content: Text('Delete promo code "$code"?'),
+      title: Text(t('promo_delete_title')),
+      content: Text(t('promo_delete_confirm').replaceAll('{code}', code)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Cancel'),
+          child: Text(t('cancel')),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: FilledButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
-          child: const Text('Delete'),
+          child: Text(t('delete')),
         ),
       ],
     ),

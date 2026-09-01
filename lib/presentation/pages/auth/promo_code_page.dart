@@ -39,6 +39,9 @@ class _PromoCodePageState extends State<PromoCodePage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final settings = context.watch<SettingsCubit>().state;
+    final locale = settings.locale;
+    String t(String key) => Tr.get(key, locale);
     final acct = context.watch<AccountCubit>().state;
     if (acct.isActivated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -58,7 +61,7 @@ class _PromoCodePageState extends State<PromoCodePage> {
                   const PromoHeroIcon(),
                   const SizedBox(height: 24),
                   Text(
-                    'Enter Promo Code',
+                    t('promo_title'),
                     style: TextStyle(
                       fontSize: R.fontXl(context),
                       fontWeight: FontWeight.w800,
@@ -67,7 +70,7 @@ class _PromoCodePageState extends State<PromoCodePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Contact the developer to get your activation code.',
+                    t('promo_subtitle'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: R.fontMd(context),
@@ -84,8 +87,8 @@ class _PromoCodePageState extends State<PromoCodePage> {
                     const SizedBox(height: 12),
                     PromoErrorText(
                       message: acct.errorMessage == 'err_invalid_promo'
-                          ? 'Invalid or already used promo code.'
-                          : 'Something went wrong.',
+                          ? t('promo_invalid')
+                          : t('promo_error_general'),
                       cs: cs,
                     ),
                   ],
@@ -93,6 +96,7 @@ class _PromoCodePageState extends State<PromoCodePage> {
                   PromoActivateButton(
                     loading: _loading,
                     onTap: _loading ? null : _submit,
+                    t: t,
                   ),
                 ],
               ),

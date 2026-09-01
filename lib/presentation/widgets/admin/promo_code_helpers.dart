@@ -8,10 +8,10 @@ bool isPromoExpired(Map<String, dynamic> code) {
   return d != null && d.isBefore(DateTime.now());
 }
 
-String promoStatusText(Map<String, dynamic> code) {
-  if (code['used_by'] != null) return 'Used';
-  if (isPromoExpired(code)) return 'Expired';
-  return 'Available';
+String promoStatusText(Map<String, dynamic> code, String Function(String) t) {
+  if (code['used_by'] != null) return t('promo_status_used');
+  if (isPromoExpired(code)) return t('promo_status_expired');
+  return t('promo_status_available');
 }
 
 Color promoStatusColor(Map<String, dynamic> code) {
