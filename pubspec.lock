@@ -989,6 +989,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  libserialport_plus:
+    dependency: transitive
+    description:
+      name: libserialport_plus
+      sha256: "90609c55b05668fd33d4aeea22cc795037adc67891b032fba7ff42f93a29e678"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   lints:
     dependency: transitive
     description:
@@ -1037,6 +1045,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  native_toolchain_c:
+    dependency: transitive
+    description:
+      name: native_toolchain_c
+      sha256: "9d233b6f2d9c52e1a2b5fbe70451d2c10ac674d3bb419d0ec8de14989d437c26"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.4"
   nested:
     dependency: transitive
     description:
@@ -1045,6 +1061,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  network_info_plus:
+    dependency: transitive
+    description:
+      name: network_info_plus
+      sha256: "2866dadcbee2709e20d67737a1556f5675b8b0cdcf2c1659ba74bc21bffede4f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  network_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: network_info_plus_platform_interface
+      sha256: "7e7496a8a9d8136859b8881affc613c4a21304afeb6c324bcefc4bd0aff6b94b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   nm:
     dependency: transitive
     description:
@@ -1245,6 +1277,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.9.1"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      sha256: "4242ba3508d37e01808bdf71ad1d5bb93a8d671bf2e7450e6b1b353fb0808891"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.6"
   provider:
     dependency: transitive
     description:
@@ -1570,6 +1610,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  unified_esc_pos_printer:
+    dependency: "direct main"
+    description:
+      name: unified_esc_pos_printer
+      sha256: "430a33968d2fa080bb31df9190d221dcd52f25a083e546debab032737f17cc9c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.0"
   universal_io:
     dependency: transitive
     description:
@@ -1642,6 +1690,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.5"
+  usb_serial:
+    dependency: transitive
+    description:
+      name: usb_serial
+      sha256: a605a600e34e7f28d4e80851ca3999ef747e42e406138887b8a88b8c382a8b07
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   uuid:
     dependency: "direct main"
     description:

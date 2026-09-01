@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
+import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/widgets/admin/bt_scan_sheet.dart';
 
 class PrinterConnectionSection extends StatelessWidget {
   const PrinterConnectionSection({
@@ -38,12 +40,14 @@ class PrinterConnectionSection extends StatelessWidget {
             final icon = switch (ct) {
               PrinterConnectionType.network => Icons.wifi,
               PrinterConnectionType.bluetooth => Icons.bluetooth,
+              PrinterConnectionType.usb => Icons.usb,
               PrinterConnectionType.sunmi => Icons.phone_android,
               PrinterConnectionType.none => Icons.power_off,
             };
             final label = switch (ct) {
               PrinterConnectionType.network => t('conn_wifi_lan'),
               PrinterConnectionType.bluetooth => t('conn_bluetooth'),
+              PrinterConnectionType.usb => t('conn_usb'),
               PrinterConnectionType.sunmi => t('conn_sunmi'),
               PrinterConnectionType.none => t('conn_disabled'),
             };
@@ -70,8 +74,25 @@ class PrinterConnectionSection extends StatelessWidget {
           const SizedBox(height: 20),
           _label(t('mac_address'), cs),
           const SizedBox(height: 8),
-          _field(macCtl, Icons.bluetooth, 'AA:BB:CC:DD:EE:FF'),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: _field(macCtl, Icons.bluetooth, 'AA:BB:CC:DD:EE:FF')),
+              const SizedBox(width: 8),
+              FilledButton.tonalIcon(
+                onPressed: () => scanBluetooth(context, macCtl),
+                icon: const Icon(Icons.radar, size: 18),
+                label: Text(t('bt_scan')),
+              ),
+            ],
+          ),
         ],
+        if (type == PrinterConnectionType.usb) ...[
+          const SizedBox(height: 20),
+          _label(t('usb_hint'), cs),
+        ],
+        const SizedBox(height: 20),
+        _StatusBanner(connectionType: type),
       ],
     );
   }
@@ -97,6 +118,53 @@ class PrinterConnectionSection extends StatelessWidget {
           horizontal: 12,
           vertical: 12,
         ),
+      ),
+    );
+  }
+}
+
+class _StatusBanner extends StatelessWidget {
+  const _StatusBanner({required this.connectionType});
+  final PrinterConnectionType connectionType;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
+    final connected = context.watch<PrinterCubit>().state.isConnected;
+    final disabled = connectionType == PrinterConnectionType.none;
+    final ok = !disabled && connected;
+
+    final (color, icon, text) = disabled
+        ? (cs.outlineVariant, Icons.power_off, t('conn_disabled'))
+        : ok
+            ? (Colors.green, Icons.link, t('printer_connected'))
+            : (cs.error, Icons.link_off, t('printer_not_connected'));
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: cs.onSurface,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

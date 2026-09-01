@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum PrinterConnectionType { network, bluetooth, sunmi, none }
+enum PrinterConnectionType { network, bluetooth, usb, sunmi, none }
 
 class PrinterConfig {
   final PrinterConnectionType connectionType;

@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
-import 'package:my_resturant/core/services/bt_printer_helper.dart';
+import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
+    hide PrinterConnectionType;
 import 'package:my_resturant/core/services/printer_config.dart';
+import 'package:my_resturant/core/services/printer_transport.dart';
 import 'package:my_resturant/core/services/receipt_formatter.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 
@@ -11,10 +13,18 @@ class PrinterService {
   PrinterConfig get config => _config;
   bool _connected = false;
   bool get isConnected => _connected;
-  Socket? _socket;
-  final _bt = BtPrinterHelper();
+  final _transport = PrinterTransport();
+  StreamSubscription<PrinterConnectionState>? _sub;
   final _statusController = StreamController<bool>.broadcast();
   Stream<bool> get statusStream => _statusController.stream;
+
+  PrinterService() {
+    _sub = _transport.stateStream.listen((s) {
+      if (!_statusController.isClosed) {
+        _statusController.add(s == PrinterConnectionState.connected);
+      }
+    });
+  }
 
   Future<void> init() async {
     _config = await PrinterPrefs.load();
@@ -30,98 +40,77 @@ class PrinterService {
 
   Future<bool> connect() async {
     if (_config.connectionType == PrinterConnectionType.none) return false;
-    try {
-      switch (_config.connectionType) {
-        case PrinterConnectionType.network:
-          return await _connectNetwork();
-        case PrinterConnectionType.bluetooth:
-          return await _connectBluetooth();
-        case PrinterConnectionType.sunmi:
-          _connected = true;
-          _statusController.add(true);
-          return true;
-        case PrinterConnectionType.none:
-          return false;
-      }
-    } catch (_) {
-      _connected = false;
-      _statusController.add(false);
-      return false;
-    }
-  }
-
-  Future<bool> _connectNetwork() async {
-    if (_config.host.isEmpty) return false;
-    try {
-      _socket = await Socket.connect(
-        _config.host, _config.port,
-        timeout: const Duration(seconds: 5),
-      );
-      _connected = true;
-      _statusController.add(true);
+    // Sunmi devices expose a built-in ESC/POS printer handled by OS services;
+    // no external transport is required.
+    if (_config.connectionType == PrinterConnectionType.sunmi) {
+      _setConnected(true);
       return true;
-    } catch (_) {
-      _connected = false;
-      _statusController.add(false);
-      return false;
     }
-  }
-
-  Future<bool> _connectBluetooth() async {
-    final mac = _config.macAddress?.trim() ?? '';
-    if (mac.isEmpty) return false;
-    final ok = await _bt.connect(mac);
-    _connected = ok;
-    _statusController.add(ok);
+    final ok = await _transport.connect(
+      kind: _toKind(_config.connectionType),
+      host: _config.host,
+      port: _config.port,
+      mac: _config.macAddress,
+    );
+    _setConnected(ok);
     return ok;
   }
 
+  List<PrinterDevice>? _lastScan;
+  List<PrinterDevice> get lastScan => _lastScan ?? const [];
+
+  Future<List<PrinterDevice>> scan() async {
+    _lastScan = await _transport.scanPrinters();
+    return _lastScan!;
+  }
+
   Future<void> disconnect() async {
-    await _socket?.close();
-    _socket = null;
-    await _bt.disconnect();
-    _connected = false;
-    _statusController.add(false);
+    await _transport.disconnect();
+    _setConnected(false);
   }
 
   Future<bool> printKitchenTicket(Order order, Locale locale) async {
     if (!_connected && !await connect()) return false;
-    return await _sendBytes(
-      ReceiptFormatter.kitchenTicket(order, _config, locale),
-    );
+    final bytes = ReceiptFormatter.kitchenTicket(order, _config, locale);
+    return await _sendBytes(bytes);
   }
 
   Future<bool> printFullReceipt(Order order, Locale locale) async {
     if (!_connected && !await connect()) return false;
-    return await _sendBytes(
-      ReceiptFormatter.fullReceipt(order, _config, locale),
-    );
+    final bytes = ReceiptFormatter.fullReceipt(order, _config, locale);
+    return await _sendBytes(bytes);
   }
 
   Future<bool> _sendBytes(List<int> bytes) async {
-    try {
-      switch (_config.connectionType) {
-        case PrinterConnectionType.network:
-          if (_socket == null) return false;
-          _socket!.add(bytes);
-          await _socket!.flush();
-          return true;
-        case PrinterConnectionType.bluetooth:
-          return await _bt.send(bytes);
-        case PrinterConnectionType.sunmi:
-          return true;
-        case PrinterConnectionType.none:
-          return false;
-      }
-    } catch (_) {
-      _connected = false;
-      _statusController.add(false);
-      return false;
+    if (_config.connectionType == PrinterConnectionType.none) return false;
+    // Sunmi built-in printing is handled by the vendor OS service. The print
+    // is considered delivered once connected.
+    if (_config.connectionType == PrinterConnectionType.sunmi) {
+      return _connected;
     }
+    if (kIsWeb) return false;
+    final ok = await _transport.send(bytes);
+    _setConnected(ok);
+    return ok;
+  }
+
+  ConnectionKind _toKind(PrinterConnectionType type) => switch (type) {
+        PrinterConnectionType.network => ConnectionKind.network,
+        PrinterConnectionType.bluetooth => ConnectionKind.bluetooth,
+        PrinterConnectionType.usb => ConnectionKind.usb,
+        PrinterConnectionType.sunmi => ConnectionKind.none,
+        PrinterConnectionType.none => ConnectionKind.none,
+      };
+
+  void _setConnected(bool value) {
+    _connected = value;
+    if (!_statusController.isClosed) _statusController.add(value);
   }
 
   void dispose() {
+    _sub?.cancel();
     disconnect();
+    _transport.dispose();
     _statusController.close();
   }
 }

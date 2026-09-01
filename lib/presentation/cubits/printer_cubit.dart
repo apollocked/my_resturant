@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/core/services/printer_service.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
+    show PrinterDevice;
 
 class PrinterState {
   final PrinterConfig config;
@@ -72,6 +74,8 @@ class PrinterCubit extends Cubit<PrinterState> {
     await _service.disconnect();
     if (!isClosed) emit(state.copyWith(isConnected: false));
   }
+
+  Future<List<PrinterDevice>> scan() => _service.scan();
 
   Future<bool> printKitchen(Order order, Locale locale) async {
     if (!state.isConnected) {
