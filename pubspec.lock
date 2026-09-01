@@ -1691,12 +1691,11 @@ packages:
     source: hosted
     version: "3.1.5"
   usb_serial:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: usb_serial
-      sha256: a605a600e34e7f28d4e80851ca3999ef747e42e406138887b8a88b8c382a8b07
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/usb_serial"
+      relative: true
+    source: path
     version: "0.5.2"
   uuid:
     dependency: "direct main"

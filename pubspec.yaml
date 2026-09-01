@@ -43,6 +43,10 @@ dependencies:
   permission_handler: ^12.0.3
   unified_esc_pos_printer: ^3.4.0
 
+dependency_overrides:
+  usb_serial:
+    path: third_party/usb_serial
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
