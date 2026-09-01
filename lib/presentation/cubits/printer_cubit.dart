@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/core/services/printer_service.dart';
@@ -72,7 +73,7 @@ class PrinterCubit extends Cubit<PrinterState> {
     if (!isClosed) emit(state.copyWith(isConnected: false));
   }
 
-  Future<bool> printKitchen(Order order) async {
+  Future<bool> printKitchen(Order order, Locale locale) async {
     if (!state.isConnected) {
       final ok = await connect();
       if (!ok) {
@@ -81,12 +82,12 @@ class PrinterCubit extends Cubit<PrinterState> {
       }
     }
     if (!isClosed) emit(state.copyWith(isPrinting: true, clearError: true));
-    final ok = await _service.printKitchenTicket(order);
+    final ok = await _service.printKitchenTicket(order, locale);
     if (!isClosed) emit(state.copyWith(isPrinting: false));
     return ok;
   }
 
-  Future<bool> printReceipt(Order order) async {
+  Future<bool> printReceipt(Order order, Locale locale) async {
     if (!state.isConnected) {
       final ok = await connect();
       if (!ok) {
@@ -95,7 +96,7 @@ class PrinterCubit extends Cubit<PrinterState> {
       }
     }
     if (!isClosed) emit(state.copyWith(isPrinting: true, clearError: true));
-    final ok = await _service.printFullReceipt(order);
+    final ok = await _service.printFullReceipt(order, locale);
     if (!isClosed) emit(state.copyWith(isPrinting: false));
     return ok;
   }

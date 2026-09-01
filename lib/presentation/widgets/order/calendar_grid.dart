@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 
 class CalendarGrid extends StatelessWidget {
   final int year, month, selectedDay;
@@ -18,10 +19,21 @@ class CalendarGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context);
     final first = DateTime(year, month);
     final daysInMonth = DateTime(year, month + 1, 0).day;
     final satStartIndex = (first.weekday + 1) % 7;
     final now = DateTime.now();
+
+    const dayInitKeys = [
+      'day_init_sat',
+      'day_init_sun',
+      'day_init_mon',
+      'day_init_tue',
+      'day_init_wed',
+      'day_init_thu',
+      'day_init_fri',
+    ];
 
     final cells = <Widget>[];
     final cellHeight = 38 * MediaQuery.textScalerOf(context).scale(1);
@@ -79,14 +91,14 @@ class CalendarGrid extends StatelessWidget {
 
     final rows = <Widget>[
       Row(
-        children: ['S', 'S', 'M', 'T', 'W', 'T', 'F']
+        children: dayInitKeys
             .map(
-              (l) => Expanded(
+              (k) => Expanded(
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      l,
+                      Tr.get(k, locale),
                       style: TextStyle(
                         fontSize: R.fontSm(context),
                         fontWeight: FontWeight.w600,

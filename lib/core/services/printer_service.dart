@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:my_resturant/core/services/bt_printer_helper.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/core/services/receipt_formatter.dart';
@@ -83,14 +84,18 @@ class PrinterService {
     _statusController.add(false);
   }
 
-  Future<bool> printKitchenTicket(Order order) async {
+  Future<bool> printKitchenTicket(Order order, Locale locale) async {
     if (!_connected && !await connect()) return false;
-    return await _sendBytes(ReceiptFormatter.kitchenTicket(order, _config));
+    return await _sendBytes(
+      ReceiptFormatter.kitchenTicket(order, _config, locale),
+    );
   }
 
-  Future<bool> printFullReceipt(Order order) async {
+  Future<bool> printFullReceipt(Order order, Locale locale) async {
     if (!_connected && !await connect()) return false;
-    return await _sendBytes(ReceiptFormatter.fullReceipt(order, _config));
+    return await _sendBytes(
+      ReceiptFormatter.fullReceipt(order, _config, locale),
+    );
   }
 
   Future<bool> _sendBytes(List<int> bytes) async {

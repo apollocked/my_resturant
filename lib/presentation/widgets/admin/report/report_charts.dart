@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 
 class ReportDay {
   const ReportDay({
@@ -14,14 +15,14 @@ class ReportDay {
   final double revenue;
 }
 
-const List<String> reportDayAbbr = [
-  'Sat',
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
+List<String> reportDayAbbr(Locale locale) => [
+  Tr.get('day_sat', locale),
+  Tr.get('day_sun', locale),
+  Tr.get('day_mon', locale),
+  Tr.get('day_tue', locale),
+  Tr.get('day_wed', locale),
+  Tr.get('day_thu', locale),
+  Tr.get('day_fri', locale),
 ];
 
 class ReportBarChart extends StatelessWidget {
@@ -43,6 +44,7 @@ class ReportBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context);
     final isDesktop = R.isDesktop(context);
     final maxValue = weekData.fold(0.0, (m, d) {
       final v = toY(d);
@@ -94,7 +96,8 @@ class ReportBarChart extends StatelessWidget {
                         return const SizedBox();
                       }
                       return Text(
-                        reportDayAbbr[(weekData[i].date.weekday + 1) % 7],
+                        reportDayAbbr(locale)[
+                            (weekData[i].date.weekday + 1) % 7],
                         style: TextStyle(
                           fontSize: 10,
                           color: cs.onSurfaceVariant,

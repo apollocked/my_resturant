@@ -5,10 +5,16 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/admin/promo_code_helpers.dart';
 
 class PromoCodeList extends StatelessWidget {
-  const PromoCodeList({super.key, required this.codes, required this.onDelete});
+  const PromoCodeList({
+    super.key,
+    required this.codes,
+    required this.onDelete,
+    required this.t,
+  });
 
   final List<Map<String, dynamic>> codes;
   final ValueChanged<String> onDelete;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,7 @@ class PromoCodeList extends StatelessWidget {
       itemCount: codes.length,
       itemBuilder: (context, i) {
         final c = codes[i];
-        final status = promoStatusText(c);
+        final status = promoStatusText(c, t);
         final color = promoStatusColor(c);
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
@@ -40,7 +46,8 @@ class PromoCodeList extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              '$status • expires ${formatPromoDate(c['expires_at'])}',
+              '$status • ${t('promo_col_expires')} '
+              '${formatPromoDate(c['expires_at'])}',
               style: TextStyle(color: color, fontSize: 12),
             ),
             trailing: Row(
@@ -51,9 +58,9 @@ class PromoCodeList extends StatelessWidget {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: c['code'] ?? ''));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Copied'),
-                        duration: Duration(seconds: 1),
+                      SnackBar(
+                        content: Text(t('copied')),
+                        duration: const Duration(seconds: 1),
                       ),
                     );
                   },

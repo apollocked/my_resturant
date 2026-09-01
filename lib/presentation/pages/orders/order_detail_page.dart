@@ -87,26 +87,32 @@ class OrderDetailPage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.receipt_long),
               title: Text(t('print_receipt')),
-              subtitle: const Text('Full receipt with prices'),
+              subtitle: Text(t('full_receipt')),
               onTap: () async {
                 Navigator.pop(ctx);
-                final ok = await printer.printReceipt(order);
+                final locale = context.read<SettingsCubit>().state.locale;
+                final ok = await printer.printReceipt(order, locale);
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(ok ? 'Printed' : 'Print failed')),
+                  SnackBar(
+                    content: Text(ok ? t('printed') : t('print_failed')),
+                  ),
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.restaurant_menu),
               title: Text(t('kitchen_ticket')),
-              subtitle: const Text('Items only, no prices'),
+              subtitle: Text(t('items_only')),
               onTap: () async {
                 Navigator.pop(ctx);
-                final ok = await printer.printKitchen(order);
+                final locale = context.read<SettingsCubit>().state.locale;
+                final ok = await printer.printKitchen(order, locale);
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(ok ? 'Printed' : 'Print failed')),
+                  SnackBar(
+                    content: Text(ok ? t('printed') : t('print_failed')),
+                  ),
                 );
               },
             ),

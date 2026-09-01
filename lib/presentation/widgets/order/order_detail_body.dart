@@ -83,6 +83,7 @@ class OrderDetailBody extends StatelessWidget {
           OrderDetailNotes(
             notes: order.notes,
             cs: cs,
+            t: t,
             canEdit: canEdit,
             onEdit: canEdit ? (n) => _editNotes(context, n) : null,
           ),

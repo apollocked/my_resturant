@@ -9,10 +9,12 @@ class PromoCodeTable extends StatelessWidget {
     super.key,
     required this.codes,
     required this.onDelete,
+    required this.t,
   });
 
   final List<Map<String, dynamic>> codes;
   final ValueChanged<String> onDelete;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,10 @@ class PromoCodeTable extends StatelessWidget {
                   ),
                 ),
                 children: [
-                  _th(context, 'Code', cs),
-                  _th(context, 'Status', cs),
-                  _th(context, 'Created', cs),
-                  _th(context, 'Expires', cs),
+                  _th(context, t('promo_col_code'), cs),
+                  _th(context, t('promo_col_status'), cs),
+                  _th(context, t('promo_col_created'), cs),
+                  _th(context, t('promo_col_expires'), cs),
                   _th(context, '', cs),
                 ],
               ),
@@ -69,7 +71,7 @@ class PromoCodeTable extends StatelessWidget {
                     _td(context, codes[i]['code'] ?? '', cs, bold: true),
                     _td(
                       context,
-                      promoStatusText(codes[i]),
+                      promoStatusText(codes[i], t),
                       cs,
                       color: promoStatusColor(codes[i]),
                     ),
@@ -127,13 +129,13 @@ class PromoCodeTable extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(Icons.copy_rounded, size: 18, color: cs.primary),
-            tooltip: 'Copy',
+            tooltip: t('copy'),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: code['code'] ?? ''));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Copied'),
-                  duration: Duration(seconds: 1),
+                SnackBar(
+                  content: Text(t('copied')),
+                  duration: const Duration(seconds: 1),
                 ),
               );
             },
@@ -141,7 +143,7 @@ class PromoCodeTable extends StatelessWidget {
           if (canDelete)
             IconButton(
               icon: Icon(Icons.delete_outline, size: 18, color: cs.error),
-              tooltip: 'Delete',
+              tooltip: t('delete'),
               onPressed: () => onDelete(code['code']),
             ),
         ],

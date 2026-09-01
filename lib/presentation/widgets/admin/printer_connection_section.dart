@@ -42,10 +42,10 @@ class PrinterConnectionSection extends StatelessWidget {
               PrinterConnectionType.none => Icons.power_off,
             };
             final label = switch (ct) {
-              PrinterConnectionType.network => 'WiFi/LAN',
-              PrinterConnectionType.bluetooth => 'Bluetooth',
-              PrinterConnectionType.sunmi => 'Sunmi',
-              PrinterConnectionType.none => 'Disabled',
+              PrinterConnectionType.network => t('conn_wifi_lan'),
+              PrinterConnectionType.bluetooth => t('conn_bluetooth'),
+              PrinterConnectionType.sunmi => t('conn_sunmi'),
+              PrinterConnectionType.none => t('conn_disabled'),
             };
             return ChoiceChip(
               avatar: Icon(icon, size: 18),

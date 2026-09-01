@@ -67,6 +67,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 ProfileAccountActions(
+                  t: t,
                   onUpdateEmail: () =>
                       ProfileDialogs.showUpdateEmail(context, accountCubit, t),
                   onUpdatePassword: () =>
@@ -85,7 +86,7 @@ class ProfilePage extends StatelessWidget {
                   if (acctState.email == 'hamabarznji1990@gmail.com')
                     ProfileOutlinedAction(
                       icon: Icons.vpn_key_outlined,
-                      label: 'Promo Codes',
+                      label: t('promo_codes_title'),
                       sideWidth: 1.5,
                       onTap: () => context.push('/promo-codes'),
                     ),

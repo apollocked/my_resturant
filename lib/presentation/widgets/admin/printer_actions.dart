@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 
 class PrinterActions extends StatelessWidget {
   const PrinterActions({super.key, required this.config, required this.t});
@@ -24,7 +25,7 @@ class PrinterActions extends StatelessWidget {
               connected ? printer.disconnect() : printer.connect();
             },
             icon: Icon(connected ? Icons.link_off : Icons.link, size: 20),
-            label: Text(connected ? 'Disconnect' : 'Connect'),
+            label: Text(connected ? t('disconnect') : t('connect')),
             style: FilledButton.styleFrom(
               backgroundColor: connected ? cs.error : cs.primary,
             ),
@@ -37,10 +38,19 @@ class PrinterActions extends StatelessWidget {
             onPressed: connected
                 ? () async {
                     await _save(printer);
-                    final ok = await printer.printReceipt(_dummyOrder());
+                    if (!context.mounted) return;
+                    final locale = context.read<SettingsCubit>().state.locale;
+                    final ok = await printer.printReceipt(
+                      _dummyOrder(),
+                      locale,
+                    );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(ok ? 'Test printed' : 'Print failed')),
+                        SnackBar(
+                          content: Text(
+                            ok ? t('test_printed') : t('print_failed'),
+                          ),
+                        ),
                       );
                     }
                   }

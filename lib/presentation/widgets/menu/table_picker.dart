@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/menu/table_picker_header.dart';
 import 'package:my_resturant/presentation/widgets/menu/table_picker_tile.dart';
 
@@ -12,6 +14,8 @@ class TablePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<OrderCubit>().state;
     final cs = Theme.of(context).colorScheme;
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
     final isDesktop = R.isDesktop(context);
     final avatarSize = isDesktop
         ? 140.0
@@ -39,6 +43,7 @@ class TablePicker extends StatelessWidget {
                         isDesktop: isDesktop,
                         avatarSize: avatarSize,
                         iconSize: iconSize,
+                        t: t,
                       ),
                       GridView.builder(
                         shrinkWrap: true,
@@ -57,6 +62,7 @@ class TablePicker extends StatelessWidget {
                             locked: s.reservedTables.contains(n),
                             cs: cs,
                             isDesktop: isDesktop,
+                            t: t,
                             onTap: () =>
                                 context.read<OrderCubit>().setSelectedTable(n),
                           );

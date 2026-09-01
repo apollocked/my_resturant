@@ -25,8 +25,11 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
-  List<Map<String, String>> _allCats(List<Map<String, String>> dbCats) => [
-    {'key': 'all', 'name': 'Ù‡Û•Ù…ÙˆÙˆ', 'icon': 'ðŸ½'},
+  List<Map<String, String>> _allCats(
+    List<Map<String, String>> dbCats,
+    String Function(String) t,
+  ) => [
+    {'key': 'all', 'name': t('cat_all'), 'icon': '🍽️'},
     ...effectiveCategories(dbCats),
   ];
 
@@ -100,7 +103,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       return const MenuShimmerLoader();
     }
 
-    final cats = _allCats(state.categories);
+    final cats = _allCats(state.categories, t);
     final meals = _filteredMeals(state.recipes, cats);
     void onCat(int i) => setState(() => _selectedCategoryIndex = i);
     void onSearch(String v) => setState(() => _searchQuery = v);

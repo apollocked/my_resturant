@@ -6,10 +6,12 @@ import 'package:my_resturant/shared/pressable_scale.dart';
 class ProfileAccountActions extends StatelessWidget {
   final VoidCallback onUpdateEmail;
   final VoidCallback onUpdatePassword;
+  final String Function(String) t;
   const ProfileAccountActions({
     super.key,
     required this.onUpdateEmail,
     required this.onUpdatePassword,
+    required this.t,
   });
 
   @override
@@ -45,7 +47,7 @@ class ProfileAccountActions extends StatelessWidget {
         child: ListTile(
           leading: Icon(icon, color: AppColors.primary),
           title: Text(
-            labelKey,
+            t(labelKey),
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: R.fontMd(context),

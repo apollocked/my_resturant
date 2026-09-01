@@ -4,6 +4,7 @@ import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_state.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 
 class AutoPrintListener extends StatelessWidget {
   const AutoPrintListener({super.key, required this.child});
@@ -30,9 +31,10 @@ class AutoPrintListener extends StatelessWidget {
   void _onStatusChange(BuildContext context, OrderState state) {
     final printer = context.read<PrinterCubit>();
     if (!printer.state.config.autoPrintKitchen) return;
+    final locale = context.read<SettingsCubit>().state.locale;
     for (final o in state.orders) {
       if (o.status == OrderStatus.preparing) {
-        printer.printKitchen(o);
+        printer.printKitchen(o, locale);
         return;
       }
     }

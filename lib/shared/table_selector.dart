@@ -41,7 +41,9 @@ class TableSelector extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              selectedTable == 0 ? t('choose') : 'Table $selectedTable',
+              selectedTable == 0
+                  ? t('choose')
+                  : t('table_n').replaceAll('{n}', '$selectedTable'),
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: R.fontSm(context),

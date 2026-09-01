@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/widgets.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
 
 class ReceiptFormatter {
-  static Uint8List kitchenTicket(Order order, PrinterConfig config) {
+  static Uint8List kitchenTicket(Order order, PrinterConfig config, Locale locale) {
+    String tr(String key) => Tr.get(key, locale);
     final buf = BytesBuilder();
     _init(buf);
     _center(buf);
@@ -17,13 +20,13 @@ class ReceiptFormatter {
     _lf2(buf);
     _center(buf);
     _bold(buf);
-    _text(buf, 'KITCHEN ORDER');
+    _text(buf, tr('receipt_kitchen_header'));
     _reset(buf);
     _lf(buf);
     _left(buf);
-    _text(buf, 'Table: ${order.displayTable}');
-    _text(buf, 'Order: ${order.displayTrackingCode}');
-    _text(buf, 'Time: ${_time(order.createdAt)}');
+    _text(buf, '${tr('receipt_table')}: ${order.displayTable}');
+    _text(buf, '${tr('receipt_order')}: ${order.displayTrackingCode}');
+    _text(buf, '${tr('receipt_time')}: ${_time(order.createdAt)}');
     _lf(buf);
     _text(buf, '-------------------------------');
     _lf(buf);
@@ -31,14 +34,16 @@ class ReceiptFormatter {
       _bold(buf);
       _text(buf, 'x${item.quantity}  ${item.recipe.name}');
       _reset(buf);
-      if (item.notes.isNotEmpty) _text(buf, '  Note: ${item.notes}');
+      if (item.notes.isNotEmpty) {
+        _text(buf, '  ${tr('receipt_note')}: ${item.notes}');
+      }
     }
     _lf(buf);
     _text(buf, '-------------------------------');
     if (order.notes.isNotEmpty) {
       _lf(buf);
       _bold(buf);
-      _text(buf, 'Notes: ${order.notes}');
+      _text(buf, '${tr('receipt_notes')}: ${order.notes}');
       _reset(buf);
     }
     _lf2(buf);
@@ -46,7 +51,8 @@ class ReceiptFormatter {
     return buf.toBytes();
   }
 
-  static Uint8List fullReceipt(Order order, PrinterConfig config) {
+  static Uint8List fullReceipt(Order order, PrinterConfig config, Locale locale) {
+    String tr(String key) => Tr.get(key, locale);
     final buf = BytesBuilder();
     _init(buf);
     _center(buf);
@@ -57,14 +63,14 @@ class ReceiptFormatter {
     _reset(buf);
     _lf(buf);
     _left(buf);
-    _text(buf, 'Table: ${order.displayTable}');
-    _text(buf, 'Order: ${order.displayTrackingCode}');
-    _text(buf, 'Date: ${_date(order.createdAt)}');
-    _text(buf, 'Time: ${_time(order.createdAt)}');
+    _text(buf, '${tr('receipt_table')}: ${order.displayTable}');
+    _text(buf, '${tr('receipt_order')}: ${order.displayTrackingCode}');
+    _text(buf, '${tr('receipt_date')}: ${_date(order.createdAt)}');
+    _text(buf, '${tr('receipt_time')}: ${_time(order.createdAt)}');
     _lf(buf);
     _text(buf, '-----------------------------------');
     _lf(buf);
-    _text(buf, 'Item          Qty   Price');
+    _text(buf, '${tr('receipt_header_item')}          ${tr('receipt_header_qty')}   ${tr('receipt_header_price')}');
     _text(buf, '-----------------------------------');
     for (final item in order.items) {
       _receiptItem(buf, item);
@@ -72,16 +78,16 @@ class ReceiptFormatter {
     _lf(buf);
     _text(buf, '-----------------------------------');
     _bold(buf);
-    _text(buf, 'TOTAL:          ${order.totalPrice.toInt()}');
+    _text(buf, '${tr('receipt_total')}:          ${order.totalPrice.toInt()}');
     _reset(buf);
     _text(buf, '-----------------------------------');
     if (order.notes.isNotEmpty) {
       _lf(buf);
-      _text(buf, 'Notes: ${order.notes}');
+      _text(buf, '${tr('receipt_notes')}: ${order.notes}');
     }
     _lf(buf);
     _center(buf);
-    _text(buf, 'Thank you!');
+    _text(buf, tr('receipt_thanks'));
     _lf2(buf);
     _cut(buf);
     return buf.toBytes();

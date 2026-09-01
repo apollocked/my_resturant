@@ -57,7 +57,7 @@ class OnboardingSettingsPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 LanguageOption(
                   label: t('kurdish'),
-                  flag: ' Kurdish',
+                  flag: t('kurdish'),
                   locale: const Locale('ku'),
                   isSelected: currentLocale.languageCode == 'ku',
                   onTap: () => context.read<SettingsCubit>().setLocale(
@@ -68,7 +68,7 @@ class OnboardingSettingsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 LanguageOption(
                   label: t('arabic'),
-                  flag: ' Arabic',
+                  flag: t('arabic'),
                   locale: const Locale('ar'),
                   isSelected: currentLocale.languageCode == 'ar',
                   onTap: () => context.read<SettingsCubit>().setLocale(
@@ -79,7 +79,7 @@ class OnboardingSettingsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 LanguageOption(
                   label: t('english'),
-                  flag: ' English',
+                  flag: t('english'),
                   locale: const Locale('en'),
                   isSelected: currentLocale.languageCode == 'en',
                   onTap: () => context.read<SettingsCubit>().setLocale(

@@ -7,12 +7,14 @@ class OrderDetailNotes extends StatefulWidget {
     super.key,
     required this.notes,
     required this.cs,
+    required this.t,
     this.canEdit = false,
     this.onEdit,
   });
 
   final String notes;
   final ColorScheme cs;
+  final String Function(String) t;
   final bool canEdit;
   final ValueChanged<String>? onEdit;
 
@@ -46,24 +48,24 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Notes'),
+        title: Text(widget.t('notes')),
         content: TextField(
           controller: ctrl,
           maxLines: 3,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Order notes...'),
+          decoration: InputDecoration(hintText: widget.t('order_notes_hint')),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(widget.t('cancel')),
           ),
           FilledButton(
             onPressed: () {
               widget.onEdit?.call(ctrl.text);
               Navigator.pop(ctx);
             },
-            child: const Text('Save'),
+            child: Text(widget.t('save')),
           ),
         ],
       ),
@@ -100,7 +102,7 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
             Expanded(
               child: Text(
                 widget.notes.isEmpty
-                    ? (widget.canEdit ? 'Tap to add notes...' : '')
+                    ? (widget.canEdit ? widget.t('tap_to_add_notes') : '')
                     : widget.notes,
                 style: TextStyle(
                   fontSize: R.fontSm(context),

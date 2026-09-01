@@ -9,12 +9,14 @@ class TablePickerHeader extends StatelessWidget {
     required this.isDesktop,
     required this.avatarSize,
     required this.iconSize,
+    required this.t,
   });
 
   final ColorScheme cs;
   final bool isDesktop;
   final double avatarSize;
   final double iconSize;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class TablePickerHeader extends StatelessWidget {
         ),
         SizedBox(height: R.hp(context, isDesktop ? 5 : 3)),
         Text(
-          'select_table',
+          t('select_table'),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: isDesktop ? R.fontXxl(context) : R.fontXl(context),

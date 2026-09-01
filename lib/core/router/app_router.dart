@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
@@ -143,7 +144,10 @@ final appRouter = GoRouter(
       builder: (context, _) {
         final acct = context.read<AccountCubit>().state;
         if (acct.email != 'hamabarznji1990@gmail.com') {
-          return const Scaffold(body: Center(child: Text('Not found')));
+          final locale = context.read<SettingsCubit>().state.locale;
+          return Scaffold(
+            body: Center(child: Text(Tr.get('not_found', locale))),
+          );
         }
         return const PromoCodesPage();
       }),

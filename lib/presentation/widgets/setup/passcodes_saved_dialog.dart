@@ -1,44 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 
 Future<void> showPasscodesSavedDialog(
   BuildContext context,
   Map<String, String> codes,
 ) async {
+  final locale = context.read<SettingsCubit>().state.locale;
+  String t(String key) => Tr.get(key, locale);
   await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (ctx) => AlertDialog(
       scrollable: true,
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Icons.check_circle, color: AppColors.success, size: 28),
-          SizedBox(width: 10),
-          Text('Passcodes Saved'),
+          const Icon(Icons.check_circle, color: AppColors.success, size: 28),
+          const SizedBox(width: 10),
+          Text(t('passcodes_saved_title')),
         ],
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Save these passcodes securely. You will need them to log in.',
-          ),
+          Text(t('passcodes_saved_body')),
           const SizedBox(height: 16),
           _passcodeRow(
             Icons.room_service_outlined,
-            'Waiter',
+            t('waiter'),
             codes['waiter'] ?? '',
           ),
           const SizedBox(height: 8),
           _passcodeRow(
             Icons.restaurant_outlined,
-            'Kitchen',
+            t('kitchen'),
             codes['kitchen'] ?? '',
           ),
           const SizedBox(height: 8),
           _passcodeRow(
             Icons.admin_panel_settings_outlined,
-            'Admin',
+            t('admin'),
             codes['admin'] ?? '',
           ),
         ],
@@ -46,7 +49,7 @@ Future<void> showPasscodesSavedDialog(
       actions: [
         FilledButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Got it'),
+          child: Text(t('got_it')),
         ),
       ],
     ),

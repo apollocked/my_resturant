@@ -9,6 +9,7 @@ class TablePickerTile extends StatelessWidget {
     required this.cs,
     required this.isDesktop,
     required this.onTap,
+    required this.t,
   });
 
   final int n;
@@ -16,6 +17,7 @@ class TablePickerTile extends StatelessWidget {
   final ColorScheme cs;
   final bool isDesktop;
   final VoidCallback onTap;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class TablePickerTile extends StatelessWidget {
               Icon(Icons.lock, color: cs.surface, size: isDesktop ? 28 : 20),
               const SizedBox(height: 2),
               Text(
-                'Table $n',
+                t('table_n').replaceAll('{n}', '$n'),
                 style: TextStyle(
                   color: cs.surface,
                   fontSize: isDesktop ? 16 : 13,
@@ -51,7 +53,7 @@ class TablePickerTile extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'Table',
+                t('table'),
                 style: TextStyle(
                   color: cs.surface.withValues(alpha: 0.7),
                   fontSize: isDesktop ? 14 : 11,

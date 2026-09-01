@@ -61,10 +61,10 @@ class AdminActionButton extends StatelessWidget {
               context,
             ).showSnackBar(SnackBar(content: Text(t('dish_added'))));
           }
-        } catch (e) {
+        } catch (_) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${t('error_occurred')}: $e')),
+              SnackBar(content: Text(t('error_occurred'))),
             );
           }
         }
