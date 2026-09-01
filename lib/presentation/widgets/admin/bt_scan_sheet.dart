@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BtScanSheet extends StatelessWidget {
   const BtScanSheet({super.key, required this.devices, required this.onPick});
@@ -34,6 +35,15 @@ Future<void> scanBluetooth(
   BuildContext context,
   TextEditingController macCtl,
 ) async {
+  final status = await Permission.bluetooth.request();
+  if (!status.isGranted) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bluetooth permission required')),
+      );
+    }
+    return;
+  }
   final state = FlutterBluePlus.adapterStateNow;
   if (state != BluetoothAdapterState.on && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(

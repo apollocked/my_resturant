@@ -1,11 +1,31 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BtPrinterHelper {
   BluetoothDevice? device;
   BluetoothCharacteristic? char;
 
+  Future<bool> ensurePermission() async {
+    try {
+      if (Platform.isAndroid) {
+        final status = await Permission.bluetooth.request();
+        if (!status.isGranted) return false;
+      }
+      if (FlutterBluePlus.adapterStateNow != BluetoothAdapterState.on &&
+          !kIsWeb) {
+        await FlutterBluePlus.turnOn();
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<bool> connect(String mac) async {
     try {
+      if (!await ensurePermission()) return false;
       device = BluetoothDevice(remoteId: DeviceIdentifier(mac));
       await device!.connect(
         license: License.nonprofit,
