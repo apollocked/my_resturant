@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class BtScanSheet extends StatelessWidget {
@@ -35,11 +38,13 @@ Future<void> scanBluetooth(
   BuildContext context,
   TextEditingController macCtl,
 ) async {
+  final locale = context.read<SettingsCubit>().state.locale;
+  String t(String key) => Tr.get(key, locale);
   final status = await Permission.bluetooth.request();
   if (!status.isGranted) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bluetooth permission required')),
+        SnackBar(content: Text(t('bt_permission_required'))),
       );
     }
     return;
@@ -47,13 +52,13 @@ Future<void> scanBluetooth(
   final state = FlutterBluePlus.adapterStateNow;
   if (state != BluetoothAdapterState.on && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Bluetooth is off')),
+      SnackBar(content: Text(t('bt_is_off'))),
     );
     return;
   }
   if (!context.mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Scanning...')),
+    SnackBar(content: Text(t('bt_scanning'))),
   );
   try {
     final results = <ScanResult>[];
@@ -65,7 +70,7 @@ Future<void> scanBluetooth(
         results.where((r) => r.advertisementData.advName.isNotEmpty).toList();
     if (printers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No devices found')),
+        SnackBar(content: Text(t('bt_no_devices'))),
       );
       return;
     }
@@ -79,7 +84,9 @@ Future<void> scanBluetooth(
   } catch (e) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scan error: $e')),
+        SnackBar(
+          content: Text(t('bt_scan_error').replaceAll('{error}', '$e')),
+        ),
       );
     }
   }

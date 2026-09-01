@@ -2,7 +2,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
+import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/presentation/widgets/auth/promo_activate_button.dart';
 import 'package:my_resturant/presentation/widgets/auth/promo_error_text.dart';
 import 'package:my_resturant/presentation/widgets/auth/promo_hero_icon.dart';
