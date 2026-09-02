@@ -42,6 +42,7 @@ class FoodDishCard extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
+                const SizedBox(width: 6),
                 IconButton(
                   icon: const Icon(
                     Icons.delete_outline,

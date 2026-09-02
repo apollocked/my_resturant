@@ -48,9 +48,9 @@ class OrderActionBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (onCancel != null) ...[
-                  const SizedBox(width: 8),
                   _outlined(context, cs, Icons.close, Tr.get('cancel', locale),
                       onCancel, cs.error),
+                  const SizedBox(width: 8),
                 ],
                 if (onNextStatus != null) _next(context, cs),
               ],

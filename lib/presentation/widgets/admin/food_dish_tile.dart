@@ -71,6 +71,7 @@ class FoodDishTile extends StatelessWidget {
               ),
               onPressed: onEdit,
             ),
+            const SizedBox(width: 4),
             IconButton(
               icon: const Icon(
                 Icons.delete_outline,

@@ -140,12 +140,14 @@ class PromoCodeTable extends StatelessWidget {
               );
             },
           ),
-          if (canDelete)
+          if (canDelete) ...[
+            const SizedBox(width: 8),
             IconButton(
               icon: Icon(Icons.delete_outline, size: 18, color: cs.error),
               tooltip: t('delete'),
               onPressed: () => onDelete(code['code']),
             ),
+          ],
         ],
       ),
     );

@@ -65,11 +65,13 @@ class PromoCodeList extends StatelessWidget {
                     );
                   },
                 ),
-                if (c['used_by'] == null)
+                if (c['used_by'] == null) ...[
+                  const SizedBox(width: 8),
                   IconButton(
                     icon: Icon(Icons.delete_outline, size: 18, color: cs.error),
                     onPressed: () => onDelete(c['code']),
                   ),
+                ],
               ],
             ),
           ),
