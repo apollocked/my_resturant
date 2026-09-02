@@ -49,19 +49,24 @@ class LiquidNavTab extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 350),
-                  curve: Curves.easeOutQuint,
-                  width: active ? 48 : 36,
-                  height: active ? 32 : 28,
-                  decoration: BoxDecoration(
-                    color: active ? indColor : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: Icon(
-                    active ? item.activeIcon : item.icon,
-                    size: active ? 24 : 22,
-                    color: active ? sel : unsel,
+                AnimatedScale(
+                  scale: active ? 1 : 0.82,
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutBack,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOutQuint,
+                    width: active ? 48 : 36,
+                    height: active ? 32 : 28,
+                    decoration: BoxDecoration(
+                      color: active ? indColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: Icon(
+                      active ? item.activeIcon : item.icon,
+                      size: active ? 24 : 22,
+                      color: active ? sel : unsel,
+                    ),
                   ),
                 ),
                 if (showBadge)
