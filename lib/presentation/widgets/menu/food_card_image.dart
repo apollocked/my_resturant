@@ -78,7 +78,10 @@ class FoodCardImage extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              AppImage(recipe.imageUrl, width: double.infinity),
+              Hero(
+                tag: 'meal-img-${recipe.imageUrl}',
+                child: AppImage(recipe.imageUrl, width: double.infinity),
+              ),
               Positioned.fill(
                 child: IgnorePointer(
                   child: Container(

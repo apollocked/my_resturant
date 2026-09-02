@@ -15,16 +15,19 @@ class ItemHoldHeaderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
-      child: SizedBox(
-        width: double.infinity,
-        height: height,
-        child: AppImage(
-          imageUrl,
+    return Hero(
+      tag: 'meal-img-$imageUrl',
+      child: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
+        child: SizedBox(
           width: double.infinity,
           height: height,
-          fit: BoxFit.cover,
+          child: AppImage(
+            imageUrl,
+            width: double.infinity,
+            height: height,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
