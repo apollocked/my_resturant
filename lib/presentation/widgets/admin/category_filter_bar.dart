@@ -71,7 +71,8 @@ class CategoryFilterBar extends StatelessWidget {
             child: PressableScale(
               onTap: () => onChanged(i),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.easeOutBack,
                 padding: EdgeInsets.symmetric(
                   horizontal: paddingH,
                   vertical: paddingV,

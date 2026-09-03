@@ -65,7 +65,6 @@ class MenuCartBar extends StatelessWidget {
                     color: cs.onSurfaceVariant,
                   ),
                 ),
-                ),
               ],
             ),
           ),

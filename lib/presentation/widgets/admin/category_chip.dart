@@ -62,8 +62,8 @@ class CategoryChip extends StatelessWidget {
       child: PressableScale(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOutBack,
           padding: EdgeInsets.symmetric(
             horizontal: paddingH,
             vertical: paddingV,

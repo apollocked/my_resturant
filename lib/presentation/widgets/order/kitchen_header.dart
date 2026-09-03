@@ -94,7 +94,8 @@ class _TabPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
         padding: EdgeInsets.symmetric(
           horizontal: R.padding(context) * 1.6,
           vertical: R.padding(context) * 0.5,

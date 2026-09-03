@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/presentation/pages/layout/nav_item.dart';
+import 'package:my_resturant/shared/cart_badge.dart';
 
 class NavDestination {
   const NavDestination({required this.item, required this.cartCount});
@@ -12,21 +13,32 @@ class NavDestination {
     double? iconSize,
     double? labelSize,
   }) {
-    final badge = item.index == 0 && cartCount > 0;
-    final badgeLabel = Text('$cartCount', style: const TextStyle(fontSize: 9));
+    final showBadge = item.index == 0 && cartCount > 0;
     return NavigationRailDestination(
-      icon: badge
-          ? Badge(
-              label: badgeLabel,
-              child: Icon(item.outline, size: iconSize),
-            )
-          : Icon(item.outline, size: iconSize),
-      selectedIcon: badge
-          ? Badge(
-              label: badgeLabel,
-              child: Icon(item.filled, size: iconSize),
-            )
-          : Icon(item.filled, size: iconSize),
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(item.outline, size: iconSize),
+          if (showBadge)
+            Positioned(
+              top: -6,
+              right: -6,
+              child: CartBadge(count: cartCount),
+            ),
+        ],
+      ),
+      selectedIcon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(item.filled, size: iconSize),
+          if (showBadge)
+            Positioned(
+              top: -6,
+              right: -6,
+              child: CartBadge(count: cartCount),
+            ),
+        ],
+      ),
       label: Text(label, style: TextStyle(fontSize: labelSize)),
     );
   }
