@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/shared/haptics.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
 class FoodCardAddButton extends StatelessWidget {
@@ -27,7 +27,7 @@ class FoodCardAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        Haptics.added();
         onAdd?.call();
       },
       child: SizedBox(
