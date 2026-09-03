@@ -7,14 +7,6 @@ import 'package:flutter/material.dart';
 /// Handles both filled/elevated buttons and outlined buttons.
 abstract final class PhysicalButtons {
   static const double _radius = 12;
-  static const EdgeInsetsGeometry _padding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 14,
-  );
-  static const TextStyle _text = TextStyle(
-    fontWeight: FontWeight.w700,
-    fontSize: 14,
-  );
 
   /// Filled / elevated buttons: solid background that darkens and gets a
   /// deeper shadow on press.
@@ -53,8 +45,6 @@ abstract final class PhysicalButtons {
           borderRadius: BorderRadius.all(Radius.circular(_radius)),
         ),
       ),
-      padding: const WidgetStatePropertyAll(_padding),
-      textStyle: const WidgetStatePropertyAll(_text),
     );
   }
 
@@ -88,8 +78,6 @@ abstract final class PhysicalButtons {
           borderRadius: BorderRadius.all(Radius.circular(_radius)),
         ),
       ),
-      padding: const WidgetStatePropertyAll(_padding),
-      textStyle: const WidgetStatePropertyAll(_text),
       elevation: const WidgetStatePropertyAll(0),
     );
   }
@@ -114,9 +102,6 @@ abstract final class PhysicalButtons {
         const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(_radius)),
         ),
-      ),
-      padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       ),
     );
   }
