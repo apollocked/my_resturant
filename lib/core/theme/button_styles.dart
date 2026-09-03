@@ -25,8 +25,18 @@ abstract final class PhysicalButtons {
     required Color shadowColor,
   }) {
     return ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(backgroundColor),
-      foregroundColor: WidgetStatePropertyAll(foregroundColor),
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        return states.contains(WidgetState.disabled)
+            ? null
+            : backgroundColor;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        // Don't override a button's own disabledForegroundColor (set via
+        // styleFrom) — let it fall back to the button's explicit value.
+        return states.contains(WidgetState.disabled)
+            ? null
+            : foregroundColor;
+      }),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         return states.contains(WidgetState.pressed)
             ? overlayColor
@@ -55,7 +65,11 @@ abstract final class PhysicalButtons {
     required Color shadowColor,
   }) {
     return ButtonStyle(
-      foregroundColor: WidgetStatePropertyAll(foregroundColor),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        return states.contains(WidgetState.disabled)
+            ? null
+            : foregroundColor;
+      }),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         return states.contains(WidgetState.pressed)
             ? overlayColor
@@ -86,7 +100,11 @@ abstract final class PhysicalButtons {
     required Color overlayColor,
   }) {
     return ButtonStyle(
-      foregroundColor: WidgetStatePropertyAll(foregroundColor),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        return states.contains(WidgetState.disabled)
+            ? null
+            : foregroundColor;
+      }),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         return states.contains(WidgetState.pressed)
             ? overlayColor
