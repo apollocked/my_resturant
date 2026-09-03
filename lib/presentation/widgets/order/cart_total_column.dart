@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/shared/animated_counter.dart';
 
 class CartTotalColumn extends StatelessWidget {
   const CartTotalColumn({
@@ -21,10 +22,9 @@ class CartTotalColumn extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          '${total.toInt()} $currencySuffix',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        AnimatedCounter(
+          value: total,
+          suffix: ' $currencySuffix',
           style: TextStyle(
             fontWeight: FontWeight.w800,
             fontSize: R.fontXl(context),

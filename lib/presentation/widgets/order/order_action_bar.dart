@@ -4,6 +4,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
+import 'package:my_resturant/shared/haptics.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
 class OrderActionBar extends StatelessWidget {
@@ -93,7 +94,10 @@ class OrderActionBar extends StatelessWidget {
   Widget _next(BuildContext context, ColorScheme cs) {
     final color = OrderStatusStyle.color(status);
     return PressableScale(
-      onTap: onNextStatus,
+      onTap: () {
+        Haptics.heavy();
+        onNextStatus?.call();
+      },
       child: SizedBox(
         height: isDesktop ? 38.0 : 32.0,
         child: FilledButton.icon(

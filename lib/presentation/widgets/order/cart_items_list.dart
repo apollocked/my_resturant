@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/presentation/widgets/order/cart_item_card.dart';
+import 'package:my_resturant/shared/staggered_grid.dart';
 
 class CartItemsList extends StatelessWidget {
   const CartItemsList({
@@ -67,11 +68,13 @@ class CartItemsList extends StatelessWidget {
   }
 
   Widget _card(BuildContext context, int index) {
-    return CartItemCard(
-      item: cart[index],
-      index: index,
-      notesCtl: notesCtl,
-      notesHint: notesHint,
+    return StaggeredEntrance(
+      child: CartItemCard(
+        item: cart[index],
+        index: index,
+        notesCtl: notesCtl,
+        notesHint: notesHint,
+      ),
     );
   }
 }

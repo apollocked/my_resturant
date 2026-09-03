@@ -3,6 +3,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/staggered_grid.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 
 class KitchenCleanList extends StatelessWidget {
@@ -30,7 +31,9 @@ class KitchenCleanList extends StatelessWidget {
     }
     final isGrid = !R.isPhone(context);
     final tiles = tableList
-        .map((n) => _CleanTile(n: n, t: t, cs: cs, cubit: cubit))
+        .map((n) => StaggeredEntrance(
+              child: _CleanTile(n: n, t: t, cs: cs, cubit: cubit),
+            ))
         .toList();
     return RefreshIndicator(
       onRefresh: () async => cubit.refresh(),
@@ -113,7 +116,10 @@ class _CleanTile extends StatelessWidget {
           style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontSm(context)),
         ),
         trailing: PressableScale(
-          onTap: () => cubit.clearTable(n),
+          onTap: () {
+            Haptics.tap();
+            cubit.clearTable(n);
+          },
           child: FilledButton.icon(
             icon: const Icon(Icons.check, size: 18),
             label: Text(

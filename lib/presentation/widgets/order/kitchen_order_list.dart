@@ -6,6 +6,7 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/order/order_card.dart';
 import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
 import 'package:my_resturant/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/shared/staggered_grid.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
@@ -56,9 +57,10 @@ class KitchenOrderList extends StatelessWidget {
     final widgets = orders.map((o) {
       final hasNext =
           o.status != OrderStatus.served && o.status != OrderStatus.cancelled;
-      return PressableScale(
-        onTap: () => context.push('/order-detail', extra: o),
-        child: OrderCard(
+      return StaggeredEntrance(
+        child: PressableScale(
+          onTap: () => context.push('/order-detail', extra: o),
+          child: OrderCard(
           order: o,
           showTimeline: true,
           onNextStatus: canEdit && hasNext
@@ -96,6 +98,7 @@ class KitchenOrderList extends StatelessWidget {
                 }
               : null,
         ),
+      ),
       );
     }).toList();
     return RefreshIndicator(
