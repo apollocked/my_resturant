@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 
+/// Wraps any widget (button, tile, card) with a physical press-down effect:
+/// the child scales down slightly while pressed and springs back on release,
+/// mimicking a real tactile button.
 class PressableScale extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final double scaleDown;
   final Duration duration;
   final Curve curve;
+  final Duration springBackDuration;
+  final Curve springBackCurve;
 
   const PressableScale({
     super.key,
     required this.child,
     this.onTap,
-    this.scaleDown = 0.95,
-    this.duration = const Duration(milliseconds: 60),
+    this.scaleDown = 0.94,
+    this.duration = const Duration(milliseconds: 70),
     this.curve = Curves.easeOut,
+    this.springBackDuration = const Duration(milliseconds: 180),
+    this.springBackCurve = Curves.easeOutBack,
   });
 
   @override
@@ -23,7 +30,6 @@ class PressableScale extends StatefulWidget {
 class _PressableScaleState extends State<PressableScale>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
-  late final Animation<double> _anim;
 
   @override
   void initState() {
@@ -34,10 +40,18 @@ class _PressableScaleState extends State<PressableScale>
       lowerBound: 0.0,
       upperBound: 1.0,
     );
-    _anim = Tween<double>(
-      begin: 1.0,
-      end: widget.scaleDown,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: widget.curve));
+  }
+
+  @override
+  void didUpdateWidget(covariant PressableScale old) {
+    super.didUpdateWidget(old);
+    if (old.scaleDown != widget.scaleDown && _ctrl.value > 0) {
+      _ctrl.animateBack(
+        0,
+        duration: widget.duration,
+        curve: widget.curve,
+      );
+    }
   }
 
   @override
@@ -46,9 +60,21 @@ class _PressableScaleState extends State<PressableScale>
     super.dispose();
   }
 
-  void _onTapDown(TapDownDetails _) => _ctrl.forward();
-  void _onTapUp(TapUpDetails _) => _ctrl.reverse();
-  void _onTapCancel() => _ctrl.reverse();
+  void _onTapDown(TapDownDetails _) => _ctrl.animateTo(
+    1,
+    duration: widget.duration,
+    curve: widget.curve,
+  );
+  void _onTapUp(TapUpDetails _) => _ctrl.animateBack(
+    0,
+    duration: widget.springBackDuration,
+    curve: widget.springBackCurve,
+  );
+  void _onTapCancel() => _ctrl.animateBack(
+    0,
+    duration: widget.duration,
+    curve: widget.curve,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +84,11 @@ class _PressableScaleState extends State<PressableScale>
       onTapCancel: widget.onTap != null ? _onTapCancel : null,
       onTap: widget.onTap,
       child: AnimatedBuilder(
-        animation: _anim,
-        builder: (context, child) =>
-            Transform.scale(scale: _anim.value, child: child),
+        animation: _ctrl,
+        builder: (context, child) {
+          final scale = 1.0 + (widget.scaleDown - 1.0) * _ctrl.value;
+          return Transform.scale(scale: scale, child: child);
+        },
         child: widget.child,
       ),
     );

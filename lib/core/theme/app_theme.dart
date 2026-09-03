@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/theme/button_styles.dart';
 
 class AppTheme {
   static ThemeData get light => ThemeData(
@@ -35,13 +36,32 @@ class AppTheme {
       unselectedLabelStyle: TextStyle(fontSize: 11),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
+      style: PhysicalButtons.filled(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+        overlayColor: Colors.white.withValues(alpha: 0.18),
+        shadowColor: AppColors.primary,
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: PhysicalButtons.filled(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        overlayColor: Colors.white.withValues(alpha: 0.18),
+        shadowColor: AppColors.primary,
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: PhysicalButtons.text(
+        foregroundColor: AppColors.primary,
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: PhysicalButtons.outlined(
+        foregroundColor: AppColors.primary,
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
+        shadowColor: AppColors.primary,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -104,13 +124,32 @@ class AppTheme {
       unselectedLabelStyle: TextStyle(fontSize: 11),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
+      style: PhysicalButtons.filled(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+        overlayColor: Colors.white.withValues(alpha: 0.18),
+        shadowColor: AppColors.primary,
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: PhysicalButtons.filled(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        overlayColor: Colors.white.withValues(alpha: 0.18),
+        shadowColor: AppColors.primary,
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: PhysicalButtons.text(
+        foregroundColor: AppColors.primary,
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: PhysicalButtons.outlined(
+        foregroundColor: AppColors.primary,
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
+        shadowColor: AppColors.primary,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
