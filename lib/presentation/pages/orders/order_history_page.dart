@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -7,11 +7,11 @@ import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/calendar_grid.dart';
-import 'package:my_resturant/presentation/widgets/order/clear_all_orders_dialog.dart';
-import 'package:my_resturant/presentation/widgets/order/history_layout.dart';
-import 'package:my_resturant/presentation/widgets/order/history_month_nav.dart';
-import 'package:my_resturant/presentation/widgets/order/history_stats_bar.dart';
+import 'package:my_resturant/presentation/widgets/orders/calendar_grid.dart';
+import 'package:my_resturant/presentation/widgets/orders/clear_all_orders_dialog.dart';
+import 'package:my_resturant/presentation/widgets/orders/history_layout.dart';
+import 'package:my_resturant/presentation/widgets/orders/history_month_nav.dart';
+import 'package:my_resturant/presentation/widgets/orders/history_stats_bar.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});

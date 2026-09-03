@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -6,9 +6,9 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_item_notes_field.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_item_remove_button.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_item_total_row.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_item_notes_field.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_item_remove_button.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_item_total_row.dart';
 import 'package:my_resturant/shared/app_image.dart';
 
 class CartItemCard extends StatelessWidget {

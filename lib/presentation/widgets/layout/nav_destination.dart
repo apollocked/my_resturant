@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/presentation/pages/layout/nav_item.dart';
+import 'package:my_resturant/presentation/widgets/layout/nav_item.dart';
 import 'package:my_resturant/shared/cart_badge.dart';
 
 class NavDestination {

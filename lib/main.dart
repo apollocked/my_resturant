@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,7 +18,7 @@ import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
-import 'package:my_resturant/presentation/widgets/order/auto_print_listener.dart';
+import 'package:my_resturant/presentation/widgets/orders/auto_print_listener.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
 import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';

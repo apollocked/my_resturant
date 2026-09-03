@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -7,10 +7,10 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_header.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_order_list.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_clean_list.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_board.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_header.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_order_list.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_clean_list.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_board.dart';
 
 class KitchenPage extends StatefulWidget {
   const KitchenPage({super.key});

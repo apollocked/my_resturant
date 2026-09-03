@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/presentation/widgets/order/elapsed_time_chip.dart';
+import 'package:my_resturant/presentation/widgets/orders/elapsed_time_chip.dart';
 
 class OrderTableRow extends StatelessWidget {
   const OrderTableRow({

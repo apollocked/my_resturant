@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_notes_field.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_send_button.dart';
-import 'package:my_resturant/presentation/widgets/order/cart_total_column.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_notes_field.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_send_button.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_total_column.dart';
 
 class CartBottomBar extends StatelessWidget {
   final TextEditingController notesCtrl;

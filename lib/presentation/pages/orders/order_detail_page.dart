@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
@@ -10,9 +10,9 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/add_order_items_sheet.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_body.dart';
-import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
+import 'package:my_resturant/presentation/widgets/orders/add_order_items_sheet.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_body.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_status_style.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -31,7 +31,7 @@ class OrderDetailPage extends StatelessWidget {
     final isDesktop = !R.isPhone(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('${order.displayTable} — ${order.displayTrackingCode}'),
+        title: Text('${order.displayTable} â€” ${order.displayTrackingCode}'),
         actions: [
           IconButton(
             onPressed: () => _showPrintDialog(context, t),

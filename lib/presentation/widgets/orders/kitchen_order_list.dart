@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/order_card.dart';
-import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_card.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_status_style.dart';
 import 'package:my_resturant/shared/shimmer_skeletons.dart';
 import 'package:my_resturant/shared/staggered_grid.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';

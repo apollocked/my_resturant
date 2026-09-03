@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/presentation/widgets/order/history_order_list.dart';
-import 'package:my_resturant/presentation/widgets/order/history_shimmer.dart';
+import 'package:my_resturant/presentation/widgets/orders/history_order_list.dart';
+import 'package:my_resturant/presentation/widgets/orders/history_shimmer.dart';
 
 class HistoryLayout extends StatelessWidget {
   final Widget calendar;

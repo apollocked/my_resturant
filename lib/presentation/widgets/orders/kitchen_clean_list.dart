@@ -3,6 +3,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/shared/haptics.dart';
 import 'package:my_resturant/shared/staggered_grid.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 

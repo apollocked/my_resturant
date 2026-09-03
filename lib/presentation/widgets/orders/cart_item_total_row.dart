@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/presentation/widgets/order/quantity_selector.dart';
+import 'package:my_resturant/presentation/widgets/orders/quantity_selector.dart';
 
 class CartItemTotalRow extends StatelessWidget {
   const CartItemTotalRow({

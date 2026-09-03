@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_clean_list.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_order_list.dart';
-import 'package:my_resturant/presentation/widgets/order/kitchen_board_pane.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_clean_list.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_order_list.dart';
+import 'package:my_resturant/presentation/widgets/orders/kitchen_board_pane.dart';
 
 class KitchenBoard extends StatelessWidget {
   final ColorScheme cs;

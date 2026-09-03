@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_action_button.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_foods_header.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_header.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_item_card.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_notes.dart';
-import 'package:my_resturant/presentation/widgets/order/order_detail_timeline.dart';
-import 'package:my_resturant/presentation/widgets/order/order_status_style.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_action_button.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_foods_header.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_header.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_item_card.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_notes.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_detail_timeline.dart';
+import 'package:my_resturant/presentation/widgets/orders/order_status_style.dart';
 import 'package:my_resturant/shared/confirm_dialog.dart';
 
 class OrderDetailBody extends StatelessWidget {

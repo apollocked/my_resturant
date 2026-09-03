@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/presentation/pages/layout/nav_destination.dart';
-import 'package:my_resturant/presentation/pages/layout/nav_item.dart';
+import 'package:my_resturant/presentation/widgets/layout/nav_destination.dart';
+import 'package:my_resturant/presentation/widgets/layout/nav_item.dart';
 
 class SideNavRail extends StatelessWidget {
   const SideNavRail({

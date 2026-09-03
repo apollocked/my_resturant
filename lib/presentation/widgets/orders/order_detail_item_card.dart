@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/presentation/widgets/order/qty_stepper.dart';
+import 'package:my_resturant/presentation/widgets/orders/qty_stepper.dart';
 import 'package:my_resturant/shared/app_image.dart';
 
 class OrderDetailItemCard extends StatelessWidget {
