@@ -8,6 +8,7 @@ import 'package:my_resturant/presentation/widgets/admin/category_chip.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/shared/menu_cart_bar.dart';
 import 'package:my_resturant/shared/empty_state.dart';
+import 'package:my_resturant/shared/staggered_grid.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 
 class MenuMobileLayout extends StatelessWidget {
@@ -101,20 +102,16 @@ class MenuMobileLayout extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                           horizontal: R.padding(context),
                         ),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
+                        child: StaggeredGrid(
                           itemCount: meals.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: R.menuGridColumns(context),
-                                childAspectRatio: R.menuGridAspectRatio(
-                                  context,
-                                ),
-                                crossAxisSpacing: R.gridSpacing(context),
-                                mainAxisSpacing: R.gridSpacing(context),
-                              ),
-                          itemBuilder: (ctx, i) {
+                          crossAxisCount: R.menuGridColumns(context),
+                          childAspectRatio: R.menuGridAspectRatio(context),
+                          crossAxisSpacing: R.gridSpacing(context),
+                          mainAxisSpacing: R.gridSpacing(context),
+                          padding: EdgeInsets.zero,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          builder: (ctx, i) {
                             final r = meals[i];
                             return FoodCard(
                               recipe: r,

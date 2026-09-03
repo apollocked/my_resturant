@@ -4,6 +4,7 @@ import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/shared/animated_counter.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
 class MenuCartBar extends StatelessWidget {
@@ -46,10 +47,9 @@ class MenuCartBar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '${cartTotal.toInt()} ${t('currency_suffix')}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                AnimatedCounter(
+                  value: cartTotal,
+                  suffix: ' ${t('currency_suffix')}',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: R.fontXl(context),
@@ -64,6 +64,7 @@ class MenuCartBar extends StatelessWidget {
                     fontSize: R.fontSm(context),
                     color: cs.onSurfaceVariant,
                   ),
+                ),
                 ),
               ],
             ),

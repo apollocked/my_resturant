@@ -4,6 +4,7 @@ import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/presentation/widgets/menu/food_card.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/shared/search_bar_widget.dart';
+import 'package:my_resturant/shared/staggered_grid.dart';
 
 class MenuFoodGrid extends StatelessWidget {
   const MenuFoodGrid({
@@ -43,17 +44,16 @@ class MenuFoodGrid extends StatelessWidget {
             ),
           )
         else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+          StaggeredGrid(
             itemCount: meals.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: R.menuGridColumns(context),
-              childAspectRatio: R.menuGridAspectRatio(context),
-              crossAxisSpacing: R.gridSpacing(context),
-              mainAxisSpacing: R.gridSpacing(context),
-            ),
-            itemBuilder: (ctx, i) {
+            crossAxisCount: R.menuGridColumns(context),
+            childAspectRatio: R.menuGridAspectRatio(context),
+            crossAxisSpacing: R.gridSpacing(context),
+            mainAxisSpacing: R.gridSpacing(context),
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            builder: (ctx, i) {
               final r = meals[i];
               return FoodCard(
                 recipe: r,
