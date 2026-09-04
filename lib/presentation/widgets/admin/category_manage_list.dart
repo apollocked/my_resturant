@@ -33,7 +33,7 @@ class CategoryManageList extends StatelessWidget {
         itemBuilder: (context, index) {
           final c = categories[index];
           return CategoryManageTile(
-            emoji: c['icon'] ?? 'ðŸ½',
+            emoji: c['icon'] ?? '🍽',
             name: c['name'] ?? '',
             keyName: c['key'] ?? '',
             cs: cs,
@@ -54,7 +54,7 @@ class CategoryManageList extends StatelessWidget {
       itemBuilder: (context, index) {
         final c = categories[index];
         return CategoryManageCard(
-          emoji: c['icon'] ?? 'ðŸ½',
+          emoji: c['icon'] ?? '🍽',
           name: c['name'] ?? '',
           keyName: c['key'] ?? '',
           cs: cs,

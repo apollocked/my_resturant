@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -8,8 +10,17 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+fun loadKeystoreProperties(): Properties {
+    val properties = Properties()
+    val propFile = rootProject.file("key.properties")
+    if (propFile.exists()) {
+        properties.load(propFile.inputStream())
+    }
+    return properties
+}
+
 android {
-    namespace = "com.example.my_resturant"
+    namespace = "com.apollo.my_restaurant"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.my_resturant"
+        applicationId = "com.apollo.my_restaurant"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -28,11 +39,19 @@ android {
         multiDexEnabled = true
     }
 
+    signingConfigs {
+        create("release") {
+            val keystoreProperties = loadKeystoreProperties()
+            storeFile = file(keystoreProperties["storeFile"] ?: "debug.keystore")
+            storePassword = keystoreProperties["storePassword"] as? String ?: ""
+            keyAlias = keystoreProperties["keyAlias"] as? String ?: ""
+            keyPassword = keystoreProperties["keyPassword"] as? String ?: ""
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

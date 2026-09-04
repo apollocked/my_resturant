@@ -16,7 +16,7 @@ class CategoryFormPage extends StatefulWidget {
 
 class _CategoryFormPageState extends State<CategoryFormPage> {
   final _nameCtrl = TextEditingController();
-  String _selectedIcon = 'ðŸ½';
+  String _selectedIcon = '🍽';
   bool _saving = false;
 
   String _t(String key) =>
