@@ -72,7 +72,7 @@ class CategoryFilterBar extends StatelessWidget {
               onTap: () => onChanged(i),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 280),
-                curve: Curves.easeOutBack,
+                curve: Curves.easeOutCubic,
                 padding: EdgeInsets.symmetric(
                   horizontal: paddingH,
                   vertical: paddingV,
@@ -80,14 +80,14 @@ class CategoryFilterBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSel ? AppColors.primary : cs.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(isDesktop ? 26 : 20),
-                  boxShadow: isSel
-                      ? [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.25),
-                            blurRadius: 8,
-                          ),
-                        ]
-                      : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: isSel
+                          ? AppColors.primary.withValues(alpha: 0.25)
+                          : Colors.transparent,
+                      blurRadius: isSel ? 8 : 0,
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
