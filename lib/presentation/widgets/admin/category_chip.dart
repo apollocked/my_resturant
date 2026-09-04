@@ -63,7 +63,7 @@ class CategoryChip extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 280),
-          curve: Curves.easeOutBack,
+          curve: Curves.easeOutCubic,
           padding: EdgeInsets.symmetric(
             horizontal: paddingH,
             vertical: paddingV,
@@ -71,16 +71,18 @@ class CategoryChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primary : cs.surface,
             borderRadius: BorderRadius.circular(radius),
-            border: isSelected ? null : Border.all(color: cs.outlineVariant),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
+            border: Border.all(
+              color: isSelected ? AppColors.primary : cs.outlineVariant,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isSelected
+                    ? AppColors.primary.withValues(alpha: 0.3)
+                    : Colors.transparent,
+                blurRadius: isSelected ? 8 : 0,
+                offset: isSelected ? const Offset(0, 2) : Offset.zero,
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

@@ -46,7 +46,9 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     setState(() => _saving = true);
     try {
       await context.read<OrderCubit>().addCategory(key, name, _selectedIcon);
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        Navigator.pop(context, {'key': key, 'name': name, 'icon': _selectedIcon});
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

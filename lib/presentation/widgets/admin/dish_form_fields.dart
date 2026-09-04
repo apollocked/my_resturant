@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
+import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/widgets/admin/dish_field.dart';
 import 'package:my_resturant/presentation/widgets/admin/dish_preview_image.dart';
 import 'package:my_resturant/presentation/widgets/admin/image_picker_button.dart';
@@ -49,9 +52,20 @@ class _DishFormFieldsState extends State<DishFormFields> {
         : (cats.isNotEmpty ? cats.first['key']! : 'burger');
   }
 
+  Future<void> _addCategory() async {
+    final created = await context.push<Map<String, String>>('/category-form');
+    if (!mounted || created == null) return;
+    setState(() {
+      _cat = created['key']!;
+      widget.onCategoryChanged(created['key']!);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final catKeys = effectiveCategories(widget.categories);
+    final cats = effectiveCategories(
+      context.watch<OrderCubit>().state.categories,
+    );
     final isDesktop = R.isDesktop(context);
     final nameField = DishField(
       label: widget.t('dish_name'),
@@ -87,7 +101,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
         labelText: widget.t('section_field'),
         filled: true,
       ),
-      items: catKeys
+      items: cats
           .map(
             (c) => DropdownMenuItem(
               value: c['key'],
@@ -101,6 +115,17 @@ class _DishFormFieldsState extends State<DishFormFields> {
           widget.onCategoryChanged(v);
         }
       },
+    );
+    final categoryRow = Row(
+      children: [
+        Expanded(child: categoryField),
+        const SizedBox(width: 8),
+        IconButton.filledTonal(
+          onPressed: _addCategory,
+          icon: const Icon(Icons.add),
+          tooltip: widget.t('add_category'),
+        ),
+      ],
     );
     return Form(
       key: widget.formKey,
@@ -129,7 +154,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(child: categoryField),
+                Expanded(child: categoryRow),
                 const SizedBox(width: 12),
                 Expanded(child: imageButton),
               ],
@@ -137,7 +162,7 @@ class _DishFormFieldsState extends State<DishFormFields> {
           else ...[
             imageButton,
             const SizedBox(height: 12),
-            categoryField,
+            categoryRow,
           ],
         ],
       ),
