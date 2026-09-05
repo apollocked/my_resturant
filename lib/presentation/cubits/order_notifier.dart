@@ -11,13 +11,16 @@ class OrderNotifier {
   List<Order> _previous = [];
 
   void init() {
-    _service.init();
+    _service.init(_currentLocale);
     _service.requestPermission();
   }
 
   void setRole(Role? role) => _currentRole = role;
 
-  void setLocale(Locale locale) => _currentLocale = locale;
+  void setLocale(Locale locale) {
+    _currentLocale = locale;
+    _service.updateChannels(locale);
+  }
 
   void onOrdersChanged(List<Order> next) {
     if (_currentRole != null) {

@@ -17,7 +17,7 @@ class PrinterConfig {
     this.port = 9100,
     this.macAddress,
     this.paperWidth = 80,
-    this.restaurantName = 'My Restaurant',
+    this.restaurantName = '',
     this.autoPrintKitchen = true,
   });
 
@@ -56,7 +56,7 @@ class PrinterPrefs {
       port: p.getInt('${_prefix}port') ?? 9100,
       macAddress: p.getString('${_prefix}mac'),
       paperWidth: p.getInt('${_prefix}paper') ?? 80,
-      restaurantName: p.getString('${_prefix}name') ?? 'My Restaurant',
+      restaurantName: p.getString('${_prefix}name') ?? '',
       autoPrintKitchen: p.getBool('${_prefix}auto_kitchen') ?? true,
     );
   }

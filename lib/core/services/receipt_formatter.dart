@@ -9,12 +9,14 @@ import 'package:my_resturant/core/services/printer_config.dart';
 class ReceiptFormatter {
   static Uint8List kitchenTicket(Order order, PrinterConfig config, Locale locale) {
     String tr(String key) => Tr.get(key, locale);
+    final restaurantName =
+        config.restaurantName.isNotEmpty ? config.restaurantName : tr('restaurant_name');
     final buf = BytesBuilder();
     _init(buf);
     _center(buf);
     _bold(buf);
     _large(buf);
-    _text(buf, config.restaurantName);
+    _text(buf, restaurantName);
     _normal(buf);
     _reset(buf);
     _lf2(buf);
@@ -53,12 +55,14 @@ class ReceiptFormatter {
 
   static Uint8List fullReceipt(Order order, PrinterConfig config, Locale locale) {
     String tr(String key) => Tr.get(key, locale);
+    final restaurantName =
+        config.restaurantName.isNotEmpty ? config.restaurantName : tr('restaurant_name');
     final buf = BytesBuilder();
     _init(buf);
     _center(buf);
     _bold(buf);
     _large(buf);
-    _text(buf, config.restaurantName);
+    _text(buf, restaurantName);
     _normal(buf);
     _reset(buf);
     _lf(buf);

@@ -8,22 +8,35 @@ class OrderNotificationService {
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
-  Future<void> init() async {
+  Future<void> init(Locale locale) async {
     if (_initialized) return;
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: androidSettings);
     await _plugin.initialize(settings);
 
+    await _createChannels(locale);
+    _initialized = true;
+  }
+
+  Future<void> updateChannels(Locale locale) async {
+    if (!_initialized) return;
+    await _createChannels(locale);
+  }
+
+  Future<void> _createChannels(Locale locale) async {
     final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     await android?.createNotificationChannel(
-      const AndroidNotificationChannel('kitchen_channel', 'Kitchen Notifications',
-        description: 'New orders for kitchen', importance: Importance.high),
+      AndroidNotificationChannel('kitchen_channel',
+        _t('notif_channel_kitchen_name', locale),
+        description: _t('notif_channel_kitchen_desc', locale),
+        importance: Importance.high),
     );
     await android?.createNotificationChannel(
-      const AndroidNotificationChannel('waiter_channel', 'Waiter Notifications',
-        description: 'Served orders for waiter', importance: Importance.high),
+      AndroidNotificationChannel('waiter_channel',
+        _t('notif_channel_waiter_name', locale),
+        description: _t('notif_channel_waiter_desc', locale),
+        importance: Importance.high),
     );
-    _initialized = true;
   }
 
   Future<void> requestPermission() async {
@@ -73,9 +86,9 @@ class OrderNotificationService {
       order.tableNumber,
       title,
       body,
-      const NotificationDetails(android: AndroidNotificationDetails(
-        'kitchen_channel', 'Kitchen Notifications',
-        channelDescription: 'New orders for kitchen',
+      NotificationDetails(android: AndroidNotificationDetails(
+        'kitchen_channel', _t('notif_channel_kitchen_name', locale),
+        channelDescription: _t('notif_channel_kitchen_desc', locale),
         importance: Importance.high, priority: Priority.high,
         icon: '@mipmap/ic_launcher',
       )),
@@ -89,9 +102,9 @@ class OrderNotificationService {
       order.tableNumber + 1000,
       title,
       body,
-      const NotificationDetails(android: AndroidNotificationDetails(
-        'waiter_channel', 'Waiter Notifications',
-        channelDescription: 'Served orders for waiter',
+      NotificationDetails(android: AndroidNotificationDetails(
+        'waiter_channel', _t('notif_channel_waiter_name', locale),
+        channelDescription: _t('notif_channel_waiter_desc', locale),
         importance: Importance.high, priority: Priority.high,
         icon: '@mipmap/ic_launcher',
       )),

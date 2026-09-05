@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/helpers/app_errors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
@@ -56,7 +57,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('${_t('error_occurred')}: $e')));
+        ).showSnackBar(SnackBar(content: Text(_t(localizedErrorKey(e)))));
       }
     }
   }

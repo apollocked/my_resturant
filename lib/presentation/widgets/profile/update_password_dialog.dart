@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_resturant/core/helpers/app_errors.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 
@@ -38,7 +39,10 @@ class _UpdatePasswordDialogState extends State<UpdatePasswordDialog> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+        SnackBar(
+          content: Text(widget.t(localizedErrorKey(e))),
+          backgroundColor: AppColors.error,
+        ),
       );
     }
   }

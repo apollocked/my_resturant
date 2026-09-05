@@ -41,7 +41,7 @@ class PrinterActions extends StatelessWidget {
                     if (!context.mounted) return;
                     final locale = context.read<SettingsCubit>().state.locale;
                     final ok = await printer.printReceipt(
-                      _dummyOrder(),
+                      _dummyOrder(t('table_n').replaceAll('{n}', '1')),
                       locale,
                     );
                     if (context.mounted) {
@@ -65,8 +65,8 @@ class PrinterActions extends StatelessWidget {
 
   Future<void> _save(PrinterCubit cubit) async => cubit.updateConfig(config);
 
-  Order _dummyOrder() => Order(
-    id: 'test', tableNumber: 1, tableName: 'Table 1',
+  Order _dummyOrder(String tableLabel) => Order(
+    id: 'test', tableNumber: 1, tableName: tableLabel,
     items: [], trackingCode: 'TEST',
   );
 }
