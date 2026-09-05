@@ -51,10 +51,15 @@ void main() async {
   settings.stream.listen((_) => routeRefresh.value++);
   final printer = PrinterCubit(PrinterService());
   await printer.init();
-  runApp(MyApp(
-    repo: dataRepo, acct: acct, role: role,
-    settings: settings, printer: printer,
-  ));
+  runApp(
+    MyApp(
+      repo: dataRepo,
+      acct: acct,
+      role: role,
+      settings: settings,
+      printer: printer,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -64,8 +69,12 @@ class MyApp extends StatelessWidget {
   final SettingsCubit settings;
   final PrinterCubit printer;
   const MyApp({
-    super.key, required this.repo, required this.acct,
-    required this.role, required this.settings, required this.printer,
+    super.key,
+    required this.repo,
+    required this.acct,
+    required this.role,
+    required this.settings,
+    required this.printer,
   });
   @override
   Widget build(BuildContext context) {
@@ -97,7 +106,8 @@ class _AppViewState extends State<AppView> {
     final settings = context.watch<SettingsCubit>().state;
     final role = context.watch<RoleCubit>().state;
     final orderCubit = context.read<OrderCubit>();
-    if (role.isLoggedIn != _lastRole?.isLoggedIn || role.role != _lastRole?.role) {
+    if (role.isLoggedIn != _lastRole?.isLoggedIn ||
+        role.role != _lastRole?.role) {
       _lastRole = role;
       orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
     }
@@ -130,15 +140,18 @@ class _AppViewState extends State<AppView> {
       routerConfig: appRouter,
       builder: (context, child) {
         return BlocListener<OrderCubit, OrderState>(
-          listenWhen: (p, c) => p.errorMessage != c.errorMessage && c.errorMessage != null,
+          listenWhen: (p, c) =>
+              p.errorMessage != c.errorMessage && c.errorMessage != null,
           listener: (context, state) {
             final msg = Tr.get(state.errorMessage!, settings.locale);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(msg),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 3),
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+              ),
+            );
             context.read<OrderCubit>().clearError();
           },
           child: AutoPrintListener(child: child ?? const SizedBox.shrink()),
