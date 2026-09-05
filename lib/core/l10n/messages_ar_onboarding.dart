@@ -36,9 +36,10 @@ const Map<String, String> aronboarding = {
   'onboarding_welcome_desc':
       'كل ما تحتاجه لإدارة مطعمك بكفاءة — من الطلبات إلى التحليلات.',
   'onboarding_menu_title': 'القائمة والطلبات',
-  'onboarding_menu_desc': 'تصفح قائمتك، اختر الطاولة، وأدر طلباتك بسهولة.',
+  'onboarding_menu_desc':
+      'تصفح قائمتك مع أقسام بالرموز التعبيرية — من الطعام إلى المشروبات — اختر الطاولة وأدر طلباتك بسهولة.',
   'onboarding_feat_table': 'اختيار الطاولة',
-  'onboarding_feat_categories': 'تصفية الأقسام',
+  'onboarding_feat_categories': 'أقسام بالرموز (أطعمة ومشروبات)',
   'onboarding_feat_notes': 'ملاحظات الأصناف والسلة',
   'onboarding_feat_search': 'بحث ذكي',
   'onboarding_kitchen_title': 'المطبخ و مباشر',
@@ -60,6 +61,7 @@ const Map<String, String> aronboarding = {
   'onboarding_feat_food_mgmt': 'إدارة الأطعمة',
   'onboarding_feat_table_mgmt': 'إدارة الطاولات',
   'onboarding_feat_categories_mgmt': 'إدارة الأقسام',
+  'onboarding_feat_printing': 'طباعة الفواتير والمطبخ',
   'onboarding_settings_title': 'اللغة والمظهر',
   'onboarding_settings_desc': 'اختر لغتك والمظهر المفضل لديك.',
   'onboarding_select_language': 'اختر اللغة',

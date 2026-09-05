@@ -4,10 +4,10 @@
 
 **A production-grade, multi-tenant SaaS restaurant management system**
 
-Real-time orders · Role-based access · Offline-first · Fully responsive
+Real-time orders · Role-based access · Offline-first · Bluetooth/USB printing
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.29-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-2.x-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
@@ -25,9 +25,10 @@ Real-time orders · Role-based access · Offline-first · Fully responsive
 - **Multi-Tenant SaaS** — Fully isolated data per restaurant with row-level security
 - **Real-Time** — Live order updates via Supabase Realtime with auto-reconnect and polling fallback
 - **Offline-First** — Local SQLite (Drift) when the network is unavailable, with connectivity banner
-- **Role-Based Access** — Waiter, Kitchen, Admin — each with its own PIN login and PIN change screens
+- **Role-Based Access** — Waiter, Kitchen, Admin — each with its own per-account PIN, auto-provisioned on first login
 - **Responsive** — Phone (liquid glass nav), tablet, and desktop (navigation rail) layouts
-- **Multi-Language** — Kurdish (Sorani), Arabic, English — full RTL support
+- **Multi-Language** — English (default), Kurdish (Sorani), Arabic — full RTL support
+- **Printer Ready** — Bluetooth & USB receipt and kitchen printing (ESC/POS)
 
 ---
 
@@ -56,12 +57,22 @@ Real-time orders · Role-based access · Offline-first · Fully responsive
 </details>
 
 <details>
+<summary><strong>Printing</strong></summary>
+
+- Receipt and kitchen ticket printing over **Bluetooth** or **USB** (ESC/POS)
+- Dedicated printer settings screen with connection tests
+- Unified API for Bluetooth (flutter_blue_plus) and USB (unified_esc_pos_printer / embedded USB driver)
+
+</details>
+
+<details>
 <summary><strong>Menu & Inventory</strong></summary>
 
 - Dish management with image upload, pricing, and descriptions
-- Categories with custom icons
+- Categories with emoji icons — food, drinks, and beyond
 - Toggle dish availability with an on/off switch — from the dedicated screen **and** the Food Management list
 - Search across the menu
+- Item notes and a cart with live totals
 
 </details>
 
@@ -80,8 +91,8 @@ Real-time orders · Role-based access · Offline-first · Fully responsive
 
 - Google Sign-In for restaurant account creation
 - Promo code activation system with admin management
-- Role-based PIN login (Waiter / Kitchen / Admin)
-- Guided onboarding: Welcome → language/theme → account → restaurant setup
+- Role-based PIN login (Waiter / Kitchen / Admin), with PINs persisted per account
+- Guided onboarding: Welcome → language/theme → menu → kitchen → reports → management & roles
 
 </details>
 
@@ -119,11 +130,12 @@ lib/
 ├── presentation/       # Pages, widgets, cubits (BLoC)
 │   ├── cubits/
 │   ├── pages/
-│   └── widgets/
-├── shared/             # Reusable UI components (nav bar, dialogs, etc.)
+│   └── widgets/        # Mirrors pages/ (admin, auth, layout, menu, orders, profile, …)
 ├── firebase_options.dart
 └── main.dart
 ```
+
+`third_party/usb_serial/` — local vendored USB serial driver (linked via `dependency_overrides`).
 
 **Pattern:** Clean Architecture — `domain` defines interfaces, `data` implements them with Supabase/Drift, `presentation` consumes via BLoC cubits.
 
@@ -133,8 +145,8 @@ lib/
 
 | Layer                | Technology                                                       | Version                 |
 | -------------------- | ---------------------------------------------------------------- | ----------------------- |
-| **Framework**        | Flutter                                                          | 3.29                    |
-| **Language**         | Dart                                                             | 3.12                    |
+| **Framework**        | Flutter                                                          | 3.47                    |
+| **Language**         | Dart                                                             | 3.13                    |
 | **State Management** | flutter_bloc                                                     | 9.1                     |
 | **Routing**          | go_router                                                        | 17.3                    |
 | **Backend**          | Supabase (Auth, Postgres, Storage, Realtime, Edge Functions)     | 2.16                    |
@@ -142,11 +154,14 @@ lib/
 | **Local Storage**    | shared_preferences                                               | 2.5                     |
 | **Notifications**    | flutter_local_notifications + Firebase Messaging                 | 18.0 / 15.2             |
 | **Charts**           | fl_chart                                                         | 1.2                     |
-| **Images**           | image_picker, image_cropper, file_picker, flutter_image_compress | —                       |
+| **Images**           | image_picker, image_cropper, file_picker, flutter_image_compress | 1.1 / 12.2 / 8.1 / 2.4  |
 | **Auth**             | google_sign_in + Supabase Auth                                   | 7.1                     |
-| **Connectivity**     | connectivity_plus                                                | 7.3                     |
+| **Connectivity**     | connectivity_plus                                               | 7.3                     |
 | **Caching**          | cached_network_image                                             | 3.4                     |
-| **i18n**             | Custom `Tr.get()`                                                | 3 locales (ckb, ar, en) |
+| **Printing**         | unified_esc_pos_printer + flutter_blue_plus                      | 3.4 / 2.3               |
+| **Permissions**      | permission_handler                                               | 12.0                    |
+| **UI Extras**        | glass_liquid_navbar, shimmer                                     | 0.2 / 3.0               |
+| **i18n**             | Custom `Tr.get()`                                                | 3 locales (ku, ar, en)  |
 
 ---
 
@@ -154,7 +169,7 @@ lib/
 
 ### Prerequisites
 
-- [Flutter 3.29+](https://docs.flutter.dev/get-started/install)
+- [Flutter 3.47+](https://docs.flutter.dev/get-started/install)
 - A [Supabase](https://supabase.com) project
 - (Optional) A [Firebase](https://firebase.google.com) project for push notifications
 
@@ -182,13 +197,20 @@ flutter run
 
 ### Database Setup
 
-Apply migrations to your Supabase project:
+Apply migrations to your Supabase project, in order:
 
 ```bash
 supabase db push
 ```
 
-Or paste the contents of `supabase/migration.sql` into the [Supabase SQL Editor](https://supabase.com/dashboard/project/_/sql/new).
+Or paste the SQL files from `supabase/` into the [Supabase SQL Editor](https://supabase.com/dashboard/project/_/sql/new) in this order:
+
+1. `migration.sql` — core schema (profiles, categories, dishes, tables, orders, RLS)
+2. `security_hardening.sql` — hardening views, policies, and security definer functions
+3. `admin_app.sql` — admin dashboard functions (current role, stats, multi-restaurant reports)
+4. `device_tokens.sql` — push notification device tokens
+5. `storage_recipe_images.sql` — recipe image storage bucket + policies
+6. `upsert_passcodes.sql` — per-account PIN auto-save (UPSERT) for the profiles table
 
 ### Push Notifications
 
@@ -220,6 +242,8 @@ flutter build web --release
 flutter build windows --release
 ```
 
+> **Release signing:** Android release builds are signed with `android/app/upload-keystore.jks` via `android/key.properties` (both gitignored). The application id is `com.apollo.my_restaurant`.
+
 ---
 
 ## 🔐 Environment Variables
@@ -237,6 +261,7 @@ flutter build windows --release
 | Path             | Purpose                               |
 | ---------------- | ------------------------------------- |
 | `supabase/`      | SQL migrations and edge functions     |
+| `third_party/`   | Vendored USB serial driver (printer)  |
 | `assets/icons/`  | App icons and category icons          |
 | `assets/images/` | Onboarding and placeholder images     |
 | `assets/fonts/`  | NRT font family                       |
@@ -268,7 +293,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 **Built with care for restaurant owners everywhere**
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.29-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-2.x-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
 
 </div>

@@ -8,7 +8,7 @@ class SettingsState {
   final bool onboardingComplete;
   const SettingsState({
     this.themeMode = ThemeMode.light,
-    this.locale = const Locale('ku'),
+    this.locale = const Locale('en'),
     this.onboardingComplete = false,
   });
 
@@ -40,7 +40,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         locale: switch (localeStr) {
           'en' => const Locale('en'),
           'ar' => const Locale('ar'),
-          _ => const Locale('ku'),
+          _ => const Locale('en'),
         },
         onboardingComplete: onboarding,
       ),
