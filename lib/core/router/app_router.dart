@@ -25,6 +25,7 @@ import 'package:my_resturant/presentation/pages/admin/category_management_page.d
 import 'package:my_resturant/presentation/pages/admin/change_passcodes_page.dart';
 import 'package:my_resturant/presentation/pages/admin/printer_settings_page.dart';
 import 'package:my_resturant/presentation/pages/admin/promo_codes_page.dart';
+import 'package:my_resturant/presentation/pages/admin/info_page.dart';
 import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
 import 'package:my_resturant/presentation/pages/onboarding/onboarding_page.dart';
@@ -47,12 +48,14 @@ bool _roleAllowed(Role role, String loc) {
     case Role.kitchen:
       return loc == '/kitchen' ||
           loc == '/profile' ||
+          loc == '/info' ||
           loc.startsWith('/order-detail');
     case Role.waiter:
       return loc == '/menu' ||
           loc == '/cart' ||
           loc == '/kitchen' ||
           loc == '/profile' ||
+          loc == '/info' ||
           loc.startsWith('/order-detail');
   }
 }
@@ -140,6 +143,8 @@ final appRouter = GoRouter(
       builder: (_, _) => const ChangePasscodesPage()),
     GoRoute(path: '/printer-settings', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const PrinterSettingsPage()),
+    GoRoute(path: '/info', parentNavigatorKey: _rootNavigator,
+      builder: (_, _) => const InfoPage()),
     GoRoute(path: '/promo-codes', parentNavigatorKey: _rootNavigator,
       builder: (context, _) {
         final acct = context.read<AccountCubit>().state;

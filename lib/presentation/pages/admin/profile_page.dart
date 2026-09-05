@@ -110,6 +110,12 @@ class ProfilePage extends StatelessWidget {
                     t,
                   ),
                 ),
+                const SizedBox(height: 12),
+                ProfileOutlinedAction(
+                  icon: Icons.help_outline,
+                  label: t('info_section_title'),
+                  onTap: () => context.push('/info'),
+                ),
                 const SizedBox(height: 20),
               ],
             ),
