@@ -36,6 +36,20 @@ const List<String> categoryIcons = [
   '🥮',
   '🍦',
   '🍰',
+  '🥤',
+  '🧋',
+  '☕',
+  '🍵',
+  '🫖',
+  '🥛',
+  '🧃',
+  '🍹',
+  '🍸',
+  '🍺',
+  '🍻',
+  '🍷',
+  '🥂',
+  '🍾',
 ];
 
 class CategoryIconPicker extends StatelessWidget {
