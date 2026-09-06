@@ -60,12 +60,6 @@ class ProfileAdminPanel extends StatelessWidget {
         route: '/availability',
       ),
       AdminPanelCard(
-        icon: Icons.history,
-        title: t('order_history'),
-        sub: t('order_history_sub'),
-        route: '/history',
-      ),
-      AdminPanelCard(
         icon: Icons.bar_chart,
         title: t('report'),
         sub: t('report_sub'),
