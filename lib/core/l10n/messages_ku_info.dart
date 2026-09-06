@@ -82,13 +82,6 @@ const Map<String, String> kuinfo = {
   'info_printer_feat_1': 'پەیوەندی بە WiFi، بلوتوث یان USB',
   'info_printer_feat_2': 'وەسڵ و تایبەتی چێشتخانە چاپ بکە',
   'info_printer_feat_3': 'چاپکردنی خۆکارانەی داواکارییەکانی چێشتخانە',
-  // Promo codes page
-  'info_promo_codes_title': 'کۆدی چاڵاککردن',
-  'info_promo_codes_desc':
-      'کۆدی چاڵاککردن دروست بکە کە ڕێگە بە ڕێستۆرانتە نوێکان دەدات هەژمارەکەیان چاڵاک بکەن. هەر کۆدێک دوای ماوەیەکی دیاریکراو دەبەسێت و تەنها یەک جار بەکاردێت.',
-  'info_promo_codes_feat_1': 'کۆدی تایبەت دروست یان داخڵ بکە',
-  'info_promo_codes_feat_2': 'ماوەی بەسەرچوون دیاری بکە',
-  'info_promo_codes_feat_3': 'کۆدە بەکارهاتووەکان و بەردەستەکان ببینە',
   // Profile page
   'info_profile_title': 'پڕۆفایل',
   'info_profile_desc':

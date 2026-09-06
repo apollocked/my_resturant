@@ -83,13 +83,6 @@ class ProfilePage extends StatelessWidget {
                     onTap: () => context.push('/change-passcodes'),
                   ),
                   const SizedBox(height: 8),
-                  if (acctState.email == 'hamabarznji1990@gmail.com')
-                    ProfileOutlinedAction(
-                      icon: Icons.vpn_key_outlined,
-                      label: t('promo_codes_title'),
-                      sideWidth: 1.5,
-                      onTap: () => context.push('/promo-codes'),
-                    ),
                 ],
                 const SizedBox(height: 16),
                 ProfileRoleSwitcher(

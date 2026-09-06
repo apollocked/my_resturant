@@ -104,13 +104,6 @@ const List<_InfoItem> _items = [
     visibleFor: {Role.admin},
   ),
   _InfoItem(
-    Icons.vpn_key_outlined,
-    'info_promo_codes_title',
-    'info_promo_codes_desc',
-    ['info_promo_codes_feat_1', 'info_promo_codes_feat_2', 'info_promo_codes_feat_3'],
-    visibleFor: {Role.admin},
-  ),
-  _InfoItem(
     Icons.person_outline,
     'info_profile_title',
     'info_profile_desc',

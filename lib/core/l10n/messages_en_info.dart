@@ -82,13 +82,6 @@ const Map<String, String> eninfo = {
   'info_printer_feat_1': 'Connect via WiFi, Bluetooth or USB',
   'info_printer_feat_2': 'Print receipts and kitchen tickets',
   'info_printer_feat_3': 'Auto-print kitchen orders',
-  // Promo codes page
-  'info_promo_codes_title': 'Promo Codes',
-  'info_promo_codes_desc':
-      'Create activation codes that let new restaurants activate their account. Each code expires after a chosen period and can only be used once.',
-  'info_promo_codes_feat_1': 'Generate or enter a custom code',
-  'info_promo_codes_feat_2': 'Set the expiry duration',
-  'info_promo_codes_feat_3': 'Track used and available codes',
   // Profile page
   'info_profile_title': 'Profile',
   'info_profile_desc':

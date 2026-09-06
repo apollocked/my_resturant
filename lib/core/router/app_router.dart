@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
@@ -24,7 +23,6 @@ import 'package:my_resturant/presentation/pages/admin/category_form_page.dart';
 import 'package:my_resturant/presentation/pages/admin/category_management_page.dart';
 import 'package:my_resturant/presentation/pages/admin/change_passcodes_page.dart';
 import 'package:my_resturant/presentation/pages/admin/printer_settings_page.dart';
-import 'package:my_resturant/presentation/pages/admin/promo_codes_page.dart';
 import 'package:my_resturant/presentation/pages/admin/info_page.dart';
 import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
@@ -39,7 +37,7 @@ final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 /// react to non-navigation state changes).
 final ValueNotifier<int> routeRefresh = ValueNotifier<int>(0);
 
-final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/promo-codes', '/change-passcodes', '/printer-settings'];
+final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/change-passcodes', '/printer-settings'];
 
 bool _roleAllowed(Role role, String loc) {
   switch (role) {
@@ -145,16 +143,5 @@ final appRouter = GoRouter(
       builder: (_, _) => const PrinterSettingsPage()),
     GoRoute(path: '/info', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const InfoPage()),
-    GoRoute(path: '/promo-codes', parentNavigatorKey: _rootNavigator,
-      builder: (context, _) {
-        final acct = context.read<AccountCubit>().state;
-        if (acct.email != 'hamabarznji1990@gmail.com') {
-          final locale = context.read<SettingsCubit>().state.locale;
-          return Scaffold(
-            body: Center(child: Text(Tr.get('not_found', locale))),
-          );
-        }
-        return const PromoCodesPage();
-      }),
   ],
 );

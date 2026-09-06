@@ -82,13 +82,6 @@ const Map<String, String> arinfo = {
   'info_printer_feat_1': 'الاتصال عبر WiFi أو بلوتوث أو USB',
   'info_printer_feat_2': 'طباعة الفواتير وتيكتات المطبخ',
   'info_printer_feat_3': 'الطباعة التلقائية لطلبات المطبخ',
-  // Promo codes page
-  'info_promo_codes_title': 'رموز التفعيل',
-  'info_promo_codes_desc':
-      'أنشئ رموز تفعيل تسمح للمطاعم الجديدة بتفعيل حسابها. ينتهي كل رمز بعد فترة محددة ويمكن استخدامه مرة واحدة فقط.',
-  'info_promo_codes_feat_1': 'توليد أو إدخال رمز مخصص',
-  'info_promo_codes_feat_2': 'تحديد مدة الصلاحية',
-  'info_promo_codes_feat_3': 'تتبع الرموز المستخدمة والمتاحة',
   // Profile page
   'info_profile_title': 'الملف الشخصي',
   'info_profile_desc':
