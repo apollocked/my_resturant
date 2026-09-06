@@ -16,7 +16,6 @@ class FoodListView extends StatelessWidget {
     required this.cs,
     required this.onEdit,
     required this.onDelete,
-    required this.onToggle,
   });
 
   final bool isLoading;
@@ -26,7 +25,6 @@ class FoodListView extends StatelessWidget {
   final ColorScheme cs;
   final ValueChanged<Recipe> onEdit;
   final ValueChanged<Recipe> onDelete;
-  final ValueChanged<Recipe> onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +68,6 @@ class FoodListView extends StatelessWidget {
           priceLabel: t('currency_suffix'),
           onEdit: () => onEdit(dishes[index]),
           onDelete: () => onDelete(dishes[index]),
-          onToggle: () => onToggle(dishes[index]),
         ),
       );
     }
@@ -83,7 +80,6 @@ class FoodListView extends StatelessWidget {
         priceLabel: t('currency_suffix'),
         onEdit: () => onEdit(dishes[index]),
         onDelete: () => onDelete(dishes[index]),
-        onToggle: () => onToggle(dishes[index]),
       ),
     );
   }

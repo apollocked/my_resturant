@@ -12,7 +12,6 @@ class FoodDishCard extends StatelessWidget {
     required this.priceLabel,
     required this.onEdit,
     required this.onDelete,
-    required this.onToggle,
   });
 
   final Recipe recipe;
@@ -20,7 +19,6 @@ class FoodDishCard extends StatelessWidget {
   final String priceLabel;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +55,6 @@ class FoodDishCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                   child: AppImage(recipe.imageUrl, width: 44, height: 44),
-                ),
-                const SizedBox(width: 10),
-                Switch(
-                  value: recipe.available,
-                  onChanged: (_) => onToggle(),
-                  activeTrackColor: AppColors.primary,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ],
             ),

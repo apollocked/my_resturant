@@ -12,7 +12,6 @@ class FoodDishTile extends StatelessWidget {
     required this.priceLabel,
     required this.onEdit,
     required this.onDelete,
-    required this.onToggle,
   });
 
   final Recipe recipe;
@@ -20,7 +19,6 @@ class FoodDishTile extends StatelessWidget {
   final String priceLabel;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -39,26 +37,14 @@ class FoodDishTile extends StatelessWidget {
             color: cs.onSurface,
           ),
         ),
-        subtitle: Row(
-          children: [
-            Expanded(
-              child: Text(
-                '${recipe.price.toInt()} $priceLabel • ${recipe.category}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: R.fontSm(context),
-                  color: cs.onSurfaceVariant,
-                ),
-              ),
-            ),
-            Switch(
-              value: recipe.available,
-              onChanged: (_) => onToggle(),
-              activeTrackColor: AppColors.primary,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-          ],
+        subtitle: Text(
+          '${recipe.price.toInt()} $priceLabel • ${recipe.category}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: R.fontSm(context),
+            color: cs.onSurfaceVariant,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
