@@ -4,7 +4,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/services/printer_transport.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:my_resturant/presentation/permissions/permission_prompts.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
     hide PrinterConnectionType;
 
@@ -41,10 +41,11 @@ Future<void> scanBluetooth(
 ) async {
   final settings = context.read<SettingsCubit>().state;
   String t(String key) => Tr.get(key, settings.locale);
-  final status = await Permission.bluetooth.request();
   if (!context.mounted) return;
   final messenger = ScaffoldMessenger.of(context);
-  if (!status.isGranted) {
+  final granted = await ensureBluetoothPermission(context);
+  if (!context.mounted) return;
+  if (!granted) {
     messenger.showSnackBar(SnackBar(content: Text(t('bt_permission_required'))));
     return;
   }

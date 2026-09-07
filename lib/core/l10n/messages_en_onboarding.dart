@@ -32,6 +32,11 @@ const Map<String, String> enonboarding = {
   'notif_channel_kitchen_desc': 'New orders for kitchen',
   'notif_channel_waiter_name': 'Waiter Notifications',
   'notif_channel_waiter_desc': 'Served orders for waiter',
+  'notif_permission_title': 'Turn on notifications',
+  'notif_permission_subtitle':
+      'Get notified instantly when a new order arrives at the kitchen or when a table is ready to be served.',
+  'notif_permission_allow': 'Allow notifications',
+  'notif_permission_skip': 'Not now',
   'onboarding_skip': 'Skip',
   'onboarding_next': 'Next',
   'onboarding_get_started': 'Get Started',

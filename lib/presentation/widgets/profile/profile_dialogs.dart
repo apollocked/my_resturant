@@ -5,6 +5,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
+import 'package:my_resturant/presentation/permissions/permission_prompts.dart';
 import 'package:my_resturant/presentation/widgets/profile/logout_dialog.dart';
 import 'package:my_resturant/presentation/widgets/profile/pin_dialog.dart';
 import 'package:my_resturant/presentation/widgets/profile/role_transition_overlay.dart';
@@ -66,6 +67,9 @@ class ProfileDialogs {
 
     if (!context.mounted) return;
     if (ok == true || cubit.state.role == r) {
+      if (r == Role.kitchen || r == Role.waiter) {
+        promptNotificationIfNeeded(context);
+      }
       final home = homeForRole(cubit.state.role);
       if (home != '/profile' && context.mounted) {
         context.go(home);

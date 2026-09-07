@@ -32,6 +32,11 @@ const Map<String, String> kuonboarding = {
   'notif_channel_kitchen_desc': 'داواکاری نوێ بۆ چێشتخانە',
   'notif_channel_waiter_name': 'ئاگاداری وەیتەر',
   'notif_channel_waiter_desc': 'داواکاری پێشکەشکراو بۆ وەیتەر',
+  'notif_permission_title': 'ئاگادارییەکان چالاک بکە',
+  'notif_permission_subtitle':
+      'لە کاتی گەیشتنی داواکارییەکی نوێ بۆ چێشتخانە یان ئامادەبوونی مێزێک بۆ پێشکەشکردن، ڕاستەوخۆ ئاگادار بە.',
+  'notif_permission_allow': 'ڕێگەدان بە ئاگاداری',
+  'notif_permission_skip': 'ئێستا نا',
   'onboarding_skip': 'بپەڕێ',
   'onboarding_next': 'دواتر',
   'onboarding_get_started': 'دەست پێ بکە',

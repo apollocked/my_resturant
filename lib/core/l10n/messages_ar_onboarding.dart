@@ -32,6 +32,11 @@ const Map<String, String> aronboarding = {
   'notif_channel_kitchen_desc': 'طلبات جديدة للمطبخ',
   'notif_channel_waiter_name': 'إشعارات النادل',
   'notif_channel_waiter_desc': 'طلبات تم تقديمها للنادل',
+  'notif_permission_title': 'فعّل الإشعارات',
+  'notif_permission_subtitle':
+      'استلم تنبيهًا فور وصول طلب جديد إلى المطبخ أو عند تجهيز طاولة لتقديم الطلب.',
+  'notif_permission_allow': 'السماح بالإشعارات',
+  'notif_permission_skip': 'ليس الآن',
   'onboarding_skip': 'تخطي',
   'onboarding_next': 'التالي',
   'onboarding_get_started': 'ابدأ الآن',

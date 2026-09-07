@@ -102,6 +102,15 @@ const Map<String, String> engeneral = {
   'bt_no_devices': 'No devices found',
   'bt_scan_error': 'Scan error: {error}',
   'bt_scan': 'Scan',
+  'bt_perm_title': 'Enable Bluetooth',
+  'bt_perm_sub':
+      'Allow Bluetooth to search for and connect to nearby printers.',
+  'bt_perm_allow': 'Allow Bluetooth',
+  'bt_perm_not_now': 'Not now',
+  'bt_perm_settings_title': 'Bluetooth is blocked',
+  'bt_perm_settings_sub':
+      'Bluetooth access is turned off. Open the system settings to enable it.',
+  'bt_perm_settings_action': 'Open settings',
   'find_printer': 'Find & Pair Printer',
   'find_printer_sub': 'Search nearby Bluetooth printers and pair with one',
   'nearby_printers': 'Nearby printers',

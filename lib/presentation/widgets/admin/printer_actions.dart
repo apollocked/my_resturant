@@ -4,6 +4,7 @@ import 'package:my_resturant/core/services/printer_config.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/permissions/permission_prompts.dart';
 
 class PrinterActions extends StatelessWidget {
   const PrinterActions({super.key, required this.config, required this.t});
@@ -22,7 +23,21 @@ class PrinterActions extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: () async {
               await _save(printer);
-              connected ? printer.disconnect() : printer.connect();
+              if (connected) {
+                printer.disconnect();
+                return;
+              }
+              if (!context.mounted) return;
+              if (config.connectionType == PrinterConnectionType.bluetooth &&
+                  !await ensureBluetoothPermission(context)) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(t('bt_permission_required'))),
+                  );
+                }
+                return;
+              }
+              printer.connect();
             },
             icon: Icon(connected ? Icons.link_off : Icons.link, size: 20),
             label: Text(connected ? t('disconnect') : t('connect')),

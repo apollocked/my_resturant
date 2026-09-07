@@ -12,7 +12,6 @@ class OrderNotifier {
 
   void init() {
     _service.init(_currentLocale);
-    _service.requestPermission();
   }
 
   void setRole(Role? role) => _currentRole = role;

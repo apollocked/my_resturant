@@ -7,6 +7,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/presentation/permissions/permission_prompts.dart';
 import 'package:my_resturant/presentation/widgets/auth/auth_loading_overlay.dart';
 import 'package:my_resturant/presentation/widgets/auth/pin_field.dart';
 import 'package:my_resturant/presentation/widgets/auth/role_login_header.dart';
@@ -120,6 +121,9 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
     if (!mounted) return;
     if (ok) {
       setState(() => _loading = false);
+      if (_selected == Role.kitchen || _selected == Role.waiter) {
+        promptNotificationIfNeeded(context);
+      }
       context.go('/menu');
     } else {
       setState(() {

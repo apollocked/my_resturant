@@ -19,6 +19,7 @@ import 'package:my_resturant/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/theme/app_theme.dart';
 import 'package:my_resturant/presentation/widgets/orders/auto_print_listener.dart';
+import 'package:my_resturant/presentation/permissions/permission_gate.dart';
 import 'package:my_resturant/domain/repositories/data_repository.dart';
 import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
 import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
@@ -154,7 +155,9 @@ class _AppViewState extends State<AppView> {
             );
             context.read<OrderCubit>().clearError();
           },
-          child: AutoPrintListener(child: child ?? const SizedBox.shrink()),
+          child: PermissionGate(
+            child: AutoPrintListener(child: child ?? const SizedBox.shrink()),
+          ),
         );
       },
     );

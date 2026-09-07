@@ -39,9 +39,14 @@ class OrderNotificationService {
     );
   }
 
-  Future<void> requestPermission() async {
+  Future<bool?> requestPermission() async {
     final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    await android?.requestNotificationsPermission();
+    return android?.requestNotificationsPermission();
+  }
+
+  Future<bool> areNotificationsEnabled() async {
+    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    return await android?.areNotificationsEnabled() ?? true;
   }
 
   void checkOrderChanges(List<Order> previous, List<Order> current, Role currentRole, Locale locale) {

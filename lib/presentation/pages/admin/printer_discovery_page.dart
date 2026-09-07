@@ -8,7 +8,7 @@ import 'package:my_resturant/core/services/printer_transport.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:my_resturant/presentation/permissions/permission_prompts.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
     hide PrinterConnectionType;
 
@@ -158,18 +158,14 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final printer = context.read<PrinterCubit>();
     if (!kIsWeb) {
-      try {
-        final status = await Permission.bluetooth.request();
-        if (!status.isGranted) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(t('bt_permission_required'))),
-            );
-          }
-          return;
+      final granted = await ensureBluetoothPermission(context);
+      if (!granted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(t('bt_permission_required'))),
+          );
         }
-      } catch (_) {
-        // Some devices/flavours do not surface a Bluetooth permission request.
+        return;
       }
     }
     setState(() {
