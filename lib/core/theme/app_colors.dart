@@ -5,6 +5,11 @@ class AppColors {
 
   static const Color primary = Color(0xFFE8611A);
   static const Color primarySoft = Color(0xFFFFF0E8);
+
+  static Color softSurface(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF3A2B24)
+          : primarySoft;
   static const Color background = Color(0xFFFAF8F6);
   static const Color surface = Colors.white;
   static const Color textPrimary = Color(0xFF1C1B1A);

@@ -18,6 +18,21 @@ Future<T> safeCall<T>(Future<T> Function() call) async {
   }
 }
 
+/// Like [safeCall] but never retries. Use for non-idempotent writes
+/// (e.g. RPCs) where a retry could double-apply the side effect after the
+/// first attempt actually succeeded but timed out while responding.
+Future<T> safeCallNoRetry<T>(Future<T> Function() call) async {
+  try {
+    return await call().timeout(const Duration(seconds: 20));
+  } on TimeoutException {
+    debugPrint('[safeCall] timeout – not retrying (non-idempotent)');
+    rethrow;
+  } on SocketException {
+    debugPrint('[safeCall] socket error – not retrying (non-idempotent)');
+    rethrow;
+  }
+}
+
 /// Lightweight connectivity singleton.
 ///
 /// Call `NetworkService.instance.init()` once at app start.

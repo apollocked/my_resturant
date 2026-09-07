@@ -16,8 +16,8 @@ class SetupHeader extends StatelessWidget {
         Container(
           width: R.avatarSize(context),
           height: R.avatarSize(context),
-          decoration: const BoxDecoration(
-            color: AppColors.primarySoft,
+          decoration: BoxDecoration(
+            color: AppColors.softSurface(context),
             shape: BoxShape.circle,
           ),
           child: Icon(

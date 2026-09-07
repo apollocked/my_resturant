@@ -12,7 +12,7 @@ class ProfileAvatar extends StatelessWidget {
         width: avatarSize,
         height: avatarSize,
         decoration: BoxDecoration(
-          color: AppColors.primarySoft,
+          color: AppColors.softSurface(context),
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.primary, width: 2),
         ),

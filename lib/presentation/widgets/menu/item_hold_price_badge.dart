@@ -27,7 +27,7 @@ class ItemHoldPriceBadge extends StatelessWidget {
         vertical: isDesktop ? 6 : 5,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft,
+        color: AppColors.softSurface(context),
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Text(

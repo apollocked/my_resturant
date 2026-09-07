@@ -55,7 +55,7 @@ class AddItemsSheetHeader extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primarySoft,
+                    color: AppColors.softSurface(context),
                     borderRadius: BorderRadius.circular(AppRadius.xl),
                   ),
                   child: Text(

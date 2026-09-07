@@ -33,7 +33,7 @@ class TableSelector extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.primarySoft,
+          color: AppColors.softSurface(context),
           borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
         ),

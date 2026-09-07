@@ -37,7 +37,7 @@ class SideNavRail extends StatelessWidget {
       },
       labelType: NavigationRailLabelType.all,
       backgroundColor: cs.surface,
-      indicatorColor: AppColors.primarySoft,
+      indicatorColor: AppColors.softSurface(context),
       leading: showTitle ? _titleLeading(t('app_name')) : _logo(32),
       minWidth: showTitle ? 100 : null,
       groupAlignment: 0,

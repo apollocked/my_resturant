@@ -197,7 +197,7 @@ class _ProfileInfoSectionState extends State<ProfileInfoSection> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.primarySoft,
+                        color: AppColors.softSurface(context),
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                       child: Icon(item.icon, color: AppColors.primary, size: 22),

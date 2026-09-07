@@ -19,7 +19,7 @@ mixin AuthRpcMixin on SupabaseAuthRepositoryBase {
     String waiterPin,
     String kitchenPin,
     String adminPin,
-  ) => safeCall(() => client.rpc(
+  ) => safeCallNoRetry(() => client.rpc(
         'save_passcodes',
         params: {
           'p_waiter': waiterPin,
@@ -45,19 +45,20 @@ mixin AuthRpcMixin on SupabaseAuthRepositoryBase {
   }
 
   @override
-  Future<void> changePasscode(Role role, String newPin) => safeCall(() => client.rpc(
+  Future<void> changePasscode(Role role, String newPin) => safeCallNoRetry(
+      () => client.rpc(
         'change_passcode',
         params: {'p_role': role.name, 'p_pin': newPin},
       ));
 
   @override
-  Future<void> saveLoggedInRole(Role? role, {String? pin}) => safeCall(
+  Future<void> saveLoggedInRole(Role? role, {String? pin}) => safeCallNoRetry(
       () => client.rpc('set_role', params: {'p_role': role?.name, 'p_pin': pin}));
 
   @override
   Future<bool> claimPromoCode(String code) async {
     try {
-      final result = await safeCall(
+      final result = await safeCallNoRetry(
         () => client.rpc(
           'claim_promo_code',
           params: {'promo_code': code.trim().toUpperCase()},
