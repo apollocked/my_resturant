@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/services/printer_config.dart';
@@ -73,6 +74,25 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () async {
+                        final address = await context.push<String>(
+                          '/printer-discover',
+                        );
+                        if (address != null && mounted) {
+                          setState(() {
+                            _type = PrinterConnectionType.bluetooth;
+                            _macCtl.text = address;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.bluetooth_searching, size: 20),
+                      label: Text(t('find_printer')),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   PrinterConnectionSection(
                     type: _type,
                     hostCtl: _hostCtl,

@@ -23,6 +23,7 @@ import 'package:my_resturant/presentation/pages/admin/category_form_page.dart';
 import 'package:my_resturant/presentation/pages/admin/category_management_page.dart';
 import 'package:my_resturant/presentation/pages/admin/change_passcodes_page.dart';
 import 'package:my_resturant/presentation/pages/admin/printer_settings_page.dart';
+import 'package:my_resturant/presentation/pages/admin/printer_discovery_page.dart';
 import 'package:my_resturant/presentation/pages/admin/info_page.dart';
 import 'package:my_resturant/presentation/pages/setup/setup_page.dart';
 import 'package:my_resturant/presentation/pages/layout/layout_page.dart';
@@ -37,7 +38,7 @@ final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 /// react to non-navigation state changes).
 final ValueNotifier<int> routeRefresh = ValueNotifier<int>(0);
 
-final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/change-passcodes', '/printer-settings'];
+final List<String> adminRoutes = ['/table-management', '/food-management', '/availability', '/report', '/dish-form', '/category-form', '/category-management', '/change-passcodes'];
 
 bool _roleAllowed(Role role, String loc) {
   switch (role) {
@@ -47,6 +48,8 @@ bool _roleAllowed(Role role, String loc) {
       return loc == '/kitchen' ||
           loc == '/profile' ||
           loc == '/info' ||
+          loc == '/printer-settings' ||
+          loc == '/printer-discover' ||
           loc.startsWith('/order-detail');
     case Role.waiter:
       return loc == '/menu' ||
@@ -54,6 +57,8 @@ bool _roleAllowed(Role role, String loc) {
           loc == '/kitchen' ||
           loc == '/profile' ||
           loc == '/info' ||
+          loc == '/printer-settings' ||
+          loc == '/printer-discover' ||
           loc.startsWith('/order-detail');
   }
 }
@@ -141,6 +146,8 @@ final appRouter = GoRouter(
       builder: (_, _) => const ChangePasscodesPage()),
     GoRoute(path: '/printer-settings', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const PrinterSettingsPage()),
+    GoRoute(path: '/printer-discover', parentNavigatorKey: _rootNavigator,
+      builder: (_, _) => const PrinterDiscoveryPage()),
     GoRoute(path: '/info', parentNavigatorKey: _rootNavigator,
       builder: (_, _) => const InfoPage()),
   ],

@@ -73,7 +73,15 @@ class ProfilePage extends StatelessWidget {
                   onUpdatePassword: () =>
                       ProfileDialogs.showUpdatePassword(context, accountCubit, t),
                 ),
+                const SizedBox(height: 16),
+                ProfileOutlinedAction(
+                  icon: Icons.print_outlined,
+                  label: t('printer'),
+                  sideWidth: 1.5,
+                  onTap: () => context.push('/printer-settings'),
+                ),
                 if (role == Role.admin) ...[
+                  const SizedBox(height: 8),
                   ProfileAdminPanel(t: t),
                   const SizedBox(height: 12),
                   ProfileOutlinedAction(
@@ -81,13 +89,6 @@ class ProfilePage extends StatelessWidget {
                     label: t('change_pins'),
                     sideWidth: 1.5,
                     onTap: () => context.push('/change-passcodes'),
-                  ),
-                  const SizedBox(height: 8),
-                  ProfileOutlinedAction(
-                    icon: Icons.print_outlined,
-                    label: t('printer'),
-                    sideWidth: 1.5,
-                    onTap: () => context.push('/printer-settings'),
                   ),
                   const SizedBox(height: 8),
                 ],
