@@ -56,13 +56,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   }
 
   void _onDayTap(int day) {
-    if (day <= DateTime.now().day ||
-        _viewMonth.month < DateTime.now().month ||
-        _viewMonth.year < DateTime.now().year) {
-      setState(
-        () => _selectedDate = DateTime(_viewMonth.year, _viewMonth.month, day),
-      );
-    }
+    final now = DateTime.now();
+    final isFutureMonth =
+        _viewMonth.year > now.year ||
+        (_viewMonth.year == now.year && _viewMonth.month > now.month);
+    if (isFutureMonth) return;
+    final isCurrentMonth =
+        _viewMonth.year == now.year && _viewMonth.month == now.month;
+    if (isCurrentMonth && day > now.day) return;
+    setState(
+      () => _selectedDate = DateTime(_viewMonth.year, _viewMonth.month, day),
+    );
   }
 
   void _clearAll(String Function(String) t) {

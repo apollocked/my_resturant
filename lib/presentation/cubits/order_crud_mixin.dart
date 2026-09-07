@@ -4,11 +4,13 @@ import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
 
 mixin OrderCrudMixin on OrderCubitBase {
-  Future<void> addRecipe(Recipe recipe) async {
+  Future<bool> addRecipe(Recipe recipe) async {
     try {
       await repo.addRecipe(recipe);
+      return true;
     } catch (e) {
       if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+      return false;
     }
   }
 
@@ -20,7 +22,7 @@ mixin OrderCrudMixin on OrderCubitBase {
     }
   }
 
-  Future<void> updateRecipe(
+  Future<bool> updateRecipe(
     String id, {
     String? name,
     double? price,
@@ -37,8 +39,10 @@ mixin OrderCrudMixin on OrderCubitBase {
         description: description,
         imageUrl: imageUrl,
       );
+      return true;
     } catch (e) {
       if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+      return false;
     }
   }
 
@@ -50,11 +54,13 @@ mixin OrderCrudMixin on OrderCubitBase {
     }
   }
 
-  Future<void> addCategory(String key, String name, String icon) async {
+  Future<bool> addCategory(String key, String name, String icon) async {
     try {
       await repo.addCategory(key, name, icon);
+      return true;
     } catch (e) {
       if (!isClosed) emit(state.copyWith(errorMessage: errorKey(e)));
+      return false;
     }
   }
 

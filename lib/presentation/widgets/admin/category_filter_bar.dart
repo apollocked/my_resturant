@@ -53,7 +53,7 @@ class CategoryFilterBar extends StatelessWidget {
         : 13.0;
     String t(String key) => Tr.get(key, settings.state.locale);
     final cats = [
-      {'key': 'all', 'name': 'هەموو', 'icon': '🍽'},
+      {'key': 'all', 'name': 'All', 'icon': '🍽'},
       ...effectiveCategories(categories),
     ];
     return SizedBox(

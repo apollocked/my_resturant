@@ -50,9 +50,9 @@ class OrderCubit extends OrderCubitBase
     if (!isClosed) emit(state.copyWith(errorMessage: null));
   }
 
-  Future<void> submitOrder(String notes) async {
+  Future<bool> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) {
-      return;
+      return false;
     }
     if (!isClosed) emit(state.copyWith(isSubmitting: true, errorMessage: null));
     try {
@@ -78,10 +78,12 @@ class OrderCubit extends OrderCubitBase
           ),
         );
       }
+      return true;
     } catch (e) {
       if (!isClosed) {
         emit(state.copyWith(isSubmitting: false, errorMessage: errorKey(e)));
       }
+      return false;
     }
   }
 

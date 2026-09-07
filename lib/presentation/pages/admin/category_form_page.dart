@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/core/helpers/app_errors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -45,23 +44,19 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     final existing = context.read<OrderCubit>().state.categories;
     if (existing.any((c) => c['key'] == key)) return;
     setState(() => _saving = true);
-    try {
-      await context.read<OrderCubit>().addCategory(key, name, _selectedIcon);
-      if (mounted) {
-        Navigator.pop(context, {'key': key, 'name': name, 'icon': _selectedIcon});
-      }
-    } catch (e) {
+    final ok =
+        await context.read<OrderCubit>().addCategory(key, name, _selectedIcon);
+    if (!ok) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_t(localizedErrorKey(e))),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text(_t('error_occurred')),
+          backgroundColor: AppColors.error),
         );
       }
-    } finally {
-      if (mounted) setState(() => _saving = false);
+    } else if (mounted) {
+      Navigator.pop(context, {'key': key, 'name': name, 'icon': _selectedIcon});
     }
+    if (mounted) setState(() => _saving = false);
   }
 
   @override

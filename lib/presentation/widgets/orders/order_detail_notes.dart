@@ -45,7 +45,7 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
 
   void _edit() {
     final ctrl = TextEditingController(text: widget.notes);
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(widget.t('notes')),
@@ -69,7 +69,7 @@ class _OrderDetailNotesState extends State<OrderDetailNotes> {
           ),
         ],
       ),
-    );
+    ).whenComplete(ctrl.dispose);
   }
 
   @override

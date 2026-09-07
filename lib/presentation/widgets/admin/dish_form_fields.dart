@@ -77,11 +77,16 @@ class _DishFormFieldsState extends State<DishFormFields> {
     final priceField = DishField(
       label: widget.t('price_dinar'),
       controller: widget.priceCtrl,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          if (RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)) return newValue;
+          return oldValue;
+        }),
+      ],
       validator: (v) {
         if (v == null || v.isEmpty) return widget.t('price_required');
-        final n = int.tryParse(v);
+        final n = double.tryParse(v);
         return (n == null || n <= 0) ? widget.t('price_invalid') : null;
       },
     );

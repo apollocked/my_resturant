@@ -83,7 +83,7 @@ class OrderNotificationService {
       'price': order.totalPrice.toStringAsFixed(0),
     });
     _plugin.show(
-      order.tableNumber,
+      order.id.hashCode,
       title,
       body,
       NotificationDetails(android: AndroidNotificationDetails(
@@ -99,7 +99,7 @@ class OrderNotificationService {
     final title = _t('notif_table_ready', locale, {'table': '${order.tableNumber}'});
     final body = _t('notif_order_served', locale);
     _plugin.show(
-      order.tableNumber + 1000,
+      order.id.hashCode,
       title,
       body,
       NotificationDetails(android: AndroidNotificationDetails(

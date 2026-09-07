@@ -31,6 +31,7 @@ mixin OrderStreamMixin on OrderCubitBase {
           ),
         );
       }
+      notifier.seedOrders(orders);
     } catch (e) {
       if (!isClosed) {
         debugPrint('OrderCubit._load error: $e');
@@ -74,9 +75,10 @@ mixin OrderStreamMixin on OrderCubitBase {
     int attempt = 0,
   ]) {
     if (isClosed || attempt >= maxReconnectAttempts) return;
+    final g = gen;
     final delay = Duration(seconds: min(1 << attempt, 30));
     Future.delayed(delay, () {
-      if (isClosed) return;
+      if (isClosed || g != gen) return;
       final sub = streamFactory().listen(
         onData,
         onError: (_, _) => reconnect(streamFactory, onData, attempt + 1),

@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:my_resturant/domain/entities/recipe.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
@@ -22,9 +24,29 @@ class AppRepository implements DataRepository {
     _categoryCtrl.close();
   }
 
-  Future<void> _emitOrders() async => _orderCtrl.add(await loadOrders());
-  Future<void> _emitRecipes() async => _recipeCtrl.add(await loadRecipes());
-  Future<void> _emitSettings() async => _settingCtrl.add(await loadSettings());
+  Future<void> _emitOrders() async {
+    try {
+      _orderCtrl.add(await loadOrders());
+    } catch (e) {
+      debugPrint('AppRepository._emitOrders error: $e');
+    }
+  }
+
+  Future<void> _emitRecipes() async {
+    try {
+      _recipeCtrl.add(await loadRecipes());
+    } catch (e) {
+      debugPrint('AppRepository._emitRecipes error: $e');
+    }
+  }
+
+  Future<void> _emitSettings() async {
+    try {
+      _settingCtrl.add(await loadSettings());
+    } catch (e) {
+      debugPrint('AppRepository._emitSettings error: $e');
+    }
+  }
 
   // Recipes
   @override
@@ -70,11 +92,10 @@ class AppRepository implements DataRepository {
 
   @override
   Future<String> uploadImage(String recipeId, Uint8List bytes) async {
-    final dir = Directory(
-      'C:\\Users\\hamab\\Desktop\\Flutter_Projects\\my_resturant\\uploads\\recipes',
-    );
+    final base = await getApplicationDocumentsDirectory();
+    final dir = Directory(p.join(base.path, 'uploads', 'recipes'));
     if (!await dir.exists()) await dir.create(recursive: true);
-    final file = File('${dir.path}\\$recipeId.jpg');
+    final file = File(p.join(dir.path, '$recipeId.jpg'));
     await file.writeAsBytes(bytes);
     return file.path;
   }

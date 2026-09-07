@@ -54,20 +54,14 @@ class AdminActionButton extends StatelessWidget {
     if (route == '/dish-form') {
       final r = await router.push<Recipe>('/dish-form');
       if (r != null) {
-        try {
-          await orderCubit.addRecipe(r);
-          if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(t('dish_added'))));
-          }
-        } catch (_) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(t('error_occurred'))),
-            );
-          }
-        }
+        final ok = await orderCubit.addRecipe(r);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(ok ? t('dish_added') : t('error_occurred')),
+            backgroundColor: ok ? null : AppColors.error,
+          ),
+        );
       }
     } else {
       final ok = await router.push<bool>(route);

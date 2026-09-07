@@ -113,16 +113,22 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final cubit = context.read<RoleCubit>();
-    for (final r in Role.values) {
-      await cubit.changePin(r, _ctl[r]!.text);
+    final locale = context.read<SettingsCubit>().state.locale;
+    try {
+      for (final r in Role.values) {
+        await cubit.changePin(r, _ctl[r]!.text);
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(Tr.get('error_occurred', locale))),
+        );
+      }
+      return;
     }
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            Tr.get('pins_updated', context.read<SettingsCubit>().state.locale),
-          ),
-        ),
+        SnackBar(content: Text(Tr.get('pins_updated', locale))),
       );
       Navigator.pop(context);
     }

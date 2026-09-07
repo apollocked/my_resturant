@@ -34,7 +34,12 @@ class _DishFormPageState extends State<DishFormPage> {
     super.initState();
     final r = widget.recipe;
     _nameCtrl = TextEditingController(text: r?.name ?? '');
-    _priceCtrl = TextEditingController(text: r?.price.toInt().toString() ?? '');
+    final price = r?.price;
+    _priceCtrl = TextEditingController(
+      text: price == null
+          ? ''
+          : (price % 1 == 0 ? price.toInt().toString() : price.toString()),
+    );
     _descCtrl = TextEditingController(text: r?.description ?? '');
     _imageUrl.value = r?.imageUrl ?? '';
     _category = r?.category ?? 'burger';

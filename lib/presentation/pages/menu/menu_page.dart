@@ -21,7 +21,7 @@ class RestaurantMenuScreen extends StatefulWidget {
 }
 
 class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
-  int _selectedCategoryIndex = 0;
+  String _selectedCategoryKey = 'all';
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
@@ -38,10 +38,10 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     List<Map<String, String>> cats,
   ) {
     var list = allRecipes.where((r) => r.available).toList();
-    if (cats.isNotEmpty && _selectedCategoryIndex < cats.length) {
-      final key = cats[_selectedCategoryIndex]['key'];
-      if (key != 'all') list = list.where((r) => r.category == key).toList();
-    }
+    final key = cats.any((c) => c['key'] == _selectedCategoryKey)
+        ? _selectedCategoryKey
+        : 'all';
+    if (key != 'all') list = list.where((r) => r.category == key).toList();
     if (_searchQuery.isNotEmpty) {
       list = list.where((r) => r.name.contains(_searchQuery)).toList();
     }
@@ -105,7 +105,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
     final cats = _allCats(state.categories, t);
     final meals = _filteredMeals(state.recipes, cats);
-    void onCat(int i) => setState(() => _selectedCategoryIndex = i);
+    final selectedIndex = cats.indexWhere((c) => c['key'] == _selectedCategoryKey);
+    void onCat(int i) =>
+        setState(() => _selectedCategoryKey = cats[i]['key']!);
     void onSearch(String v) => setState(() => _searchQuery = v);
 
     final Widget layout = MenuLayout(
@@ -114,7 +116,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       state: state,
       meals: meals,
       cats: cats,
-      selectedIndex: _selectedCategoryIndex,
+      selectedIndex: selectedIndex,
       onCategoryChanged: onCat,
       onSearchChanged: onSearch,
       onIncrement: _increment,

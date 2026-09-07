@@ -6,24 +6,34 @@ import 'package:my_resturant/presentation/cubits/order_state.dart';
 import 'package:my_resturant/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 
-class AutoPrintListener extends StatelessWidget {
+class AutoPrintListener extends StatefulWidget {
   const AutoPrintListener({super.key, required this.child});
   final Widget child;
+
+  @override
+  State<AutoPrintListener> createState() => _AutoPrintListenerState();
+}
+
+class _AutoPrintListenerState extends State<AutoPrintListener> {
+  final Set<String> _printed = {};
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<OrderCubit, OrderState>(
       listenWhen: _shouldListen,
       listener: _onStatusChange,
-      child: child,
+      child: widget.child,
     );
   }
 
   bool _shouldListen(OrderState prev, OrderState curr) {
     if (prev.orders.length != curr.orders.length) return false;
-    for (int i = 0; i < curr.orders.length; i++) {
-      final p = prev.orders.where((o) => o.id == curr.orders[i].id).firstOrNull;
-      if (p != null && p.status != curr.orders[i].status) return true;
+    final prevById = {for (final o in prev.orders) o.id: o};
+    for (final currOrder in curr.orders) {
+      final prevOrder = prevById[currOrder.id];
+      if (prevOrder != null && prevOrder.status != currOrder.status) {
+        return true;
+      }
     }
     return false;
   }
@@ -33,7 +43,8 @@ class AutoPrintListener extends StatelessWidget {
     if (!printer.state.config.autoPrintKitchen) return;
     final locale = context.read<SettingsCubit>().state.locale;
     for (final o in state.orders) {
-      if (o.status == OrderStatus.preparing) {
+      if (o.status == OrderStatus.preparing && !_printed.contains(o.id)) {
+        _printed.add(o.id);
         printer.printKitchen(o, locale);
         return;
       }

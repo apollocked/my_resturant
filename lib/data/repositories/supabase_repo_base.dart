@@ -115,7 +115,9 @@ class SupabaseDataRepoBase {
     String localPath,
   ) => safeCall(() async {
     final file = File(localPath);
-    if (!await file.exists()) return localPath;
+    if (!await file.exists()) {
+      throw Exception('Image file not found: $localPath');
+    }
     final bytes = await FlutterImageCompress.compressWithFile(
       file.path,
       quality: 75,
@@ -123,7 +125,9 @@ class SupabaseDataRepoBase {
       minHeight: 1024,
       format: CompressFormat.jpeg,
     );
-    if (bytes == null || bytes.isEmpty) return localPath;
+    if (bytes == null || bytes.isEmpty) {
+      throw Exception('Failed to compress image');
+    }
     return uploadImage(recipeId, bytes);
   });
 }

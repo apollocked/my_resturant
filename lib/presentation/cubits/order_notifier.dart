@@ -22,6 +22,8 @@ class OrderNotifier {
     _service.updateChannels(locale);
   }
 
+  void seedOrders(List<Order> orders) => _previous = List.from(orders);
+
   void onOrdersChanged(List<Order> next) {
     if (_currentRole != null) {
       _service.checkOrderChanges(

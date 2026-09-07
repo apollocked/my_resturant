@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_resturant/core/helpers/app_errors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/data/models/default_categories.dart';
@@ -39,8 +38,7 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
     final orderCubit = context.read<OrderCubit>();
     final result = await context.push<Recipe>('/dish-form', extra: r);
     if (!mounted || result == null) return;
-    try {
-      await orderCubit.updateRecipe(
+    final ok = await orderCubit.updateRecipe(
         result.id,
         name: result.name,
         price: result.price,
@@ -51,15 +49,8 @@ class _FoodManagementPageState extends State<FoodManagementPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(_t('dish_updated'))));
+        ).showSnackBar(SnackBar(content: Text(_t(ok ? 'dish_updated' : 'error_occurred'))));
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(_t(localizedErrorKey(e)))));
-      }
-    }
   }
 
   Future<void> _confirmDelete(Recipe r) async {

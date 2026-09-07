@@ -49,7 +49,8 @@ class PrinterPrefs {
 
   static Future<PrinterConfig> load() async {
     final p = await SharedPreferences.getInstance();
-    final typeIdx = p.getInt('${_prefix}type') ?? 0;
+    final typeIdx = (p.getInt('${_prefix}type') ?? 0)
+        .clamp(0, PrinterConnectionType.values.length - 1);
     return PrinterConfig(
       connectionType: PrinterConnectionType.values[typeIdx],
       host: p.getString('${_prefix}host') ?? '',

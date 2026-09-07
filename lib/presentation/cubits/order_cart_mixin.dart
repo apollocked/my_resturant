@@ -33,7 +33,6 @@ mixin OrderCartMixin on OrderCubitBase {
       emit(state.copyWith(cart: cart, pendingNotes: pending));
       return;
     }
-    emit(state.copyWith(cart: cart));
   }
 
   void decrementOrRemove(String recipeId) {

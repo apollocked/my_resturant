@@ -84,13 +84,12 @@ class _CartPageState extends State<CartPage> {
             isSubmitting: state.isSubmitting,
             onSubmit: () async {
               final notes = _notesCtrl.text;
-              try {
-                await cubit.submitOrder(notes);
-              } catch (_) {
+              final ok = await cubit.submitOrder(notes);
+              if (!ok) {
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(t('error_occurred'))));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(t('error_occurred'))),
+                );
                 return;
               }
               _notesCtrl.clear();
