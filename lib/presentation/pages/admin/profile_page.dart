@@ -83,6 +83,13 @@ class ProfilePage extends StatelessWidget {
                     onTap: () => context.push('/change-passcodes'),
                   ),
                   const SizedBox(height: 8),
+                  ProfileOutlinedAction(
+                    icon: Icons.print_outlined,
+                    label: t('printer'),
+                    sideWidth: 1.5,
+                    onTap: () => context.push('/printer-settings'),
+                  ),
+                  const SizedBox(height: 8),
                 ],
                 const SizedBox(height: 16),
                 ProfileRoleSwitcher(

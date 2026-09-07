@@ -68,6 +68,7 @@ const Map<String, String> kugeneral = {
   'cleared': 'سڕایەوە',
   'no_cleared_tables': 'هیچ مێزێک سڕاوە نییە',
   'no_cleared_tables_subtitle': 'مێزە پاککراوەکان لێرە دەردەکەون',
+  'printer': 'چاپکەر',
   'printer_settings': 'ڕێکخستنی چاپکەر',
   'connection_type': 'جۆری پەیوەندی',
   'host_ip': 'ناونیشانی IP',

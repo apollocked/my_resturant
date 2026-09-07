@@ -68,6 +68,7 @@ const Map<String, String> engeneral = {
   'cleared': 'Cleared',
   'no_cleared_tables': 'No cleared tables',
   'no_cleared_tables_subtitle': 'Cleaned tables will be listed here',
+  'printer': 'Printer',
   'printer_settings': 'Printer Settings',
   'connection_type': 'Connection Type',
   'host_ip': 'IP Address',

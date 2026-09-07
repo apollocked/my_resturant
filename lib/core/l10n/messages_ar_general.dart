@@ -68,6 +68,7 @@ const Map<String, String> argeneral = {
   'cleared': 'تم الإخلاء',
   'no_cleared_tables': 'لا توجد طاولات مُخلّاة',
   'no_cleared_tables_subtitle': 'ستظهر الطاولات المنظّفة هنا',
+  'printer': 'الطابعة',
   'printer_settings': 'إعدادات الطابعة',
   'connection_type': 'نوع الاتصال',
   'host_ip': 'عنوان IP',
