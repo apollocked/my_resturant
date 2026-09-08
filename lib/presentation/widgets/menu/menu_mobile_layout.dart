@@ -126,6 +126,7 @@ class MenuMobileLayout extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 100),
+                    SizedBox(height: R.bottomBarClearance(context) + 32),
                   ],
                 ),
               ),

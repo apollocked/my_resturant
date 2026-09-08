@@ -23,26 +23,30 @@ class MenuCartBar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
     String t(String key) => Tr.get(key, settings.state.locale);
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        R.padding(context),
-        isDesktop ? 16 : 12,
-        R.padding(context),
-        isDesktop ? 16 + 100 : 12 + 100,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: R.bottomBarClearance(context),
       ),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-        border: Border(top: BorderSide(color: cs.outlineVariant)),
-      ),
-      child: Row(
-        children: [
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+          R.padding(context),
+          isDesktop ? 16 : 12,
+          R.padding(context),
+          isDesktop ? 16 : 12,
+        ),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          boxShadow: [
+            BoxShadow(
+              color: cs.shadow.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+          border: Border(top: BorderSide(color: cs.outlineVariant)),
+        ),
+        child: Row(
+          children: [
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -118,6 +122,7 @@ class MenuCartBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

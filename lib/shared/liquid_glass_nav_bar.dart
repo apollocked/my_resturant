@@ -77,7 +77,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final glowColor = widget.accentColor.withValues(alpha: dark ? 0.2 : 0.1);
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 16 + bottomInset),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, (bottomInset == 0 ? 6 : 2) + bottomInset),
       child: AnimatedBuilder(
         animation: _ctl,
         builder: (_, _) => Container(

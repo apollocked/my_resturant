@@ -29,24 +29,28 @@ class CartBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isDesktop = R.isDesktop(context);
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        R.padding(context),
-        16,
-        R.padding(context),
-        R.isPhone(context) ? 116 : 72,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: R.bottomBarClearance(context),
       ),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-        border: Border(top: BorderSide(color: cs.outlineVariant)),
-      ),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+          R.padding(context),
+          16,
+          R.padding(context),
+          isDesktop ? 16 : 12,
+        ),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          boxShadow: [
+            BoxShadow(
+              color: cs.shadow.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+          border: Border(top: BorderSide(color: cs.outlineVariant)),
+        ),
       child: isDesktop
           ? Row(
               children: [
@@ -94,8 +98,9 @@ class CartBottomBar extends StatelessWidget {
                     ),
                   ],
                 ),
-              ],
-            ),
+],
+      ),
+      ),
     );
   }
 }

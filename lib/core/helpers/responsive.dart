@@ -109,4 +109,16 @@ abstract class R {
     if (isTablet(context)) return 72;
     return 56;
   }
+
+/// Distance from the screen bottom to the bottom edge of cards that float
+  /// above [LiquidGlassNavBar] (e.g. the cart bar and the send-order bar).
+  ///
+  /// With `extendBody: true` the Scaffold rewrites the body's
+  /// `MediaQuery.padding.bottom` to equal the bottom widgets' height (the nav
+  /// bar), so using that padded value directly keeps the card flush with the
+  /// nav's top — adding only a small overlap so it reads as "touching".
+  static double bottomBarClearance(BuildContext context) {
+    if (!isPhone(context)) return 16;
+    return MediaQuery.of(context).padding.bottom + 6;
+  }
 }

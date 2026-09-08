@@ -12,6 +12,7 @@ class CartSendButton extends StatelessWidget {
     required this.label,
     required this.fontSize,
     required this.padH,
+    this.icon = Icons.send_rounded,
   });
 
   final bool canSubmit;
@@ -21,6 +22,7 @@ class CartSendButton extends StatelessWidget {
   final String label;
   final double fontSize;
   final double padH;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class CartSendButton extends StatelessWidget {
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.send_rounded, size: 18),
+                    Icon(icon, size: 18),
                     const SizedBox(width: 8),
                     Text(
                       label,
