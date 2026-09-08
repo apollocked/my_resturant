@@ -110,6 +110,7 @@ const Map<String, String> kugeneral = {
   'bt_perm_settings_sub':
       'دەستیگەیشتن بە بلوتوث داخراوە. سیستەمی ڕێکخستنەکان بکەرەوە بۆ چالاککردنی.',
   'bt_perm_settings_action': 'ڕێکخستنەکان بکەرەوە',
+  'permission_denied_snackbar': 'مۆڵەت ڕەتکرایەوە. چالاکی بکە بۆ بەکارهێنانی ئەم تایبەتمەندییە.',
   'find_printer': 'دۆزینەوە و پەیوەندی چاپکەر',
   'find_printer_sub': 'بگەڕێ بۆ چاپکەرە بلوتوثەکانی نزیک و پەیوەندی بەیان بکە',
   'nearby_printers': 'چاپکەرە نزیکەکان',

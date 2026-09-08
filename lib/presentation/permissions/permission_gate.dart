@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/notifications/order_notification_service.dart';
@@ -56,16 +57,45 @@ class _PermissionGateState extends State<PermissionGate> {
     final prefs = await SharedPreferences.getInstance();
     if (_phase == _Phase.notifications) {
       await prefs.setBool('notif_permission_prompt', true);
+      bool granted = false;
       try {
-        await OrderNotificationService().requestPermission();
+        granted = (await OrderNotificationService().requestPermission()) == true;
       } catch (_) {}
+      if (!mounted) return;
+      setState(() => _busy = false);
+      // If the system request was denied, show a brief snackbar with an
+      // "Open settings" action so the user can fix it manually.
+      if (!granted) {
+        _showBlockedSnackbar();
+      }
+      await _advance();
     } else {
       await prefs.setBool('bt_permission_prompt', true);
-      await requestBluetoothSystem();
+      final granted = await requestBluetoothSystem();
+      if (!mounted) return;
+      setState(() => _busy = false);
+      if (!granted) {
+        _showBlockedSnackbar();
+      }
+      await _advance();
     }
+  }
+
+  void _showBlockedSnackbar() {
     if (!mounted) return;
-    setState(() => _busy = false);
-    await _advance();
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(t('permission_denied_snackbar')),
+        action: SnackBarAction(
+          label: t('bt_perm_settings_action'),
+          textColor: cs.primary,
+          onPressed: () => openAppSettings(),
+        ),
+      ),
+    );
   }
 
   Future<void> _skip() async {

@@ -37,6 +37,11 @@ const Map<String, String> kuonboarding = {
       'لە کاتی گەیشتنی داواکارییەکی نوێ بۆ چێشتخانە یان ئامادەبوونی مێزێک بۆ پێشکەشکردن، ڕاستەوخۆ ئاگادار بە.',
   'notif_permission_allow': 'ڕێگەدان بە ئاگاداری',
   'notif_permission_skip': 'ئێستا نا',
+  'notif_perm_blocked_title': 'ئاگادارییەکان ڕەتکراونەتەوە',
+  'notif_perm_blocked_sub':
+      'ئاگادارییەکان کوژاونەتەوە. سیستەمی ڕێکخستنەکان بکەرەوە بۆ چالاککردنیان.',
+  'notif_perm_open_settings': 'ڕێکخستنەکان بکەرەوە',
+  'notif_perm_not_now': 'ئێستا نا',
   'onboarding_skip': 'بپەڕێ',
   'onboarding_next': 'دواتر',
   'onboarding_get_started': 'دەست پێ بکە',

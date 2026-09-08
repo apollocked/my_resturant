@@ -58,10 +58,9 @@ Future<bool> ensureBluetoothPermission(BuildContext context) async {
   if (allowed != true) return false;
   if (permanent) {
     try {
-      return await openAppSettings();
-    } catch (_) {
-      return false;
-    }
+      await openAppSettings();
+    } catch (_) {}
+    return false;
   }
   return requestBluetoothSystem();
 }
@@ -86,7 +85,30 @@ Future<bool> ensureNotificationPermission(BuildContext context) async {
   );
   if (allowed != true) return false;
   try {
-    return await service.requestPermission() ?? false;
+    final granted = await service.requestPermission();
+    if (granted == true) return true;
+    // Permission denied — if still not enabled after the system request, the
+    // user tapped "Don't ask again" or explicitly denied. Offer "Open settings"
+    // so they can enable it manually.
+    if (!context.mounted) return false;
+    final stillDenied = !(await service.areNotificationsEnabled());
+    if (!context.mounted) return false;
+    if (stillDenied) {
+      final openSettings = await showPermissionRequestDialog(
+        context,
+        icon: Icons.notifications_off_outlined,
+        title: t('notif_perm_blocked_title'),
+        subtitle: t('notif_perm_blocked_sub'),
+        allowLabel: t('notif_perm_open_settings'),
+        skipLabel: t('notif_perm_not_now'),
+      );
+      if (openSettings == true) {
+        try {
+          return await openAppSettings();
+        } catch (_) {}
+      }
+    }
+    return false;
   } catch (_) {
     return false;
   }

@@ -37,6 +37,11 @@ const Map<String, String> enonboarding = {
       'Get notified instantly when a new order arrives at the kitchen or when a table is ready to be served.',
   'notif_permission_allow': 'Allow notifications',
   'notif_permission_skip': 'Not now',
+  'notif_perm_blocked_title': 'Notifications are blocked',
+  'notif_perm_blocked_sub':
+      'Notifications are turned off. Open the system settings to enable them.',
+  'notif_perm_open_settings': 'Open settings',
+  'notif_perm_not_now': 'Not now',
   'onboarding_skip': 'Skip',
   'onboarding_next': 'Next',
   'onboarding_get_started': 'Get Started',

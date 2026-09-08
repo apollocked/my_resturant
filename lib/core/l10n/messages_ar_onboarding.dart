@@ -37,6 +37,11 @@ const Map<String, String> aronboarding = {
       'استلم تنبيهًا فور وصول طلب جديد إلى المطبخ أو عند تجهيز طاولة لتقديم الطلب.',
   'notif_permission_allow': 'السماح بالإشعارات',
   'notif_permission_skip': 'ليس الآن',
+  'notif_perm_blocked_title': 'الإشعارات محظورة',
+  'notif_perm_blocked_sub':
+      'تم إيقاف الإشعارات. افتح إعدادات النظام لتفعيلها.',
+  'notif_perm_open_settings': 'فتح الإعدادات',
+  'notif_perm_not_now': 'ليس الآن',
   'onboarding_skip': 'تخطي',
   'onboarding_next': 'التالي',
   'onboarding_get_started': 'ابدأ الآن',

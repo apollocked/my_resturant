@@ -110,6 +110,7 @@ const Map<String, String> argeneral = {
   'bt_perm_settings_sub':
       'تم إيقاف إذن البلوتوث. افتح إعدادات النظام لتفعيله.',
   'bt_perm_settings_action': 'فتح الإعدادات',
+  'permission_denied_snackbar': 'تم رفض الإذن. فعّله لاستخدام هذه الميزة.',
   'find_printer': 'البحث عن طابعة وإقرانها',
   'find_printer_sub': 'ابحث عن طابعات البلوتوث القريبة واقرن بها',
   'nearby_printers': 'الطابعات القريبة',

@@ -111,6 +111,7 @@ const Map<String, String> engeneral = {
   'bt_perm_settings_sub':
       'Bluetooth access is turned off. Open the system settings to enable it.',
   'bt_perm_settings_action': 'Open settings',
+  'permission_denied_snackbar': 'Permission denied. Enable it to use this feature.',
   'find_printer': 'Find & Pair Printer',
   'find_printer_sub': 'Search nearby Bluetooth printers and pair with one',
   'nearby_printers': 'Nearby printers',
