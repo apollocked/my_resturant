@@ -2,10 +2,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/animated_counter.dart';
-import 'package:my_resturant/shared/pressable_scale.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_send_button.dart';
+import 'package:my_resturant/presentation/widgets/orders/cart_total_column.dart';
 
 class MenuCartBar extends StatelessWidget {
   final int cartCount;
@@ -47,82 +46,25 @@ class MenuCartBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                AnimatedCounter(
-                  value: cartTotal,
-                  suffix: ' ${t('currency_suffix')}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: R.fontXl(context),
-                    color: AppColors.primary,
-                  ),
-                ),
-                Text(
-                  t('items').replaceAll('{count}', '$cartCount'),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: R.fontSm(context),
-                    color: cs.onSurfaceVariant,
-                  ),
-                ),
-              ],
+            CartSendButton(
+              canSubmit: true,
+              isSubmitting: false,
+              onSubmit: onViewCart ?? () {},
+              cs: cs,
+              label: t('view_order'),
+              fontSize: isDesktop ? 16 : 14,
+              padH: isDesktop ? 32 : 24,
+              icon: Icons.shopping_bag,
             ),
-          ),
-          SizedBox(width: isDesktop ? 24 : 16),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: isDesktop ? 52 : 46,
-                child: PressableScale(
-                  onTap: onViewCart,
-                  child: ElevatedButton(
-                    onPressed: null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      disabledBackgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.primary,
-                      disabledForegroundColor: Theme.of(
-                        context,
-                      ).colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          isDesktop ? 16 : 12,
-                        ),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isDesktop ? 28 : 20,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.shopping_bag, size: isDesktop ? 22 : 18),
-                        SizedBox(width: isDesktop ? 10 : 6),
-                        Text(
-                          t('view_order'),
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: R.fontMd(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            const Spacer(),
+            CartTotalColumn(
+              total: cartTotal.toDouble(),
+              currencySuffix: t('currency_suffix'),
+              totalLabel: t('total'),
+              cs: cs,
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
