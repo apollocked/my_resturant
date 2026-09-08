@@ -9,7 +9,6 @@ import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cart_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_crud_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
-import 'package:my_resturant/presentation/cubits/order_draft_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_stream_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_table_mixin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
@@ -18,12 +17,7 @@ import 'package:uuid/uuid.dart';
 String errorKey(Object e) => networkErrorKey(e);
 
 class OrderCubit extends OrderCubitBase
-    with
-        OrderStreamMixin,
-        OrderCartMixin,
-        OrderTableMixin,
-        OrderCrudMixin,
-        OrderDraftMixin {
+    with OrderStreamMixin, OrderCartMixin, OrderTableMixin, OrderCrudMixin {
   StreamSubscription? _authSub;
   StreamSubscription<bool>? _connSub;
   bool _wasAuthed = false;
