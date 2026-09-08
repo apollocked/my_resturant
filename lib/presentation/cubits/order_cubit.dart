@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -13,33 +13,54 @@ import 'package:my_resturant/presentation/cubits/order_table_mixin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:uuid/uuid.dart';
 
-String errorKey(Object e) {
-  if (e is TimeoutException) return 'err_network';
-  if (e is SocketException) return 'err_network';
-  if (e is Exception && e.toString().contains('SocketException')) {
-    return 'err_network';
-  }
-  return 'error_occurred';
-}
+String errorKey(Object e) => networkErrorKey(e);
 
 class OrderCubit extends OrderCubitBase
     with OrderStreamMixin, OrderCartMixin, OrderTableMixin, OrderCrudMixin {
   StreamSubscription? _authSub;
+  StreamSubscription<bool>? _connSub;
   bool _wasAuthed = false;
 
   OrderCubit({super.repo}) {
-    _wasAuthed = Supabase.instance.client.auth.currentSession != null;
+    _wasAuthed = _sessionActive();
     notifier.init();
     loadAndSubscribe();
-    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((state) {
-      final authed = state.session != null;
-      if (authed && !_wasAuthed) {
-        loadAndSubscribe();
-      } else if (!authed && _wasAuthed) {
-        disposeSubs();
-      }
-      _wasAuthed = authed;
-    });
+    _authSub = _listenAuth();
+    _connSub = NetworkService.instance.onConnectivityChanged.listen(
+      _onConnectivityChanged,
+    );
+  }
+
+  bool _sessionActive() {
+    try {
+      return Supabase.instance.client.auth.currentSession != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  StreamSubscription? _listenAuth() {
+    try {
+      return Supabase.instance.client.auth.onAuthStateChange.listen((state) {
+        final authed = state.session != null;
+        if (authed && !_wasAuthed) {
+          loadAndSubscribe();
+        } else if (!authed && _wasAuthed) {
+          disposeSubs();
+        }
+        _wasAuthed = authed;
+      });
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// When connectivity comes back, re-fetch everything and re-subscribe to the
+  /// realtime streams (they give up with capped backoff while offline).
+  void _onConnectivityChanged(bool connected) {
+    if (connected && _wasAuthed) {
+      loadAndSubscribe();
+    }
   }
 
   void setCurrentRole(Role? role) => notifier.setRole(role);
@@ -142,6 +163,7 @@ class OrderCubit extends OrderCubitBase
   Future<void> close() {
     disposeSubs();
     _authSub?.cancel();
+    _connSub?.cancel();
     return super.close();
   }
 }

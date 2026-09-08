@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
 
@@ -9,8 +10,6 @@ mixin OrderStreamMixin on OrderCubitBase {
   final List<StreamSubscription> subs = [];
   Timer? pollTimer;
   int gen = 0;
-
-  static const int maxReconnectAttempts = 10;
 
   Future<void> loadAndSubscribe() async {
     final g = ++gen;
@@ -74,16 +73,29 @@ mixin OrderStreamMixin on OrderCubitBase {
     void Function(T) onData, [
     int attempt = 0,
   ]) {
-    if (isClosed || attempt >= maxReconnectAttempts) return;
+    if (isClosed) return;
     final g = gen;
-    final delay = Duration(seconds: min(1 << attempt, 30));
+    // Capped exponential backoff, retrying forever so the stream survives long
+    // offline periods. Pauses (keeps rescheduling) while the device is known
+    // to be offline instead of burning requests.
+    final delay = Duration(
+      seconds: min(2 << min(attempt, 5), 60),
+    );
     Future.delayed(delay, () {
       if (isClosed || g != gen) return;
-      final sub = streamFactory().listen(
-        onData,
-        onError: (_, _) => reconnect(streamFactory, onData, attempt + 1),
-      );
-      subs.add(sub);
+      if (!NetworkService.instance.connected) {
+        reconnect(streamFactory, onData, attempt + 1);
+        return;
+      }
+      try {
+        final sub = streamFactory().listen(
+          onData,
+          onError: (_, _) => reconnect(streamFactory, onData, attempt + 1),
+        );
+        subs.add(sub);
+      } catch (_) {
+        reconnect(streamFactory, onData, attempt + 1);
+      }
     });
   }
 

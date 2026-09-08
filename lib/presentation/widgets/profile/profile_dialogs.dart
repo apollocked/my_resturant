@@ -78,7 +78,7 @@ class ProfileDialogs {
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(t('pin_invalid')),
+        content: Text(t(cubit.state.errorMessage ?? 'pin_invalid')),
         backgroundColor: AppColors.error,
       ),
     );

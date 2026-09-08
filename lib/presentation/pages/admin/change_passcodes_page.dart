@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/domain/entities/role.dart';
@@ -118,10 +119,10 @@ class _ChangePasscodesPageState extends State<ChangePasscodesPage> {
       for (final r in Role.values) {
         await cubit.changePin(r, _ctl[r]!.text);
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(Tr.get('error_occurred', locale))),
+          SnackBar(content: Text(Tr.get(networkErrorKey(e), locale))),
         );
       }
       return;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
@@ -133,7 +134,14 @@ class _SetupPageState extends State<SetupPage> {
         _adminCtl.text,
       );
       ok = true;
-    } catch (_) {}
+    } catch (e) {
+      if (mounted) {
+        final locale = context.read<SettingsCubit>().state.locale;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(Tr.get(networkErrorKey(e), locale))),
+        );
+      }
+    }
     if (mounted) {
       setState(() => _loading = false);
       if (ok) {

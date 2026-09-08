@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:ui' show PlatformDispatcher;
+
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,33 +27,82 @@ import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
 import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
 import 'firebase_options.dart';
 
+/// Global error handlers so an uncaught exception logs instead of taking down
+/// the whole app (the "app won't crash" guarantee).
+void bootstrapErrorHandlers() {
+  FlutterError.onError = (details) {
+    debugPrint('[app] Unhandled Flutter error: ${details.exception}');
+    debugPrint('[app] Stack: ${details.stack}');
+    FlutterError.presentError(details);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('[app] Uncaught async error: $error\n$stack');
+    return true;
+  };
+}
+
 @pragma('vm:entry-point')
 Future<void> _onBackgroundMessage(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    debugPrint('[app] background message init failed: $e');
+  }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
-  await Supabase.initialize(
-    url: SupabaseCredentials.url,
-    publishableKey: SupabaseCredentials.publishableKey,
-  );
-  await NetworkService.instance.init();
+  bootstrapErrorHandlers();
+  try {
+    await dotenv.load();
+  } catch (e) {
+    debugPrint('[app] dotenv load failed: $e');
+  }
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+  } catch (e) {
+    debugPrint('[app] Firebase init failed: $e');
+  }
+  try {
+    await Supabase.initialize(
+      url: SupabaseCredentials.url,
+      publishableKey: SupabaseCredentials.publishableKey,
+    );
+  } catch (e) {
+    debugPrint('[app] Supabase init failed: $e');
+  }
+  try {
+    await NetworkService.instance.init();
+  } catch (e) {
+    debugPrint('[app] NetworkService init failed: $e');
+  }
   final authRepo = SupabaseAuthRepository();
   final dataRepo = SupabaseDataRepository();
   final acct = AccountCubit(repo: authRepo);
-  await acct.load();
+  try {
+    await acct.load();
+  } catch (e) {
+    debugPrint('[app] acct.load failed: $e');
+  }
   final role = RoleCubit(repo: authRepo);
-  await role.load();
+  try {
+    await role.load();
+  } catch (e) {
+    debugPrint('[app] role.load failed: $e');
+  }
   final settings = await SettingsCubit.create();
   acct.stream.listen((_) => routeRefresh.value++);
   role.stream.listen((_) => routeRefresh.value++);
   settings.stream.listen((_) => routeRefresh.value++);
   final printer = PrinterCubit(PrinterService());
-  await printer.init();
+  try {
+    await printer.init();
+  } catch (e) {
+    debugPrint('[app] printer.init failed: $e');
+  }
   runApp(
     MyApp(
       repo: dataRepo,

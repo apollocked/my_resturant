@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/domain/repositories/auth_repository.dart';
 import 'package:my_resturant/presentation/cubits/role_storage.dart';
@@ -71,7 +72,7 @@ class RoleCubit extends Cubit<RoleState> {
       emit(const RoleState(isConfigured: true));
     } catch (e, st) {
       debugPrint('RoleCubit.configure error: $e\n$st');
-      emit(RoleState(errorMessage: '$e'));
+      emit(RoleState(errorMessage: networkErrorKey(e)));
       rethrow;
     }
   }
@@ -90,7 +91,12 @@ class RoleCubit extends Cubit<RoleState> {
       return ok;
     } catch (e, st) {
       debugPrint('RoleCubit.loginAsync error: $e\n$st');
-      emit(RoleState(errorMessage: '$e'));
+      emit(RoleState(
+        isConfigured: state.isConfigured,
+        isLoggedIn: state.isLoggedIn,
+        role: state.role,
+        errorMessage: networkErrorKey(e),
+      ));
       return false;
     }
   }
@@ -121,7 +127,7 @@ class RoleCubit extends Cubit<RoleState> {
         isConfigured: state.isConfigured,
         isLoggedIn: state.isLoggedIn,
         role: state.role,
-        errorMessage: 'error_occurred',
+        errorMessage: networkErrorKey(e),
       ));
       return false;
     }
@@ -147,7 +153,7 @@ class RoleCubit extends Cubit<RoleState> {
         isConfigured: state.isConfigured,
         isLoggedIn: state.isLoggedIn,
         role: state.role,
-        errorMessage: 'error_occurred',
+        errorMessage: networkErrorKey(e),
       ));
       rethrow;
     }

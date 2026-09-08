@@ -114,6 +114,7 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
       _loading = true;
       _error = null;
     });
+    context.read<RoleCubit>().clearError();
     final ok = await context.read<RoleCubit>().loginAsync(
       _selected,
       _pinCtl.text,
@@ -126,10 +127,11 @@ class _RoleLoginPageState extends State<RoleLoginPage> {
       }
       context.go('/menu');
     } else {
+      final errKey = context.read<RoleCubit>().state.errorMessage;
       setState(() {
         _loading = false;
         _error = Tr.get(
-          'pin_invalid',
+          errKey ?? 'pin_invalid',
           context.read<SettingsCubit>().state.locale,
         );
       });

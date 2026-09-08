@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/presentation/cubits/account_cubit_base.dart';
 import 'package:my_resturant/presentation/cubits/account_state.dart';
 
@@ -30,7 +31,7 @@ mixin AccountManageMixin on AccountCubitBase {
             isLoggedIn: true,
             isActivated: false,
             email: state.email,
-            errorMessage: 'error_occurred',
+            errorMessage: networkErrorKey(e),
           ),
         );
       }
@@ -57,7 +58,7 @@ mixin AccountManageMixin on AccountCubitBase {
             isLoggedIn: true,
             isActivated: state.isActivated,
             email: state.email,
-            errorMessage: '$e',
+            errorMessage: networkErrorKey(e),
           ),
         );
       }
@@ -79,7 +80,7 @@ mixin AccountManageMixin on AccountCubitBase {
             isLoggedIn: true,
             isActivated: state.isActivated,
             email: state.email,
-            errorMessage: '$e',
+            errorMessage: networkErrorKey(e),
           ),
         );
       }
