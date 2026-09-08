@@ -3,21 +3,30 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_manage_card.dart';
 import 'package:my_resturant/presentation/widgets/admin/category_manage_tile.dart';
 import 'package:my_resturant/shared/empty_state.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
 
 class CategoryManageList extends StatelessWidget {
   const CategoryManageList({
     super.key,
+    required this.isLoading,
     required this.categories,
     required this.t,
     required this.onDelete,
   });
 
+  final bool isLoading;
   final List<Map<String, String>> categories;
   final String Function(String) t;
   final ValueChanged<Map<String, String>> onDelete;
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading && categories.isEmpty) {
+      return ShimmerListView(
+        itemCount: 6,
+        itemBuilder: () => const ShimmerListTile(),
+      );
+    }
     if (categories.isEmpty) {
       return EmptyState(
         icon: Icons.category_outlined,

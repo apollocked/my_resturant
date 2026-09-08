@@ -31,6 +31,7 @@ class CategoryManagementPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: CategoryManageList(
+          isLoading: context.read<OrderCubit>().state.isLoading,
           categories: context.read<OrderCubit>().state.categories,
           t: t,
           onDelete: (c) => _confirmDelete(context, c, t),
