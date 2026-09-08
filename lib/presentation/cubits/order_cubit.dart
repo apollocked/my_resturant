@@ -73,54 +73,74 @@ class OrderCubit extends OrderCubitBase
     if (!isClosed) emit(state.copyWith(errorMessage: null));
   }
 
+  /// Sends the order in the background and returns immediately, so the UI
+  /// animations and navigation never wait on the network. The cart is cleared
+  /// optimistically (a durable device draft keeps everything recoverable).
+  /// The DB write is only verified at the point it actually fails: the error
+  /// snackbar fires and the unsent items come back automatically.
   Future<bool> submitOrder(String notes) async {
     if (state.cart.isEmpty || state.selectedTable == 0 || state.isSubmitting) {
       return false;
     }
-    if (!isClosed) emit(state.copyWith(isSubmitting: true, errorMessage: null));
-    try {
-      final order = Order(
-        id: const Uuid().v4(),
-        tableNumber: state.selectedTable,
-        tableName: state.getTableName(state.selectedTable),
-        items: List.from(state.cart),
-        notes: notes,
-      );
-      // Keep a durable snapshot of exactly what is being sent so a crash
-      // mid-submit never loses the order; it is cleared only after the server
-      // confirms the save.
-      unawaited(
-        CartDraftStore.instance.save(
-          CartDraft(
-            items: List.from(order.items),
-            selectedTable: order.tableNumber,
-            pendingNotes: Map.from(state.pendingNotes),
-          ),
-        ),
-      );
-      await repo.saveOrder(order);
-      if (isClosed) return true;
+    final order = Order(
+      id: const Uuid().v4(),
+      tableNumber: state.selectedTable,
+      tableName: state.getTableName(state.selectedTable),
+      items: List.from(state.cart),
+      notes: notes,
+    );
+    if (!isClosed) {
       emit(
         state.copyWith(
           cart: [],
           selectedTable: 0,
           pendingNotes: const {},
           clearedTables: Set<int>.from(state.clearedTables)
-            ..remove(state.selectedTable),
-          isSubmitting: false,
+            ..remove(order.tableNumber),
+          errorMessage: null,
         ),
       );
-      saveDraft();
-      // Post-save housekeeping runs in the background; a failure here must not
-      // turn a confirmed order into an error (which could trigger a duplicate).
-      unawaited(_clearTableFlag(order.tableNumber));
-      return true;
-    } catch (e) {
+    }
+    saveDraft();
+    unawaited(_sendOrderInBackground(order));
+    return true;
+  }
+
+  Future<void> _sendOrderInBackground(Order order) async {
+    try {
+      await repo.saveOrder(order);
       if (!isClosed) {
-        emit(state.copyWith(isSubmitting: false, errorMessage: errorKey(e)));
+        emit(state.copyWith(errorMessage: null));
       }
-      // Draft is intentionally kept so the user can retry and nothing is lost.
-      return false;
+      // Post-save housekeeping is best effort and must never surface an error
+      // for a confirmed order (which could trigger a duplicate send).
+      unawaited(_clearTableFlag(order.tableNumber));
+    } catch (e) {
+      if (isClosed) return;
+      if (state.cart.isEmpty) {
+        // Nothing new has been typed yet: bring the unsent order back so the
+        // user can retry with one tap and no data is lost.
+        unawaited(
+          CartDraftStore.instance.save(
+            CartDraft(
+              items: List.from(order.items),
+              selectedTable: order.tableNumber,
+              pendingNotes: const {},
+            ),
+          ),
+        );
+        emit(
+          state.copyWith(
+            cart: List.from(order.items),
+            selectedTable: order.tableNumber,
+            errorMessage: errorKey(e),
+          ),
+        );
+      } else {
+        // A new cart is already in progress: never clobber it, just report the
+        // failure (the failed snapshot is still safe in the device draft).
+        emit(state.copyWith(errorMessage: errorKey(e)));
+      }
     }
   }
 
