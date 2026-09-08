@@ -25,12 +25,14 @@ mixin OrderCartMixin on OrderCubitBase {
           pendingNotes: updatedPending ?? state.pendingNotes,
         ),
       );
+      saveDraft();
     } else {
       final notes = state.pendingNotes[recipe.id] ?? '';
       final pending = Map<String, String>.from(state.pendingNotes)
         ..remove(recipe.id);
       cart.add(CartItem(recipe: recipe, notes: notes));
       emit(state.copyWith(cart: cart, pendingNotes: pending));
+      saveDraft();
       return;
     }
   }
@@ -49,6 +51,7 @@ mixin OrderCartMixin on OrderCubitBase {
       cart.removeAt(idx);
     }
     emit(state.copyWith(cart: cart));
+    saveDraft();
   }
 
   void updateQuantity(int index, int delta) {
@@ -65,18 +68,21 @@ mixin OrderCartMixin on OrderCubitBase {
       );
     }
     emit(state.copyWith(cart: cart));
+    saveDraft();
   }
 
   void removeFromCart(int index) {
     if (index < 0 || index >= state.cart.length) return;
     final cart = List<CartItem>.from(state.cart)..removeAt(index);
     emit(state.copyWith(cart: cart));
+    saveDraft();
   }
 
   void removeFromCartById(String recipeId) {
     final cart = List<CartItem>.from(state.cart);
     cart.removeWhere((c) => c.recipe.id == recipeId);
     emit(state.copyWith(cart: cart));
+    saveDraft();
   }
 
   void updateNotesByRecipe(String recipeId, String notes) {
@@ -89,10 +95,12 @@ mixin OrderCartMixin on OrderCubitBase {
         notes: notes,
       );
       emit(state.copyWith(cart: cart));
+      saveDraft();
     } else {
       final pending = Map<String, String>.from(state.pendingNotes)
         ..[recipeId] = notes;
       emit(state.copyWith(pendingNotes: pending));
+      saveDraft();
     }
   }
 
@@ -105,9 +113,16 @@ mixin OrderCartMixin on OrderCubitBase {
       notes: notes,
     );
     emit(state.copyWith(cart: cart));
+    saveDraft();
   }
 
-  void clearCart() => emit(state.copyWith(cart: [], pendingNotes: const {}));
+  void clearCart() {
+    emit(state.copyWith(cart: [], pendingNotes: const {}));
+    saveDraft();
+  }
 
-  void setSelectedTable(int t) => emit(state.copyWith(selectedTable: t));
+  void setSelectedTable(int t) {
+    emit(state.copyWith(selectedTable: t));
+    saveDraft();
+  }
 }

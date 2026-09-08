@@ -12,4 +12,12 @@ class CartItem {
   Map<String, dynamic> toMap() {
     return {'recipe': recipe.toMap(), 'quantity': quantity, 'notes': notes};
   }
+
+  factory CartItem.fromMap(Map<String, dynamic> m) {
+    return CartItem(
+      recipe: Recipe.fromMap((m['recipe'] as Map).cast<String, dynamic>()),
+      quantity: (m['quantity'] as num?)?.toInt() ?? 1,
+      notes: m['notes'] as String? ?? '',
+    );
+  }
 }

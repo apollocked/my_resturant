@@ -22,6 +22,18 @@ class Recipe {
           price: price ?? this.price, description: description ?? this.description,
           category: category ?? this.category, available: available ?? this.available);
 
+  factory Recipe.fromMap(Map<String, dynamic> m) {
+    return Recipe(
+      id: m['id'] as String,
+      name: m['name'] as String,
+      imageUrl: m['imageUrl'] as String? ?? '',
+      price: (m['price'] as num?)?.toDouble() ?? 0,
+      description: m['description'] as String? ?? '',
+      category: m['category'] as String? ?? '',
+      available: m['available'] as bool? ?? true,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id, 'name': name, 'imageUrl': imageUrl,

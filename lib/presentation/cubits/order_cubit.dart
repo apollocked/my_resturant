@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:my_resturant/core/helpers/network_helper.dart';
+import 'package:my_resturant/core/services/cart_draft_store.dart';
 import 'package:my_resturant/domain/entities/cart_item.dart';
 import 'package:my_resturant/domain/entities/order_model.dart';
 import 'package:my_resturant/domain/entities/role.dart';
 import 'package:my_resturant/presentation/cubits/order_cart_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_crud_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit_base.dart';
+import 'package:my_resturant/presentation/cubits/order_draft_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_stream_mixin.dart';
 import 'package:my_resturant/presentation/cubits/order_table_mixin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
@@ -16,7 +18,12 @@ import 'package:uuid/uuid.dart';
 String errorKey(Object e) => networkErrorKey(e);
 
 class OrderCubit extends OrderCubitBase
-    with OrderStreamMixin, OrderCartMixin, OrderTableMixin, OrderCrudMixin {
+    with
+        OrderStreamMixin,
+        OrderCartMixin,
+        OrderTableMixin,
+        OrderCrudMixin,
+        OrderDraftMixin {
   StreamSubscription? _authSub;
   StreamSubscription<bool>? _connSub;
   bool _wasAuthed = false;
@@ -24,6 +31,7 @@ class OrderCubit extends OrderCubitBase
   OrderCubit({super.repo}) {
     _wasAuthed = _sessionActive();
     notifier.init();
+    restoreDraft();
     loadAndSubscribe();
     _authSub = _listenAuth();
     _connSub = NetworkService.instance.onConnectivityChanged.listen(
@@ -84,27 +92,49 @@ class OrderCubit extends OrderCubitBase
         items: List.from(state.cart),
         notes: notes,
       );
-      await repo.saveOrder(order);
-      final cleared = Set<int>.from(state.clearedTables)
-        ..remove(state.selectedTable);
-      await repo.saveSetting('cleared_${state.selectedTable}', 'false');
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            cart: [],
-            selectedTable: 0,
-            pendingNotes: const {},
-            clearedTables: cleared,
-            isSubmitting: false,
+      // Keep a durable snapshot of exactly what is being sent so a crash
+      // mid-submit never loses the order; it is cleared only after the server
+      // confirms the save.
+      unawaited(
+        CartDraftStore.instance.save(
+          CartDraft(
+            items: List.from(order.items),
+            selectedTable: order.tableNumber,
+            pendingNotes: Map.from(state.pendingNotes),
           ),
-        );
-      }
+        ),
+      );
+      await repo.saveOrder(order);
+      if (isClosed) return true;
+      emit(
+        state.copyWith(
+          cart: [],
+          selectedTable: 0,
+          pendingNotes: const {},
+          clearedTables: Set<int>.from(state.clearedTables)
+            ..remove(state.selectedTable),
+          isSubmitting: false,
+        ),
+      );
+      saveDraft();
+      // Post-save housekeeping runs in the background; a failure here must not
+      // turn a confirmed order into an error (which could trigger a duplicate).
+      unawaited(_clearTableFlag(order.tableNumber));
       return true;
     } catch (e) {
       if (!isClosed) {
         emit(state.copyWith(isSubmitting: false, errorMessage: errorKey(e)));
       }
+      // Draft is intentionally kept so the user can retry and nothing is lost.
       return false;
+    }
+  }
+
+  Future<void> _clearTableFlag(int table) async {
+    try {
+      await repo.saveSetting('cleared_$table', 'false');
+    } catch (_) {
+      // Best effort; the flag is cosmetic.
     }
   }
 
