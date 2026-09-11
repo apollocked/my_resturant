@@ -24,7 +24,9 @@ class OrderStatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final color = OrderStatusStyle.color(status);
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
       padding: EdgeInsets.symmetric(
         horizontal: isDesktop ? 14 : 10,
         vertical: isDesktop ? 7 : 5,
@@ -38,7 +40,7 @@ class OrderStatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.sm),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.2),
+            color: color.withValues(alpha: 0.22),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -48,14 +50,30 @@ class OrderStatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
-            child: Text(
-              OrderStatusStyle.label(status, locale),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: cs.onPrimary,
-                fontWeight: FontWeight.w700,
-                fontSize: R.fontSm(context),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 260),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, anim) => FadeTransition(
+                opacity: anim,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.35),
+                    end: Offset.zero,
+                  ).animate(anim),
+                  child: child,
+                ),
+              ),
+              child: Text(
+                OrderStatusStyle.label(status, locale),
+                key: ValueKey(status),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: cs.onPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: R.fontSm(context),
+                ),
               ),
             ),
           ),

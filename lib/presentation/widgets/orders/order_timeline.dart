@@ -47,9 +47,17 @@ class OrderTimeline extends StatelessWidget {
 
   Widget _line(OrderStatus s, ColorScheme cs) {
     final reached = status != OrderStatus.cancelled && s.index <= status.index;
-    return Container(
-      height: 2,
-      color: reached ? OrderStatusStyle.color(s) : cs.outlineVariant,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        height: 2,
+        decoration: BoxDecoration(
+          color: reached ? OrderStatusStyle.color(s) : cs.outlineVariant,
+          borderRadius: BorderRadius.circular(1),
+        ),
+      ),
     );
   }
 
@@ -65,12 +73,16 @@ class OrderTimeline extends StatelessWidget {
             : s == OrderStatus.preparing
             ? status.index >= OrderStatus.preparing.index
             : status == OrderStatus.pending);
-    return Text(
-      Tr.get(key, locale),
+    final color = active ? OrderStatusStyle.color(s) : cs.onSurfaceVariant;
+    return AnimatedDefaultTextStyle(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
       style: TextStyle(
         fontSize: R.fontSm(context),
-        color: active ? OrderStatusStyle.color(s) : cs.onSurfaceVariant,
+        color: color,
+        fontWeight: active ? FontWeight.w700 : FontWeight.w500,
       ),
+      child: Text(Tr.get(key, locale)),
     );
   }
 
@@ -78,19 +90,42 @@ class OrderTimeline extends StatelessWidget {
     final isReached =
         status != OrderStatus.cancelled && s.index <= status.index;
     final c = OrderStatusStyle.color(s);
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      width: isReached ? 14 : 10,
-      height: isReached ? 14 : 10,
-      decoration: BoxDecoration(
-        color: isReached ? c : cs.surface,
-        shape: BoxShape.circle,
-        border: Border.all(color: isReached ? c : cs.outlineVariant, width: 2),
-        boxShadow: isReached
-            ? [BoxShadow(color: c.withValues(alpha: 0.3), blurRadius: 4)]
-            : null,
+    return SizedBox(
+      width: 18,
+      height: 18,
+      child: Center(
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutBack,
+          scale: isReached ? 1 : 0.38,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            width: isReached ? 16 : 12,
+            height: isReached ? 16 : 12,
+            decoration: BoxDecoration(
+              color: isReached ? c : cs.surface,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isReached ? c : cs.outlineVariant,
+                width: 2,
+              ),
+              boxShadow: isReached
+                  ? [
+                      BoxShadow(
+                        color: c.withValues(alpha: 0.35),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: isReached
+                ? Icon(Icons.check, size: 10, color: cs.onPrimary)
+                : null,
+          ),
+        ),
       ),
-      child: isReached ? Icon(Icons.check, size: 8, color: cs.onPrimary) : null,
     );
   }
 }
