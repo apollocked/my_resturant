@@ -29,13 +29,20 @@ class RoleCubit extends Cubit<RoleState> {
       try {
         configured = await _repo.arePasscodesConfigured();
       } catch (_) {
+        // DB unreachable/failing: fall back to what this device already knows
+        // so an already-configured account goes to role-login, not setup.
         final local = await loadLocalRole();
         if (local != null) {
           emit(RoleState(isConfigured: true, isLoggedIn: true, role: local));
           return;
         }
+        if (await loadPasscodesConfigured()) {
+          emit(const RoleState(isConfigured: true));
+          return;
+        }
         return;
       }
+      await savePasscodesConfigured(configured);
       if (!configured) {
         emit(const RoleState());
         return;
@@ -69,6 +76,7 @@ class RoleCubit extends Cubit<RoleState> {
   Future<void> configure(String w, String k, String a) async {
     try {
       await _repo.savePasscodes(w, k, a);
+      await savePasscodesConfigured(true);
       emit(const RoleState(isConfigured: true));
     } catch (e, st) {
       debugPrint('RoleCubit.configure error: $e\n$st');
@@ -86,6 +94,7 @@ class RoleCubit extends Cubit<RoleState> {
       if (ok) {
         await _repo.saveLoggedInRole(role, pin: pin);
         await saveLocalRole(role);
+        await savePasscodesConfigured(true);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;

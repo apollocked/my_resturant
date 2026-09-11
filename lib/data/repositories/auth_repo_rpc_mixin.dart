@@ -6,12 +6,9 @@ import 'package:my_resturant/domain/entities/role.dart';
 mixin AuthRpcMixin on SupabaseAuthRepositoryBase {
   @override
   Future<bool> arePasscodesConfigured() async {
-    try {
-      return await safeCall(() => client.rpc('passcodes_configured')) == true;
-    } catch (e, st) {
-      debugPrint('SupabaseAuthRepo.arePasscodesConfigured error: $e\n$st');
-      return false;
-    }
+    // Errors must propagate (not return false) so RoleCubit can fall back to
+    // the locally cached "configured" flag when the DB is flaky/offline.
+    return await safeCall(() => client.rpc('passcodes_configured')) == true;
   }
 
   @override
