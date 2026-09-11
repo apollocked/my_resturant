@@ -4,7 +4,7 @@ import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 import 'package:my_resturant/shared/haptics.dart';
-import 'package:my_resturant/shared/staggered_grid.dart';
+import 'package:my_resturant/shared/animated_item_list.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 
 class KitchenCleanList extends StatelessWidget {
@@ -31,44 +31,27 @@ class KitchenCleanList extends StatelessWidget {
       );
     }
     final isGrid = !R.isPhone(context);
-    final tiles = tableList
-        .map((n) => StaggeredEntrance(
-              child: _CleanTile(n: n, t: t, cs: cs, cubit: cubit),
-            ))
-        .toList();
     return RefreshIndicator(
       onRefresh: () async => cubit.refresh(),
-      child: isGrid
-          ? SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                R.padding(context),
-                8,
-                R.padding(context),
-                100,
-              ),
-              child: Wrap(
-                spacing: R.gridSpacing(context),
-                runSpacing: R.gridSpacing(context),
-                children: [
-                  for (final tile in tiles)
-                    SizedBox(
-                      width: R.orderCardWidth(context, maxExtent: 360),
-                      child: tile,
-                    ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.fromLTRB(
-                R.padding(context),
-                8,
-                R.padding(context),
-                100,
-              ),
-              itemCount: tableList.length,
-              itemBuilder: (context, index) => tiles[index],
-            ),
+      child: AnimatedItemList(
+        ids: tableList.map((n) => n).toList(),
+        itemBuilder: (context, id) => _CleanTile(
+          n: id as int,
+          t: t,
+          cs: cs,
+          cubit: cubit,
+        ),
+        isGrid: isGrid,
+        itemWidth: R.orderCardWidth(context, maxExtent: 360),
+        spacing: R.gridSpacing(context),
+        padding: EdgeInsets.fromLTRB(
+          R.padding(context),
+          8,
+          R.padding(context),
+          100,
+        ),
+        physics: const AlwaysScrollableScrollPhysics(),
+      ),
     );
   }
 }
