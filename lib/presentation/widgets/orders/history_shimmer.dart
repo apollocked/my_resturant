@@ -8,23 +8,34 @@ class HistoryShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding, vertical: 4),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ShimmerBox(width: 36, height: 36, radius: 8),
-              ShimmerBox(width: 140, height: 36, radius: 8),
-              ShimmerBox(width: 36, height: 36, radius: 8),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 4),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ShimmerBox(width: 36, height: 36, radius: 8),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 36,
+                      radius: 8,
+                    ),
+                  ),
+                ),
+                ShimmerBox(width: 36, height: 36, radius: 8),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        ShimmerGrid(itemCount: 6, itemBuilder: () => const ShimmerOrderCard()),
-      ],
+          const SizedBox(height: 8),
+          ShimmerGrid(itemCount: 6, itemBuilder: () => const ShimmerOrderCard()),
+        ],
+      ),
     );
   }
 }

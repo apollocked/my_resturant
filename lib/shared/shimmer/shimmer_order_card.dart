@@ -32,8 +32,21 @@ class ShimmerOrderCard extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ShimmerBox(width: 90, height: 28, radius: 8),
-                  ShimmerBox(width: 60, height: 28, radius: 8),
+                  Expanded(
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 28,
+                      radius: 8,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 28,
+                      radius: 8,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -60,8 +73,21 @@ class ShimmerOrderCard extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ShimmerBox(width: 80, height: 32, radius: 10),
-                  ShimmerBox(width: 100, height: 32, radius: 10),
+                  Expanded(
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 32,
+                      radius: 10,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 32,
+                      radius: 10,
+                    ),
+                  ),
                 ],
               ),
             ],
