@@ -9,7 +9,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   flutter_blue_plus_winrt
   permission_handler_windows
-  rive_common
   sqlite3_flutter_libs
   unified_esc_pos_printer
   url_launcher_windows

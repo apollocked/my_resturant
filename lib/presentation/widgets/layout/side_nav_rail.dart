@@ -41,16 +41,17 @@ class SideNavRail extends StatelessWidget {
       leading: showTitle ? _titleLeading(t('app_name')) : _logo(32),
       minWidth: showTitle ? 100 : null,
       groupAlignment: 0,
-      destinations: items
-          .map(
-            (item) =>
-                NavDestination(item: item, cartCount: cartCount).destination(
-                  label: t(item.labelKey),
-                  iconSize: iconSize,
-                  labelSize: labelSize,
-                ),
-          )
-          .toList(),
+      destinations: [
+        for (var i = 0; i < items.length; i++)
+          NavDestination(item: items[i], cartCount: cartCount).destination(
+            label: t(items[i].labelKey),
+            iconSize: iconSize,
+            labelSize: labelSize,
+            isSelected: i == selectedIndex,
+            selectedColor: AppColors.primary,
+            unselectedColor: cs.onSurfaceVariant,
+          ),
+      ],
     );
   }
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/shared/animated_nav_icon.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
-import 'package:my_resturant/shared/nav_rive_icon.dart';
 
 class LiquidNavTab extends StatelessWidget {
   const LiquidNavTab({
@@ -63,21 +63,14 @@ class LiquidNavTab extends StatelessWidget {
                       color: active ? indColor : Colors.transparent,
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: item.rive != null
-                      ? NavRiveIcon(
-                          spec: item.rive!,
-                          active: active,
-                          icon: item.icon,
-                          activeIcon: item.activeIcon,
-                          color: sel,
-                          inactiveColor: unsel,
-                          size: active ? 24 : 22,
-                        )
-                      : Icon(
-                          active ? item.activeIcon : item.icon,
-                          size: active ? 24 : 22,
-                          color: active ? sel : unsel,
-                        ),
+                    child: AnimatedNavIcon(
+                      active: active,
+                      icon: item.icon,
+                      activeIcon: item.activeIcon,
+                      color: sel,
+                      inactiveColor: unsel,
+                      size: active ? 24 : 22,
+                    ),
                   ),
                 ),
                 if (showBadge)

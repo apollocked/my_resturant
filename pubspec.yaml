@@ -42,7 +42,6 @@ dependencies:
   flutter_blue_plus: ^2.3.12
   permission_handler: ^12.0.3
   unified_esc_pos_printer: ^3.4.0
-  rive: 0.13.0
 
 dependency_overrides:
   usb_serial:
@@ -64,7 +63,6 @@ flutter:
     - assets/
     - assets/images/
     - assets/icons/
-    - assets/rive/
     - .env
 
   fonts:

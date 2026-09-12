@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/presentation/widgets/layout/nav_item.dart';
+import 'package:my_resturant/shared/animated_nav_icon.dart';
 import 'package:my_resturant/shared/cart_badge.dart';
 
 class NavDestination {
@@ -10,6 +11,9 @@ class NavDestination {
 
   NavigationRailDestination destination({
     required String label,
+    required bool isSelected,
+    required Color selectedColor,
+    required Color unselectedColor,
     double? iconSize,
     double? labelSize,
   }) {
@@ -18,19 +22,14 @@ class NavDestination {
       icon: Stack(
         clipBehavior: Clip.none,
         children: [
-          Icon(item.outline, size: iconSize),
-          if (showBadge)
-            Positioned(
-              top: -6,
-              right: -6,
-              child: CartBadge(count: cartCount),
-            ),
-        ],
-      ),
-      selectedIcon: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Icon(item.filled, size: iconSize),
+          AnimatedNavIcon(
+            active: isSelected,
+            icon: item.outline,
+            activeIcon: item.filled,
+            color: selectedColor,
+            inactiveColor: unselectedColor,
+            size: iconSize ?? 24,
+          ),
           if (showBadge)
             Positioned(
               top: -6,

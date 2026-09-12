@@ -14,7 +14,6 @@ import 'package:my_resturant/presentation/widgets/layout/side_nav_rail.dart';
 import 'package:my_resturant/shared/connectivity_banner.dart';
 import 'package:my_resturant/shared/liquid_glass_nav_bar.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
-import 'package:my_resturant/shared/nav_rive_icon.dart';
 import 'package:my_resturant/shared/tab_entrance.dart';
 
 class MainShell extends StatelessWidget {
@@ -75,7 +74,6 @@ class MainShell extends StatelessWidget {
                     icon: item.outline,
                     activeIcon: item.filled,
                     label: t(item.labelKey),
-                    rive: NavRiveSpec.forLabel(item.labelKey),
                   ),
                 )
                 .toList(),

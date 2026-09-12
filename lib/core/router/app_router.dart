@@ -97,6 +97,13 @@ final appRouter = GoRouter(
       result = loc != '/role-login' ? '/role-login' : null;
     } else if (loc == '/role-login') {
       result = homeForRole(rs.role);
+    } else if (loc == '/setup' ||
+        loc == '/promo-code' ||
+        loc == '/account-auth' ||
+        loc == '/onboarding') {
+      // Fully configured and logged into a role: never stay on an auth/setup
+      // page, send the user to their role home instead.
+      result = homeForRole(rs.role);
     } else if (adminRoutes.any((r) => loc.startsWith(r)) && rs.role != Role.admin) {
       result = homeForRole(rs.role);
     } else if (!_roleAllowed(rs.role, loc)) {
