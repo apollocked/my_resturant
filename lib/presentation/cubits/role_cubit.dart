@@ -25,6 +25,12 @@ class RoleCubit extends Cubit<RoleState> {
 
   Future<void> load() async {
     try {
+      String? email;
+      try {
+        email = await _repo.getAccountEmail();
+      } catch (_) {
+        email = null;
+      }
       bool configured = false;
       try {
         configured = await _repo.arePasscodesConfigured();
@@ -36,17 +42,23 @@ class RoleCubit extends Cubit<RoleState> {
           emit(RoleState(isConfigured: true, isLoggedIn: true, role: local));
           return;
         }
-        if (await loadPasscodesConfigured()) {
+        if (await isAccountConfigured(email)) {
           emit(const RoleState(isConfigured: true));
           return;
         }
         return;
       }
-      await savePasscodesConfigured(configured);
       if (!configured) {
+        // DB says this account has no pins, but it was set up on this device
+        // before – never ask an existing account for passcodes again.
+        if (await isAccountConfigured(email)) {
+          emit(const RoleState(isConfigured: true));
+          return;
+        }
         emit(const RoleState());
         return;
       }
+      await markAccountConfigured(email);
       Role? role;
       try {
         role = await _repo.getLoggedInRole();
@@ -76,7 +88,11 @@ class RoleCubit extends Cubit<RoleState> {
   Future<void> configure(String w, String k, String a) async {
     try {
       await _repo.savePasscodes(w, k, a);
-      await savePasscodesConfigured(true);
+      String? email;
+      try {
+        email = await _repo.getAccountEmail();
+      } catch (_) {}
+      await markAccountConfigured(email);
       emit(const RoleState(isConfigured: true));
     } catch (e, st) {
       debugPrint('RoleCubit.configure error: $e\n$st');
@@ -94,7 +110,11 @@ class RoleCubit extends Cubit<RoleState> {
       if (ok) {
         await _repo.saveLoggedInRole(role, pin: pin);
         await saveLocalRole(role);
-        await savePasscodesConfigured(true);
+        String? email;
+        try {
+          email = await _repo.getAccountEmail();
+        } catch (_) {}
+        await markAccountConfigured(email);
         emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
       }
       return ok;
@@ -145,6 +165,11 @@ class RoleCubit extends Cubit<RoleState> {
   Future<void> _setRole(Role role, {String? pin}) async {
     await _repo.saveLoggedInRole(role, pin: pin);
     await saveLocalRole(role);
+    String? email;
+    try {
+      email = await _repo.getAccountEmail();
+    } catch (_) {}
+    await markAccountConfigured(email);
     emit(RoleState(isConfigured: true, isLoggedIn: true, role: role));
   }
 
