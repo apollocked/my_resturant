@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/animated_nav_icon.dart';
@@ -13,7 +12,6 @@ class LiquidNavTab extends StatelessWidget {
     required this.active,
     required this.sel,
     required this.unsel,
-    required this.indColor,
     required this.accentColor,
     required this.dark,
     required this.showBadge,
@@ -26,7 +24,6 @@ class LiquidNavTab extends StatelessWidget {
   final bool active;
   final Color sel;
   final Color unsel;
-  final Color indColor;
   final Color accentColor;
   final bool dark;
   final bool showBadge;
@@ -50,28 +47,13 @@ class LiquidNavTab extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                AnimatedScale(
-                  scale: active ? 1 : 0.82,
-                  duration: const Duration(milliseconds: 280),
-                  curve: Curves.easeOutBack,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    curve: Curves.easeOutQuint,
-                    width: active ? 48 : 36,
-                    height: active ? 32 : 28,
-                    decoration: BoxDecoration(
-                      color: active ? indColor : Colors.transparent,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
-                    child: AnimatedNavIcon(
-                      active: active,
-                      icon: item.icon,
-                      activeIcon: item.activeIcon,
-                      color: sel,
-                      inactiveColor: unsel,
-                      size: active ? 24 : 22,
-                    ),
-                  ),
+                AnimatedNavIcon(
+                  active: active,
+                  icon: item.icon,
+                  activeIcon: item.activeIcon,
+                  color: sel,
+                  inactiveColor: unsel,
+                  size: 24,
                 ),
                 if (showBadge)
                   PositionedDirectional(
@@ -103,15 +85,19 @@ class LiquidNavTab extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 2),
-            Text(
-              item.label,
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 240),
+              curve: Curves.easeOut,
               style: TextStyle(
                 fontSize: R.fontSm(context),
-                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: active ? FontWeight.w800 : FontWeight.w500,
                 color: active ? sel : unsel,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              child: Text(
+                item.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
