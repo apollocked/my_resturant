@@ -36,7 +36,6 @@ class LiquidNavTab extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          debugPrint('[NAV] bar-tap index=$index label=${item.label}');
           HapticFeedback.lightImpact();
           onTap();
         },
@@ -57,40 +56,24 @@ class LiquidNavTab extends StatelessWidget {
                 ),
                 if (showBadge)
                   PositionedDirectional(
-                    top: -4,
-                    end: -2,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: accentColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: dark ? const Color(0xE0252535) : cs.surface,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '${badgeCount ?? 0}',
-                        style: TextStyle(
-                          color: dark ? Colors.white : cs.onPrimary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          height: 1,
-                        ),
-                      ),
+                    top: -6,
+                    end: -7,
+                    child: _AuroraBadge(
+                      count: badgeCount ?? 0,
+                      accentColor: accentColor,
+                      borderColor: dark ? const Color(0xE0252535) : cs.surface,
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 240),
               curve: Curves.easeOut,
               style: TextStyle(
-                fontSize: R.fontSm(context),
+                fontSize: R.fontSm(context) + (active ? 1 : 0),
                 fontWeight: active ? FontWeight.w800 : FontWeight.w500,
+                height: 1.15,
                 color: active ? sel : unsel,
               ),
               child: Text(
@@ -100,6 +83,62 @@ class LiquidNavTab extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A tiny glass capsule that carries the cart/order count.
+class _AuroraBadge extends StatelessWidget {
+  const _AuroraBadge({
+    required this.count,
+    required this.accentColor,
+    required this.borderColor,
+  });
+
+  final int count;
+  final Color accentColor;
+  final Color borderColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+      child: Container(
+        key: ValueKey(count),
+        alignment: Alignment.center,
+        constraints: const BoxConstraints(minWidth: 19, minHeight: 19),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.lerp(accentColor, Colors.white, 0.25)!,
+              accentColor,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: borderColor, width: 1.6),
+          boxShadow: [
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.45),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(
+          '$count',
+          style: TextStyle(
+            color: cs.onPrimary,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            height: 1,
+          ),
         ),
       ),
     );

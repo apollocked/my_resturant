@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// A Material-icon nav icon that pops whenever [active] changes.
+/// A springy, gravity-weighted nav icon.
 ///
-/// The entire pop (scale, lift, tilt and color) is driven by a single
-/// [TweenAnimationBuilder] value so the animation is perfectly synchronized
-/// and identical for every tab. There is deliberately no [AnimatedSwitcher]
-/// here: its child-crossfade only animates when the outline/filled glyphs
-/// differ perceptibly, so tabs with near-identical glyphs looked frozen.
+/// Activation drives a single [TweenAnimationBuilder] value so scale, lift,
+/// tilt, color and the outline→filled glyph cross-fade are all perfectly
+/// synchronized. The two glyphs cross-fade with opacity (rather than a hard
+/// swap) so even near-identical outline/filled pairs always animate smoothly.
 class AnimatedNavIcon extends StatelessWidget {
   final bool active;
   final IconData icon;
@@ -29,23 +28,35 @@ class AnimatedNavIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: active ? 1 : 0),
-      duration: const Duration(milliseconds: 340),
+      duration: const Duration(milliseconds: 420),
       curve: Curves.easeOutBack,
       builder: (context, v, _) {
         final t = v.clamp(0.0, 1.0);
         final col = Color.lerp(inactiveColor, color, t) ?? color;
         return Opacity(
-          opacity: active ? 1.0 : 0.65,
+          opacity: 0.62 + 0.38 * t,
           child: Transform.translate(
-            offset: Offset(0, -5 * t),
+            offset: Offset(0, -6 * t),
             child: Transform.rotate(
-              angle: 0.14 * (1 - t),
+              angle: 0.16 * (1 - t),
               child: Transform.scale(
-                scale: 0.7 + 0.3 * v,
-                child: Icon(
-                  v > 0.5 ? activeIcon : icon,
-                  size: size,
-                  color: col,
+                scale: 0.62 + 0.38 * v,
+                child: SizedBox(
+                  width: size,
+                  height: size,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Opacity(
+                        opacity: 1 - t,
+                        child: Icon(icon, size: size, color: col),
+                      ),
+                      Opacity(
+                        opacity: t,
+                        child: Icon(activeIcon, size: size, color: col),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
