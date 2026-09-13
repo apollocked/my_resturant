@@ -51,23 +51,49 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     _ctl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 560),
-    )..value = widget.selectedIndex.toDouble();
+      upperBound: 16,
+    )..value = _initialTarget(widget.selectedIndex, widget.items.length);
     _entryCtl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 620),
     )..forward();
   }
 
+  static double _initialTarget(int index, int count) {
+    if (count <= 0) return 0;
+    return index.toDouble().clamp(0.0, (count - 1).toDouble()).toDouble();
+  }
+
   @override
   void didUpdateWidget(covariant LiquidGlassNavBar old) {
     super.didUpdateWidget(old);
-    if (old.selectedIndex != widget.selectedIndex) {
-      _backdropGen++;
+    final indexChanged = old.selectedIndex != widget.selectedIndex;
+    final itemsChanged = !_itemsEqual(old.items, widget.items);
+    if (!indexChanged && !itemsChanged) return;
+    _backdropGen++;
+    if (itemsChanged) {
+      // Role/locale bar changed shape mid-life: snap the pill to the new
+      // position instead of animating across indices that don't exist in the
+      // new layout (e.g. admin's 5 tabs shrinking to kitchen's 2).
+      _ctl.value = _initialTarget(widget.selectedIndex, widget.items.length);
+    } else if (indexChanged) {
       _ctl.animateTo(
         widget.selectedIndex.toDouble(),
         curve: Curves.easeOutBack,
       );
     }
+  }
+
+  static bool _itemsEqual(List<LiquidNavItem> a, List<LiquidNavItem> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].icon != b[i].icon ||
+          a[i].activeIcon != b[i].activeIcon ||
+          a[i].label != b[i].label) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
