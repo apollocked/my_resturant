@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/features/cart/presentation/widgets/cart_item_notes_field.dart';
+import 'package:my_resturant/features/cart/presentation/widgets/cart_item_remove_button.dart';
+import 'package:my_resturant/features/cart/presentation/widgets/cart_item_total_row.dart';
+import 'package:my_resturant/shared/app_image.dart';
+
+class CartItemCard extends StatelessWidget {
+  final CartItem item;
+  final int index;
+  final TextEditingController Function(String, String) notesCtl;
+  final String notesHint;
+
+  const CartItemCard({
+    super.key,
+    required this.item,
+    required this.index,
+    required this.notesCtl,
+    required this.notesHint,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final cubit = context.read<OrderCubit>();
+    final suff = Tr.get(
+      'currency_suffix',
+      context.watch<SettingsCubit>().state.locale,
+    );
+    final screen = R.screenSize(context);
+    final isDesktop = screen == ScreenSize.desktop;
+    final isTablet = screen == ScreenSize.tablet;
+    final imageSize = isDesktop
+        ? 80.0
+        : isTablet
+        ? 72.0
+        : 64.0;
+    final nameSize = isDesktop
+        ? 16.0
+        : isTablet
+        ? 15.0
+        : 14.0;
+    final priceSize = isDesktop
+        ? 14.0
+        : isTablet
+        ? 13.0
+        : 12.0;
+    final totalSize = isDesktop
+        ? 20.0
+        : isTablet
+        ? 18.0
+        : 16.0;
+    return Card(
+      margin: EdgeInsets.only(bottom: isDesktop ? 14 : 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(isDesktop ? 18 : 14),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(R.cardPadding(context)),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  child: AppImage(
+                    item.recipe.imageUrl,
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                ),
+                SizedBox(width: isDesktop ? 18 : 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          CartItemRemoveButton(
+                            onRemove: () => cubit.removeFromCart(index),
+                          ),
+                          Flexible(
+                            child: Text(
+                              item.recipe.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: nameSize,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.recipe.price.toInt()} $suff',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: priceSize,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: isDesktop ? 12 : 10),
+                      CartItemNotesField(
+                        controller: notesCtl(item.recipe.id, item.notes),
+                        hint: notesHint,
+                        cs: cs,
+                        isDesktop: isDesktop,
+                        onChanged: (v) => cubit.updateNotes(index, v),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            CartItemTotalRow(
+              total: item.totalPrice,
+              totalLabel: suff,
+              fontSize: totalSize,
+              quantity: item.quantity,
+              onQuantityChanged: (d) => cubit.updateQuantity(index, d),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

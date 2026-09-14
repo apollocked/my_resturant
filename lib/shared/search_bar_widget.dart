@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 

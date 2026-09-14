@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/shared/app_image.dart';
+import 'package:my_resturant/shared/shimmer_skeletons.dart';
+import 'package:my_resturant/shared/empty_state.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+
+class AvailabilityPage extends StatelessWidget {
+  const AvailabilityPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<OrderCubit>();
+    final settings = context.watch<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    final cs = Theme.of(context).colorScheme;
+    final recipes = cubit.state.recipes;
+    final isGrid = !R.isPhone(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(t('availability_title'))),
+      body: SafeArea(
+        child: cubit.state.isLoading && recipes.isEmpty
+            ? ShimmerListView(
+                itemCount: 6,
+                itemBuilder: () => const ShimmerListTile(),
+              )
+            : recipes.isEmpty
+            ? EmptyState(
+                icon: Icons.restaurant_menu,
+                title: t('no_food_found'),
+                subtitle: t('no_food_found_subtitle'),
+              )
+            : isGrid
+            ? GridView.builder(
+                padding: EdgeInsets.all(R.padding(context)),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: R.menuGridColumns(context),
+                  childAspectRatio: 2.5,
+                  crossAxisSpacing: R.gridSpacing(context),
+                  mainAxisSpacing: R.gridSpacing(context),
+                ),
+                itemCount: recipes.length,
+                itemBuilder: (context, index) {
+                  final r = recipes[index];
+                  return Card(
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: AppImage(
+                          r.imageUrl,
+                          width: 48,
+                          height: 48,
+                        ),
+                      ),
+                      title: Text(
+                        r.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: R.fontMd(context),
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${r.price.toInt()} ${t('currency_suffix')}',
+                        style: TextStyle(
+                          fontSize: R.fontSm(context),
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: Switch(
+                        value: r.available,
+                        onChanged: (_) => cubit.toggleAvailability(r.id),
+                        activeTrackColor: AppColors.primary,
+                        materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  );
+                },
+              )
+            : ListView.builder(
+                padding: EdgeInsets.all(R.padding(context)),
+                itemCount: recipes.length,
+                itemBuilder: (context, index) {
+                  final r = recipes[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: AppImage(
+                          r.imageUrl,
+                          width: 48,
+                          height: 48,
+                        ),
+                      ),
+                      title: Text(
+                        r.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: R.fontMd(context),
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${r.price.toInt()} ${t('currency_suffix')}',
+                        style: TextStyle(
+                          fontSize: R.fontSm(context),
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: Switch(
+                        value: r.available,
+                        onChanged: (_) => cubit.toggleAvailability(r.id),
+                        activeTrackColor: AppColors.primary,
+                        materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
+    );
+  }
+}

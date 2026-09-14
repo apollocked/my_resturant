@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/presentation/cubits/order_cubit.dart';
+import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 
 class TableNameRow extends StatefulWidget {
   final int tableNumber;

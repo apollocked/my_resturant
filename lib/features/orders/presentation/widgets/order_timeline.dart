@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/helpers/responsive.dart';
+import 'package:my_resturant/core/l10n/tr.dart';
+import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/order_status_style.dart';
+
+class OrderTimeline extends StatelessWidget {
+  const OrderTimeline({super.key, required this.status, required this.locale});
+
+  final OrderStatus status;
+  final Locale locale;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _dot(OrderStatus.served, cs),
+              Expanded(child: _line(OrderStatus.served, cs)),
+              _dot(OrderStatus.preparing, cs),
+              Expanded(child: _line(OrderStatus.preparing, cs)),
+              _dot(OrderStatus.pending, cs),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _label(context, 'timeline_served', OrderStatus.served, cs),
+              _label(context, 'timeline_preparing', OrderStatus.preparing, cs),
+              _label(context, 'timeline_pending', OrderStatus.pending, cs),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _line(OrderStatus s, ColorScheme cs) {
+    final reached = status != OrderStatus.cancelled && s.index <= status.index;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        height: 2,
+        decoration: BoxDecoration(
+          color: reached ? OrderStatusStyle.color(s) : cs.outlineVariant,
+          borderRadius: BorderRadius.circular(1),
+        ),
+      ),
+    );
+  }
+
+  Widget _label(
+    BuildContext context,
+    String key,
+    OrderStatus s,
+    ColorScheme cs,
+  ) {
+    final bool active = status != OrderStatus.cancelled &&
+        (s == OrderStatus.served
+            ? status == OrderStatus.served
+            : s == OrderStatus.preparing
+            ? status.index >= OrderStatus.preparing.index
+            : status == OrderStatus.pending);
+    final color = active ? OrderStatusStyle.color(s) : cs.onSurfaceVariant;
+    return AnimatedDefaultTextStyle(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      style: TextStyle(
+        fontSize: R.fontSm(context),
+        color: color,
+        fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+      ),
+      child: Text(Tr.get(key, locale)),
+    );
+  }
+
+  Widget _dot(OrderStatus s, ColorScheme cs) {
+    final isReached =
+        status != OrderStatus.cancelled && s.index <= status.index;
+    final c = OrderStatusStyle.color(s);
+    return SizedBox(
+      width: 18,
+      height: 18,
+      child: Center(
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutBack,
+          scale: isReached ? 1 : 0.38,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            width: isReached ? 16 : 12,
+            height: isReached ? 16 : 12,
+            decoration: BoxDecoration(
+              color: isReached ? c : cs.surface,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isReached ? c : cs.outlineVariant,
+                width: 2,
+              ),
+              boxShadow: isReached
+                  ? [
+                      BoxShadow(
+                        color: c.withValues(alpha: 0.35),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: isReached
+                ? Icon(Icons.check, size: 10, color: cs.onPrimary)
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+}

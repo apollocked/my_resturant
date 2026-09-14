@@ -1,10 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/presentation/widgets/orders/cart_send_button.dart';
-import 'package:my_resturant/presentation/widgets/orders/cart_total_column.dart';
+import 'package:my_resturant/features/cart/presentation/widgets/cart_send_button.dart';
+import 'package:my_resturant/features/cart/presentation/widgets/cart_total_column.dart';
 
 class MenuCartBar extends StatelessWidget {
   final int cartCount;
