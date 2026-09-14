@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/history_order_list.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/history_shimmer.dart';
 

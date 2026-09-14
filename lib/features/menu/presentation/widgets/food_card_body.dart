@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/food_card_controls.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/food_card_image.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/food_card_title.dart';

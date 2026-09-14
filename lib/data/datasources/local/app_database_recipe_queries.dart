@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:my_resturant/data/datasources/local/app_database.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 
 extension AppDatabaseRecipeQueries on AppDatabase {
   Future<List<Recipe>> getAllRecipes() async {

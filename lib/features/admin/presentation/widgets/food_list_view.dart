@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/food_dish_card.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/food_dish_tile.dart';
 import 'package:my_resturant/shared/empty_state.dart';

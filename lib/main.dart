@@ -11,7 +11,7 @@ import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/app/router/app_router.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/l10n/ku_localizations.dart';
-import 'package:my_resturant/core/services/printer_service.dart';
+import 'package:my_resturant/features/printer/data/printer_service.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_state.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
@@ -21,9 +21,9 @@ import 'package:my_resturant/features/settings/presentation/cubits/settings_cubi
 import 'package:my_resturant/core/theme/app_theme.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/auto_print_listener.dart';
 import 'package:my_resturant/features/permissions/presentation/permission_gate.dart';
-import 'package:my_resturant/domain/repositories/data_repository.dart';
-import 'package:my_resturant/data/repositories/supabase_data_repo.dart';
-import 'package:my_resturant/data/repositories/supabase_auth_repo.dart';
+import 'package:my_resturant/app/domain/data_repository.dart';
+import 'package:my_resturant/app/data/supabase_data_repo.dart';
+import 'package:my_resturant/features/auth/data/repositories/supabase_auth_repo.dart';
 import 'firebase_options.dart';
 
 /// Global error handlers so an uncaught exception logs instead of taking down

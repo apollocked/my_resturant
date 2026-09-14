@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:my_resturant/features/cart/presentation/widgets/cart_item_card.dart';
 import 'package:my_resturant/shared/staggered_grid.dart';
 

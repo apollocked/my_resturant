@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
-import 'package:my_resturant/domain/entities/role.dart';
-import 'package:my_resturant/domain/repositories/auth_repository.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_storage.dart';
 
 class RoleState {

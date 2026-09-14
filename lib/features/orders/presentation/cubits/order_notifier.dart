@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:my_resturant/core/notifications/order_notification_service.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/orders/data/order_notification_service.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 
 class OrderNotifier {
   final OrderNotificationService _service = OrderNotificationService();

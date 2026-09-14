@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/food_card_body.dart';
 
 class FoodCard extends StatelessWidget {

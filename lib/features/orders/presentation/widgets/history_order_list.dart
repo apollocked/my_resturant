@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/history_order_tile.dart';
 import 'package:my_resturant/shared/empty_state.dart';

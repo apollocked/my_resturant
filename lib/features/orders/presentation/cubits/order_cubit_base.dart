@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/core/services/cart_draft_store.dart';
-import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/domain/repositories/data_repository.dart';
+import 'package:my_resturant/features/cart/data/cart_draft_store.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
+import 'package:my_resturant/app/domain/data_repository.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_notifier.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_state.dart';
 

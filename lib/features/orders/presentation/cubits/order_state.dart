@@ -1,6 +1,6 @@
-import 'package:my_resturant/domain/entities/recipe.dart';
-import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 
 class OrderState {
   final List<Recipe> recipes;

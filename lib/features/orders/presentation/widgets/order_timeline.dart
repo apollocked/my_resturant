@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/order_status_style.dart';
 
 class OrderTimeline extends StatelessWidget {

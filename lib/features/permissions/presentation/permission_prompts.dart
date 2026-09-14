@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/notifications/order_notification_service.dart';
+import 'package:my_resturant/features/orders/data/order_notification_service.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'permission_request_dialog.dart';
 

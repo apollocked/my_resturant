@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/pin_dialog_header.dart';
 
 class PinDialog extends StatefulWidget {

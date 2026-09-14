@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/app/router/app_router.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/permissions/presentation/permission_prompts.dart';

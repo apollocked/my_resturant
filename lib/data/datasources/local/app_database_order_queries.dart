@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:my_resturant/data/datasources/local/app_database.dart';
-import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 
 extension AppDatabaseOrderQueries on AppDatabase {
   Future<List<Order>> getAllOrders() async {

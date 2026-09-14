@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
@@ -28,8 +28,8 @@ import 'package:my_resturant/features/admin/presentation/pages/info_page.dart';
 import 'package:my_resturant/features/setup/presentation/pages/setup_page.dart';
 import 'package:my_resturant/features/shell/presentation/pages/layout_page.dart';
 import 'package:my_resturant/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey<NavigatorState>();
 

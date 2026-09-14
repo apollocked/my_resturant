@@ -1,5 +1,5 @@
-import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/domain/entities/recipe.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit_base.dart';
 

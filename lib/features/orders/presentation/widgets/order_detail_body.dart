@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/order_detail_action_button.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/order_detail_foods_header.dart';

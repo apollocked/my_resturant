@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/data/models/default_categories.dart';
+import 'package:my_resturant/features/menu/domain/default_categories.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/dish_field.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/dish_preview_image.dart';

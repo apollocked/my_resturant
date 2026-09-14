@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/passcode_field.dart';

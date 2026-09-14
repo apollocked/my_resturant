@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/data/models/default_categories.dart';
+import 'package:my_resturant/features/menu/domain/default_categories.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/recipe_category_field.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/recipe_field.dart';
 

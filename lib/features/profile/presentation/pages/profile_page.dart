@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';

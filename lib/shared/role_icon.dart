@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 
 /// Presentation-side metadata for a [Role]. Kept out of the domain entity so
 /// the domain layer stays free of any UI framework dependency.

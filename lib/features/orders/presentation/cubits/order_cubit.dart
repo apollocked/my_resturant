@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:my_resturant/core/helpers/network_helper.dart';
-import 'package:my_resturant/core/services/cart_draft_store.dart';
-import 'package:my_resturant/domain/entities/cart_item.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/cart/data/cart_draft_store.dart';
+import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cart_mixin.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_crud_mixin.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit_base.dart';

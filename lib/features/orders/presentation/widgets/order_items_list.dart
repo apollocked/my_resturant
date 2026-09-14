@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/domain/entities/order_model.dart';
+import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 
 class OrderItemsList extends StatelessWidget {
   const OrderItemsList({

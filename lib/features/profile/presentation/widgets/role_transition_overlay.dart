@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_resturant/domain/entities/role.dart';
+import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_icon_stack.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_overlay_card.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_phase.dart';

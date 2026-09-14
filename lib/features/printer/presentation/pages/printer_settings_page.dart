@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/services/printer_config.dart';
+import 'package:my_resturant/features/printer/data/printer_config.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/printer/presentation/widgets/printer_actions.dart';
