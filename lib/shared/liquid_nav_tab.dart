@@ -4,7 +4,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/animated_nav_icon.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
 
-class LiquidNavTab extends StatelessWidget {
+class LiquidNavTab extends StatefulWidget {
   const LiquidNavTab({
     super.key,
     required this.item,
@@ -31,67 +31,86 @@ class LiquidNavTab extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<LiquidNavTab> createState() => _LiquidNavTabState();
+}
+
+class _LiquidNavTabState extends State<LiquidNavTab> {
+  bool _pressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final item = widget.item;
     return Expanded(
       child: GestureDetector(
-        onTap: () {
+        onTapDown: (_) {
+          setState(() => _pressed = true);
           HapticFeedback.lightImpact();
-          onTap();
         },
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedNavIcon(
-                  active: active,
-                  icon: item.icon,
-                  activeIcon: item.activeIcon,
-                  color: sel,
-                  inactiveColor: unsel,
-                  size: 24,
-                ),
-                if (showBadge)
-                  PositionedDirectional(
-                    top: -6,
-                    end: -7,
-                    child: _AuroraBadge(
-                      count: badgeCount ?? 0,
-                      accentColor: accentColor,
-                      borderColor: dark ? const Color(0xE0252535) : cs.surface,
-                    ),
+        child: AnimatedScale(
+          scale: _pressed ? 0.92 : 1,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AnimatedNavIcon(
+                    active: widget.active,
+                    icon: item.icon,
+                    activeIcon: item.activeIcon,
+                    color: widget.sel,
+                    inactiveColor: widget.unsel,
+                    size: 22,
                   ),
-              ],
-            ),
-            const SizedBox(height: 3),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 240),
-              curve: Curves.easeOut,
-              style: TextStyle(
-                fontSize: R.fontSm(context) + (active ? 1 : 0),
-                fontWeight: active ? FontWeight.w800 : FontWeight.w500,
-                height: 1.15,
-                color: active ? sel : unsel,
+                  if (widget.showBadge)
+                    PositionedDirectional(
+                      top: -5,
+                      end: -8,
+                      child: _Badge(
+                        count: widget.badgeCount ?? 0,
+                        accentColor: widget.accentColor,
+                        borderColor: widget.dark
+                            ? const Color(0xE0161820)
+                            : Theme.of(context).colorScheme.surface,
+                      ),
+                    ),
+                ],
               ),
-              child: Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              const SizedBox(height: 3),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 240),
+                curve: Curves.easeOut,
+                style: TextStyle(
+                  fontSize:
+                      R.fontSm(context) + (widget.active ? 1 : 0),
+                  fontWeight:
+                      widget.active ? FontWeight.w700 : FontWeight.w500,
+                  height: 1.1,
+                  color: widget.active ? widget.sel : widget.unsel,
+                ),
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// A tiny glass capsule that carries the cart/order count.
-class _AuroraBadge extends StatelessWidget {
-  const _AuroraBadge({
+/// A compact solid capsule that carries the cart/order count.
+class _Badge extends StatelessWidget {
+  const _Badge({
     required this.count,
     required this.accentColor,
     required this.borderColor,
@@ -105,31 +124,18 @@ class _AuroraBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 220),
-      transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+      duration: const Duration(milliseconds: 180),
+      transitionBuilder: (child, anim) =>
+          ScaleTransition(scale: anim, child: child),
       child: Container(
         key: ValueKey(count),
         alignment: Alignment.center,
-        constraints: const BoxConstraints(minWidth: 19, minHeight: 19),
+        constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
         padding: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.lerp(accentColor, Colors.white, 0.25)!,
-              accentColor,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(10),
+          color: accentColor,
+          borderRadius: BorderRadius.circular(9),
           border: Border.all(color: borderColor, width: 1.6),
-          boxShadow: [
-            BoxShadow(
-              color: accentColor.withValues(alpha: 0.45),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Text(
           '$count',

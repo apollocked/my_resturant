@@ -27,19 +27,14 @@ Widget _host(List<LiquidNavItem> items, int sel, ValueChanged<int> onTap) {
   );
 }
 
-Finder _pillFinder() => find.byWidgetPredicate((w) {
-      if (w is PositionedDirectional) {
-        return w.start != null;
-      }
-      return false;
-    });
+Finder _pillFinder() => find.byKey(LiquidGlassNavBar.navChipKey);
 
-/// Expected pill `start` for a settled tab: with `breath == 1` the bubble is
-/// `0.81 * tabW` wide, so `start = tabW * (tab + 0.5) - bubbleW / 2`.
+/// Expected indicator `start` for a settled tab: the squircle sits at 86% of
+/// the cell width, centred on the cell, so `start = tabW * (tab + 0.07)`.
 double _expectedStart(double barWidth, int n, int tab) {
   final innerW = barWidth - 32; // right/left 16 px padding each side
   final tabW = innerW / n;
-  return tabW * (tab + 0.095);
+  return tabW * (tab + 0.07);
 }
 
 void main() {
@@ -195,6 +190,28 @@ void main() {
       await tester.pumpAndSettle();
       final pos = tester.widget<PositionedDirectional>(_pillFinder());
       expect(pos.start!, closeTo(_expectedStart(barWidth, 5, 2), 1.0));
+    });
+
+    testWidgets('chip glides on a spring between tabs, not a snap',
+        (tester) async {
+      final barWidth =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      await tester.pumpWidget(_host(admin, 0, (_) {}));
+      await tester.pumpAndSettle();
+      final from = _expectedStart(barWidth, 5, 0);
+      final to = _expectedStart(barWidth, 5, 4);
+
+      await tester.pumpWidget(_host(admin, 4, (_) {}));
+      await tester.pump(const Duration(milliseconds: 120));
+      final mid = tester.widget<PositionedDirectional>(_pillFinder()).start!;
+      expect(mid, greaterThan(from));
+      expect(mid, lessThan(to));
+      expect((mid - from).abs(), greaterThan(10), reason: 'motion is real');
+
+      await tester.pumpAndSettle();
+      final settled =
+          tester.widget<PositionedDirectional>(_pillFinder()).start!;
+      expect(settled, closeTo(to, 1.0));
     });
   });
 }

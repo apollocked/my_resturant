@@ -1,18 +1,17 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/shared/liquid_nav_item.dart';
-import 'package:my_resturant/shared/liquid_nav_shine.dart';
 import 'package:my_resturant/shared/liquid_nav_tab.dart';
 
-/// A 2026-style floating "aurora glass dock".
+/// A 2026 spring-driven floating nav dock.
 ///
-/// A capsule-shaped frosted dock that floats above the content. The active
-/// tab is marked by a morphing aurora pill that glides between tabs while
-/// "breathing": it narrows as it travels and swells as it lands, giving a
-/// liquid, gravity-weighted feel. Ambient color blooms live inside the glass
-/// so the dock reads tonal even before page content blurs through, and the
-/// whole dock rises in on first mount.
+/// One softly frosted capsule that floats above the content. The active tab
+/// is marked by a squircled tonal indicator that is carried between tabs by a
+/// damped [SpringSimulation] — it narrows mid-flight, then swells and wobbles
+/// back into place with a magnetic settle. No glow-noise: state is carried by
+/// the chip fill, the icon pop and the label weight.
 class LiquidGlassNavBar extends StatefulWidget {
   final List<LiquidNavItem> items;
   final int selectedIndex;
@@ -21,6 +20,10 @@ class LiquidGlassNavBar extends StatefulWidget {
   final int? badgeIndex;
   final Color accentColor;
   final bool isDark;
+
+  /// Identifies the sliding active indicator in tests.
+  static const Key navChipKey = ValueKey('liquid-nav-chip');
+
   const LiquidGlassNavBar({
     super.key,
     required this.items,
@@ -40,8 +43,15 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
   late final AnimationController _ctl;
   late final AnimationController _entryCtl;
 
-  /// Bumped on every tab change so the glass backdrop re-captures the page
-  /// behind the dock (kept isolated from the moving pill, whose animation
+  /// Magnetic snap physics used for every tab change.
+  static const SpringDescription _spring = SpringDescription(
+    mass: 1.0,
+    stiffness: 320,
+    damping: 24,
+  );
+
+  /// Bumped on every tab change so the frosted backdrop re-captures the page
+  /// behind the dock (kept isolated from the moving chip, whose animation
   /// state stays untouched).
   int _backdropGen = 0;
 
@@ -50,13 +60,15 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     super.initState();
     _ctl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 560),
+      duration: const Duration(milliseconds: 460),
       upperBound: 16,
     )..value = _initialTarget(widget.selectedIndex, widget.items.length);
     _entryCtl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 620),
-    )..forward();
+    )..animateWith(
+        SpringSimulation(_spring, 0, 1, 0),
+      );
   }
 
   static double _initialTarget(int index, int count) {
@@ -72,14 +84,19 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     if (!indexChanged && !itemsChanged) return;
     _backdropGen++;
     if (itemsChanged) {
-      // Role/locale bar changed shape mid-life: snap the pill to the new
-      // position instead of animating across indices that don't exist in the
-      // new layout (e.g. admin's 5 tabs shrinking to kitchen's 2).
+      // Role bar changed shape mid-life: snap the chip to the new position
+      // instead of animating across indices that don't exist in the new
+      // layout (e.g. admin's 5 tabs shrinking to kitchen's 2).
       _ctl.value = _initialTarget(widget.selectedIndex, widget.items.length);
     } else if (indexChanged) {
-      _ctl.animateTo(
-        widget.selectedIndex.toDouble(),
-        curve: Curves.easeOutBack,
+      // Magnetic snap: physics-driven settle with a soft wobble on arrival.
+      _ctl.animateWith(
+        SpringSimulation(
+          _spring,
+          _ctl.value,
+          widget.selectedIndex.toDouble(),
+          0,
+        ),
       );
     }
   }
@@ -109,168 +126,109 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final cs = Theme.of(context).colorScheme;
     final dark = widget.isDark;
     final accent = widget.accentColor;
-    final sel = accent;
     final unsel = dark
-        ? Colors.white.withValues(alpha: 0.62)
-        : cs.onSurface.withValues(alpha: 0.5);
-    final bgColor = dark ? const Color(0xEC171726) : const Color(0xB3F7F8FB);
+        ? Colors.white.withValues(alpha: 0.5)
+        : cs.onSurface.withValues(alpha: 0.45);
+    final bgTop = dark ? const Color(0xE6191A22) : const Color(0xF2FFFFFF);
+    final bgBottom = dark ? const Color(0xD9111117) : const Color(0xE6EEF0F4);
+    // The dock picks up a whisper of the accent so it reads as living glass.
+    final tintAmt = dark ? 0.05 : 0.035;
+    final glassTop = Color.lerp(bgTop, accent, tintAmt)!;
+    final glassBottom = Color.lerp(bgBottom, accent, tintAmt)!;
     final borderColor = dark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.6);
-    final shadowColor = cs.shadow.withValues(alpha: dark ? 0.6 : 0.18);
-    final glowColor = accent.withValues(alpha: dark ? 0.24 : 0.12);
-    final haloColor = accent.withValues(alpha: dark ? 0.45 : 0.28);
-    const capsuleR = 38.0;
+        ? Colors.white.withValues(alpha: 0.09)
+        : Colors.black.withValues(alpha: 0.06);
+    final shadow = cs.shadow.withValues(alpha: dark ? 0.45 : 0.14);
+    const capsuleR = 36.0;
+    const barH = 72.0;
 
-    final entry = CurvedAnimation(parent: _entryCtl, curve: Curves.easeOutCubic);
+    // Spring-driven entrance (slide + fade) with a soft settle.
+    final entry = _entryCtl;
+    final slide = Tween<Offset>(
+      begin: const Offset(0, 0.16),
+      end: Offset.zero,
+    ).animate(entry);
 
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0, 0.35),
-        end: Offset.zero,
-      ).animate(entry),
+      position: slide,
       child: FadeTransition(
         opacity: entry,
-        child: ScaleTransition(
-          scale: Tween<double>(begin: 0.96, end: 1).animate(entry),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              16,
-              0,
-              16,
-              (bottomInset == 0 ? 8 : 4) + bottomInset,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            (bottomInset == 0 ? 10 : 6) + bottomInset,
+          ),
+          child: Container(
+            height: barH,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(capsuleR),
+              boxShadow: [
+                BoxShadow(
+                  color: shadow,
+                  blurRadius: 24,
+                  offset: const Offset(0, 10),
+                  spreadRadius: -6,
+                ),
+              ],
             ),
-            child: Container(
-              height: 76,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(capsuleR),
-                boxShadow: [
-                  BoxShadow(
-                    color: shadowColor,
-                    blurRadius: 44,
-                    offset: const Offset(0, 16),
-                    spreadRadius: -6,
-                  ),
-                  BoxShadow(
-                    color: glowColor,
-                    blurRadius: 26,
-                    offset: const Offset(0, 6),
-                    spreadRadius: -2,
-                  ),
-                  BoxShadow(
-                    color: haloColor.withValues(alpha: dark ? 0.3 : 0.12),
-                    blurRadius: 36,
-                    offset: Offset.zero,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(capsuleR),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Static frosted-glass layer. Re-captured once per tab switch.
-                    RepaintBoundary(
-                      key: ValueKey('glass-$_backdropGen'),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                bgColor.withValues(alpha: 0.45),
-                                bgColor.withValues(alpha: 0.75),
-                                bgColor,
-                                bgColor.withValues(alpha: 0.85),
-                                bgColor.withValues(alpha: 0.55),
-                              ],
-                              stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                            ),
-                            borderRadius: BorderRadius.circular(capsuleR),
-                            border: Border.all(color: borderColor, width: 0.6),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(capsuleR),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Frosted glass layer, re-captured once per tab switch.
+                  RepaintBoundary(
+                    key: ValueKey('glass-$_backdropGen'),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [glassTop, glassBottom],
                           ),
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              // Specular hairline on the top edge for glass depth.
-                              Positioned(
+                          border:
+                              Border.all(color: borderColor, width: 0.8),
+                        ),
+                        child: dark
+                            ? Positioned(
                                 top: 0.5,
-                                left: 30,
-                                right: 30,
-                                height: 1,
+                                left: 28,
+                                right: 28,
+                                height: 0.8,
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
                                         Colors.transparent,
-                                        Colors.white.withValues(
-                                          alpha: dark ? 0.5 : 0.7,
-                                        ),
+                                        Colors.white.withValues(alpha: 0.28),
                                         Colors.transparent,
                                       ],
                                     ),
                                   ),
                                 ),
-                              ),
-                              // Ambient aurora blooms behind the pill.
-                              Positioned(
-                                left: -28,
-                                top: -30,
-                                width: 180,
-                                height: 130,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        accent.withValues(
-                                          alpha: dark ? 0.2 : 0.14,
-                                        ),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                right: -30,
-                                bottom: -34,
-                                width: 170,
-                                height: 126,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        cs.tertiary.withValues(
-                                          alpha: dark ? 0.18 : 0.12,
-                                        ),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     ),
-                    if (widget.items.length > 1)
-                      RepaintBoundary(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final n = widget.items.length;
-                            final tabW = constraints.maxWidth / n;
-                            // Icon-row geometry inside each tab: icon + gap + label.
-                            const iconMetric = 26.0;
-                            const labelMetric = 14.0;
-                            final iconTop = (constraints.maxHeight -
-                                (iconMetric + 2 + labelMetric)) /
-                                2;
-                            final cy = iconTop + iconMetric / 2;
+                  ),
+                  if (widget.items.length > 1)
+                    RepaintBoundary(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final n = widget.items.length;
+                          final tabW = constraints.maxWidth / n;
+                            // The active indicator wraps the icon AND the label
+                            // but keeps a breath of cell on each side. It
+                            // narrows in flight, then swolels out on land.
+                            const landedH = 48.0;
+                            const pillR = 17.0;
+                            const pillCY = 36.0; // bar mid-height (72 / 2)
+                            const landedFrac = 0.86; // seated width of the cell
+                            const flightFrac = 0.60; // mid-flight width factor
                             return IgnorePointer(
                               child: AnimatedBuilder(
                                 animation: _ctl,
@@ -281,85 +239,104 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                                       .toDouble();
                                   final center = t.round().clamp(0, n - 1);
                                   final dist = (t - center).abs();
-                                  // "Breathing": slim while travelling,
-                                  // swell once it lands on a tab.
-                                  final breath =
-                                      1.0 - (dist * 2.0).clamp(0.0, 1.0);
-                                  final easedB =
-                                      Curves.easeOut.transform(breath);
-                                  final bubbleW =
-                                      tabW * (0.5 + 0.31 * easedB);
-                                  final h = 40 - 6 * (1 - easedB);
+                                  final travel =
+                                      Curves.easeInOut.transform(
+                                        (dist * 2).clamp(0.0, 1.0),
+                                      );
+                                  final landedness = 1.0 - travel;
+                                  final landedW = tabW * landedFrac;
+                                  final w =
+                                      landedW *
+                                      (1 - (1 - flightFrac) * travel);
+                                  final h = landedH - 8 * travel;
+                                  final lift = 2.5 * travel;
                                   final start =
-                                      tabW * (t + 0.5) - bubbleW / 2;
+                                      tabW * (t + 0.5) - w / 2;
+                                  final top = pillCY - h / 2 - lift;
+                                  final glowW = w;
+                                  final glowH = h + 16;
+                                  final glowTop = pillCY - glowH / 2 - lift;
                                   return Stack(
                                     fit: StackFit.expand,
                                     children: [
+                                      // Ambient glow behind the active pill.
                                       PositionedDirectional(
                                         start: start,
-                                        top: cy - h / 2,
-                                        width: bubbleW,
-                                        height: h,
-                                        child: Container(
+                                        top: glowTop,
+                                        width: glowW,
+                                        height: glowH,
+                                        child: DecoratedBox(
                                           decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                  glowH / 2,
+                                                ),
+                                            gradient: RadialGradient(
+                                              colors: [
+                                                accent.withValues(
+                                                  alpha:
+                                                      (dark ? 0.11 : 0.06) *
+                                                      landedness,
+                                                ),
+                                                Colors.transparent,
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Active cell wrapper: covers icon + label.
+                                      PositionedDirectional(
+                                        key: LiquidGlassNavBar.navChipKey,
+                                        start: start,
+                                        top: top,
+                                        width: w,
+                                        height: h,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(pillR),
                                             gradient: LinearGradient(
                                               begin: Alignment.topCenter,
                                               end: Alignment.bottomCenter,
                                               colors: [
                                                 accent.withValues(
-                                                  alpha: dark ? 0.36 : 0.26,
+                                                  alpha: dark ? 0.32 : 0.26,
                                                 ),
-                                                cs.tertiary.withValues(
-                                                  alpha: dark ? 0.28 : 0.18,
+                                                accent.withValues(
+                                                  alpha: dark ? 0.14 : 0.10,
                                                 ),
                                               ],
                                             ),
-                                            borderRadius:
-                                                BorderRadius.circular(h / 2),
                                             border: Border.all(
                                               color: accent.withValues(
-                                                alpha: dark ? 0.4 : 0.3,
+                                                alpha: dark ? 0.40 : 0.34,
                                               ),
-                                              width: 0.7,
+                                              width: 1,
                                             ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: haloColor,
-                                                blurRadius: 20,
-                                                spreadRadius: -2,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                              BoxShadow(
-                                                color: accent.withValues(
-                                                  alpha: dark ? 0.4 : 0.25,
-                                                ),
-                                                blurRadius: 34,
-                                                offset: Offset.zero,
-                                              ),
-                                            ],
                                           ),
+                                          // Glass inner highlight.
                                           child: DecoratedBox(
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                h / 2 - 1,
-                                              ),
+                                                    pillR - 1,
+                                                  ),
                                               gradient: LinearGradient(
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
                                                 colors: [
                                                   Colors.white.withValues(
-                                                    alpha: dark ? 0.24 : 0.4,
+                                                    alpha: dark ? 0.18 : 0.26,
                                                   ),
                                                   Colors.transparent,
                                                   Colors.black.withValues(
-                                                    alpha: dark ? 0.12 : 0.05,
+                                                    alpha: dark ? 0.10 : 0.04,
                                                   ),
                                                 ],
                                                 stops: const [
-                                                  0.0,
-                                                  0.45,
-                                                  1.0,
+                                                  0,
+                                                  0.42,
+                                                  1,
                                                 ],
                                               ),
                                             ),
@@ -371,37 +348,33 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                                 },
                               ),
                             );
-                          },
+},
                         ),
                       ),
-                    RepaintBoundary(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: List.generate(widget.items.length, (i) {
-                          final item = widget.items[i];
-                          final active = widget.selectedIndex == i;
-                          return LiquidNavTab(
-                            item: item,
-                            index: i,
-                            active: active,
-                            sel: sel,
-                            unsel: unsel,
-                            accentColor: widget.accentColor,
-                            dark: dark,
-                            showBadge:
-                                widget.badgeIndex == i &&
-                                (widget.badgeCount ?? 0) > 0,
-                            badgeCount: widget.badgeCount,
-                            onTap: () => widget.onTap(i),
-                          );
-                        }),
-                      ),
+                  RepaintBoundary(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(widget.items.length, (i) {
+                        final item = widget.items[i];
+                        final active = widget.selectedIndex == i;
+                        return LiquidNavTab(
+                          item: item,
+                          index: i,
+                          active: active,
+                          sel: accent,
+                          unsel: unsel,
+                          accentColor: widget.accentColor,
+                          dark: dark,
+                          showBadge:
+                              widget.badgeIndex == i &&
+                              (widget.badgeCount ?? 0) > 0,
+                          badgeCount: widget.badgeCount,
+                          onTap: () => widget.onTap(i),
+                        );
+                      }),
                     ),
-                    RepaintBoundary(
-                      child: LiquidNavShine(dark: dark, color: accent),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
