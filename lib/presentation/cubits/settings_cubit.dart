@@ -40,6 +40,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         locale: switch (localeStr) {
           'en' => const Locale('en'),
           'ar' => const Locale('ar'),
+          'ku' => const Locale('ku'),
           _ => const Locale('en'),
         },
         onboardingComplete: onboarding,
