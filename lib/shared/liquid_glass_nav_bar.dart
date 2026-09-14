@@ -129,14 +129,15 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     final unsel = dark
         ? Colors.white.withValues(alpha: 0.5)
         : cs.onSurface.withValues(alpha: 0.45);
-    final bgTop = dark ? const Color(0xE6191A22) : const Color(0xF2FFFFFF);
-    final bgBottom = dark ? const Color(0xD9111117) : const Color(0xE6EEF0F4);
-    // The dock picks up a whisper of the accent so it reads as living glass.
-    final tintAmt = dark ? 0.05 : 0.035;
+    // Dark mode is a flat theme surface; light mode keeps a soft gradient.
+    final bgTop = dark ? cs.surface : const Color(0xF2FFFFFF);
+    final bgBottom = dark ? cs.surface : const Color(0xE6EEF0F4);
+    // A whisper of the accent keeps light mode reading as living glass.
+    final tintAmt = dark ? 0.0 : 0.035;
     final glassTop = Color.lerp(bgTop, accent, tintAmt)!;
     final glassBottom = Color.lerp(bgBottom, accent, tintAmt)!;
     final borderColor = dark
-        ? Colors.white.withValues(alpha: 0.09)
+        ? const Color(0xFF2E2E2E)
         : Colors.black.withValues(alpha: 0.06);
     final shadow = cs.shadow.withValues(alpha: dark ? 0.45 : 0.14);
     const capsuleR = 36.0;
@@ -193,25 +194,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                           border:
                               Border.all(color: borderColor, width: 0.8),
                         ),
-                        child: dark
-                            ? Positioned(
-                                top: 0.5,
-                                left: 28,
-                                right: 28,
-                                height: 0.8,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.white.withValues(alpha: 0.28),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                        child: const SizedBox.shrink(),
                       ),
                     ),
                   ),
