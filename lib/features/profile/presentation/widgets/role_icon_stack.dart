@@ -4,7 +4,7 @@ import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_phase.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_painters.dart';
 import 'package:my_resturant/features/profile/presentation/widgets/role_status_badge.dart';
-import 'package:my_resturant/shared/role_icon.dart';
+import 'package:my_resturant/features/auth/presentation/widgets/role_icon.dart';
 
 class RoleIconStack extends StatelessWidget {
   const RoleIconStack({

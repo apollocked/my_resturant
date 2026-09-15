@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/shared/liquid_nav_item.dart';
-import 'package:my_resturant/shared/liquid_nav_tab.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_nav_item.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_nav_tab.dart';
 
 /// A 2026 spring-driven floating nav dock.
 ///

@@ -8,7 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:my_resturant/core/config/supabase_credentials.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
-import 'package:my_resturant/app/router/app_router.dart';
+import 'package:my_resturant/core/router/app_router.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/l10n/ku_localizations.dart';
 import 'package:my_resturant/features/printer/data/printer_service.dart';

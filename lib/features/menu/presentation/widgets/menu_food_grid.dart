@@ -3,7 +3,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/food_card.dart';
 import 'package:my_resturant/shared/empty_state.dart';
-import 'package:my_resturant/shared/search_bar_widget.dart';
+import 'package:my_resturant/features/menu/presentation/widgets/search_bar_widget.dart';
 import 'package:my_resturant/shared/staggered_grid.dart';
 
 class MenuFoodGrid extends StatelessWidget {

@@ -6,7 +6,7 @@ import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_category_sidebar.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_food_grid.dart';
-import 'package:my_resturant/shared/menu_cart_bar.dart';
+import 'package:my_resturant/features/menu/presentation/widgets/menu_cart_bar.dart';
 
 class MenuDesktopLayout extends StatelessWidget {
   final ColorScheme cs;

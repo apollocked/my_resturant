@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:my_resturant/shared/liquid_glass_nav_bar.dart';
-import 'package:my_resturant/shared/liquid_nav_item.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_glass_nav_bar.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_nav_item.dart';
 
 LiquidNavItem _item(String label) => LiquidNavItem(
       icon: Icons.shopping_bag_outlined,

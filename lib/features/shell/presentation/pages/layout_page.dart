@@ -11,10 +11,10 @@ import 'package:my_resturant/features/settings/presentation/cubits/settings_cubi
 import 'package:my_resturant/features/shell/presentation/widgets/exit_scope.dart';
 import 'package:my_resturant/features/shell/presentation/widgets/nav_item.dart';
 import 'package:my_resturant/features/shell/presentation/widgets/side_nav_rail.dart';
-import 'package:my_resturant/shared/connectivity_banner.dart';
-import 'package:my_resturant/shared/liquid_glass_nav_bar.dart';
-import 'package:my_resturant/shared/liquid_nav_item.dart';
-import 'package:my_resturant/shared/tab_entrance.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/connectivity_banner.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_glass_nav_bar.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_nav_item.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/tab_entrance.dart';
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;

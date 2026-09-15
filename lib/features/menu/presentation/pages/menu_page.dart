@@ -10,7 +10,7 @@ import 'package:my_resturant/features/menu/presentation/widgets/item_on_hold_she
 import 'package:my_resturant/features/orders/presentation/widgets/table_picker.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_shimmer_loader.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_layout.dart';
-import 'package:my_resturant/shared/table_selector.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/table_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/confirm_dialog.dart';
 

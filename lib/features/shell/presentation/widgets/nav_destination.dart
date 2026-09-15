@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/features/shell/presentation/widgets/nav_item.dart';
-import 'package:my_resturant/shared/animated_nav_icon.dart';
-import 'package:my_resturant/shared/cart_badge.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/animated_nav_icon.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/cart_badge.dart';
 
 class NavDestination {
   const NavDestination({required this.item, required this.cartCount});

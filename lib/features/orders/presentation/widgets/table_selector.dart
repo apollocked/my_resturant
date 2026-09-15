@@ -5,7 +5,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
-import 'package:my_resturant/shared/table_picker_dialog.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/table_picker_dialog.dart';
 
 class TableSelector extends StatelessWidget {
   final int selectedTable;

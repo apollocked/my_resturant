@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/animated_nav_icon.dart';
-import 'package:my_resturant/shared/liquid_nav_item.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/animated_nav_icon.dart';
+import 'package:my_resturant/features/shell/presentation/widgets/liquid_nav_item.dart';
 
 class LiquidNavTab extends StatefulWidget {
   const LiquidNavTab({

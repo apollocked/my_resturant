@@ -5,7 +5,7 @@ import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
-import 'package:my_resturant/shared/role_icon.dart';
+import 'package:my_resturant/features/auth/presentation/widgets/role_icon.dart';
 
 class ProfileRoleSwitcher extends StatelessWidget {
   final Role currentRole;

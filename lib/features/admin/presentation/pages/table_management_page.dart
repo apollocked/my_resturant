@@ -7,7 +7,7 @@ import 'package:my_resturant/features/settings/presentation/cubits/settings_cubi
 import 'package:my_resturant/features/admin/presentation/widgets/table_count_stepper.dart';
 import 'package:my_resturant/features/admin/presentation/widgets/table_manage_skeleton.dart';
 import 'package:my_resturant/shared/empty_state.dart';
-import 'package:my_resturant/shared/table_name_row.dart';
+import 'package:my_resturant/features/admin/presentation/widgets/table_name_row.dart';
 
 class TableManagementPage extends StatefulWidget {
   const TableManagementPage({super.key});

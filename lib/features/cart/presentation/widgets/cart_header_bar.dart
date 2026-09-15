@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/shared/table_selector.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/table_selector.dart';
 
 class CartHeaderBar extends StatelessWidget {
   const CartHeaderBar({
