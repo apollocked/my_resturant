@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:my_resturant/data/datasources/local/app_database.dart';
+import 'package:my_resturant/app/data/datasources/local/app_database.dart';
 import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 
 extension AppDatabaseRecipeQueries on AppDatabase {

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit_base.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_state.dart';
-import 'package:my_resturant/features/auth/presentation/cubits/account_storage.dart';
+import 'package:my_resturant/features/auth/data/account_storage.dart';
 
 mixin AccountSessionMixin on AccountCubitBase {
   Future<void> load() async {

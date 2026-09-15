@@ -1,21 +1,8 @@
 import 'dart:convert';
 
+import 'package:my_resturant/features/cart/domain/entities/cart_draft.dart';
 import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class CartDraft {
-  final List<CartItem> items;
-  final int selectedTable;
-  final Map<String, String> pendingNotes;
-  final DateTime createdAt;
-
-  CartDraft({
-    required this.items,
-    required this.selectedTable,
-    required this.pendingNotes,
-    DateTime? createdAt,
-  }) : createdAt = createdAt ?? DateTime.now();
-}
 
 class CartDraftStore {
   CartDraftStore._();

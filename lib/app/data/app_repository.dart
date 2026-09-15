@@ -7,7 +7,7 @@ import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/app/domain/data_repository.dart';
-import 'package:my_resturant/data/datasources/local/app_database.dart';
+import 'package:my_resturant/app/data/datasources/local/app_database.dart';
 
 final AppDatabase db = AppDatabase();
 

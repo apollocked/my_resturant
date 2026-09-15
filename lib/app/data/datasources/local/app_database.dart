@@ -3,8 +3,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'package:my_resturant/data/datasources/local/seed_data.dart';
-import 'package:my_resturant/data/datasources/local/tables.dart';
+import 'package:my_resturant/app/data/datasources/local/seed_data.dart';
+import 'package:my_resturant/app/data/datasources/local/tables.dart';
 
 export 'app_database_order_queries.dart';
 export 'app_database_recipe_queries.dart';

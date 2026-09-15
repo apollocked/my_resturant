@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/auth/domain/repositories/auth_repository.dart';
-import 'package:my_resturant/features/auth/presentation/cubits/role_storage.dart';
+import 'package:my_resturant/features/auth/data/role_storage.dart';
 
 class RoleState {
   final Role role;
