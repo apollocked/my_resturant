@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
     hide PrinterConnectionType;
-import 'package:my_resturant/features/printer/data/printer_config.dart';
+import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
+import 'package:my_resturant/features/printer/data/printer_prefs.dart';
 import 'package:my_resturant/features/printer/data/printer_transport.dart';
 import 'package:my_resturant/features/printer/data/receipt_formatter.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';

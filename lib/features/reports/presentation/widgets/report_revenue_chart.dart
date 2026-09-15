@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/reports/presentation/widgets/report_charts.dart';
+import 'package:my_resturant/features/reports/domain/entities/report_day.dart';
 
 class RevenueChart extends StatelessWidget {
   const RevenueChart({super.key, required this.weekData});

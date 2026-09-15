@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/features/printer/data/printer_config.dart';
+import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';

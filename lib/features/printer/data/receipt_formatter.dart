@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
-import 'package:my_resturant/features/printer/data/printer_config.dart';
+import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
 
 class ReceiptFormatter {
   static Uint8List kitchenTicket(Order order, PrinterConfig config, Locale locale) {

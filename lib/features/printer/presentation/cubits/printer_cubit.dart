@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_resturant/features/printer/data/printer_config.dart';
+import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
 import 'package:my_resturant/features/printer/data/printer_service.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'

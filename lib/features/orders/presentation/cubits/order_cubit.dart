@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/features/cart/data/cart_draft_store.dart';
+import 'package:my_resturant/features/cart/domain/entities/cart_draft.dart';
 import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/auth/domain/entities/role.dart';

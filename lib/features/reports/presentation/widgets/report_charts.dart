@@ -2,18 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-
-class ReportDay {
-  const ReportDay({
-    required this.date,
-    required this.count,
-    required this.revenue,
-  });
-
-  final DateTime date;
-  final int count;
-  final double revenue;
-}
+import 'package:my_resturant/features/reports/domain/entities/report_day.dart';
 
 List<String> reportDayAbbr(Locale locale) => [
   Tr.get('day_sat', locale),
