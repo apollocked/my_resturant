@@ -130,8 +130,8 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
         ? Colors.white.withValues(alpha: 0.5)
         : cs.onSurface.withValues(alpha: 0.45);
     // Dark mode is a flat theme surface; light mode keeps a soft gradient.
-    final bgTop = dark ? cs.surface : const Color(0xF2FFFFFF);
-    final bgBottom = dark ? cs.surface : const Color(0xE6EEF0F4);
+    final bgTop = dark ? cs.surface : const Color(0xF2FDFBF8);
+    final bgBottom = dark ? cs.surface : const Color(0xE6F2EDE6);
     // A whisper of the accent keeps light mode reading as living glass.
     final tintAmt = dark ? 0.0 : 0.035;
     final glassTop = Color.lerp(bgTop, accent, tintAmt)!;

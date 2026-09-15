@@ -26,7 +26,7 @@ class AuthScaffold extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: dark
                 ? const [Color(0xFF141019), Color(0xFF0D0E12)]
-                : const [Color(0xFFEFEBFF), Color(0xFFF5F5FA)],
+                : const [AppColors.surfaceLowest, Color(0xFFF4EFE9)],
           ),
         ),
         child: Stack(

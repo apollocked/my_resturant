@@ -12,13 +12,23 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.primary,
-      surface: AppColors.surface,
       error: AppColors.error,
+      surface: AppColors.surface,
+      onSurface: AppColors.onSurface,
+      onSurfaceVariant: AppColors.onSurfaceVariant,
+      outline: AppColors.outline,
+      outlineVariant: AppColors.outlineVariant,
+      surfaceContainerLowest: AppColors.surfaceLowest,
+      surfaceContainerLow: AppColors.surfaceContainerLow,
+      surfaceContainer: AppColors.surfaceContainer,
+      surfaceContainerHigh: AppColors.surfaceContainerHigh,
+      surfaceContainerHighest: AppColors.surfaceContainerHighest,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.surface,
       elevation: 0,
       centerTitle: false,
+      scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
         color: AppColors.textPrimary,
         fontSize: 18,
@@ -66,7 +76,7 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFFF7F5F3),
+      fillColor: AppColors.inputFill,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -76,7 +86,10 @@ class AppTheme {
     ),
     cardTheme: CardThemeData(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: AppColors.outlineVariant),
+      ),
       color: AppColors.surface,
       margin: const EdgeInsets.only(bottom: 12),
     ),
@@ -87,6 +100,7 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
+      backgroundColor: AppColors.onSurface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
   );
