@@ -101,7 +101,14 @@ const List<_InfoItem> _items = [
     'info_printer_title',
     'info_printer_desc',
     ['info_printer_feat_1', 'info_printer_feat_2', 'info_printer_feat_3'],
-    visibleFor: {Role.admin},
+    visibleFor: {Role.waiter, Role.kitchen, Role.admin},
+  ),
+  _InfoItem(
+    Icons.bluetooth_searching,
+    'info_printer_discovery_title',
+    'info_printer_discovery_desc',
+    ['info_printer_discovery_feat_1', 'info_printer_discovery_feat_2'],
+    visibleFor: {Role.waiter, Role.kitchen, Role.admin},
   ),
   _InfoItem(
     Icons.person_outline,
