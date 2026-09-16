@@ -24,15 +24,17 @@ BEGIN
   IF public.passcodes_configured() AND public.current_role() <> 'admin' THEN
     RAISE EXCEPTION 'Forbidden';
   END IF;
-  INSERT INTO public.profiles (id, email, pin_waiter, pin_kitchen, pin_admin)
+  INSERT INTO public.profiles (id, email, pin_waiter, pin_kitchen, pin_admin, passcodes_set)
   VALUES (uid,
           (SELECT email FROM auth.users WHERE id = uid),
           crypt(p_waiter, gen_salt('bf')),
           crypt(p_kitchen, gen_salt('bf')),
-          crypt(p_admin, gen_salt('bf')))
+          crypt(p_admin, gen_salt('bf')),
+          TRUE)
   ON CONFLICT (id) DO UPDATE SET
-    pin_waiter  = EXCLUDED.pin_waiter,
-    pin_kitchen = EXCLUDED.pin_kitchen,
-    pin_admin   = EXCLUDED.pin_admin;
+    pin_waiter    = EXCLUDED.pin_waiter,
+    pin_kitchen   = EXCLUDED.pin_kitchen,
+    pin_admin     = EXCLUDED.pin_admin,
+    passcodes_set = TRUE;
 END;
 $$;

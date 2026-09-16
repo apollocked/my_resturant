@@ -81,6 +81,43 @@ BEGIN
 END;
 $$;
 
+-- Mint a promo code (generated or custom) valid for p_duration_months.
+CREATE OR REPLACE FUNCTION public.admin_create_promo_code(p_code TEXT, p_duration_months INT)
+RETURNS TEXT
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = public, extensions
+AS $$
+DECLARE
+  new_code text;
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Forbidden';
+  END IF;
+  IF p_duration_months < 1 OR p_duration_months > 120 THEN
+    RAISE EXCEPTION 'Duration must be between 1 and 120 months';
+  END IF;
+  IF p_code IS NOT NULL THEN
+    p_code := upper(btrim(p_code));
+    IF p_code !~ '^[A-Z0-9]{4,32}$' THEN
+      RAISE EXCEPTION 'Code must be 4-32 letters or digits';
+    END IF;
+    IF EXISTS (SELECT 1 FROM public.promo_codes WHERE code = p_code) THEN
+      RAISE EXCEPTION 'Code already exists';
+    END IF;
+    new_code := p_code;
+  ELSE
+    LOOP
+      new_code := public.generate_promo_code();
+      EXIT WHEN NOT EXISTS (SELECT 1 FROM public.promo_codes WHERE code = new_code);
+    END LOOP;
+  END IF;
+
+  INSERT INTO public.promo_codes (code, created_by, expires_at)
+  VALUES (new_code, auth.uid(), NOW() + make_interval(months => p_duration_months));
+
+  RETURN new_code;
+END;
+$$;
+
 -- Create a restaurant account directly (email + password) and optionally
 -- activate it for a number of months, minting + claiming a promo code.
 -- Returns the generated promo code (NULL when no activation duration given).
@@ -144,6 +181,8 @@ $$;
 -- reject everyone except the platform admin.
 REVOKE EXECUTE ON FUNCTION public.admin_create_restaurant(TEXT, TEXT, INT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.admin_create_restaurant(TEXT, TEXT, INT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.admin_create_promo_code(TEXT, INT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.admin_create_promo_code(TEXT, INT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.admin_list_restaurants() FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.admin_list_restaurants() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.admin_list_promo_codes() FROM PUBLIC, anon;

@@ -1,12 +1,17 @@
 -- ============================================================
 -- Security hardening — apply to the live Supabase project
--- Run this once in the SQL editor. Idempotent (safe to re-run).
+-- Run once in the SQL editor. Idempotent (safe to re-run).
 -- Fixes:
 --   1. profiles: clients can no longer UPDATE role/activated/pins directly
 --   2. PINs: hashed server-side with bcrypt + brute-force rate limit
---   3. promo_codes: admin-only read/mint/delete; atomic claim with expiry
---   4. profiles removed from realtime publication
---   5. misc: search_path on SECURITY DEFINER fns, length caps
+--   3. role switches: set_role() now takes the target role's PIN and
+--      verifies it server-side (no client-side role escalation)
+--   4. promo_codes: admin-only read/mint/delete; atomic claim with expiry
+--   5. profiles removed from realtime publication
+--   6. misc: search_path on SECURITY DEFINER fns, length caps
+-- NOTE: the current baseline is supabase/migration.sql; this file only
+-- describes the hardening deltas applied on top and the ones that are
+-- already baked into migration.sql (kept for reference and safe re-run).
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -38,7 +43,7 @@ ALTER TABLE public.pin_attempts ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.pin_attempts FROM anon, authenticated;
 
 -- ------------------------------------------------------------
--- 3. Profile RPCs
+-- 3. Profile RPCs (hardened)
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
@@ -52,6 +57,13 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.current_role()
+RETURNS TEXT
+LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT coalesce((SELECT role FROM public.profiles WHERE id = auth.uid()), '');
+$$;
+
 CREATE OR REPLACE FUNCTION public.save_passcodes(p_waiter TEXT, p_kitchen TEXT, p_admin TEXT)
 RETURNS VOID
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
@@ -60,14 +72,24 @@ DECLARE
   uid uuid := auth.uid();
 BEGIN
   IF uid IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
-  IF p_waiter !~ '^\d{4,6}$' OR p_kitchen !~ '^\d{4,6}$' OR p_admin !~ '^\d{4,6}$' THEN
+  IF p_waiter !~ '^[0-9]{4,6}$' OR p_kitchen !~ '^[0-9]{4,6}$' OR p_admin !~ '^[0-9]{4,6}$' THEN
     RAISE EXCEPTION 'PIN must be 4 to 6 digits';
   END IF;
-  UPDATE public.profiles
-  SET pin_waiter = crypt(p_waiter, gen_salt('bf')),
-      pin_kitchen = crypt(p_kitchen, gen_salt('bf')),
-      pin_admin = crypt(p_admin, gen_salt('bf'))
-  WHERE id = uid;
+  IF public.passcodes_configured() AND public.current_role() <> 'admin' THEN
+    RAISE EXCEPTION 'Forbidden';
+  END IF;
+  INSERT INTO public.profiles (id, email, pin_waiter, pin_kitchen, pin_admin, passcodes_set)
+  VALUES (uid,
+          (SELECT email FROM auth.users WHERE id = uid),
+          crypt(p_waiter, gen_salt('bf')),
+          crypt(p_kitchen, gen_salt('bf')),
+          crypt(p_admin, gen_salt('bf')),
+          TRUE)
+  ON CONFLICT (id) DO UPDATE SET
+    pin_waiter    = EXCLUDED.pin_waiter,
+    pin_kitchen   = EXCLUDED.pin_kitchen,
+    pin_admin     = EXCLUDED.pin_admin,
+    passcodes_set = TRUE;
 END;
 $$;
 
@@ -81,6 +103,7 @@ BEGIN
   IF uid IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
   IF p_role NOT IN ('waiter', 'kitchen', 'admin') THEN RAISE EXCEPTION 'Invalid role'; END IF;
   IF p_pin !~ '^\d{4,6}$' THEN RAISE EXCEPTION 'PIN must be 4 to 6 digits'; END IF;
+  IF public.current_role() <> 'admin' THEN RAISE EXCEPTION 'Forbidden'; END IF;
   CASE p_role
     WHEN 'waiter'  THEN UPDATE public.profiles SET pin_waiter  = crypt(p_pin, gen_salt('bf')) WHERE id = uid;
     WHEN 'kitchen' THEN UPDATE public.profiles SET pin_kitchen = crypt(p_pin, gen_salt('bf')) WHERE id = uid;
@@ -135,39 +158,45 @@ RETURNS BOOLEAN
 LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public
 AS $$
   SELECT COALESCE(
-    (SELECT pin_waiter <> '' AND pin_kitchen <> '' AND pin_admin <> ''
-     FROM public.profiles WHERE id = auth.uid()),
+    (SELECT passcodes_set FROM public.profiles WHERE id = auth.uid()),
     FALSE
   );
 $$;
 
-CREATE OR REPLACE FUNCTION public.set_role(p_role TEXT)
+CREATE OR REPLACE FUNCTION public.set_role(p_role TEXT, p_pin TEXT)
 RETURNS VOID
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
 AS $$
 DECLARE
   uid uuid := auth.uid();
+  cur text;
 BEGIN
   IF uid IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
   IF p_role IS NOT NULL AND p_role NOT IN ('waiter', 'kitchen', 'admin') THEN
     RAISE EXCEPTION 'Invalid role';
   END IF;
+  SELECT role INTO cur FROM public.profiles WHERE id = uid;
+  IF p_role IS NULL OR cur = 'admin' THEN
+    UPDATE public.profiles SET role = p_role WHERE id = uid;
+    RETURN;
+  END IF;
+  IF p_pin IS NULL OR NOT public.verify_pin(p_role, p_pin) THEN
+    RAISE EXCEPTION 'Forbidden';
+  END IF;
   UPDATE public.profiles SET role = p_role WHERE id = uid;
 END;
 $$;
 
--- ------------------------------------------------------------
--- IMPORTANT: existing PINs were stored as unsalted SHA-256 hashes,
--- which bcrypt's crypt() cannot verify. Clear them so every owner
--- re-sets their passcodes from the setup page (app will show setup
--- because passcodes_configured() now returns false).
--- ------------------------------------------------------------
-UPDATE public.profiles SET pin_waiter = '', pin_kitchen = '', pin_admin = '';
+-- Migration note (applied once historically): existing PINs were stored as
+-- unsalted SHA-256 hashes, which bcrypt's crypt() cannot verify. They were
+-- cleared so every owner re-sets their passcodes from the setup page.
+-- This is deliberately NOT re-run here; the clearing UPDATE from the
+-- original hardening pass must not fire again on live data.
 
 -- ------------------------------------------------------------
 -- 4. Promo codes — admin only, atomic claim with expiry
 -- ------------------------------------------------------------
-ALTER TABLE public.promo_codes ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE public.promo_codes ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 year';
 ALTER TABLE public.promo_codes ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL;
 
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -177,7 +206,10 @@ AS $$
   SELECT EXISTS (
     SELECT 1 FROM auth.users u
     WHERE u.id = auth.uid()
-      AND u.email = 'hamabarznji1990@gmail.com'
+      AND (
+        COALESCE(u.raw_app_meta_data->>'platform_admin', '') = 'true'
+        OR u.email = 'hamabarznji1990@gmail.com'
+      )
   );
 $$;
 
@@ -285,22 +317,24 @@ ALTER TABLE public.orders ADD CONSTRAINT orders_notes_len CHECK (length(notes) <
 -- 7. Client can no longer execute any SECURITY DEFINER functions
 --    except the auth RPCs, which are restricted to authenticated
 -- ------------------------------------------------------------
-REVOKE EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 GRANT  EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 GRANT  EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION public.passcodes_configured() FROM PUBLIC;
-GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.set_role(TEXT) FROM PUBLIC, anon;
-GRANT  EXECUTE ON FUNCTION public.set_role(TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.passcodes_configured() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.set_role(TEXT, TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.set_role(TEXT, TEXT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.claim_promo_code(TEXT) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.claim_promo_code(TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION public.is_activated() FROM PUBLIC;
-GRANT  EXECUTE ON FUNCTION public.is_activated() TO anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.is_activated() FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.is_activated() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.is_admin() FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.append_order_items(TEXT, JSONB) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.append_order_items(TEXT, JSONB) TO authenticated;
 
 -- infra-only functions: no client role may call them via RPC
 REVOKE EXECUTE ON FUNCTION public.auto_confirm_user() FROM PUBLIC, anon, authenticated;
@@ -311,8 +345,9 @@ REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authentic
 REVOKE EXECUTE ON FUNCTION public.check_recipe_limit() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.check_category_limit() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.check_order_limit() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.sync_profile_email() FROM PUBLIC, anon, authenticated;
 
--- pin search_path on remaining trigger functions
+-- pin search_path on the trigger helper functions
 CREATE OR REPLACE FUNCTION public.check_recipe_limit()
 RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
 AS $function$
@@ -328,7 +363,7 @@ CREATE OR REPLACE FUNCTION public.check_category_limit()
 RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public
 AS $function$
 BEGIN
-  IF (SELECT count(*) FROM public.categories) >= 15 THEN
+  IF (SELECT count(*) FROM public.categories WHERE restaurant_id = NEW.restaurant_id) >= 15 THEN
     RAISE EXCEPTION 'Maximum number of categories (15) reached for this restaurant.';
   END IF;
   RETURN NEW;

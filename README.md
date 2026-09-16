@@ -202,10 +202,11 @@ Or paste the SQL from `supabase/*.sql` into the [SQL Editor](https://supabase.co
 
 1. `migration.sql` — core schema (profiles, categories, dishes, tables, orders, RLS)
 2. `security_hardening.sql` — hardening views, policies, security definer functions
-3. `admin_app.sql` — admin dashboard functions (role, stats, multi-restaurant reports)
-4. `device_tokens.sql` — push-notification device tokens
-5. `storage_recipe_images.sql` — recipe image storage bucket + policies
-6. `upsert_passcodes.sql` — per-account PIN auto-save (UPSERT)
+3. `security_hardening_v2.sql` — lock admin stock tables behind `is_admin()`, gate stock RPCs, metadata-based admin detection, profiles.email sync
+4. `admin_app.sql` — admin dashboard functions (role, stats, multi-restaurant reports)
+5. `device_tokens.sql` — push-notification device tokens
+6. `storage_recipe_images.sql` — recipe image storage bucket + policies
+7. `upsert_passcodes.sql` — per-account PIN auto-save (UPSERT)
 
 ### Push Notifications
 
