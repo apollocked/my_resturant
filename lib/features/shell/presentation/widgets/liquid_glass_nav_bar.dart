@@ -141,6 +141,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     const capsuleR =
         17.0; // squared dock, same corner radius as the active pill
     const barH = 72.0;
+    const navRowH = 16.0; // empty start/end space inside the dock
 
     // Spring-driven entrance (slide + fade) with a soft settle.
     final entry = _entryCtl;
@@ -154,7 +155,12 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
       child: FadeTransition(
         opacity: entry,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 0, 24, bottomInset),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            0,
+            24,
+            (bottomInset == 0 ? 10 : 6) + bottomInset,
+          ),
           child: Container(
             height: barH,
             decoration: BoxDecoration(
@@ -192,8 +198,12 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                     ),
                   ),
                   if (widget.items.length > 1)
-                    RepaintBoundary(
-                      child: LayoutBuilder(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: navRowH,
+                      ),
+                      child: RepaintBoundary(
+                        child: LayoutBuilder(
                         builder: (context, constraints) {
                           final n = widget.items.length;
                           final tabW = constraints.maxWidth / n;
@@ -316,27 +326,33 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                         },
                       ),
                     ),
-                  RepaintBoundary(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: List.generate(widget.items.length, (i) {
-                        final item = widget.items[i];
-                        final active = widget.selectedIndex == i;
-                        return LiquidNavTab(
-                          item: item,
-                          index: i,
-                          active: active,
-                          sel: accent,
-                          unsel: unsel,
-                          accentColor: widget.accentColor,
-                          dark: dark,
-                          showBadge:
-                              widget.badgeIndex == i &&
-                              (widget.badgeCount ?? 0) > 0,
-                          badgeCount: widget.badgeCount,
-                          onTap: () => widget.onTap(i),
-                        );
-                      }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: navRowH,
+                    ),
+                    child: RepaintBoundary(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: List.generate(widget.items.length, (i) {
+                          final item = widget.items[i];
+                          final active = widget.selectedIndex == i;
+                          return LiquidNavTab(
+                            item: item,
+                            index: i,
+                            active: active,
+                            sel: accent,
+                            unsel: unsel,
+                            accentColor: widget.accentColor,
+                            dark: dark,
+                            showBadge:
+                                widget.badgeIndex == i &&
+                                (widget.badgeCount ?? 0) > 0,
+                            badgeCount: widget.badgeCount,
+                            onTap: () => widget.onTap(i),
+                          );
+                        }),
+                      ),
                     ),
                   ),
                 ],
