@@ -60,11 +60,20 @@ class RoleCubit extends Cubit<RoleState> {
       }
       await markAccountConfigured(email);
       Role? role;
+      var serverOk = true;
       try {
         role = await _repo.getLoggedInRole();
-      } catch (_) {}
-      if (role == null) {
+      } catch (e, st) {
+        // DB unreachable/failing: use what this device knows locally.
+        serverOk = false;
+        debugPrint('RoleCubit.load getLoggedInRole error: $e\n$st');
+      }
+      if (!serverOk) {
         role = await loadLocalRole();
+      } else if (role == null) {
+        // Reachable server, but THIS device has no role yet → force role-login
+        // (a fresh install / logged-out device on a shared account).
+        await clearLocalRole();
       } else {
         await saveLocalRole(role);
       }
@@ -174,6 +183,15 @@ class RoleCubit extends Cubit<RoleState> {
   }
 
   Future<void> logout() async {
+    try {
+      // Clear THIS device's server session first (set_role NULL). Must happen
+      // while the token is still valid – account logout revokes it straight
+      // after. On failure the local role is still cleared; the stale server
+      // session is harmless because this device will re-login with a PIN.
+      await _repo.saveLoggedInRole(null);
+    } catch (e, st) {
+      debugPrint('RoleCubit.logout server clear failed: $e\n$st');
+    }
     await clearLocalRole();
     emit(const RoleState(isConfigured: true));
   }

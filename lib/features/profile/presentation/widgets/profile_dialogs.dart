@@ -96,8 +96,10 @@ class ProfileDialogs {
     );
     if (confirmed != true) return;
     if (!context.mounted) return;
-    await acct.logout();
+    // Role logout first: it needs a live token to delete this device's server
+    // session. Account logout (signOut) revokes the token.
     await role.logout();
+    await acct.logout();
     if (!context.mounted) return;
     context.go('/account-auth');
   }

@@ -39,7 +39,7 @@ Real-time orders · Role-based access · Offline-first · Bluetooth/USB printing
 - **Multi-tenant SaaS** — per-restaurant data isolation enforced by row-level security
 - **Real-time** — live order updates via Supabase Realtime with auto-reconnect and polling fallback
 - **Offline-first** — local SQLite (Drift) when the network drops, with a connectivity banner
-- **Role-based access** — Waiter, Kitchen, Admin; each role signs in with its own per-account PIN, auto-provisioned on first login
+- **Role-based access** — Waiter, Kitchen, Admin; each role signs in with its own per-account PIN, auto-provisioned on first login. Roles are stored **per device**, so multiple devices on the same account can run different roles at the same time (each install sends its own `x-device-id` header)
 - **Responsive** — phone (liquid glass nav), tablet, and desktop (navigation rail) layouts
 - **Multi-language** — English, Kurdish (Sorani), Arabic with full RTL support
 - **Printing ready** — Bluetooth & USB receipt and kitchen tickets (ESC/POS)
@@ -201,12 +201,13 @@ supabase db push
 Or paste the SQL from `supabase/*.sql` into the [SQL Editor](https://supabase.com/dashboard/project/_/sql/new) in order:
 
 1. `migration.sql` — core schema (profiles, categories, dishes, tables, orders, RLS)
-2. `security_hardening.sql` — hardening views, policies, security definer functions
-3. `security_hardening_v2.sql` — lock admin stock tables behind `is_admin()`, gate stock RPCs, metadata-based admin detection, profiles.email sync
-4. `admin_app.sql` — admin dashboard functions (role, stats, multi-restaurant reports)
-5. `device_tokens.sql` — push-notification device tokens
-6. `storage_recipe_images.sql` — recipe image storage bucket + policies
-7. `upsert_passcodes.sql` — per-account PIN auto-save (UPSERT)
+2. `device_roles.sql` — per-device roles (`device_sessions` + device-aware `current_role()`/`set_role()`)
+3. `security_hardening.sql` — hardening views, policies, security definer functions
+4. `security_hardening_v2.sql` — lock admin stock tables behind `is_admin()`, gate stock RPCs, metadata-based admin detection, profiles.email sync
+5. `admin_app.sql` — admin dashboard functions (role, stats, multi-restaurant reports)
+6. `device_tokens.sql` — push-notification device tokens
+7. `storage_recipe_images.sql` — recipe image storage bucket + policies
+8. `upsert_passcodes.sql` — per-account PIN auto-save (UPSERT)
 
 ### Push Notifications
 

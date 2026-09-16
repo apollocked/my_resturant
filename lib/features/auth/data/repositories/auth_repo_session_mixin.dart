@@ -80,19 +80,15 @@ mixin AuthSessionMixin on SupabaseAuthRepositoryBase {
   Future<Role?> getLoggedInRole() async {
     final user = client.auth.currentUser;
     if (user == null) return null;
-    try {
-      final data = await client
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .maybeSingle();
-      final name = data?['role'] as String?;
-      if (name == null) return null;
-      for (final r in Role.values) {
-        if (r.name == name) return r;
-      }
-    } catch (e, st) {
-      debugPrint('SupabaseAuthRepo.getLoggedInRole error: $e\n$st');
+    // Errors propagate so RoleCubit can distinguish "this device has no role"
+    // (returns null) from "network/server error" (throws → caller falls back to
+    // the locally cached role for offline resilience).
+    final name = await safeCall(
+      () => client.rpc('current_role'),
+    ) as String?;
+    if (name == null || name.isEmpty) return null;
+    for (final r in Role.values) {
+      if (r.name == name) return r;
     }
     return null;
   }

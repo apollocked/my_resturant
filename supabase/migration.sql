@@ -66,15 +66,48 @@ CREATE TRIGGER on_auth_user_created
   EXECUTE FUNCTION public.handle_new_user();
 
 -- ============================================================
--- Role helpers
--- current_role() = the client-set role used by RLS write gates.
--- get_my_role()   = same value, INVOKER (records only own row).
+-- Role helpers (per-device)
+-- Each install sends a stable random `x-device-id` header on every request;
+-- roles are stored per (user_id, device_id) in `device_sessions`, so several
+-- devices on the same account can hold different roles at the same time.
+-- current_role() returns THIS device's role. Headerless (legacy) clients keep
+-- reading profiles.role, so the transition is seamless.
+-- get_my_role() = the profiles.role mirror, INVOKER (records only own row).
 -- ============================================================
+CREATE TABLE IF NOT EXISTS public.device_sessions (
+  user_id    UUID        NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  device_id  TEXT        NOT NULL,
+  role       TEXT        NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, device_id)
+);
+
+ALTER TABLE public.device_sessions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.device_sessions FROM anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.current_device_id()
+RETURNS TEXT
+LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT NULLIF(
+    (SELECT value FROM jsonb_each_text(current_setting('request.headers', true)::jsonb)
+     WHERE lower(key) = 'x-device-id' LIMIT 1),
+    '');
+$$;
+
 CREATE OR REPLACE FUNCTION public.current_role()
 RETURNS TEXT
 LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public
 AS $$
-  SELECT coalesce((SELECT role FROM public.profiles WHERE id = auth.uid()), '');
+  SELECT CASE
+    WHEN public.current_device_id() IS NULL OR public.current_device_id() = '' THEN
+      coalesce((SELECT role FROM public.profiles WHERE id = auth.uid()), '')
+    ELSE
+      coalesce(
+        (SELECT ds.role FROM public.device_sessions ds
+         WHERE ds.user_id = auth.uid() AND ds.device_id = public.current_device_id()),
+        '')
+  END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.get_my_role()
@@ -203,28 +236,62 @@ AS $$
   );
 $$;
 
+DROP FUNCTION IF EXISTS public.set_role(text, text);
+
 CREATE OR REPLACE FUNCTION public.set_role(p_role TEXT, p_pin TEXT)
 RETURNS VOID
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
 AS $$
 DECLARE
   uid uuid := auth.uid();
+  dev text := public.current_device_id();
   cur text;
 BEGIN
   IF uid IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
   IF p_role IS NOT NULL AND p_role NOT IN ('waiter', 'kitchen', 'admin') THEN
     RAISE EXCEPTION 'Invalid role';
   END IF;
-  SELECT role INTO cur FROM public.profiles WHERE id = uid;
-  -- Admin may switch freely; every other switch must present the
-  -- PIN of the target role (verified server-side).
-  IF p_role IS NULL OR cur = 'admin' THEN
+
+  -- Legacy client without a device header: keep the old single-role behaviour.
+  IF dev IS NULL OR dev = '' THEN
+    SELECT role INTO cur FROM public.profiles WHERE id = uid;
+    -- Admin may switch freely; every other switch must present the
+    -- PIN of the target role (verified server-side).
+    IF p_role IS NULL OR cur = 'admin' THEN
+      UPDATE public.profiles SET role = p_role WHERE id = uid;
+      RETURN;
+    END IF;
+    IF p_pin IS NULL OR NOT public.verify_pin(p_role, p_pin) THEN
+      RAISE EXCEPTION 'Forbidden';
+    END IF;
     UPDATE public.profiles SET role = p_role WHERE id = uid;
     RETURN;
   END IF;
-  IF p_pin IS NULL OR NOT public.verify_pin(p_role, p_pin) THEN
-    RAISE EXCEPTION 'Forbidden';
+
+  SELECT coalesce((SELECT role FROM public.device_sessions
+                   WHERE user_id = uid AND device_id = dev), '')
+  INTO cur;
+
+  -- Logout / exit role on this device only.
+  IF p_role IS NULL THEN
+    DELETE FROM public.device_sessions WHERE user_id = uid AND device_id = dev;
+    RETURN;
   END IF;
+
+  -- Admin devices switch roles freely; every other switch must present the
+  -- PIN of the target role (verified server-side).
+  IF cur <> 'admin' THEN
+    IF p_pin IS NULL OR NOT public.verify_pin(p_role, p_pin) THEN
+      RAISE EXCEPTION 'Forbidden';
+    END IF;
+  END IF;
+
+  INSERT INTO public.device_sessions (user_id, device_id, role)
+  VALUES (uid, dev, p_role)
+  ON CONFLICT (user_id, device_id) DO UPDATE SET role = EXCLUDED.role, updated_at = now();
+
+  -- Mirror to profiles.role for legacy reads / admin dashboards. Not used by
+  -- RLS anymore (current_role() is device-aware above).
   UPDATE public.profiles SET role = p_role WHERE id = uid;
 END;
 $$;
@@ -518,6 +585,7 @@ CREATE POLICY "Authenticated users can delete recipe images"
 -- Security: Revoke EXECUTE on SECURITY DEFINER functions
 -- ============================================================
 REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.current_device_id() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.current_role() FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.set_role(TEXT, TEXT) FROM PUBLIC, anon;
@@ -531,6 +599,7 @@ REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authentic
 
 GRANT  EXECUTE ON FUNCTION public.verify_pin(TEXT, TEXT) TO authenticated;
 GRANT  EXECUTE ON FUNCTION public.set_role(TEXT, TEXT) TO authenticated;
+GRANT  EXECUTE ON FUNCTION public.current_role() TO authenticated;
 GRANT  EXECUTE ON FUNCTION public.save_passcodes(TEXT, TEXT, TEXT) TO authenticated;
 GRANT  EXECUTE ON FUNCTION public.change_passcode(TEXT, TEXT) TO authenticated;
 GRANT  EXECUTE ON FUNCTION public.passcodes_configured() TO authenticated;

@@ -15,6 +15,7 @@ import 'package:my_resturant/features/printer/data/printer_service.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_state.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
+import 'package:my_resturant/features/auth/data/device_storage.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
@@ -67,10 +68,17 @@ void main() async {
   } catch (e) {
     debugPrint('[app] Firebase init failed: $e');
   }
+  String deviceId = '';
+  try {
+    deviceId = await getOrCreateDeviceId();
+  } catch (e) {
+    debugPrint('[app] device id init failed: $e');
+  }
   try {
     await Supabase.initialize(
       url: SupabaseCredentials.url,
       publishableKey: SupabaseCredentials.publishableKey,
+      headers: {'x-device-id': deviceId},
     );
   } catch (e) {
     debugPrint('[app] Supabase init failed: $e');
