@@ -66,9 +66,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
     _entryCtl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 620),
-    )..animateWith(
-        SpringSimulation(_spring, 0, 1, 0),
-      );
+    )..animateWith(SpringSimulation(_spring, 0, 1, 0));
   }
 
   static double _initialTarget(int index, int count) {
@@ -140,7 +138,8 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
         ? const Color(0xFF2E2E2E)
         : Colors.black.withValues(alpha: 0.06);
     final shadow = cs.shadow.withValues(alpha: dark ? 0.45 : 0.14);
-    const capsuleR = 36.0;
+    const capsuleR =
+        17.0; // squared dock, same corner radius as the active pill
     const barH = 72.0;
 
     // Spring-driven entrance (slide + fade) with a soft settle.
@@ -155,12 +154,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
       child: FadeTransition(
         opacity: entry,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            0,
-            16,
-            (bottomInset == 0 ? 10 : 6) + bottomInset,
-          ),
+          padding: EdgeInsets.fromLTRB(24, 0, 24, bottomInset),
           child: Container(
             height: barH,
             decoration: BoxDecoration(
@@ -191,8 +185,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                             end: Alignment.bottomCenter,
                             colors: [glassTop, glassBottom],
                           ),
-                          border:
-                              Border.all(color: borderColor, width: 0.8),
+                          border: Border.all(color: borderColor, width: 0.8),
                         ),
                         child: const SizedBox.shrink(),
                       ),
@@ -204,136 +197,125 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar>
                         builder: (context, constraints) {
                           final n = widget.items.length;
                           final tabW = constraints.maxWidth / n;
-                            // The active indicator wraps the icon AND the label
-                            // but keeps a breath of cell on each side. It
-                            // narrows in flight, then swolels out on land.
-                            const landedH = 48.0;
-                            const pillR = 17.0;
-                            const pillCY = 36.0; // bar mid-height (72 / 2)
-                            const landedFrac = 0.86; // seated width of the cell
-                            const flightFrac = 0.60; // mid-flight width factor
-                            return IgnorePointer(
-                              child: AnimatedBuilder(
-                                animation: _ctl,
-                                builder: (context, _) {
-                                  final t = _ctl
-                                      .value
-                                      .clamp(0, n - 1)
-                                      .toDouble();
-                                  final center = t.round().clamp(0, n - 1);
-                                  final dist = (t - center).abs();
-                                  final travel =
-                                      Curves.easeInOut.transform(
-                                        (dist * 2).clamp(0.0, 1.0),
-                                      );
-                                  final landedness = 1.0 - travel;
-                                  final landedW = tabW * landedFrac;
-                                  final w =
-                                      landedW *
-                                      (1 - (1 - flightFrac) * travel);
-                                  final h = landedH - 8 * travel;
-                                  final lift = 2.5 * travel;
-                                  final start =
-                                      tabW * (t + 0.5) - w / 2;
-                                  final top = pillCY - h / 2 - lift;
-                                  final glowW = w;
-                                  final glowH = h + 16;
-                                  final glowTop = pillCY - glowH / 2 - lift;
-                                  return Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      // Ambient glow behind the active pill.
-                                      PositionedDirectional(
-                                        start: start,
-                                        top: glowTop,
-                                        width: glowW,
-                                        height: glowH,
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                  glowH / 2,
-                                                ),
-                                            gradient: RadialGradient(
-                                              colors: [
-                                                accent.withValues(
-                                                  alpha:
-                                                      (dark ? 0.11 : 0.06) *
-                                                      landedness,
-                                                ),
-                                                Colors.transparent,
-                                              ],
-                                            ),
+                          // The active indicator wraps the icon AND the label
+                          // but keeps a breath of cell on each side. It
+                          // narrows in flight, then swolels out on land.
+                          const landedH = 48.0;
+                          const pillR = 17.0;
+                          const pillCY = 36.0; // bar mid-height (72 / 2)
+                          const landedFrac = 0.86; // seated width of the cell
+                          const flightFrac = 0.60; // mid-flight width factor
+                          return IgnorePointer(
+                            child: AnimatedBuilder(
+                              animation: _ctl,
+                              builder: (context, _) {
+                                final t = _ctl.value.clamp(0, n - 1).toDouble();
+                                final center = t.round().clamp(0, n - 1);
+                                final dist = (t - center).abs();
+                                final travel = Curves.easeInOut.transform(
+                                  (dist * 2).clamp(0.0, 1.0),
+                                );
+                                final landedness = 1.0 - travel;
+                                final landedW = tabW * landedFrac;
+                                final w =
+                                    landedW * (1 - (1 - flightFrac) * travel);
+                                final h = landedH - 8 * travel;
+                                final lift = 2.5 * travel;
+                                final start = tabW * (t + 0.5) - w / 2;
+                                final top = pillCY - h / 2 - lift;
+                                final glowW = w;
+                                final glowH = h + 16;
+                                final glowTop = pillCY - glowH / 2 - lift;
+                                return Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    // Ambient glow behind the active pill.
+                                    PositionedDirectional(
+                                      start: start,
+                                      top: glowTop,
+                                      width: glowW,
+                                      height: glowH,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            glowH / 2,
+                                          ),
+                                          gradient: RadialGradient(
+                                            colors: [
+                                              accent.withValues(
+                                                alpha:
+                                                    (dark ? 0.11 : 0.06) *
+                                                    landedness,
+                                              ),
+                                              Colors.transparent,
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      // Active cell wrapper: covers icon + label.
-                                      PositionedDirectional(
-                                        key: LiquidGlassNavBar.navChipKey,
-                                        start: start,
-                                        top: top,
-                                        width: w,
-                                        height: h,
+                                    ),
+                                    // Active cell wrapper: covers icon + label.
+                                    PositionedDirectional(
+                                      key: LiquidGlassNavBar.navChipKey,
+                                      start: start,
+                                      top: top,
+                                      width: w,
+                                      height: h,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            pillR,
+                                          ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              accent.withValues(
+                                                alpha: dark ? 0.32 : 0.26,
+                                              ),
+                                              accent.withValues(
+                                                alpha: dark ? 0.14 : 0.10,
+                                              ),
+                                            ],
+                                          ),
+                                          border: Border.all(
+                                            color: accent.withValues(
+                                              alpha: dark ? 0.40 : 0.34,
+                                            ),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        // Glass inner highlight.
                                         child: DecoratedBox(
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(pillR),
+                                            borderRadius: BorderRadius.circular(
+                                              pillR - 1,
+                                            ),
                                             gradient: LinearGradient(
                                               begin: Alignment.topCenter,
                                               end: Alignment.bottomCenter,
                                               colors: [
-                                                accent.withValues(
-                                                  alpha: dark ? 0.32 : 0.26,
+                                                Colors.white.withValues(
+                                                  alpha: dark ? 0.18 : 0.26,
                                                 ),
-                                                accent.withValues(
-                                                  alpha: dark ? 0.14 : 0.10,
+                                                Colors.transparent,
+                                                Colors.black.withValues(
+                                                  alpha: dark ? 0.10 : 0.04,
                                                 ),
                                               ],
-                                            ),
-                                            border: Border.all(
-                                              color: accent.withValues(
-                                                alpha: dark ? 0.40 : 0.34,
-                                              ),
-                                              width: 1,
-                                            ),
-                                          ),
-                                          // Glass inner highlight.
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    pillR - 1,
-                                                  ),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                                colors: [
-                                                  Colors.white.withValues(
-                                                    alpha: dark ? 0.18 : 0.26,
-                                                  ),
-                                                  Colors.transparent,
-                                                  Colors.black.withValues(
-                                                    alpha: dark ? 0.10 : 0.04,
-                                                  ),
-                                                ],
-                                                stops: const [
-                                                  0,
-                                                  0.42,
-                                                  1,
-                                                ],
-                                              ),
+                                              stops: const [0, 0.42, 1],
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            );
-},
-                        ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
+                    ),
                   RepaintBoundary(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
