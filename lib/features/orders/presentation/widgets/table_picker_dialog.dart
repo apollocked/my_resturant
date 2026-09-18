@@ -5,11 +5,32 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/shared/haptics.dart';
 
 String _firstLetters(String s) {
   final trimmed = s.trim();
   if (trimmed.isEmpty) return '';
   return trimmed.split('').take(3).join();
+}
+
+void _requestCleaning(
+  BuildContext context,
+  int n,
+  String Function(String) t,
+) {
+  Haptics.added();
+  context.read<OrderCubit>().requestCleaning(n);
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(
+          t('cleaning_request_sent').replaceAll('{table}', '$n'),
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
 }
 
 Future<void> showTablePickerDialog(
@@ -36,28 +57,43 @@ Future<void> showTablePickerDialog(
                 final n = i + 1;
                 final sel = n == selectedTable;
                 final locked = reservedTables.contains(n) && n != selectedTable;
+                final needsClean =
+                    locked && orderState.needCleaningTables.contains(n);
+                final requestedCleaning =
+                    orderState.cleaningRequests.containsKey(n);
                 final customName = orderState.tableNames[n]?.trim();
                 final hasCustom = customName != null && customName.isNotEmpty;
                 final labelColor = sel ? cs.onPrimary : cs.onSurface;
+                final accent = AppColors.warning;
                 return SizedBox(
                   width: 56,
                   height: 44,
                   child: OutlinedButton(
-                    onPressed: locked
+                    onPressed: needsClean
+                        ? () => _requestCleaning(context, n, t)
+                        : locked
                         ? null
                         : () {
                             onChanged(n);
                             Navigator.pop(ctx);
                           },
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: locked
+                      backgroundColor: needsClean
+                          ? (requestedCleaning
+                              ? accent
+                              : accent.withValues(alpha: 0.16))
+                          : locked
                           ? cs.surfaceContainerHighest
                           : (sel ? AppColors.primary : cs.surface),
-                      foregroundColor: locked
+                      foregroundColor: needsClean
+                          ? (requestedCleaning ? cs.onPrimary : accent)
+                          : locked
                           ? cs.onSurfaceVariant
                           : labelColor,
                       side: BorderSide(
-                        color: locked
+                        color: needsClean
+                            ? accent.withValues(alpha: 0.6)
+                            : locked
                             ? cs.outlineVariant
                             : (sel ? AppColors.primary : cs.outlineVariant),
                       ),
@@ -65,7 +101,16 @@ Future<void> showTablePickerDialog(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                     ),
-                    child: locked
+                    child: needsClean
+                        ? Icon(
+                            requestedCleaning
+                                ? Icons.check_circle
+                                : Icons.cleaning_services,
+                            size: 14,
+                            color:
+                                requestedCleaning ? cs.onPrimary : accent,
+                          )
+                        : locked
                         ? Icon(
                             Icons.lock,
                             size: 14,

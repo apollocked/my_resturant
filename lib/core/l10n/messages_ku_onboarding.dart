@@ -28,6 +28,8 @@ const Map<String, String> kuonboarding = {
   'notif_items_count': '{count} دانە • {price} د.ع',
   'notif_table_ready': 'مێز {table} ئامادەیە',
   'notif_order_served': 'داواکاری پێشکەشکرا — ئامادەی بڵاوکردنەوە',
+  'notif_clean_request_title': 'داواکاری پاککردنەوە — مێز {table}',
+  'notif_clean_request_body': 'مێز {table} بەتاڵە و چاوەڕوانی پاککردنەوەیە.',
   'notif_channel_kitchen_name': 'ئاگاداری چێشتخانە',
   'notif_channel_kitchen_desc': 'داواکاری نوێ بۆ چێشتخانە',
   'notif_channel_waiter_name': 'ئاگاداری وەیتەر',

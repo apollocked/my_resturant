@@ -72,6 +72,10 @@ const Map<String, String> enorders = {
   'again': 'Again',
   'again_confirm_served': 'Return this order to pending?',
   'again_confirm_cart': 'Re-add these items to the cart?',
+  'request_cleaning': 'Request cleaning',
+  'cleaning_requested': 'Cleaning requested',
+  'cleaning_request_sent':
+      'Cleaning requested for Table {table} \u2014 the kitchen has been notified',
   'add_items': 'Add items',
   'kitchen_ticket': 'Kitchen Ticket',
   'full_receipt': 'Full receipt with prices',

@@ -28,6 +28,8 @@ const Map<String, String> enonboarding = {
   'notif_items_count': '{count} items • {price} IQD',
   'notif_table_ready': 'Table {table} Ready',
   'notif_order_served': 'Order served — ready to deliver',
+  'notif_clean_request_title': 'Cleaning requested — Table {table}',
+  'notif_clean_request_body': 'Table {table} is empty and waiting to be cleaned.',
   'notif_channel_kitchen_name': 'Kitchen Notifications',
   'notif_channel_kitchen_desc': 'New orders for kitchen',
   'notif_channel_waiter_name': 'Waiter Notifications',

@@ -13,6 +13,7 @@ class OrderState {
   final Map<String, String> pendingNotes;
   final bool isLoading;
   final Set<int> clearedTables;
+  final Map<int, DateTime> cleaningRequests;
   final bool isSubmitting;
   final String? errorMessage;
 
@@ -27,6 +28,7 @@ class OrderState {
     this.pendingNotes = const {},
     this.isLoading = true,
     this.clearedTables = const {},
+    this.cleaningRequests = const {},
     this.isSubmitting = false,
     this.errorMessage,
   });
@@ -56,7 +58,33 @@ class OrderState {
         .difference(clearedTables);
   }
 
+  /// Table numbers with a served order today — empty tables that are finished
+  /// and waiting to be cleaned before they can be reused.
+  Set<int> get servedTodayTableNumbers {
+    final now = DateTime.now();
+    return orders
+        .where(
+          (o) =>
+              o.status == OrderStatus.served &&
+              o.createdAt.year == now.year &&
+              o.createdAt.month == now.month &&
+              o.createdAt.day == now.day,
+        )
+        .map((o) => o.tableNumber)
+        .toSet();
+  }
+
+  /// Served tables the kitchen has not cleared yet (locked and awaiting
+  /// cleaning before the waiter can reuse them).
+  Set<int> get needCleaningTables =>
+      servedTodayTableNumbers.difference(clearedTables);
+
   String getTableName(int n) => tableNames[n] ?? 'Table $n';
+
+  /// Tables the waiter has flagged for cleaning and that the kitchen has not
+  /// cleared yet, newest request first.
+  List<int> get requestedCleaningTables => cleaningRequests.keys.toList()
+    ..sort((a, b) => cleaningRequests[a]!.compareTo(cleaningRequests[b]!));
   int getQuantity(String id) =>
       cart.where((c) => c.recipe.id == id).firstOrNull?.quantity ?? 0;
   String getNotes(String id) =>
@@ -100,6 +128,7 @@ class OrderState {
     Map<String, String>? pendingNotes,
     bool? isLoading,
     Set<int>? clearedTables,
+    Map<int, DateTime>? cleaningRequests,
     bool? isSubmitting,
     String? errorMessage,
   }) => OrderState(
@@ -113,6 +142,7 @@ class OrderState {
     pendingNotes: pendingNotes ?? this.pendingNotes,
     isLoading: isLoading ?? this.isLoading,
     clearedTables: clearedTables ?? this.clearedTables,
+    cleaningRequests: cleaningRequests ?? this.cleaningRequests,
     isSubmitting: isSubmitting ?? this.isSubmitting,
     errorMessage: errorMessage ?? this.errorMessage,
   );

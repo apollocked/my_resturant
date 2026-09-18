@@ -72,6 +72,10 @@ const Map<String, String> kuorders = {
   'again': 'دووبارە',
   'again_confirm_served': 'ئەم داواکارییە بگەڕێنەوە بۆ چاوەڕوانی؟',
   'again_confirm_cart': 'ئەم خواردنانە بگەڕێنەوە بۆ سەبەتە؟',
+  'request_cleaning': 'داواکردنی پاککردنەوە',
+  'cleaning_requested': 'پاککردنەوە داواکرا',
+  'cleaning_request_sent':
+      'داواکاری پاککردنەوەی مێز {table} نێردرا — چێشتخانە ئاگادار کرا',
   'add_items': 'زیادکردنی خواردن',
   'kitchen_ticket': 'تيکتی چێشتخانە',
   'full_receipt': 'رسیدی تەواو بە نرخەکان',

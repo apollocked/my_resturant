@@ -19,15 +19,36 @@ mixin OrderTableMixin on OrderCubitBase {
     repo.saveSetting('tableName_$n', name.trim());
   }
 
+  /// Flags a served (locked) table for cleaning so kitchen staff are
+  /// notified it is empty and needs to be cleaned before reuse. Re-requesting
+  /// bumps the timestamp and re-notifies the kitchen.
+  void requestCleaning(int tableNumber) {
+    final requests = Map<int, DateTime>.from(state.cleaningRequests);
+    final now = DateTime.now();
+    requests[tableNumber] = now;
+    repo.saveSetting('request_clean_$tableNumber', '${now.millisecondsSinceEpoch}');
+    emit(state.copyWith(cleaningRequests: requests));
+  }
+
   void clearTable(int tableNumber) {
     final cleared = Set<int>.from(state.clearedTables)..add(tableNumber);
+    final requests = Map<int, DateTime>.from(state.cleaningRequests)
+      ..remove(tableNumber);
     repo.saveSetting('cleared_$tableNumber', 'true');
-    emit(state.copyWith(clearedTables: cleared));
+    repo.saveSetting('request_clean_$tableNumber', '');
+    emit(
+      state.copyWith(clearedTables: cleared, cleaningRequests: requests),
+    );
   }
 
   void unclearTable(int tableNumber) {
     final cleared = Set<int>.from(state.clearedTables)..remove(tableNumber);
+    final requests = Map<int, DateTime>.from(state.cleaningRequests)
+      ..remove(tableNumber);
     repo.saveSetting('cleared_$tableNumber', 'false');
-    emit(state.copyWith(clearedTables: cleared));
+    repo.saveSetting('request_clean_$tableNumber', '');
+    emit(
+      state.copyWith(clearedTables: cleared, cleaningRequests: requests),
+    );
   }
 }

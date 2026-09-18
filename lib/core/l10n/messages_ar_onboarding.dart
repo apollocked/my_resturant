@@ -28,6 +28,8 @@ const Map<String, String> aronboarding = {
   'notif_items_count': '{count} عنصر • {price} د.ع',
   'notif_table_ready': 'طاولة {table} جاهزة',
   'notif_order_served': 'تم تقديم الطلب — جاهز للتقديم',
+  'notif_clean_request_title': 'طلب تنظيف — طاولة {table}',
+  'notif_clean_request_body': 'الطاولة {table} فارغة وتنتظر التنظيف.',
   'notif_channel_kitchen_name': 'إشعارات المطبخ',
   'notif_channel_kitchen_desc': 'طلبات جديدة للمطبخ',
   'notif_channel_waiter_name': 'إشعارات النادل',

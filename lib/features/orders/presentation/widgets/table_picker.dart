@@ -6,9 +6,30 @@ import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dar
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/table_picker_header.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/table_picker_tile.dart';
+import 'package:my_resturant/shared/haptics.dart';
 
 class TablePicker extends StatelessWidget {
   const TablePicker({super.key});
+
+  void _requestCleaning(
+    BuildContext context,
+    int n,
+    String Function(String) t,
+  ) {
+    Haptics.added();
+    context.read<OrderCubit>().requestCleaning(n);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            t('cleaning_request_sent').replaceAll('{table}', '$n'),
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +81,15 @@ class TablePicker extends StatelessWidget {
                           return TablePickerTile(
                             n: n,
                             locked: s.reservedTables.contains(n),
+                            needsCleaning: s.needCleaningTables.contains(n),
+                            requested: s.cleaningRequests.containsKey(n),
                             cs: cs,
                             isDesktop: isDesktop,
                             t: t,
                             onTap: () =>
                                 context.read<OrderCubit>().setSelectedTable(n),
+                            onRequestCleaning: () =>
+                                _requestCleaning(context, n, t),
                           );
                         },
                       ),

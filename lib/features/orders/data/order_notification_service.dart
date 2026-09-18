@@ -115,4 +115,24 @@ class OrderNotificationService {
       )),
     );
   }
+
+  /// Alerts kitchen staff that a served table is empty and waiting to be
+  /// cleaned. Uses a stable per-table notification id so repeated requests
+  /// bump the same notification instead of stacking new ones.
+  void showCleaningRequest(int table, Locale locale) {
+    final title = _t('notif_clean_request_title', locale, {'table': '$table'});
+    final body = _t('notif_clean_request_body', locale, {'table': '$table'});
+    final id = 9777 + (table * 31);
+    _plugin.show(
+      id,
+      title,
+      body,
+      NotificationDetails(android: AndroidNotificationDetails(
+        'kitchen_channel', _t('notif_channel_kitchen_name', locale),
+        channelDescription: _t('notif_channel_kitchen_desc', locale),
+        importance: Importance.high, priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      )),
+    );
+  }
 }

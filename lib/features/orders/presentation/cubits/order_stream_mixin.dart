@@ -31,6 +31,7 @@ mixin OrderStreamMixin on OrderCubitBase {
         );
       }
       notifier.seedOrders(orders);
+      notifier.seedCleaningRequests(state.cleaningRequests);
     } catch (e) {
       if (!isClosed) {
         debugPrint('OrderCubit._load error: $e');
@@ -49,6 +50,7 @@ mixin OrderStreamMixin on OrderCubitBase {
     });
     subscribe(repo.watchSettings, (s) {
       if (!isClosed) applySettings(s);
+      notifier.onCleaningRequestsChanged(state.cleaningRequests);
     });
     subscribe(repo.watchCategories, (c) {
       if (!isClosed) emit(state.copyWith(categories: c));
@@ -115,6 +117,7 @@ mixin OrderStreamMixin on OrderCubitBase {
     final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
     final names = <int, String>{};
     final cleared = <int>{};
+    final requests = <int, DateTime>{};
     for (final e in settings.entries) {
       if (e.key.startsWith('tableName_')) {
         final n = int.tryParse(e.key.split('_').last);
@@ -124,12 +127,20 @@ mixin OrderStreamMixin on OrderCubitBase {
         final n = int.tryParse(e.key.split('_').last);
         if (n != null) cleared.add(n);
       }
+      if (e.key.startsWith('request_clean_') && e.value.isNotEmpty) {
+        final n = int.tryParse(e.key.split('_').last);
+        final v = int.tryParse(e.value);
+        if (n != null && v != null) {
+          requests[n] = DateTime.fromMillisecondsSinceEpoch(v);
+        }
+      }
     }
     emit(
       state.copyWith(
         tableCount: tableCount,
         tableNames: names,
         clearedTables: cleared,
+        cleaningRequests: requests,
       ),
     );
   }

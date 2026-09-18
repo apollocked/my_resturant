@@ -499,7 +499,8 @@ CREATE POLICY "Authorized staff can insert settings"
   TO authenticated
   WITH CHECK ((select auth.uid()) = restaurant_id
     AND public.current_role() = ANY (ARRAY['waiter', 'kitchen', 'admin'])
-    AND (key LIKE 'cleared\_%' OR public.current_role() = 'admin'));
+    AND (key LIKE 'cleared\_%' OR key LIKE 'request\_clean\_%'
+      OR public.current_role() = 'admin'));
 
 DROP POLICY IF EXISTS "Staff can update table clearing settings" ON app_settings;
 DROP POLICY IF EXISTS "Authorized staff can update settings" ON app_settings;
@@ -508,10 +509,12 @@ CREATE POLICY "Authorized staff can update settings"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id
     AND public.current_role() = ANY (ARRAY['waiter', 'kitchen', 'admin'])
-    AND (key LIKE 'cleared\_%' OR public.current_role() = 'admin'))
+    AND (key LIKE 'cleared\_%' OR key LIKE 'request\_clean\_%'
+      OR public.current_role() = 'admin'))
   WITH CHECK ((select auth.uid()) = restaurant_id
     AND public.current_role() = ANY (ARRAY['waiter', 'kitchen', 'admin'])
-    AND (key LIKE 'cleared\_%' OR public.current_role() = 'admin'));
+    AND (key LIKE 'cleared\_%' OR key LIKE 'request\_clean\_%'
+      OR public.current_role() = 'admin'));
 
 DROP POLICY IF EXISTS "Authorized staff can delete settings" ON app_settings;
 CREATE POLICY "Authorized staff can delete settings"
@@ -519,7 +522,8 @@ CREATE POLICY "Authorized staff can delete settings"
   TO authenticated
   USING ((select auth.uid()) = restaurant_id
     AND public.current_role() = ANY (ARRAY['waiter', 'kitchen', 'admin'])
-    AND (key LIKE 'cleared\_%' OR public.current_role() = 'admin'));
+    AND (key LIKE 'cleared\_%' OR key LIKE 'request\_clean\_%'
+      OR public.current_role() = 'admin'));
 
 CREATE INDEX IF NOT EXISTS idx_app_settings_restaurant_id ON app_settings(restaurant_id);
 

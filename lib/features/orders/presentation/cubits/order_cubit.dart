@@ -98,6 +98,8 @@ class OrderCubit extends OrderCubitBase
           pendingNotes: const {},
           clearedTables: Set<int>.from(state.clearedTables)
             ..remove(order.tableNumber),
+          cleaningRequests: Map<int, DateTime>.from(state.cleaningRequests)
+            ..remove(order.tableNumber),
           errorMessage: null,
         ),
       );
@@ -148,6 +150,11 @@ class OrderCubit extends OrderCubitBase
   Future<void> _clearTableFlag(int table) async {
     try {
       await repo.saveSetting('cleared_$table', 'false');
+    } catch (_) {
+      // Best effort; the flag is cosmetic.
+    }
+    try {
+      await repo.saveSetting('request_clean_$table', '');
     } catch (_) {
       // Best effort; the flag is cosmetic.
     }

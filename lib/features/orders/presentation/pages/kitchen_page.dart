@@ -52,8 +52,14 @@ class _KitchenPageState extends State<KitchenPage> {
     final clearedToday = servedTableNums
         .where((n) => orderState.clearedTables.contains(n))
         .toSet();
+    final requestedCleaning = orderState.cleaningRequests;
     final needCleaning = servedTableNums.difference(clearedToday).toList()
-      ..sort();
+      ..sort((a, b) {
+        final ra = requestedCleaning.containsKey(a) ? 0 : 1;
+        final rb = requestedCleaning.containsKey(b) ? 0 : 1;
+        if (ra != rb) return ra - rb;
+        return a - b;
+      });
     final cs = Theme.of(context).colorScheme;
     final tabLabels = isWaiter
         ? [

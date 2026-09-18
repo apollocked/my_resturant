@@ -73,18 +73,20 @@ class _CleanTile extends StatelessWidget {
     final tableName = cubit.state.getTableName(n);
     final title = '${t('table')} $n'
         '${tableName != '${t('table')} $n' ? ' \u2014 $tableName' : ''}';
+    final requested = cubit.state.cleaningRequests.containsKey(n);
+    final accent = requested ? AppColors.warning : AppColors.success;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.success.withValues(alpha: 0.1),
+            color: accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          child: const Icon(
-            Icons.cleaning_services,
-            color: AppColors.success,
+          child: Icon(
+            requested ? Icons.local_laundry_service : Icons.cleaning_services,
+            color: accent,
             size: 22,
           ),
         ),
@@ -95,9 +97,23 @@ class _CleanTile extends StatelessWidget {
             fontSize: R.fontMd(context),
           ),
         ),
-        subtitle: Text(
-          t('clear_table'),
-          style: TextStyle(color: cs.onSurfaceVariant, fontSize: R.fontSm(context)),
+        subtitle: Row(
+          children: [
+            Icon(
+              requested ? Icons.bolt : Icons.cleaning_services,
+              size: 13,
+              color: accent,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              requested ? t('cleaning_requested') : t('clear_table'),
+              style: TextStyle(
+                color: requested ? accent : cs.onSurfaceVariant,
+                fontWeight: requested ? FontWeight.w600 : FontWeight.w400,
+                fontSize: R.fontSm(context),
+              ),
+            ),
+          ],
         ),
         trailing: PressableScale(
           onTap: () {

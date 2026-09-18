@@ -70,6 +70,10 @@ const Map<String, String> arorders = {
   'again': 'إعادة',
   'again_confirm_served': 'إعادة هذا الطلب إلى قيد الانتظار؟',
   'again_confirm_cart': 'إعادة إضافة هذه الأصناف إلى السلة؟',
+  'request_cleaning': 'طلب تنظيف',
+  'cleaning_requested': 'تم طلب التنظيف',
+  'cleaning_request_sent':
+      'تم طلب تنظيف الطاولة {table} — تم إشعار المطبخ',
   'add_items': 'إضافة أصناف',
   'kitchen_ticket': 'تيكت المطبخ',
   'full_receipt': 'إيصال كامل بالأسعار',
