@@ -1,6 +1,7 @@
 const Map<String, String> araccount = {
   'add_to_order': 'إضافة إلى الطلب',
   'add_items_empty': 'لا توجد أصناف متاحة للإضافة',
+  'add_items_empty_subtitle': 'فعّل الأصناف من القائمة لتظهر هنا',
   'items_added': 'تمت إضافة الأصناف إلى الطلب',
   'foods': 'الأطعمة',
   'order_detail_notes': 'ملاحظات:',

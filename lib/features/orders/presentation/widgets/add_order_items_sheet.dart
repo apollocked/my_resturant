@@ -9,6 +9,7 @@ import 'package:my_resturant/features/orders/presentation/widgets/add_items_foot
 import 'package:my_resturant/features/orders/presentation/widgets/add_items_search_field.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/add_items_sheet_header.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/add_items_tile.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 
 class AddOrderItemsSheet extends StatefulWidget {
   final List<Recipe> recipes;
@@ -105,10 +106,13 @@ class _AddOrderItemsSheetState extends State<AddOrderItemsSheet> {
           const SizedBox(height: 8),
           Flexible(
             child: meals.isEmpty
-                ? Center(
-                    child: Text(
-                      t('add_items_empty'),
-                      style: TextStyle(color: cs.onSurfaceVariant),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: EmptyState(
+                      icon: Icons.search_off_rounded,
+                      title: t('add_items_empty'),
+                      subtitle: t('add_items_empty_subtitle'),
+                      compact: true,
                     ),
                   )
                 : ListView.builder(

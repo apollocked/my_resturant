@@ -8,6 +8,7 @@ import 'package:my_resturant/features/printer/data/printer_transport.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/features/permissions/presentation/permission_prompts.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
     hide PrinterConnectionType;
@@ -79,7 +80,19 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
                     ..._devices.map((d) => _deviceCard(context, t, d)),
                   ],
                   if (!_scanning && _devices.isEmpty)
-                    _emptyState(context, t, cs),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: EmptyState(
+                        icon: Icons.bluetooth_searching,
+                        title: t('bt_no_devices'),
+                        subtitle: t('bt_no_devices_subtitle'),
+                        action: FilledButton.icon(
+                          onPressed: _scanning ? null : _scan,
+                          icon: const Icon(Icons.radar, size: 20),
+                          label: Text(t('bt_scan')),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -133,22 +146,6 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
               : const Icon(Icons.link, color: AppColors.primary),
           onTap: _pairing ? null : () => _pair(t, d),
         ),
-      ),
-    );
-  }
-
-  Widget _emptyState(BuildContext context, String Function(String) t, ColorScheme cs) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 40),
-      child: Column(
-        children: [
-          Icon(Icons.bluetooth_searching, size: 56, color: cs.onSurfaceVariant),
-          const SizedBox(height: 12),
-          Text(
-            t('bt_no_devices'),
-            style: TextStyle(fontSize: R.fontMd(context), color: cs.onSurface),
-          ),
-        ],
       ),
     );
   }

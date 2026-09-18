@@ -1,6 +1,7 @@
 const Map<String, String> enaccount = {
   'add_to_order': 'Add to order',
   'add_items_empty': 'No items available to add',
+  'add_items_empty_subtitle': 'Mark dishes as available in the menu to add them here',
   'items_added': 'Items added to order',
   'foods': 'Foods',
   'order_detail_notes': 'Notes:',

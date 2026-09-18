@@ -100,6 +100,8 @@ const Map<String, String> kugeneral = {
   'bt_is_off': 'بلوتوث کوژراوە',
   'bt_scanning': 'گەڕان...',
   'bt_no_devices': 'هیچ ئامێرێک نەدۆزرایەوە',
+  'bt_no_devices_subtitle':
+      'دڵنیابە لەوەی پرینتەرەکەت کراوەیە و نزیکە، پاشان دیسان سکان بکەوە',
   'bt_scan_error': 'هەڵەی گەڕان: {error}',
   'bt_scan': 'گەڕان',
   'bt_perm_title': 'چالاککردنی بلوتوث',

@@ -1,6 +1,7 @@
 const Map<String, String> kuaccount = {
   'add_to_order': 'زیادکردن بۆ داواکاری',
   'add_items_empty': 'هیچ خواردنێک نییە بۆ زیادکردن',
+  'add_items_empty_subtitle': 'خواردنەکان لە مێنوو بەردەست بکە بۆ ئەوەی لێرە دەربکەون',
   'items_added': 'خواردنەکان زیادکران بۆ داواکاری',
   'foods': 'خواردنەکان',
   'order_detail_notes': 'تێبینی:',

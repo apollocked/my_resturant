@@ -100,6 +100,8 @@ const Map<String, String> engeneral = {
   'bt_is_off': 'Bluetooth is off',
   'bt_scanning': 'Scanning...',
   'bt_no_devices': 'No devices found',
+  'bt_no_devices_subtitle':
+      'Make sure your printer is turned on and nearby, then scan again',
   'bt_scan_error': 'Scan error: {error}',
   'bt_scan': 'Scan',
   'bt_perm_title': 'Enable Bluetooth',

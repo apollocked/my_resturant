@@ -100,6 +100,8 @@ const Map<String, String> argeneral = {
   'bt_is_off': 'البلوتوث مغلق',
   'bt_scanning': 'جارٍ البحث...',
   'bt_no_devices': 'لم يتم العثور على أجهزة',
+  'bt_no_devices_subtitle':
+      'تأكد من تشغيل الطابعة وقربها ثم امسح ضوئياً مرة أخرى',
   'bt_scan_error': 'خطأ في البحث: {error}',
   'bt_scan': 'بحث',
   'bt_perm_title': 'تفعيل البلوتوث',
