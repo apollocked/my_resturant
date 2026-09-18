@@ -5,9 +5,11 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
 import 'package:my_resturant/features/printer/data/printer_transport.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/features/printer/presentation/widgets/printer_device_card.dart';
+import 'package:my_resturant/features/printer/presentation/widgets/printer_scan_button.dart';
+import 'package:my_resturant/features/printer/presentation/widgets/printer_scan_prompt.dart';
 import 'package:my_resturant/shared/empty_state.dart';
 import 'package:my_resturant/features/permissions/presentation/permission_prompts.dart';
 import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
@@ -50,21 +52,10 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    t('find_printer_sub'),
-                    style: TextStyle(
-                      fontSize: R.fontMd(context),
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: _scanning ? null : _scan,
-                      icon: Icon(_scanning ? Icons.radar : Icons.search, size: 20),
-                      label: Text(_scanning ? t('bt_scanning') : t('scan_again')),
-                    ),
+                  PrinterScanPrompt(
+                    scanning: _scanning,
+                    t: t,
+                    onScan: _scan,
                   ),
                   const SizedBox(height: 20),
                   if (_devices.isNotEmpty) ...[
@@ -77,7 +68,11 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ..._devices.map((d) => _deviceCard(context, t, d)),
+                    ..._devices.map((d) => PrinterDeviceCard(
+                          device: d,
+                          pairing: _pairing,
+                          onTap: () => _pair(t, d),
+                        )),
                   ],
                   if (!_scanning && _devices.isEmpty)
                     Padding(
@@ -86,10 +81,10 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
                         icon: Icons.bluetooth_searching,
                         title: t('bt_no_devices'),
                         subtitle: t('bt_no_devices_subtitle'),
-                        action: FilledButton.icon(
-                          onPressed: _scanning ? null : _scan,
-                          icon: const Icon(Icons.radar, size: 20),
-                          label: Text(t('bt_scan')),
+                        action: PrinterScanButton(
+                          scanning: _scanning,
+                          onScan: _scan,
+                          label: t('bt_scan'),
                         ),
                       ),
                     ),
@@ -97,54 +92,6 @@ class _PrinterDiscoveryPageState extends State<PrinterDiscoveryPage> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _deviceCard(BuildContext context, String Function(String) t, PrinterDevice d) {
-    final cs = Theme.of(context).colorScheme;
-    final isBle = d is BlePrinterDevice;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Card(
-        margin: EdgeInsets.zero,
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          enabled: !_pairing,
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.softSurface(context),
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-            child: Icon(
-              isBle ? Icons.bluetooth : Icons.print_outlined,
-              color: AppColors.primary,
-              size: 22,
-            ),
-          ),
-          title: Text(
-            d.name,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: R.fontMd(context),
-              color: cs.onSurface,
-            ),
-          ),
-          subtitle: Text(
-            printerAddress(d),
-            style: TextStyle(fontSize: R.fontSm(context), color: cs.onSurfaceVariant),
-          ),
-          trailing: _pairing
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.link, color: AppColors.primary),
-          onTap: _pairing ? null : () => _pair(t, d),
         ),
       ),
     );

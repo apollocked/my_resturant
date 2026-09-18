@@ -7,7 +7,9 @@ import 'package:my_resturant/features/printer/domain/entities/printer_config.dar
 import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/printer/presentation/widgets/printer_actions.dart';
+import 'package:my_resturant/features/printer/presentation/widgets/printer_auto_kitchen_switch.dart';
 import 'package:my_resturant/features/printer/presentation/widgets/printer_connection_section.dart';
+import 'package:my_resturant/features/printer/presentation/widgets/printer_paper_selector.dart';
 
 class PrinterSettingsPage extends StatefulWidget {
   const PrinterSettingsPage({super.key});
