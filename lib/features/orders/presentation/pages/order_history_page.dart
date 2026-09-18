@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/auth/domain/entities/role.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/features/orders/presentation/widgets/calendar_grid.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/clear_all_orders_dialog.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/history_calendar_view.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/history_layout.dart';
-import 'package:my_resturant/features/orders/presentation/widgets/history_month_nav.dart';
-import 'package:my_resturant/features/orders/presentation/widgets/history_stats_bar.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});
@@ -86,53 +83,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     String t(String key) => Tr.get(key, settings.locale);
     final cs = Theme.of(context).colorScheme;
     final p = R.padding(context);
-    final daysWithOrders = allOrders
-        .where(
-          (o) =>
-              o.createdAt.year == _viewMonth.year &&
-              o.createdAt.month == _viewMonth.month,
-        )
-        .map((o) => o.createdAt.day)
-        .toSet();
-    final dayTotal = dayOrders
-        .where((o) => o.status != OrderStatus.cancelled)
-        .fold(0.0, (s, o) => s + o.totalPrice);
-    final dayItems = dayOrders
-        .where((o) => o.status != OrderStatus.cancelled)
-        .fold(
-          0,
-          (s, o) => s + o.items.fold(0, (si, i) => si + i.quantity),
-        );
-
-    final calendar = Column(
-      children: [
-        HistoryMonthNav(
-          t: t,
-          year: _viewMonth.year,
-          month: _viewMonth.month,
-          onPrev: () => _shiftMonth(-1),
-          onNext: () => _shiftMonth(1),
-          onPick: _pick,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: p),
-          child: CalendarGrid(
-            year: _viewMonth.year,
-            month: _viewMonth.month,
-            selectedDay: _selectedDate.day,
-            daysWithOrders: daysWithOrders,
-            onDayTap: _onDayTap,
-          ),
-        ),
-        const Divider(height: 1),
-        HistoryStatsBar(
-          orderCount: dayOrders.length,
-          itemCount: dayItems,
-          total: dayTotal,
-          t: t,
-        ),
-      ],
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -148,7 +98,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         ],
       ),
       body: HistoryLayout(
-        calendar: calendar,
+        calendar: HistoryCalendarView(
+          t: t,
+          viewMonth: _viewMonth,
+          selectedDate: _selectedDate,
+          orders: allOrders,
+          onDayTap: _onDayTap,
+          onPrev: () => _shiftMonth(-1),
+          onNext: () => _shiftMonth(1),
+          onPick: _pick,
+          hPad: p,
+        ),
         loading: cubit.state.isLoading,
         isEmpty: allOrders.isEmpty,
         dayOrders: dayOrders,

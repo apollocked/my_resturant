@@ -1,124 +1,24 @@
-import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
-import 'package:my_resturant/core/config/supabase_credentials.dart';
-import 'package:my_resturant/core/helpers/network_helper.dart';
-import 'package:my_resturant/core/router/app_router.dart';
-import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/core/l10n/ku_localizations.dart';
-import 'package:my_resturant/features/printer/data/printer_service.dart';
+import 'package:my_resturant/app/bootstrap/app_bootstrap.dart';
+import 'package:my_resturant/app/domain/data_repository.dart';
+import 'package:my_resturant/app/presentation/app_view.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/features/orders/presentation/cubits/order_state.dart';
-import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
-import 'package:my_resturant/features/auth/data/device_storage.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/account_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/theme/app_theme.dart';
-import 'package:my_resturant/features/orders/presentation/widgets/auto_print_listener.dart';
-import 'package:my_resturant/features/permissions/presentation/permission_gate.dart';
-import 'package:my_resturant/app/domain/data_repository.dart';
-import 'package:my_resturant/app/data/supabase_data_repo.dart';
-import 'package:my_resturant/features/auth/data/repositories/supabase_auth_repo.dart';
-import 'firebase_options.dart';
+import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 
-/// Global error handlers so an uncaught exception logs instead of taking down
-/// the whole app (the "app won't crash" guarantee).
-void bootstrapErrorHandlers() {
-  FlutterError.onError = (details) {
-    debugPrint('[app] Unhandled Flutter error: ${details.exception}');
-    debugPrint('[app] Stack: ${details.stack}');
-    FlutterError.presentError(details);
-  };
-  PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrint('[app] Uncaught async error: $error\n$stack');
-    return true;
-  };
-}
-
-@pragma('vm:entry-point')
-Future<void> _onBackgroundMessage(RemoteMessage message) async {
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    debugPrint('[app] background message init failed: $e');
-  }
-}
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bootstrapErrorHandlers();
-  try {
-    await dotenv.load();
-  } catch (e) {
-    debugPrint('[app] dotenv load failed: $e');
-  }
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
-  } catch (e) {
-    debugPrint('[app] Firebase init failed: $e');
-  }
-  String deviceId = '';
-  try {
-    deviceId = await getOrCreateDeviceId();
-  } catch (e) {
-    debugPrint('[app] device id init failed: $e');
-  }
-  try {
-    await Supabase.initialize(
-      url: SupabaseCredentials.url,
-      publishableKey: SupabaseCredentials.publishableKey,
-      headers: {'x-device-id': deviceId},
-    );
-  } catch (e) {
-    debugPrint('[app] Supabase init failed: $e');
-  }
-  try {
-    await NetworkService.instance.init();
-  } catch (e) {
-    debugPrint('[app] NetworkService init failed: $e');
-  }
-  final authRepo = SupabaseAuthRepository();
-  final dataRepo = SupabaseDataRepository();
-  final acct = AccountCubit(repo: authRepo);
-  try {
-    await acct.load();
-  } catch (e) {
-    debugPrint('[app] acct.load failed: $e');
-  }
-  final role = RoleCubit(repo: authRepo);
-  try {
-    await role.load();
-  } catch (e) {
-    debugPrint('[app] role.load failed: $e');
-  }
-  final settings = await SettingsCubit.create();
-  acct.stream.listen((_) => routeRefresh.value++);
-  role.stream.listen((_) => routeRefresh.value++);
-  settings.stream.listen((_) => routeRefresh.value++);
-  final printer = PrinterCubit(PrinterService());
-  try {
-    await printer.init();
-  } catch (e) {
-    debugPrint('[app] printer.init failed: $e');
-  }
+  final deps = await bootstrapApp();
   runApp(
     MyApp(
-      repo: dataRepo,
-      acct: acct,
-      role: role,
-      settings: settings,
-      printer: printer,
+      repo: deps.repo,
+      acct: deps.acct,
+      role: deps.role,
+      settings: deps.settings,
+      printer: deps.printer,
     ),
   );
 }
@@ -137,6 +37,7 @@ class MyApp extends StatelessWidget {
     required this.settings,
     required this.printer,
   });
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -148,78 +49,6 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: printer),
       ],
       child: const AppView(),
-    );
-  }
-}
-
-class AppView extends StatefulWidget {
-  const AppView({super.key});
-  @override
-  State<AppView> createState() => _AppViewState();
-}
-
-class _AppViewState extends State<AppView> {
-  RoleState? _lastRole;
-  Locale? _lastLocale;
-
-  @override
-  Widget build(BuildContext context) {
-    final settings = context.watch<SettingsCubit>().state;
-    final role = context.watch<RoleCubit>().state;
-    final orderCubit = context.read<OrderCubit>();
-    if (role.isLoggedIn != _lastRole?.isLoggedIn ||
-        role.role != _lastRole?.role) {
-      _lastRole = role;
-      orderCubit.setCurrentRole(role.isLoggedIn ? role.role : null);
-    }
-    if (_lastLocale != settings.locale) {
-      _lastLocale = settings.locale;
-      orderCubit.setCurrentLocale(settings.locale);
-    }
-    String t(String key) => Tr.get(key, settings.locale);
-    return MaterialApp.router(
-      title: t('app_name'),
-      debugShowCheckedModeBanner: false,
-      locale: settings.locale,
-      supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
-      localizationsDelegates: const [
-        KuMaterialLocalizationsDelegate(),
-        KuCupertinoLocalizationsDelegate(),
-        KuWidgetsLocalizationsDelegate(),
-        ...GlobalMaterialLocalizations.delegates,
-      ],
-      localeResolutionCallback: (locale, supported) {
-        if (locale == null) return const Locale('en');
-        for (final s in supported) {
-          if (s.languageCode == locale.languageCode) return s;
-        }
-        return const Locale('en');
-      },
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: settings.themeMode,
-      routerConfig: appRouter,
-      builder: (context, child) {
-        return BlocListener<OrderCubit, OrderState>(
-          listenWhen: (p, c) =>
-              p.errorMessage != c.errorMessage && c.errorMessage != null,
-          listener: (context, state) {
-            final msg = Tr.get(state.errorMessage!, settings.locale);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: Theme.of(context).colorScheme.error,
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 3),
-              ),
-            );
-            context.read<OrderCubit>().clearError();
-          },
-          child: PermissionGate(
-            child: AutoPrintListener(child: child ?? const SizedBox.shrink()),
-          ),
-        );
-      },
     );
   }
 }
