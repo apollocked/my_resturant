@@ -86,9 +86,11 @@ class _KitchenPageState extends State<KitchenPage> {
         children: [
           KitchenHeader(
             title: isWaiter ? t('orders') : t('kitchen_title'),
-            countLabel: t(
-              'orders_count',
-            ).replaceAll('{count}', '${todayOrders.length}'),
+            countLabel: todayOrders.length == 1
+                ? t('orders_count_one')
+                : t(
+                    'orders_count',
+                  ).replaceAll('{count}', '${todayOrders.length}'),
             selectedIndex: tab,
             tabLabels: tabLabels,
             onTabChanged: (i) => setState(() => _tabIndex = i),

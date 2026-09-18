@@ -17,6 +17,7 @@ const Map<String, String> kuaccount = {
   'select_table_title': 'هەڵبژاردنی مێز',
   'view_order': 'سەیرکردنی داواکاری',
   'items': '{count} دانە',
+  'items_one': 'دانەیەک',
   'timeline_served': 'پێشکەشکرا',
   'timeline_preparing': 'ئامادەکردن',
   'timeline_pending': 'چاوەڕوانی',

@@ -59,7 +59,9 @@ class AddItemsSheetHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.xl),
                   ),
                   child: Text(
-                    t('items').replaceAll('{count}', '$count'),
+                    count == 1
+                        ? t('items_one')
+                        : t('items').replaceAll('{count}', '$count'),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
