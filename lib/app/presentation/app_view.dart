@@ -9,6 +9,7 @@ import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dar
 import 'package:my_resturant/features/orders/presentation/cubits/order_state.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/auth/presentation/cubits/role_cubit.dart';
+import 'package:my_resturant/features/auth/presentation/cubits/role_state.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/auto_print_listener.dart';
 import 'package:my_resturant/features/permissions/presentation/permission_gate.dart';
 
