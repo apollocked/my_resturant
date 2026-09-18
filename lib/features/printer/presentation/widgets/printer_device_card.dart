@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
-import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
 import 'package:my_resturant/features/printer/data/printer_transport.dart';
+import 'package:unified_esc_pos_printer/unified_esc_pos_printer.dart'
+    hide PrinterConnectionType;
 
 /// A tappable row for one discovered Bluetooth printer. While pairing, the
 /// tile is disabled and shows an inline spinner.

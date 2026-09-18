@@ -4,6 +4,7 @@ import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/order_status_style.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/order_total_badge.dart';
 import 'package:my_resturant/shared/haptics.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
 
@@ -62,7 +63,7 @@ class OrderActionBar extends StatelessWidget {
             child: _outlined(
                 context, cs, Icons.refresh, Tr.get('again', locale), onReset, cs.onSurface),
           ),
-        _totalBadge(context, cs),
+        OrderTotalBadge(total: total, locale: locale, isDesktop: isDesktop),
       ],
     );
   }
@@ -120,36 +121,6 @@ class OrderActionBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.md),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _totalBadge(BuildContext context, ColorScheme cs) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 16.0 : 12.0, vertical: isDesktop ? 8.0 : 6.0),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primary.withValues(alpha: 0.8), AppColors.primary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        '${total.toInt()} ${Tr.get('currency_suffix', locale)}',
-        style: TextStyle(
-          fontWeight: FontWeight.w800,
-          fontSize: R.fontMd(context),
-          color: cs.onPrimary,
         ),
       ),
     );

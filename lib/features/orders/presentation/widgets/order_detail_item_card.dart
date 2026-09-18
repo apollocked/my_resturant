@@ -3,6 +3,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:my_resturant/features/cart/presentation/widgets/qty_stepper.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/order_qty_badge.dart';
 import 'package:my_resturant/shared/app_image.dart';
 
 class OrderDetailItemCard extends StatelessWidget {
@@ -55,7 +56,7 @@ class OrderDetailItemCard extends StatelessWidget {
                           onChanged: onQuantityChanged!,
                         )
                       else
-                        _QtyBadge(quantity: item.quantity),
+                        OrderQtyBadge(quantity: item.quantity),
                       const Spacer(),
                       Flexible(
                         child: Text(
@@ -122,29 +123,6 @@ class OrderDetailItemCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _QtyBadge extends StatelessWidget {
-  const _QtyBadge({required this.quantity});
-  final int quantity;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-      ),
-      child: Text(
-        '\u00d7$quantity',
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: R.fontSm(context),
-          color: AppColors.primary,
         ),
       ),
     );

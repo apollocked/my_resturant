@@ -4,6 +4,7 @@ import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/history_order_header.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/order_status_style.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/shared/pressable_scale.dart';
@@ -40,7 +41,12 @@ class HistoryOrderTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _header(context, statusColor, time, isDesktop),
+            HistoryOrderHeader(
+              code: _shortCode,
+              time: time,
+              color: statusColor,
+              isDesktop: isDesktop,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: isDesktop ? 8 : 6),
               child: Column(
@@ -57,9 +63,8 @@ class HistoryOrderTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
-                      fontSize: isDesktop
-                          ? R.fontXl(context)
-                          : R.fontLg(context),
+                      fontSize:
+                          isDesktop ? R.fontXl(context) : R.fontLg(context),
                       color: AppColors.primary,
                     ),
                   ),
@@ -68,47 +73,6 @@ class HistoryOrderTile extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _header(
-    BuildContext context,
-    Color statusColor,
-    String time,
-    bool isDesktop,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: isDesktop ? 6 : 4,
-        horizontal: 10,
-      ),
-      color: statusColor.withValues(alpha: 0.1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Text(
-              _shortCode,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: R.fontSm(context) - 1,
-                fontWeight: FontWeight.w700,
-                color: statusColor,
-              ),
-            ),
-          ),
-          Text(
-            time,
-            style: TextStyle(
-              fontSize: R.fontSm(context) - 2,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
       ),
     );
   }

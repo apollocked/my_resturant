@@ -108,10 +108,16 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                   field(_nameCtl, Icons.store, t('restaurant_name_label')),
                   const SizedBox(height: 16),
                   label(t('paper_size'), cs),
-                  const SizedBox(height: 8),
-                  _paperSelector(cs),
                   const SizedBox(height: 16),
-                  _autoKitchenRow(cs),
+                  PrinterPaperSelector(
+                    value: _paperWidth,
+                    onChanged: (w) => setState(() => _paperWidth = w),
+                  ),
+                  const SizedBox(height: 16),
+                  PrinterAutoKitchenSwitch(
+                    value: _autoKitchen,
+                    onChanged: (v) => setState(() => _autoKitchen = v),
+                  ),
                   const SizedBox(height: 24),
                   PrinterActions(config: _buildConfig(), t: t),
                 ],
@@ -120,39 +126,6 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _autoKitchenRow(ColorScheme cs) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            Tr.get('auto_print_kitchen', context.read<SettingsCubit>().state.locale),
-            style: TextStyle(fontSize: R.fontMd(context), color: cs.onSurface),
-          ),
-        ),
-        Switch(
-          value: _autoKitchen,
-          onChanged: (v) => setState(() => _autoKitchen = v),
-        ),
-      ],
-    );
-  }
-
-  Widget _paperSelector(ColorScheme cs) {
-    return Row(
-      children: [58, 80].map((w) {
-        return Padding(
-          padding: const EdgeInsetsDirectional.only(end: 8),
-          child: ChoiceChip(
-            label: Text('${w}mm'),
-            selected: _paperWidth == w,
-            onSelected: (_) => setState(() => _paperWidth = w),
-            selectedColor: cs.primary.withValues(alpha: 0.15),
-          ),
-        );
-      }).toList(),
     );
   }
 

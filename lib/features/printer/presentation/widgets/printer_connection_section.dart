@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/features/printer/domain/entities/printer_config.dart';
-import 'package:my_resturant/features/printer/presentation/cubits/printer_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/features/printer/presentation/widgets/bt_scan_sheet.dart';
 import 'package:my_resturant/features/printer/presentation/widgets/printer_status_banner.dart';

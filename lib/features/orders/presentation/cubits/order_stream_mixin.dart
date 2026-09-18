@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:my_resturant/core/helpers/network_helper.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit_base.dart';
+import 'package:my_resturant/features/orders/presentation/cubits/order_settings_parser.dart';
 
 mixin OrderStreamMixin on OrderCubitBase {
   final List<StreamSubscription> subs = [];
@@ -114,33 +115,13 @@ mixin OrderStreamMixin on OrderCubitBase {
 
   void applySettings(Map<String, String> settings) {
     if (isClosed) return;
-    final tableCount = int.tryParse(settings['tableCount'] ?? '10') ?? 10;
-    final names = <int, String>{};
-    final cleared = <int>{};
-    final requests = <int, DateTime>{};
-    for (final e in settings.entries) {
-      if (e.key.startsWith('tableName_')) {
-        final n = int.tryParse(e.key.split('_').last);
-        if (n != null) names[n] = e.value;
-      }
-      if (e.key.startsWith('cleared_') && e.value == 'true') {
-        final n = int.tryParse(e.key.split('_').last);
-        if (n != null) cleared.add(n);
-      }
-      if (e.key.startsWith('request_clean_') && e.value.isNotEmpty) {
-        final n = int.tryParse(e.key.split('_').last);
-        final v = int.tryParse(e.value);
-        if (n != null && v != null) {
-          requests[n] = DateTime.fromMillisecondsSinceEpoch(v);
-        }
-      }
-    }
+    final s = parseAppSettings(settings);
     emit(
       state.copyWith(
-        tableCount: tableCount,
-        tableNames: names,
-        clearedTables: cleared,
-        cleaningRequests: requests,
+        tableCount: s.tableCount,
+        tableNames: s.tableNames,
+        clearedTables: s.clearedTables,
+        cleaningRequests: s.cleaningRequests,
       ),
     );
   }

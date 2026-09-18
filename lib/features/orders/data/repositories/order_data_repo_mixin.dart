@@ -9,6 +9,21 @@ import 'package:my_resturant/features/orders/domain/entities/cart_item.dart';
 import 'package:my_resturant/features/orders/domain/entities/order_model.dart';
 
 mixin OrderDataRepoMixin on SupabaseDataRepoBase {
+  String _encodeItems(List<CartItem> items) => jsonEncode(
+        items
+            .map(
+              (item) => {
+                'recipe_id': item.recipe.id,
+                'recipe_name': item.recipe.name,
+                'recipe_price': item.recipe.price,
+                'recipe_image_url': item.recipe.imageUrl,
+                'quantity': item.quantity,
+                'notes': item.notes,
+              },
+            )
+            .toList(),
+      );
+
   Future<List<Order>> loadOrders() => safeCall(() async {
     if (!isAuthed) return [];
     final uid = userId;
@@ -34,20 +49,7 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
         'Maximum ${AppConstants.maxOrdersPerRestaurant} orders reached. Please archive old orders.',
       );
     }
-    final itemsJson = jsonEncode(
-      order.items
-          .map(
-            (item) => {
-              'recipe_id': item.recipe.id,
-              'recipe_name': item.recipe.name,
-              'recipe_price': item.recipe.price,
-              'recipe_image_url': item.recipe.imageUrl,
-              'quantity': item.quantity,
-              'notes': item.notes,
-            },
-          )
-          .toList(),
-    );
+    final itemsJson = _encodeItems(order.items);
     final trackingCode =
         'ORD-${DateTime.now().millisecondsSinceEpoch}-${Random.secure().nextInt(10000)}';
     await client.from('orders').insert({
@@ -100,20 +102,7 @@ mixin OrderDataRepoMixin on SupabaseDataRepoBase {
       safeCall(() async {
         final uid = userId;
         if (!isAuthed || uid == null) return;
-        final itemsJson = jsonEncode(
-          items
-              .map(
-                (item) => {
-                  'recipe_id': item.recipe.id,
-                  'recipe_name': item.recipe.name,
-                  'recipe_price': item.recipe.price,
-                  'recipe_image_url': item.recipe.imageUrl,
-                  'quantity': item.quantity,
-                  'notes': item.notes,
-                },
-              )
-              .toList(),
-        );
+        final itemsJson = _encodeItems(items);
         await client
             .from('orders')
             .update({'items_json': itemsJson})
