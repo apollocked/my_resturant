@@ -37,15 +37,15 @@ class RoleCard extends StatelessWidget {
             color: selected ? AppColors.primary : cs.outlineVariant,
             width: 1.5,
           ),
-          boxShadow: selected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [],
+          boxShadow: [
+            BoxShadow(
+              color: selected
+                  ? AppColors.primary.withValues(alpha: 0.18)
+                  : cs.shadow.withValues(alpha: 0.06),
+              blurRadius: selected ? 14 : 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           children: [

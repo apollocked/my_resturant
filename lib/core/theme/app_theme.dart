@@ -78,20 +78,21 @@ class AppTheme {
       filled: true,
       fillColor: AppColors.inputFill,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
     ),
-    cardTheme: CardThemeData(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: AppColors.outlineVariant),
-      ),
+    cardTheme: _cardTheme(
       color: AppColors.surface,
-      margin: const EdgeInsets.only(bottom: 12),
+      border: AppColors.outlineVariant,
+      shadow: AppColors.onSurface,
+    ),
+    dialogTheme: _dialogTheme(
+      color: AppColors.surfaceLowest,
+      border: AppColors.outlineVariant,
+      shadow: AppColors.onSurface,
     ),
     dividerTheme: const DividerThemeData(
       color: AppColors.divider,
@@ -101,7 +102,7 @@ class AppTheme {
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.onSurface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
   );
 
@@ -110,30 +111,40 @@ class AppTheme {
     useMaterial3: true,
     splashFactory: InkSparkle.splashFactory,
     pageTransitionsTheme: _pageTransitions,
-    scaffoldBackgroundColor: const Color(0xFF121212),
+    scaffoldBackgroundColor: AppColors.darkBackground,
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primary,
       secondary: AppColors.primary,
-      surface: Color(0xFF1E1E1E),
       error: AppColors.error,
+      surface: AppColors.darkSurface,
+      onSurface: AppColors.darkOnSurface,
+      onSurfaceVariant: AppColors.darkOnSurfaceVariant,
+      outline: AppColors.darkOutline,
+      outlineVariant: AppColors.darkOutlineVariant,
+      surfaceContainerLowest: AppColors.darkSurfaceLowest,
+      surfaceContainerLow: AppColors.darkSurfaceContainerLow,
+      surfaceContainer: AppColors.darkSurfaceContainer,
+      surfaceContainerHigh: AppColors.darkSurfaceContainerHigh,
+      surfaceContainerHighest: AppColors.darkSurfaceContainerHighest,
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: AppColors.darkSurface,
       elevation: 0,
       centerTitle: false,
+      scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: AppColors.darkOnSurface,
         fontSize: 18,
         fontWeight: FontWeight.w700,
       ),
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: AppColors.darkOnSurface),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: AppColors.darkSurface,
       elevation: 0,
       type: BottomNavigationBarType.fixed,
       selectedItemColor: AppColors.primary,
-      unselectedItemColor: Color(0xFF8C8C8E),
+      unselectedItemColor: AppColors.darkOnSurfaceVariant,
       selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
       unselectedLabelStyle: TextStyle(fontSize: 11),
     ),
@@ -166,32 +177,79 @@ class AppTheme {
         shadowColor: AppColors.primary,
       ),
     ),
+    dialogTheme: _dialogTheme(
+      color: AppColors.darkSurfaceLowest,
+      border: AppColors.darkOutlineVariant,
+      shadow: AppColors.darkShadow,
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: AppColors.darkInputFill,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      labelStyle: const TextStyle(color: Color(0xFF8C8C8E), fontSize: 13),
+      labelStyle: const TextStyle(
+        color: AppColors.darkOnSurfaceVariant,
+        fontSize: 13,
+      ),
     ),
-    cardTheme: CardThemeData(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: const Color(0xFF1E1E1E),
-      margin: const EdgeInsets.only(bottom: 12),
+    cardTheme: _cardTheme(
+      color: AppColors.darkSurface,
+      border: AppColors.darkOutlineVariant,
+      shadow: AppColors.darkShadow,
     ),
     dividerTheme: const DividerThemeData(
-      color: Color(0xFF2E2E2E),
+      color: AppColors.darkDivider,
       thickness: 1,
       space: 0,
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      backgroundColor: AppColors.darkOnSurface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
   );
+
+  /// Shared soft-squircle card surface: generous radius, hairline border and a
+  /// whisper of shadow so it floats without feeling heavy.
+  static CardThemeData _cardTheme({
+    required Color color,
+    required Color border,
+    required Color shadow,
+  }) {
+    return CardThemeData(
+      elevation: 1,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: shadow.withValues(alpha: 0.10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: border.withValues(alpha: 0.8)),
+      ),
+      color: color,
+      margin: const EdgeInsets.only(bottom: 12),
+    );
+  }
+
+  /// Floating rounded dialog: matches the card language so modals feel like
+  /// the same material as the rest of the app.
+  static DialogThemeData _dialogTheme({
+    required Color color,
+    required Color border,
+    required Color shadow,
+  }) {
+    return DialogThemeData(
+      backgroundColor: color,
+      surfaceTintColor: Colors.transparent,
+      elevation: 2,
+      shadowColor: shadow.withValues(alpha: 0.12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: border.withValues(alpha: 0.7)),
+      ),
+    );
+  }
 
   static const PageTransitionsTheme _pageTransitions = PageTransitionsTheme(
     builders: {

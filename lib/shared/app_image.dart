@@ -44,7 +44,19 @@ class AppImage extends StatelessWidget {
   }
 
   Widget _placeholder(ColorScheme cs) => Container(
-    color: cs.surfaceContainerHighest,
-    child: Icon(Icons.restaurant, color: cs.onSurfaceVariant, size: 40),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [cs.surfaceContainerHigh, cs.surfaceContainerHighest],
+      ),
+    ),
+    child: Center(
+      child: Icon(
+        Icons.restaurant,
+        color: cs.onSurfaceVariant.withValues(alpha: 0.45),
+        size: 40,
+      ),
+    ),
   );
 }

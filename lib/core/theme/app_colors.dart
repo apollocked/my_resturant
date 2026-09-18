@@ -33,6 +33,24 @@ class AppColors {
   static const Color error = Color(0xFFE53E3E);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
+
+  /// Warm layered dark scale — the night counterpart of the light neutrals
+  /// above. No pure blacks or cold grays; surfaces carry the same soft
+  /// sand/charcoal tint so dark mode keeps the app's warm identity.
+  static const Color darkBackground = Color(0xFF15120E);
+  static const Color darkSurface = Color(0xFF1F1A15);
+  static const Color darkSurfaceLowest = Color(0xFF1B1713);
+  static const Color darkSurfaceContainerLow = Color(0xFF27211C);
+  static const Color darkSurfaceContainer = Color(0xFF2C2620);
+  static const Color darkSurfaceContainerHigh = Color(0xFF332C26);
+  static const Color darkSurfaceContainerHighest = Color(0xFF3A332C);
+  static const Color darkOnSurface = Color(0xFFEFE9E1);
+  static const Color darkOnSurfaceVariant = Color(0xFFA89C90);
+  static const Color darkOutline = Color(0xFF8A7E72);
+  static const Color darkOutlineVariant = Color(0xFF363029);
+  static const Color darkInputFill = Color(0xFF2A241F);
+  static const Color darkDivider = Color(0xFF2E2822);
+  static const Color darkShadow = Color(0xFF000000);
 }
 
 abstract class AppRadius {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// visibly depresses like a physical key, then springs back on release.
 /// Handles both filled/elevated buttons and outlined buttons.
 abstract final class PhysicalButtons {
-  static const double _radius = 12;
+  static const double _radius = 14;
 
   /// Filled / elevated buttons: solid background that darkens and gets a
   /// deeper shadow on press.
