@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/features/onboarding/presentation/pages/onb_colors.dart';
+import 'package:my_resturant/features/onboarding/presentation/pages/setting_option_widgets.dart';
 import 'package:my_resturant/features/onboarding/presentation/pages/settings_widgets.dart';
 
 class OnboardingSettingsPage extends StatelessWidget {

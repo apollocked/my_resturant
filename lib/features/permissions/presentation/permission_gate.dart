@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
-import 'package:my_resturant/features/orders/data/order_notification_service.dart';
+import 'package:my_resturant/features/permissions/presentation/permission_flow.dart';
+import 'package:my_resturant/features/permissions/presentation/permission_request_view.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
-import 'permission_prompts.dart';
-import 'permission_request_view.dart';
-
-enum _Phase { loading, notifications, bluetooth, done }
 
 /// Asks for notifications and Bluetooth once, on the first app open, using the
 /// app's own widgets. If the user later denies them, the per-action prompts in
@@ -22,121 +17,22 @@ class PermissionGate extends StatefulWidget {
   State<PermissionGate> createState() => _PermissionGateState();
 }
 
-class _PermissionGateState extends State<PermissionGate> {
-  _Phase _phase = _Phase.loading;
-  bool _busy = false;
-
+class _PermissionGateState extends State<PermissionGate>
+    with PermissionFlowMixin {
   @override
   void initState() {
     super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    final prefs = await SharedPreferences.getInstance();
-    final notifAsked = prefs.getBool('notif_permission_prompt') ?? false;
-    final btAsked = prefs.getBool('bt_permission_prompt') ?? false;
-    bool notifGranted = false;
-    try {
-      notifGranted = await OrderNotificationService().areNotificationsEnabled();
-    } catch (_) {}
-    final btGranted = await bluetoothGranted();
-    if (!mounted) return;
-    if (!notifAsked && !notifGranted) {
-      setState(() => _phase = _Phase.notifications);
-    } else if (!btAsked && !btGranted) {
-      setState(() => _phase = _Phase.bluetooth);
-    } else {
-      setState(() => _phase = _Phase.done);
-    }
-  }
-
-  Future<void> _allow() async {
-    if (_busy) return;
-    setState(() => _busy = true);
-    final prefs = await SharedPreferences.getInstance();
-    if (_phase == _Phase.notifications) {
-      await prefs.setBool('notif_permission_prompt', true);
-      bool granted = false;
-      try {
-        granted = (await OrderNotificationService().requestPermission()) == true;
-      } catch (_) {}
-      if (!mounted) return;
-      setState(() => _busy = false);
-      // If the system request was denied, show a brief snackbar with an
-      // "Open settings" action so the user can fix it manually.
-      if (!granted) {
-        _showBlockedSnackbar();
-      }
-      await _advance();
-    } else {
-      await prefs.setBool('bt_permission_prompt', true);
-      final granted = await requestBluetoothSystem();
-      if (!mounted) return;
-      setState(() => _busy = false);
-      if (!granted) {
-        _showBlockedSnackbar();
-      }
-      await _advance();
-    }
-  }
-
-  void _showBlockedSnackbar() {
-    if (!mounted) return;
-    final settings = context.read<SettingsCubit>().state;
-    String t(String key) => Tr.get(key, settings.locale);
-    final cs = Theme.of(context).colorScheme;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(t('permission_denied_snackbar')),
-        action: SnackBarAction(
-          label: t('bt_perm_settings_action'),
-          textColor: cs.primary,
-          onPressed: () => openAppSettings(),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _skip() async {
-    if (_busy) return;
-    setState(() => _busy = true);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(
-      _phase == _Phase.notifications
-          ? 'notif_permission_prompt'
-          : 'bt_permission_prompt',
-      true,
-    );
-    if (!mounted) return;
-    setState(() => _busy = false);
-    await _advance();
-  }
-
-  Future<void> _advance() async {
-    if (_phase == _Phase.notifications) {
-      final prefs = await SharedPreferences.getInstance();
-      final btAsked = prefs.getBool('bt_permission_prompt') ?? false;
-      final btGranted = await bluetoothGranted();
-      if (!mounted) return;
-      if (!btAsked && !btGranted) {
-        setState(() => _phase = _Phase.bluetooth);
-      } else {
-        setState(() => _phase = _Phase.done);
-      }
-      return;
-    }
-    setState(() => _phase = _Phase.done);
+    init();
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (_phase) {
-      case _Phase.loading:
+    switch (phase) {
+      case PermissionPhase.loading:
         return ColoredBox(color: Theme.of(context).scaffoldBackgroundColor);
-      case _Phase.notifications:
-      case _Phase.bluetooth:
-        final notifications = _phase == _Phase.notifications;
+      case PermissionPhase.notifications:
+      case PermissionPhase.bluetooth:
+        final notifications = phase == PermissionPhase.notifications;
         final settings = context.watch<SettingsCubit>().state;
         String t(String key) => Tr.get(key, settings.locale);
         return Scaffold(
@@ -162,16 +58,16 @@ class _PermissionGateState extends State<PermissionGate> {
                     skipLabel: t(
                       notifications ? 'notif_permission_skip' : 'bt_perm_not_now',
                     ),
-                    busy: _busy,
-                    onAllow: _allow,
-                    onSkip: _skip,
+                    busy: busy,
+                    onAllow: allow,
+                    onSkip: skip,
                   ),
                 ),
               ),
             ),
           ),
         );
-      case _Phase.done:
+      case PermissionPhase.done:
         return widget.child;
     }
   }

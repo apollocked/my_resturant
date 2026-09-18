@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
 import 'package:my_resturant/features/menu/domain/default_categories.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
-import 'package:my_resturant/features/admin/presentation/widgets/dish_field.dart';
-import 'package:my_resturant/features/admin/presentation/widgets/dish_preview_image.dart';
-import 'package:my_resturant/features/admin/presentation/widgets/image_picker_button.dart';
+import 'package:my_resturant/features/admin/presentation/widgets/dish_form_fields_view.dart';
 
 class DishFormFields extends StatefulWidget {
   final GlobalKey<FormState> formKey;
@@ -66,111 +63,24 @@ class _DishFormFieldsState extends State<DishFormFields> {
     final cats = effectiveCategories(
       context.watch<OrderCubit>().state.categories,
     );
-    final isDesktop = R.isDesktop(context);
-    final nameField = DishField(
-      label: widget.t('dish_name'),
-      controller: widget.nameCtrl,
-      maxLength: 80,
-      validator: (v) =>
-          v == null || v.trim().isEmpty ? widget.t('dish_name_required') : null,
-    );
-    final priceField = DishField(
-      label: widget.t('price_dinar'),
-      controller: widget.priceCtrl,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        TextInputFormatter.withFunction((oldValue, newValue) {
-          if (RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)) return newValue;
-          return oldValue;
-        }),
-      ],
-      validator: (v) {
-        if (v == null || v.isEmpty) return widget.t('price_required');
-        final n = double.tryParse(v);
-        return (n == null || n <= 0) ? widget.t('price_invalid') : null;
+    return DishFormFieldsView.build(
+      context: context,
+      formKey: widget.formKey,
+      nameCtrl: widget.nameCtrl,
+      priceCtrl: widget.priceCtrl,
+      descCtrl: widget.descCtrl,
+      imageUrl: widget.imageUrl,
+      cats: cats,
+      cat: _cat,
+      t: widget.t,
+      isDesktop: R.isDesktop(context),
+      isEditing: widget.isEditing,
+      onPickImage: widget.onPickImage,
+      onCategoryChanged: (v) {
+        setState(() => _cat = v);
+        widget.onCategoryChanged(v);
       },
-    );
-    final descField = DishField(
-      label: widget.t('description'),
-      controller: widget.descCtrl,
-      maxLines: 2,
-      maxLength: 1000,
-    );
-    final imageButton = ImagePickerButton(
-      label: widget.t('pick_image'),
-      onPressed: widget.onPickImage,
-    );
-    final categoryField = DropdownButtonFormField<String>(
-      initialValue: _cat,
-      decoration: InputDecoration(
-        labelText: widget.t('section_field'),
-        filled: true,
-      ),
-      items: cats
-          .map(
-            (c) => DropdownMenuItem(
-              value: c['key'],
-              child: Text('${c['icon']} ${c['name']}'),
-            ),
-          )
-          .toList(),
-      onChanged: (v) {
-        if (v != null) {
-          setState(() => _cat = v);
-          widget.onCategoryChanged(v);
-        }
-      },
-    );
-    final categoryRow = Row(
-      children: [
-        Expanded(child: categoryField),
-        const SizedBox(width: 8),
-        IconButton.filledTonal(
-          onPressed: _addCategory,
-          icon: const Icon(Icons.add),
-          tooltip: widget.t('add_category'),
-        ),
-      ],
-    );
-    return Form(
-      key: widget.formKey,
-      child: Column(
-        children: [
-          DishPreviewImage(url: widget.imageUrl),
-          const SizedBox(height: 16),
-          if (isDesktop)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: nameField),
-                const SizedBox(width: 12),
-                Expanded(child: priceField),
-              ],
-            )
-          else ...[
-            nameField,
-            const SizedBox(height: 12),
-            priceField,
-          ],
-          const SizedBox(height: 12),
-          descField,
-          const SizedBox(height: 12),
-          if (isDesktop)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(child: categoryRow),
-                const SizedBox(width: 12),
-                Expanded(child: imageButton),
-              ],
-            )
-          else ...[
-            imageButton,
-            const SizedBox(height: 12),
-            categoryRow,
-          ],
-        ],
-      ),
+      onAddCategory: _addCategory,
     );
   }
 }

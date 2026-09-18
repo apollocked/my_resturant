@@ -10,7 +10,7 @@ import 'package:my_resturant/features/settings/presentation/cubits/settings_cubi
 import 'package:my_resturant/features/auth/presentation/widgets/auth_loading_overlay.dart';
 import 'package:my_resturant/features/setup/presentation/widgets/passcodes_saved_dialog.dart';
 import 'package:my_resturant/features/setup/presentation/widgets/setup_header.dart';
-import 'package:my_resturant/features/setup/presentation/widgets/setup_passcode_field.dart';
+import 'package:my_resturant/features/setup/presentation/widgets/setup_passcode_fields.dart';
 import 'package:my_resturant/shared/loading_action_button.dart';
 
 class SetupPage extends StatefulWidget {
@@ -59,34 +59,22 @@ class _SetupPageState extends State<SetupPage> {
                       children: [
                         SetupHeader(t: t),
                         const SizedBox(height: 32),
-                        SetupPasscodeField(
-                          controller: _waiterCtl,
-                          label: t('waiter'),
-                          icon: Icons.room_service_outlined,
-                          obscure: _obscureWaiter,
-                          onToggleObscure: () =>
-                              setState(() => _obscureWaiter = !_obscureWaiter),
-                          t: t,
-                        ),
-                        const SizedBox(height: 14),
-                        SetupPasscodeField(
-                          controller: _kitchenCtl,
-                          label: t('kitchen'),
-                          icon: Icons.restaurant_outlined,
-                          obscure: _obscureKitchen,
-                          onToggleObscure: () => setState(
+                        SetupPasscodeFields(
+                          waiterCtl: _waiterCtl,
+                          kitchenCtl: _kitchenCtl,
+                          adminCtl: _adminCtl,
+                          obscureWaiter: _obscureWaiter,
+                          obscureKitchen: _obscureKitchen,
+                          obscureAdmin: _obscureAdmin,
+                          onToggleWaiter: () => setState(
+                            () => _obscureWaiter = !_obscureWaiter,
+                          ),
+                          onToggleKitchen: () => setState(
                             () => _obscureKitchen = !_obscureKitchen,
                           ),
-                          t: t,
-                        ),
-                        const SizedBox(height: 14),
-                        SetupPasscodeField(
-                          controller: _adminCtl,
-                          label: t('admin'),
-                          icon: Icons.admin_panel_settings_outlined,
-                          obscure: _obscureAdmin,
-                          onToggleObscure: () =>
-                              setState(() => _obscureAdmin = !_obscureAdmin),
+                          onToggleAdmin: () => setState(
+                            () => _obscureAdmin = !_obscureAdmin,
+                          ),
                           t: t,
                         ),
                         const SizedBox(height: 28),

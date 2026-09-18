@@ -3,16 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_resturant/features/menu/domain/entities/recipe.dart';
 import 'package:my_resturant/features/orders/presentation/cubits/order_cubit.dart';
 import 'package:my_resturant/features/settings/presentation/cubits/settings_cubit.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/l10n/tr.dart';
 import 'package:my_resturant/features/menu/domain/default_categories.dart';
-import 'package:my_resturant/features/menu/presentation/widgets/item_on_hold_sheet.dart';
-import 'package:my_resturant/features/orders/presentation/widgets/table_picker.dart';
+import 'package:my_resturant/features/menu/presentation/pages/menu_page_actions.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_shimmer_loader.dart';
 import 'package:my_resturant/features/menu/presentation/widgets/menu_layout.dart';
+import 'package:my_resturant/features/orders/presentation/widgets/table_picker.dart';
 import 'package:my_resturant/features/orders/presentation/widgets/table_selector.dart';
 import 'package:my_resturant/core/helpers/responsive.dart';
-import 'package:my_resturant/shared/confirm_dialog.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   const RestaurantMenuScreen({super.key});
@@ -55,34 +53,14 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     if (!mounted) return;
     final settings = context.read<SettingsCubit>().state;
     String t(String key) => Tr.get(key, settings.locale);
-    final ok = await showConfirmDialog(
-      context,
-      title: t('delete_from_order'),
-      message: t('delete_confirm').replaceAll('{name}', r.name),
-      confirmLabel: t('delete'),
-      cancelLabel: t('cancel'),
-      confirmColor: AppColors.error,
-    );
-    if (ok && mounted) {
-      context.read<OrderCubit>().removeFromCartById(r.id);
-    }
+    await deleteOrderItem(context, r, t: t);
   }
 
   Future<void> _notes(Recipe recipe) async {
     if (!mounted) return;
-    final orderCubit = context.read<OrderCubit>();
-    final r = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => ItemOnHoldSheet(
-        recipe: recipe,
-        initialNotes: orderCubit.state.getNotes(recipe.id),
-      ),
-    );
-    if (!mounted) return;
-    if (r != null) orderCubit.updateNotesByRecipe(recipe.id, r);
+    final settings = context.read<SettingsCubit>().state;
+    String t(String key) => Tr.get(key, settings.locale);
+    await editItemNotes(context, recipe, t: t);
   }
 
   @override

@@ -1,113 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:my_resturant/core/theme/app_colors.dart';
 import 'package:my_resturant/core/theme/app_button_themes.dart';
-
-/// Per-brightness color choices for the shared ThemeData skeleton.
-class _ThemeSpec {
-  const _ThemeSpec(this.scheme, this.surface, this.appBarTitle, this.appBarIcon,
-      this.bottomUnselected, this.inputFill, this.inputLabel, this.cardColor,
-      this.cardBorder, this.cardShadow, this.dialogColor, this.dialogBorder,
-      this.dialogShadow, this.divider, this.snackbarBg);
-
-  final ColorScheme scheme;
-  final Color surface;
-  final Color appBarTitle;
-  final Color appBarIcon;
-  final Color bottomUnselected;
-  final Color inputFill;
-  final Color inputLabel;
-  final Color cardColor;
-  final Color cardBorder;
-  final Color cardShadow;
-  final Color dialogColor;
-  final Color dialogBorder;
-  final Color dialogShadow;
-  final Color divider;
-  final Color snackbarBg;
-}
-
-const _light = _ThemeSpec(
-  ColorScheme.light(
-    primary: AppColors.primary,
-    secondary: AppColors.primary,
-    error: AppColors.error,
-    surface: AppColors.surface,
-    onSurface: AppColors.onSurface,
-    onSurfaceVariant: AppColors.onSurfaceVariant,
-    outline: AppColors.outline,
-    outlineVariant: AppColors.outlineVariant,
-    surfaceContainerLowest: AppColors.surfaceLowest,
-    surfaceContainerLow: AppColors.surfaceContainerLow,
-    surfaceContainer: AppColors.surfaceContainer,
-    surfaceContainerHigh: AppColors.surfaceContainerHigh,
-    surfaceContainerHighest: AppColors.surfaceContainerHighest,
-  ),
-  AppColors.surface,
-  AppColors.textPrimary,
-  AppColors.textPrimary,
-  AppColors.textSecondary,
-  AppColors.inputFill,
-  AppColors.textSecondary,
-  AppColors.surface,
-  AppColors.outlineVariant,
-  AppColors.onSurface,
-  AppColors.surfaceLowest,
-  AppColors.outlineVariant,
-  AppColors.onSurface,
-  AppColors.divider,
-  AppColors.onSurface,
-);
-
-const _dark = _ThemeSpec(
-  ColorScheme.dark(
-    primary: AppColors.primary,
-    secondary: AppColors.primary,
-    error: AppColors.error,
-    surface: AppColors.darkSurface,
-    onSurface: AppColors.darkOnSurface,
-    onSurfaceVariant: AppColors.darkOnSurfaceVariant,
-    outline: AppColors.darkOutline,
-    outlineVariant: AppColors.darkOutlineVariant,
-    surfaceContainerLowest: AppColors.darkSurfaceLowest,
-    surfaceContainerLow: AppColors.darkSurfaceContainerLow,
-    surfaceContainer: AppColors.darkSurfaceContainer,
-    surfaceContainerHigh: AppColors.darkSurfaceContainerHigh,
-    surfaceContainerHighest: AppColors.darkSurfaceContainerHighest,
-  ),
-  AppColors.darkSurface,
-  AppColors.darkOnSurface,
-  AppColors.darkOnSurface,
-  AppColors.darkOnSurfaceVariant,
-  AppColors.darkInputFill,
-  AppColors.darkOnSurfaceVariant,
-  AppColors.darkSurface,
-  AppColors.darkOutlineVariant,
-  AppColors.darkShadow,
-  AppColors.darkSurfaceLowest,
-  AppColors.darkOutlineVariant,
-  AppColors.darkShadow,
-  AppColors.darkDivider,
-  AppColors.darkOnSurface,
-);
-
-const _transitions = PageTransitionsTheme(
-  builders: {
-    TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
-    TargetPlatform.iOS: FadeForwardsPageTransitionsBuilder(),
-    TargetPlatform.macOS: FadeForwardsPageTransitionsBuilder(),
-    TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
-    TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
-  },
-);
+import 'package:my_resturant/core/theme/app_colors.dart';
+import 'package:my_resturant/core/theme/theme_specs.dart';
 
 ThemeData buildAppTheme({required bool dark}) {
-  final s = dark ? _dark : _light;
+  final s = dark ? darkThemeSpec : lightThemeSpec;
   return ThemeData(
     fontFamily: 'NRT',
     useMaterial3: true,
     splashFactory: InkSparkle.splashFactory,
-    pageTransitionsTheme: _transitions,
-    scaffoldBackgroundColor: dark ? AppColors.darkBackground : AppColors.background,
+    pageTransitionsTheme: appPageTransitions,
+    scaffoldBackgroundColor:
+        dark ? AppColors.darkBackground : AppColors.background,
     colorScheme: s.scheme,
     appBarTheme: AppBarTheme(
       backgroundColor: s.surface,
@@ -127,7 +31,10 @@ ThemeData buildAppTheme({required bool dark}) {
       type: BottomNavigationBarType.fixed,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: s.bottomUnselected,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
+      selectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 11,
+      ),
       unselectedLabelStyle: const TextStyle(fontSize: 11),
     ),
     elevatedButtonTheme: AppButtonThemes.elevated,
